@@ -79,12 +79,14 @@ jobs:
 
       - name: Keep a copy of the site on the "site" branch
         if: steps.gate.outputs.run == 'true'
+        env:
+          TOKEN: ${{ github.token }}
         run: |
-          rm -rf /tmp/sitecopy && cp -r site /tmp/sitecopy
-          git fetch -q origin site || true
-          git worktree add -q /tmp/sitebranch -B site 2>/dev/null || git worktree add -q --orphan -b site /tmp/sitebranch
-          cp -r /tmp/sitecopy/. /tmp/sitebranch/
-          cd /tmp/sitebranch && git add -A && (git commit -qm "Site $(date -u +%F-%H%M)" || true) && git push -qf origin site
+          rm -rf /tmp/sb && mkdir /tmp/sb && cp -r site/. /tmp/sb/ && cd /tmp/sb
+          git init -q && git checkout -q -b site
+          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          git add -A && git commit -qm "Site $(date -u +%F-%H%M)"
+          git push -qf "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git" site
 
       - uses: actions/configure-pages@v5
         if: steps.gate.outputs.run == 'true'
