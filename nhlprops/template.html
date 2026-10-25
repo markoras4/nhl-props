@@ -432,7 +432,7 @@ const I18N = {
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
-    st_live:"Live", st_final:"Final", proj_short:"proj.", frozen_note:"Started: probabilities, odds and picks are kept as they were at puck drop.",
+    st_live:"Live", st_final:"Final", st_int:"Intermission", proj_short:"proj.", frozen_note:"Started: probabilities, odds and picks are kept as they were at puck drop.",
     st_uncertain:"Not decided", or_g:"or {n}", alt_note:"Sources disagree on the starter. {n} may start instead – switch below to see his effect.",
     st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
@@ -518,7 +518,7 @@ const I18N = {
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
-    st_live:"Live", st_final:"Slut", proj_short:"ber.", frozen_note:"Startad: sannolikheter, odds och spel visas som de var vid nedsläpp.",
+    st_live:"Live", st_final:"Slut", st_int:"Paus", proj_short:"ber.", frozen_note:"Startad: sannolikheter, odds och spel visas som de var vid nedsläpp.",
     st_uncertain:"Inte avgjort", or_g:"eller {n}", alt_note:"Källorna är oense om startmålvakten. {n} kan starta i stället – byt nedan för att se effekten.",
     st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
@@ -874,7 +874,8 @@ function statePill(g){
   if (!g.state || ["FUT","PRE"].includes(g.state)) return "";
   const fin = ["FINAL","OFF"].includes(g.state);
   const ot = g.last_period && g.last_period!=="REG" ? " "+g.last_period : "";
-  return fin ? `<span class="pill s-final">${t("st_final")}${ot}</span>` : `<span class="pill s-live"><i></i>${t("st_live")}${g.period?" · P"+g.period:""}</span>`;
+  const clk = g.intermission ? " · "+t("st_int") : (g.clock && g.clock!=="00:00" ? " "+g.clock : "");
+  return fin ? `<span class="pill s-final">${t("st_final")}${ot}</span>` : `<span class="pill s-live"><i></i>${t("st_live")}${g.period?" · P"+g.period:""}${clk}</span>`;
 }
 function bestPicksBox(g){
   const {picks, hasOdds, teamCount} = bestPicks(g);
@@ -1402,7 +1403,26 @@ function render(){
   else if (state.tab==="track") trackTab();
   else howTab();
 }
+// ------------------------------------------------------------ live scores (official NHL feed via our scores function)
+const SCORES_URL = "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores";
+async function pollScores(){
+  const now = Date.now();
+  const active = DATA.games.filter(g => g.start && !["FINAL","OFF"].includes(g.state) && new Date(g.start).getTime() - now < 10*60e3 && now - new Date(g.start).getTime() < 6*3600e3);
+  if (!active.length) return;
+  try {
+    const dates = [...new Set(active.map(g=>g.date))];
+    let changed = false;
+    for (const d of dates){
+      const r = await fetch(`${SCORES_URL}?date=${d}`); if (!r.ok) continue;
+      const js = await r.json();
+      for (const x of js.games||[]){ const g = gameById[x.id] || gameById[String(x.id)]; if (!g) continue;
+        for (const k of ["state","hs","as","period","clock","intermission","last_period"]) if (x[k]!==undefined && g[k]!==x[k]){ g[k]=x[k]; changed=true; } }
+    }
+    if (changed && state.tab==="games" && !document.activeElement?.matches?.("input,select")) render();
+  } catch(e) {}
+}
 wireHeader();
+pollScores(); setInterval(pollScores, 60e3);
 { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) state.game = m[1]; }
 render();
 
