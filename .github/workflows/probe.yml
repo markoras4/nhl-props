@@ -7,29 +7,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Hits and blocks markets in the odds feed
+      - name: Kambi operators with hits/blocks
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
           import json, urllib.request, collections
-          B="https://eu-offering-api.kambicdn.com/offering/v2018/ubse"
-          get=lambda u: json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=30))
-          lst=get(B+"/listView/ice_hockey/nhl/all/all/matches.json?lang=en_GB&market=SE&useCombined=true")
-          evs=[e["event"] for e in lst.get("events",[])]
-          print("events", len(evs))
-          labels=collections.Counter()
-          sample=None
-          for e in evs[:12]:
-              b=get(B+f"/betoffer/event/{e['id']}.json?lang=en_GB&market=SE&includeParticipants=true")
-              for o in b.get("betOffers",[]):
-                  lab=(o.get("criterion",{}).get("englishLabel") or "")
-                  labels[lab]+=1
-                  if sample is None and any(k in lab.lower() for k in ("hit","block","tackl")):
-                      sample=json.dumps(o)[:1500]
-          for k,v in sorted(labels.items()):
-              if any(w in k.lower() for w in ("hit","block","player","+/-","plus")): print(v, k)
-          print("SAMPLE", sample)
+          def get(u):
+              return json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=25))
+          for op in ["rsiuspa","rsiusnj","rsiusil","rsiusin","rsiusny","ubusnj","ubuspa","ub","ubdk","paf","888","leo","bbuk","nzbmww"]:
+              for host in ["eu-offering-api.kambicdn.com","us1-offering-api.kambicdn.com"]:
+                  B=f"https://{host}/offering/v2018/{op}"
+                  try:
+                      lst=get(B+"/listView/ice_hockey/nhl/all/all/matches.json?lang=en_US&market=US&useCombined=true")
+                  except Exception as e:
+                      print(op, host, "ERR", str(e)[:60]); continue
+                  evs=[e["event"] for e in lst.get("events",[])]
+                  labs=collections.Counter()
+                  for e in evs[:4]:
+                      try:
+                          b=get(B+f"/betoffer/event/{e['id']}.json?lang=en_US&market=US&includeParticipants=true")
+                      except Exception as ex:
+                          continue
+                      for o in b.get("betOffers",[]):
+                          labs[(o.get("criterion",{}).get("englishLabel") or "")]+=1
+                  hb={k:v for k,v in labs.items() if any(w in k.lower() for w in ("hit","block"))}
+                  print(op, host, "events", len(evs), "markets", len(labs), "HITS/BLOCKS:", hb)
+                  break
           PY
+      - name: Superbet
+        run: |
+          exec >> probe-out.txt 2>&1
+          for u in "https://production-superbet-offer-ro.freetls.fastly.net/sb-ro/api/v2/en-BR/sport/5/tournaments" "https://production-superbet-offer-pl.freetls.fastly.net/v2/pl-PL/events/by-date?offerState=prematch&startDate=2026-10-26+00:00:00&endDate=2026-10-27+00:00:00" "https://production-superbet-offer-ro.freetls.fastly.net/v2/ro-RO/events/by-date?offerState=prematch&startDate=2026-10-26+00:00:00&endDate=2026-10-27+00:00:00"; do
+            echo "== $u"; curl -s -m 20 -A "Mozilla/5.0" "$u" | head -c 600; echo
+          done
       - name: Save output to the probe branch
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
