@@ -120,6 +120,25 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .h2at{text-align:center;color:var(--mute);font-size:11px}
 .h2tot{text-align:right;font-family:var(--f-disp);font-weight:600;font-variant-numeric:tabular-nums}
 @media (max-width:640px){.h2r,.h2head{grid-template-columns:72px 1fr 14px 1fr 30px}.h2t img,.h2t .lgfb{display:none!important}}
+.sgbox{margin-bottom:12px}
+.sgtop{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:10px;font-size:13px}
+.sgt{display:inline-flex;align-items:center;gap:6px}
+.sgt b{font-family:var(--f-disp)}
+.sgt i,table.sg .sgb{font-style:normal;font-family:var(--f-disp);font-weight:800;font-size:10px;width:16px;height:16px;border-radius:50%;background:var(--accent);color:#03130c;display:inline-grid;place-items:center}
+.sgwrap{display:flex;flex-direction:column;gap:4px;align-items:center}
+.sgaxis-h,.sgaxis-v{font-size:11px;color:var(--mute);font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.sgrow{display:flex;align-items:center;gap:8px}
+.sgaxis-v{writing-mode:vertical-rl;transform:rotate(180deg)}
+.sgaxis-v img{transform:rotate(90deg)}
+table.sg{border-collapse:separate;border-spacing:3px;width:auto}
+table.sg th{font-family:var(--f-disp);font-size:12px;color:var(--mute);text-align:center;padding:4px;cursor:default;border:0}
+table.sg td.tie{background:transparent;color:var(--mute);box-shadow:inset 0 0 0 1px var(--line)}
+table.sg td{width:56px;height:38px;text-align:center;border-radius:6px;font-family:var(--f-disp);font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;position:relative;border:0;padding:0}
+table.sg td.top{box-shadow:inset 0 0 0 2px var(--accent);font-weight:800}
+table.sg .sgv{display:flex;align-items:center;justify-content:center;gap:4px;height:100%}
+table.sg .sgb{width:14px!important;height:14px!important;font-size:9px!important;flex:0 0 auto}
+table.sg .sgm{background:none!important;color:var(--mute);font-size:11px;font-weight:600}
+@media (max-width:640px){table.sg td{width:34px;height:32px;font-size:10.5px}table.sg{border-spacing:2px}.sgaxis-v{display:none}table.sg .sgb{display:none!important}}
 .totop{position:fixed;right:calc(18px + env(safe-area-inset-right, 0px));bottom:calc(18px + env(safe-area-inset-bottom, 0px));z-index:40;width:44px;height:44px;border-radius:50%;
   border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(8px);color:var(--text);font-size:20px;cursor:pointer;
   display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s,border-color .15s}
@@ -380,6 +399,8 @@ const I18N = {
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
     inj_out:"Out", inj_q:"Questionable",
     h2h_title:"Last meetings", h2h_sum:"{a} {aw} – {hw} {h} in wins · avg {avg} goals · over {l} in {o} of {n}", h2h_total:"Goals", h2h_away:"Away", h2h_home:"Home",
+    sc_title:"Chance of each final score", sc_sub:"overtime and shootout included", sc_goals:"{t} goals", sc_tie:"A tie is decided in overtime or a shootout",
+    sc_note:"Most hockey scores are individually unlikely: even the top score is usually around 10%. Ties after 60 minutes are decided in overtime or a shootout, so they become a one-goal win. Edges show how often each team scores that many. Changes when you switch goalies.",
     to_top:"Back to top", odds_word:"odds", win_odds:"Market odds: {ta} {a} · {th} {h} (fair {fa} · {fh})",
     footer:"Updated four times a day. Stats: MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   },
@@ -461,6 +482,8 @@ const I18N = {
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
     inj_out:"Ute", inj_q:"Osäker",
     h2h_title:"Senaste mötena", h2h_sum:"{a} {aw} – {hw} {h} i vinster · snitt {avg} mål · över {l} i {o} av {n}", h2h_total:"Mål", h2h_away:"Borta", h2h_home:"Hemma",
+    sc_title:"Chans för varje slutresultat", sc_sub:"inklusive förlängning och straffar", sc_goals:"{t} mål", sc_tie:"Oavgjort avgörs i förlängning eller straffar",
+    sc_note:"Varje enskilt resultat är ovanligt i hockey: även det troligaste ligger oftast runt 10 %. Lika efter 60 minuter avgörs i förlängning eller straffar och blir då vinst med ett mål. Kanterna visar hur ofta varje lag gör så många mål. Ändras när du byter målvakt.",
     to_top:"Till toppen", odds_word:"odds", win_odds:"Marknadsodds: {ta} {a} · {th} {h} (rättvisa {fa} · {fh})",
     footer:"Uppdateras fyra gånger om dagen. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
@@ -1089,6 +1112,35 @@ function detail(pr, g){
   </div></div>`;
 }
 
+// ------------------------------------------------------------ final-score grid
+function scoreGrid(g){
+  const mu = gameMu(g), N = 16, CAP = 6;
+  const ph = pmf(mu.h*0.985, N), pa = pmf(mu.a*0.985, N);
+  const share = (mu.h+mu.a)>0 ? mu.h/(mu.h+mu.a) : 0.5;
+  const F = Array.from({length:CAP+1}, ()=>new Array(CAP+1).fill(0));   // F[away][home], final score incl. OT/SO
+  const add = (a,h,p) => { F[Math.min(a,CAP)][Math.min(h,CAP)] += p; };
+  for (let a=0;a<N;a++) for (let h=0;h<N;h++){ const p = pa[a]*ph[h];
+    if (a===h){ add(a, h+1, p*share); add(a+1, h, p*(1-share)); } else add(a, h, p); }
+  const cells = []; F.forEach((row,a)=>row.forEach((p,h)=>cells.push({a,h,p})));
+  const top = cells.slice().sort((x,y)=>y.p-x.p).slice(0,3);
+  const rank = new Map(top.map((c,i)=>[c.a+"-"+c.h, i+1]));
+  const max = top[0].p;
+  const lab = n => n===CAP ? CAP+"+" : String(n);
+  const rowSum = F.map(r=>r.reduce((x,y)=>x+y,0)), colSum = F[0].map((_,h)=>F.reduce((x,r)=>x+r[h],0));
+  const head = `<tr><th class="sgc"></th>${F[0].map((_,h)=>`<th>${lab(h)}</th>`).join("")}<th class="sgm">%</th></tr>`;
+  const body = F.map((row,a)=>`<tr><th>${lab(a)}</th>${row.map((p,h)=>{ const r = rank.get(a+"-"+h); const al = Math.min(1,p/max);
+      if (a===h && a<CAP) return `<td class="tie" title="${t("sc_tie")}">–</td>`;
+      return `<td class="${r?"top":""}" ${r?`data-r="${r}"`:""} style="background:rgba(var(--heat),${(0.04+0.6*al*al).toFixed(3)})" title="${g.away} ${lab(a)} – ${lab(h)} ${g.home}: ${pct(p,1)}"><div class="sgv">${r?`<span class="sgb">${r}</span>`:""}${pct(p,p<0.1?1:0)}</div></td>`; }).join("")}<td class="sgm">${pct(rowSum[a])}</td></tr>`).join("");
+  const foot = `<tr><th class="sgm">%</th>${colSum.map(p=>`<td class="sgm">${pct(p)}</td>`).join("")}<td></td></tr>`;
+  const topTxt = top.map((c,i)=>`<span class="sgt"><i>${i+1}</i> ${g.away} ${lab(c.a)} – ${lab(c.h)} ${g.home} <b>${pct(c.p,1)}</b></span>`).join("");
+  return `<div class="box sgbox"><h4>${t("sc_title")} <span class="meta">${t("sc_sub")}</span></h4>
+    <div class="sgtop">${topTxt}</div>
+    <div class="sgwrap"><div class="sgaxis-h">${logo(g.home,18)} ${t("sc_goals",{t:g.home})} →</div>
+      <div class="sgrow"><div class="sgaxis-v">${logo(g.away,18)} ${t("sc_goals",{t:g.away})} ↓</div>
+      <div class="tablewrap"><table class="sg"><thead>${head}</thead><tbody>${body}${foot}</tbody></table></div></div></div>
+    <p class="note">${t("sc_note",{ta:g.away, th:g.home})}</p></div>`;
+}
+
 function matchup(g){
   const A = DATA.teams[g.away]||{}, H = DATA.teams[g.home]||{};
   const row = (label, a, h, f, hb=true) => { let ca="", ch="";
@@ -1097,7 +1149,7 @@ function matchup(g){
   const raw = (label, a, h) => `<tr><td>${a}</td><td>${label}</td><td>${h}</td></tr>`;
   const kindL = k => trResults(k);
   const streak = x => !x.streak_kind ? "–" : `${kindL(x.streak_kind)}${x.streak}${x.streak_excess>0?` <span class="pill s-q" title="${esc(t("rule6_tip",{tier:trTier(x.tier), n:x.streak_threshold}))}">${t("rule6")}</span>`:` <span class="meta">/${x.streak_threshold}</span>`}`;
-  $("#sidebody").innerHTML = `<div class="gsum">${goalieCard(g,g.away,t("goalie_team",{t:g.away}))}${goalieCard(g,g.home,t("goalie_team",{t:g.home}))}</div>
+  $("#sidebody").innerHTML = `${scoreGrid(g)}<div class="gsum">${goalieCard(g,g.away,t("goalie_team",{t:g.away}))}${goalieCard(g,g.home,t("goalie_team",{t:g.home}))}</div>
   <div class="card" style="padding:6px 14px"><table class="cmp"><tbody>
     <tr><td><b>${g.away}</b></td><td>${t("cmp")}</td><td><b>${g.home}</b></td></tr>
     ${row(t("c_ptspct"), A.pts_pct, H.pts_pct, v=>pct(v,1))}
