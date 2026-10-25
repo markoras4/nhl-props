@@ -281,7 +281,7 @@ const dates = [...new Set(DATA.games.map(g=>g.date))].sort();
 
 const state = {
   tab: "games", game: null, side: null, day: dates[0], open: null, sort: null,
-  market: "g", pfilter: "all", pday: "all", q: "", onlyReg: false, psort: "p",
+  market: "g", pfilter: "all", pday: dates[0] || "all", q: "", onlyReg: false, psort: "p",
   streakW: +(store.get("set:streakW") ?? (C.streak_weight_default||0)*100),
   histW: +(store.get("set:histW") ?? (C.history_weight_default||0)*100),
   goalie: {},
@@ -334,7 +334,7 @@ const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
 const userOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
 const getOdds = (gid,pid,m) => userOdds(gid,pid,m) ?? book(gid,pid,m)?.o ?? null;
 const noVig = b => b && b.o && b.n ? (1/b.o)/((1/b.o)+(1/b.n)) : null;
-const bookName = gid => "Bookmaker";
+const bookName = gid => "Market";
 const VALUE = 0.05;
 
 // ------------------------------------------------------------ helpers
@@ -482,7 +482,7 @@ function bestPicks(g){
 function pickReasons(c, g){
   const p = c.p, pr = c.pr, opp = pr.opp, why = [], warn = [];
   const b = book(g.id, pr.id, c.m), nv = noVig(b), imp = c.od ? 1/c.od : null;
-  if (c.od) why.push(`Model ${pct(c.v)} vs bookmaker ${pct(nv ?? imp)}`);
+  if (c.od) why.push(`Model ${pct(c.v)} vs market ${pct(nv ?? imp)}`);
   const lu = DATA.teams[pr.team]?.lineup?.groups || {};
   const line = Object.entries(lu).find(([k,ids])=>/^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
   const pp1 = (lu.pp1||[]).includes(pr.id);
@@ -511,7 +511,7 @@ function bestPicksBox(g){
           <div class="po">${c.od?c.od.toFixed(2):"–"}</div><div class="meta">${c.ev!=null?`edge ${(c.ev>0?"+":"")+(c.ev*100).toFixed(1)}%`:`${pct(c.v)} likely`}</div></div></div>
       <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul></div>`; }).join("");
   const [[t1,n1],[t2,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
-  const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${n1} of the ${n1+n2} value bets in this game are on ${t1} players. That usually means the model and the bookmaker disagree about ${t1}'s scoring as a whole, so these bets tend to win or lose together. Treat them as one opinion.</p>` : "";
+  const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${n1} of the ${n1+n2} value bets in this game are on ${t1} players. That usually means the model and the market disagree about ${t1}'s scoring as a whole, so these bets tend to win or lose together. Treat them as one opinion.</p>` : "";
   return `<div class="box picks"><h4>Best picks in this game <span class="meta">${hasOdds?"highest edge · one per player · point preferred when the edge is similar":"no odds yet · most likely points"}</span></h4>
     <div class="pgrid">${cards}</div>${lopsided}
     <p class="note">A helper, not a tip: it lists the facts behind each option. The model hasn't been tested for profit yet, so check the warnings and decide for yourself.</p></div>`;
@@ -613,7 +613,7 @@ function sidePanel(g, team){
       ${GRID.map(([m,n])=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${n}</th>`).join("")}<th>Signals</th></tr></thead>
       <tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>38%</b> = model probability</span>
-      <span>${DATA.odds?.[g.id] ? `small number = bookmaker odds (green when the model sees +5% value or more)` : "small number = fair odds (no bookmaker prices for this game yet)"}</span>
+      <span>${DATA.odds?.[g.id] ? `small number = market odds (green when the model sees +5% value or more)` : "small number = fair odds (no market odds for this game yet)"}</span>
       <span><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>value bet</span></div>
     <p class="foot">Click a column to sort, click it again for lineup order. Click a player for his breakdown, charts, and to enter your own odds.${DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? ` Odds updated ${new Date(DATA.odds[g.id].fetched).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})}.`:""}</p>`;
   $("#sidebody").onclick = e => {
@@ -767,8 +767,8 @@ function detail(pr, g){
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):"odds"}" value="${uo??""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box" style="grid-column:span 2"><h4>Prices & value</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Model · fair</span><span class="h">Odds · book %</span><span class="h">Your odds</span><span class="h">EV</span>${oddsRows}</div>
-      <p class="note">"Book %" is the bookmaker's own probability with its margin removed. EV uses your odds if you type them, otherwise the bookmaker's. EV = model probability × odds − 1.</p></div>
+    <div class="box" style="grid-column:span 2"><h4>Prices & value</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Model · fair</span><span class="h">Odds · market %</span><span class="h">Your odds</span><span class="h">EV</span>${oddsRows}</div>
+      <p class="note">"Market %" is the probability implied by the odds, with the margin removed. EV uses your odds if you type them, otherwise the market odds. EV = model probability × odds − 1.</p></div>
     <div class="box"><h4>How the number is built</h4>
       <div class="chips">
         <span class="chip">Goals/60 <b>${fmt(r.g60,2)}</b></span><span class="chip">Assists/60 <b>${fmt(r.a60,2)}</b></span>
@@ -846,7 +846,7 @@ function propsTab(){
     <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> regression signals only</label>
     <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">Most likely</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">Best value</button></div></div>
   <div class="card tablewrap"><table><thead><tr><th>Player</th><th class="n">TOI</th><th>Probability</th><th class="n">Fair</th><th class="n">Odds</th><th class="n">EV</th><th class="hide-sm">Last 10</th><th>Signals</th></tr></thead><tbody id="ptb"></tbody></table></div>
-  <p class="foot">Only players expected to play. The odds box shows the bookmaker's price in grey. Type your own to override it. Click a player to open his game.</p>`;
+  <p class="foot">Only players expected to play. The odds box shows the market price in grey. Type your own to override it. Click a player to open his game.</p>`;
   $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
   $("#fgame").onchange = e => { state.pfilter=e.target.value; rowsTop(); };
@@ -903,7 +903,7 @@ function trackTab(){
   $("#main").innerHTML = `<p class="meta">${T.days.length} days graded · ${T.days.reduce((a,d)=>a+d.games_final,0)} games · ${T.days.reduce((a,d)=>a+d.props,0)} player-games. Skill above 0% means better than guessing the base rate.</p>
     <div class="card tablewrap"><table><thead><tr><th>Market</th><th class="n">Bets</th><th class="n">Predicted</th><th class="n">Happened</th><th class="n">Brier</th><th class="n">Skill</th></tr></thead>
     <tbody>${rows(T.props)}${rows(T.sog)}${rows(Object.fromEntries(Object.entries(T.ou_model).map(([k,v])=>["Game "+k+" (model)",v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist).map(([k,v])=>["Game "+k+" (history only)",v])))}</tbody></table></div>
-    ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>Value bets (model EV ≥ 5% at the bookmaker's price)</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit (1 unit each)</th><th class="n">ROI</th></tr></thead><tbody>
+    ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>Value bets (model EV ≥ 5% at the market price)</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit (1 unit each)</th><th class="n">ROI</th></tr></thead><tbody>
       ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${k}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
     <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>Calibration: ${k}</h4>${calibChart(s)}</div>`).join("")}${blends}</div>`;
 }
@@ -912,28 +912,61 @@ function trackTab(){
 function howTab(){
   const t = C.streak_thresholds;
   $("#main").innerHTML = `<div class="prose">
-  <h3>What a probability means here</h3>
-  <p>For each player the model estimates how many goals, assists and shots he should produce tonight. It then converts that into the chance of at least one goal, at least one point and so on. Fair odds are 1 ÷ probability. If the bookmaker pays more than the fair odds, the bet has positive expected value.</p>
-  <p><b>Expected goals tonight = ice time × his true scoring rate × opponent defence × opposing goalie × home/away × back-to-back × league scoring level.</b></p>
+  <h3>What the site does</h3>
+  <p>For every player in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point and reach a number of shots on goal. It shows those chances next to the market odds, so you can see where the two agree and where they don't. It's a tool to help you decide, not a tipster.</p>
+
+  <h3>How a probability is built</h3>
+  <p><b>Expected goals tonight = ice time × his true scoring rate × opponent defence × opposing goalie × home/away × back-to-back × league scoring level.</b> That expectation becomes "chance of at least one" with a standard formula for rare events (Poisson).</p>
   <ul>
-    <li><b>True scoring rate:</b> built from the last ${C.lookback_seasons} seasons, recent ones counting most (${C.season_weights.join("-")}), then pulled toward the league average. The pull is strongest for players with little ice time. This is regression to the mean in practice.</li>
-    <li><b>Shooting %:</b> regressed twice: career toward league average, then recent seasons toward his career level. ▲ Due means he's scoring well below that level this season, ▼ Hot well above.</li>
+    <li><b>True scoring rate:</b> built from the last ${C.lookback_seasons} seasons, recent seasons counting most (${C.season_weights.join("-")}), then pulled toward the league average. The less a player has played, the stronger the pull. This is regression to the mean in practice: a hot or cold start is mostly treated as luck until there's enough evidence.</li>
+    <li><b>Shooting %:</b> regressed twice, career toward the league average and recent seasons toward his career level. Goals per 60 minutes blends <i>shots × true shooting %</i> with <i>expected goals from shot quality × finishing skill</i>.</li>
     <li><b>Ice time:</b> last ${C.toi_recent_games} games blended with the season average.</li>
-    <li><b>Goalies:</b> goals allowed vs expected goals allowed over ${C.goalie_seasons} seasons, compared with an average goalie.</li>
+    <li><b>Goalies:</b> goals allowed vs expected goals allowed over ${C.goalie_seasons} seasons, compared with an average goalie. Change the starter on a game page and every prop updates.</li>
   </ul>
+
+  <h3>Has it been tested?</h3>
+  <p>Yes. The model was replayed over five full seasons (2021-22 to 2025-26), about 214,000 player-games, using only information available before each game.</p>
+  <ul>
+    <li><b>The percentages are honest.</b> Goals: predicted 15.5%, happened 15.4%. Points: 35.8% vs 35.2%. When it says about 34% for a goal, it happens about 36% of the time.</li>
+    <li><b>It beats a simple season average</b> in every market (goals, assists, points, shots).</li>
+    <li><b>Shots on goal ran about 6% high</b>, and this is now corrected.</li>
+    <li>3 or 5 seasons of history made practically no difference.</li>
+  </ul>
+  <p>A good probability isn't a sure thing. A 35% chance misses two times out of three, and a single game is mostly chance. Profit against the market hasn't been tested; that needs months of results.</p>
+
+  <h3>Reading a game page</h3>
+  <ul>
+    <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the highest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Green lines are the facts behind the pick; orange lines are warnings. When most value sits on one team, it says so: those bets tend to win or lose together.</li>
+    <li><b>Roster grid:</b> the model's probability in large print, and below it the market odds (green with an outline when the model sees +5% value or more) or the fair odds if the market has no price yet.</li>
+    <li><b>Player breakdown</b> (click a player): model vs market for every market, how the number is built, regression to the mean, last 10 games, and his history as a table or chart.</li>
+  </ul>
+
+  <h3>Words used on the site</h3>
+  <ul>
+    <li><b>Fair odds</b> = 1 ÷ probability: the odds at which a bet would break even in the long run.</li>
+    <li><b>Market %</b> = the probability implied by the market odds, with the margin removed.</li>
+    <li><b>Edge / EV</b> = model probability × odds − 1. +10% means the model expects 10% profit per bet in the long run, if the model is right.</li>
+    <li><b>▲ Due / ▼ Hot</b> = scoring clearly below / above his true talent this season. In testing, "due" players did <i>not</i> score more than the model already expected, so it's context, not a reason to bet on its own.</li>
+    <li><b>Shots dry</b> = shots since his last goal, and how rare a drought that long is for his talent.</li>
+    <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
+    <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
+  </ul>
+
+  <h3>Charts</h3>
+  <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>
+
   <h3>Experiments: the two sliders</h3>
-  <p>These are two of your own ideas, built as switches you can test. Both are off (0%) by default because nobody knows yet whether they improve the predictions. The Track record page will tell you.</p>
+  <p>Two ideas that can be switched on to test them. Both are off (0%) by default.</p>
   <div class="card exp">
     <label for="sw">6-game rule <input type="range" id="sw" min="0" max="5" step="0.5" value="${state.streakW}"> <output id="swo">${(+state.streakW).toFixed(1)}%</output></label>
-    <p class="note">When a team reaches its streak threshold (strong teams ${t.strong.win} wins / ${t.strong.loss} losses, average ${t.average.win}/${t.average.loss}, weak ${t.weak.win}/${t.weak.loss}), the model expects the streak to end. At 2%, a team one game past its threshold scores 2% fewer goals and allows 2% more. All its players' props and the game total move accordingly. At 0% the streak is only shown, never used.</p>
+    <p class="note">When a team reaches its streak threshold (strong teams ${t.strong.win} wins / ${t.strong.loss} losses, average ${t.average.win}/${t.average.loss}, weak ${t.weak.win}/${t.weak.loss}), the model expects the streak to end: at 2%, a team one game past its threshold scores 2% fewer goals and allows 2% more. In testing, long <i>winning</i> streaks showed no effect; long <i>losing</i> streaks ended more often than the team's record suggested (161 cases, suggestive but not proven).</p>
   </div>
   <div class="card exp">
     <label for="hw">History weight for totals <input type="range" id="hw" min="0" max="60" step="5" value="${state.histW}"> <output id="hwo">${state.histW}%</output></label>
-    <p class="note">Game totals come from the model (expected goals, goalies, power play). The "History" number is how often these teams and their head-to-heads actually went over. At 30%, the over % you see is 70% model and 30% history. The Track record page tests every weight from 0% to 100% and shows which one has predicted best.</p>
+    <p class="note">Game totals come from the model (expected goals, goalies, power play). "History" is how often these teams and their head-to-head games actually went over. At 30%, the over % you see is 70% model and 30% history.</p>
   </div>
-  <h3>Lineups, goalies and injuries</h3>
-  <p>Starting goalies are marked Confirmed, Likely or Unconfirmed when a report exists. Otherwise "Projected" means the goalie with the most recent starts, with the backup on back-to-backs. Injured players marked Out are removed from the props. Questionable players stay in, with a yellow mark.</p>
-  <p class="foot">Data: NHL.com and MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: 020-81 91 00.</p>
+
+  <p class="foot">Data: NHL.com and MoneyPuck.com. Updated four times a day. Personal, non-commercial use. Gamble responsibly. Stödlinjen: 020-81 91 00.</p>
   </div>`;
   const sw=$("#sw"), hw=$("#hw");
   sw.oninput = () => { state.streakW=+sw.value; $("#swo").textContent=(+sw.value).toFixed(1)+"%"; store.set("set:streakW", sw.value); };
