@@ -101,6 +101,48 @@ def save_history(slate: dict, hist_dir: Path):
         f.write_text(json.dumps(clean(rec)), encoding="utf-8")
 
 
+PRE_STATES = (None, "FUT", "PRE")
+
+
+def freeze_started(slate: dict, frozen_dir: Path) -> None:
+    """Keep each game exactly as it was at its last pre-game refresh (probabilities, odds, picks).
+    Sportsbooks pull pre-game player odds at puck drop, so a started game would otherwise lose its picks."""
+    frozen_dir.mkdir(parents=True, exist_ok=True)
+    odds = slate.setdefault("odds", {})
+    by_date: dict[str, list] = {}
+    for g in slate["games"]:
+        by_date.setdefault(g["date"], []).append(g)
+    for d, games in by_date.items():
+        f = frozen_dir / f"{d}.json"
+        snap = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+        changed = False
+        for i, g in enumerate(games):
+            gid = str(g["id"])
+            if g.get("state") in PRE_STATES:
+                o = odds.get(g["id"]) or odds.get(gid)
+                prev = snap.get(gid)
+                # keep the last snapshot that still had player odds if the book has pulled them early
+                if o and not o.get("players") and prev and (prev.get("odds") or {}).get("players"):
+                    o = prev["odds"]
+                snap[gid] = {"game": clean(g), "odds": clean(o) if o else None,
+                             "at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes")}
+                changed = True
+            elif gid in snap:
+                live = {k: g.get(k) for k in ("state", "hs", "as", "period", "last_period")}
+                frozen = {**snap[gid]["game"], **live, "frozen": snap[gid]["at"]}
+                idx = slate["games"].index(g)
+                slate["games"][idx] = frozen
+                if snap[gid].get("odds"):
+                    odds[g["id"]] = snap[gid]["odds"]
+        if changed:
+            f.write_text(json.dumps(snap), encoding="utf-8")
+    # drop snapshot files older than 10 days
+    cutoff = (dt.date.today() - dt.timedelta(days=10)).isoformat()
+    for f in frozen_dir.glob("20*.json"):
+        if f.stem < cutoff:
+            f.unlink()
+
+
 def team_logos(src: Source, slate: dict, logo_dir: Path) -> dict:
     import base64
     teams = sorted({g["home"] for g in slate["games"]} | {g["away"] for g in slate["games"]})
@@ -230,6 +272,7 @@ def main(argv=None):
         except Exception as e:  # odds are optional
             print("Odds unavailable:", e)
             slate["odds"] = {}
+    freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None

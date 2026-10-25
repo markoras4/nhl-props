@@ -41,6 +41,9 @@ def slate_games(sched: dict | None, date: str, days_ahead: int = 0) -> list[dict
                 "home_name": _name(g["homeTeam"].get("placeName")) + " " + _name(g["homeTeam"].get("commonName", "")),
                 "away_name": _name(g["awayTeam"].get("placeName")) + " " + _name(g["awayTeam"].get("commonName", "")),
                 "venue": _name(g.get("venue")),
+                "hs": g["homeTeam"].get("score"), "as": g["awayTeam"].get("score"),
+                "period": (g.get("periodDescriptor") or {}).get("number"),
+                "last_period": (g.get("gameOutcome") or {}).get("lastPeriodType"),
             })
     return games
 
