@@ -662,7 +662,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             m = idx.find(ln["name"], t)
             if m:
                 groups.setdefault(ln["group"], []).append(m["id"])
-        n_main = sum(len(v) for k, v in groups.items() if k[:1] in ("f", "d") and not k.startswith("pp"))
+        import re as _re
+        main = lambda k: bool(_re.fullmatch(r"[fd]\d", k))
+        groups = {k: v for k, v in groups.items() if main(k) or _re.fullmatch(r"pp\d", k)}
+        n_main = sum(len(v) for k, v in groups.items() if main(k))
         if n_main >= 15:
             source = "projected"
         else:
@@ -675,7 +678,8 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 groups[f"f{i // 3 + 1}"] = [q["id"] for q in fw[i:i + 3]]
             for i in range(0, len(de), 2):
                 groups[f"d{i // 2 + 1}"] = [q["id"] for q in de[i:i + 2]]
-        dressed = {pid for k, v in groups.items() if k[:1] in ("f", "d") and not k.startswith("pp") for pid in v}
+        import re as _re
+        dressed = {pid for k, v in groups.items() if _re.fullmatch(r"[fd]\d", k) for pid in v}
         return {"source": source, "groups": groups, "dressed": sorted(dressed)}
 
     for t in sk_by_team:

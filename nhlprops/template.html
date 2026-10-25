@@ -447,11 +447,13 @@ function injuriesCard(team){
 function lineupCard(g, team){
   const lu = DATA.teams[team]?.lineup; if(!lu) return "";
   const props = Object.fromEntries(g.props.filter(p=>p.team===team).map(p=>[p.id,p]));
-  const name = id => { const p=P(id); if(!p) return "?"; const pr=props[id]; const pg = pr?prob(pr,g,"g"):null;
-    const last = p.name.split(" ").slice(1).join(" ")||p.name;
+  const lastOf = n => n.split(" ").slice(1).join(" ")||n;
+  const counts = {}; Object.values(lu.groups).flat().forEach(id=>{ const p=P(id); if(p) counts[lastOf(p.name)] = (counts[lastOf(p.name)]||new Set()).add(id); });
+  const name = id => { const p=P(id); if(!p) return ""; const pr=props[id]; const pg = pr?prob(pr,g,"g"):null;
+    const ln = lastOf(p.name); const last = counts[ln]?.size>1 ? p.name[0]+". "+ln : ln;
     return `<span class="${p.injury?.kind==="questionable"?"q":""}" title="${esc(p.name)}${p.injury?" – "+p.injury.status:""}">${esc(last)}${pg!=null?`<b>${pct(pg)}</b>`:""}</span>`; };
   const order = Object.keys(lu.groups).sort((a,b)=>{ const r=k=>k.startsWith("pp")?2:k[0]==="f"?0:k[0]==="d"?1:3; return r(a)-r(b) || a.localeCompare(b); });
-  const rows = order.filter(k=>!k.startsWith("g")).map(k=>`<div class="line"><span class="lab">${k.toUpperCase()}</span><div class="lp">${lu.groups[k].map(name).join("")}</div></div>`).join("");
+  const rows = order.filter(k=>/^(f|d|pp)\d$/.test(k)).map(k=>`<div class="line"><span class="lab">${k.toUpperCase()}</span><div class="lp">${lu.groups[k].map(name).join("")}</div></div>`).join("");
   return `<div class="box lineupbox"><h4>${lu.source==="projected"?"Projected lineup":"Lineup estimated from recent ice time"} <span class="meta">goal %</span></h4>
     <div class="lines">${rows||`<p class="meta">No lineup available.</p>`}</div>
     ${lu.source!=="projected"?`<p class="note">Projected lines weren't available, so players are ranked by recent ice time.</p>`:""}</div>`;
@@ -463,7 +465,7 @@ function heat(p, colMax){ const a = Math.min(1, p/Math.max(colMax,0.05)); return
 function sidePanel(g, team){
   const opp = team===g.home ? g.away : g.home;
   const lu = DATA.teams[team]?.lineup || {groups:{}};
-  const pos = {}; Object.entries(lu.groups).forEach(([k,ids])=>{ if(!k.startsWith("pp")) ids.forEach((id,i)=>{ pos[id]=k; }); });
+  const pos = {}; Object.entries(lu.groups).forEach(([k,ids])=>{ if(/^[fd]\d$/.test(k)) ids.forEach(id=>{ pos[id]=k; }); });
   const rows = g.props.filter(pr=>pr.team===team).map(pr=>{
     const p = P(pr.id); const probs = Object.fromEntries(GRID.map(([m])=>[m, prob(pr,g,m)]));
     const k = p.active ? (pos[pr.id]||(p.posg==="D"?"d9":"f9")) : "zz";
