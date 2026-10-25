@@ -185,6 +185,8 @@ table.sg .sgm{background:none!important;color:var(--mute);font-size:11px;font-we
 .sides .seg button{padding:8px 18px;font-size:14px}
 .sidegrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr);gap:12px;margin-bottom:14px}
 .sidegrid .newsbox{grid-column:1/-1}
+.msl{display:flex;flex-direction:column;gap:8px;font-size:13px}
+.msben{font-size:12.5px;margin:10px 0 0;color:var(--mute)}.msben b{color:var(--text);font-weight:600}
 .kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:12.5px}
 .kv span:nth-child(odd){color:var(--mute)}
 .kv span:nth-child(even){font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
@@ -547,6 +549,10 @@ const I18N = {
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
     st_live:"Live", st_final:"Final", st_int:"Intermission",
+    ms_title:"Who's missing", ms_sub:"regulars out tonight", ms_new:"New", ms_new_tip:"Played in recent games, so tonight's lineup really changes. His ice time is shared out and the team adjusted.",
+    ms_line:"{p} of team points · {g} of goals · {t} min a game", ms_ben:"More ice time:", ms_team:"Team adjustment:", ms_att:"attack", ms_def:"goals allowed",
+    ms_note:"Teammates at the same position share his minutes (a replacement takes the bottom minutes). The team change is small and capped at 5%, based on how the team does with him on and off the ice.",
+    ms_boost:"Extra ice time", ms_boost_tip:"Projected extra minutes tonight because {n} is out.",
     tr_title:"Team ranks", tr_sub:"#1 = best of {n}", tr_att:"Attack (xGF/60, 5v5)", tr_def:"Defence (xGA/60, 5v5)", tr_pp:"Power play (xGF/60)", tr_pk:"Penalty kill (xGA/60)", tr_gsax:"Goaltending (GSAx/game)",
     tr_att_tip:"Expected goals created per 60 minutes at 5-on-5. Higher is better.", tr_def_tip:"Expected goals allowed per 60 minutes at 5-on-5. Lower is better.",
     tr_cf_tip:"Share of all shot attempts at 5-on-5 (Corsi). Above 50% = has the puck more.", tr_xgf_tip:"Share of expected goals at 5-on-5: shot share weighted by quality. The best single team measure.",
@@ -667,6 +673,10 @@ const I18N = {
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
     st_live:"Live", st_final:"Slut", st_int:"Paus",
+    ms_title:"Vilka saknas", ms_sub:"ordinarie spelare borta i kväll", ms_new:"Ny", ms_new_tip:"Spelade i de senaste matcherna, så kvällens uppställning ändras på riktigt. Hans istid fördelas och laget justeras.",
+    ms_line:"{p} av lagets poäng · {g} av målen · {t} min per match", ms_ben:"Mer istid:", ms_team:"Lagjustering:", ms_att:"anfall", ms_def:"insläppta mål",
+    ms_note:"Lagkamrater på samma position delar hans minuter (en ersättare tar de sista minuterna). Lagändringen är liten och högst 5 %, baserad på hur laget gör det med honom på och utanför isen.",
+    ms_boost:"Extra istid", ms_boost_tip:"Beräknade extra minuter i kväll eftersom {n} saknas.",
     tr_title:"Lagrankning", tr_sub:"#1 = bäst av {n}", tr_att:"Anfall (xGF/60, 5 mot 5)", tr_def:"Försvar (xGA/60, 5 mot 5)", tr_pp:"Powerplay (xGF/60)", tr_pk:"Boxplay (xGA/60)", tr_gsax:"Målvaktsspel (GSAx/match)",
     tr_att_tip:"Förväntade mål skapade per 60 minuter i 5 mot 5. Högre är bättre.", tr_def_tip:"Förväntade mål insläppta per 60 minuter i 5 mot 5. Lägre är bättre.",
     tr_cf_tip:"Andel av alla skottförsök i 5 mot 5 (Corsi). Över 50 % = har pucken mer.", tr_xgf_tip:"Andel förväntade mål i 5 mot 5: skottandel viktad efter kvalitet. Det bästa enskilda lagmåttet.",
@@ -1150,6 +1160,18 @@ function lineupCard(g, team){
     <div class="lines">${rows||`<p class="meta">${t("no_lineup")}</p>`}</div>
     ${!["projected","gameday"].includes(lu.source)?`<p class="note">${t("lu_note")}</p>`:""}</div>`;
 }
+function missingCard(team){
+  const M = DATA.teams[team]?.missing; if (!M || !M.players?.length) return "";
+  const rows = M.players.slice(0,5).map(x => `<div class="msr"><div><b>${esc(x.name)}</b> <span class="meta">${x.pos}</span>${x.new?` <span class="pill s-q" title="${esc(t("ms_new_tip"))}">${t("ms_new")}</span>`:""}
+      <div class="meta">${t("ms_line",{p:pct(x.pts_share,0), g:pct(x.g_share,0), t:fmt(x.toi,1)})}</div></div></div>`).join("");
+  const ben = Object.values(DATA.players).filter(p => p.team===team && p.active && p.toi_boost).sort((a,b)=>b.toi_boost.min-a.toi_boost.min).slice(0,5);
+  const adj = (v, lbl, inv) => Math.abs(v) < 0.003 ? "" : `<span class="${(inv? v<0 : v>0)?"up":"down"}">${lbl} ${(v>0?"+":"")+(v*100).toFixed(1)}%</span>`;
+  const adjTxt = [adj(M.att, t("ms_att"), false), adj(M.def, t("ms_def"), true)].filter(Boolean).join(" · ");
+  return `<div class="box msbox"><h4>${t("ms_title")} <span class="meta">${t("ms_sub")}</span></h4><div class="msl">${rows}</div>
+    ${ben.length?`<p class="msben"><b>${t("ms_ben")}</b> ${ben.map(p=>`${esc(p.name.split(" ").slice(1).join(" ")||p.name)} <span class="up">+${fmt(p.toi_boost.min,1)}</span>`).join(" · ")}</p>`:""}
+    ${adjTxt?`<p class="msben"><b>${t("ms_team")}</b> ${adjTxt}</p>`:""}
+    <p class="note">${t("ms_note")}</p></div>`;
+}
 function newsCard(team){
   const n = DATA.teams[team]?.news; if(!n || !n.notes) return "";
   let when = ""; try { when = new Date(n.updated).toLocaleString(LOCALE(),{weekday:"short",hour:"2-digit",minute:"2-digit"}); } catch(e){}
@@ -1192,7 +1214,7 @@ function sidePanel(g, team){
   }
   const upd = DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? t("odds_upd",{t:new Date(DATA.odds[g.id].fetched).toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : "";
   $("#sidebody").innerHTML = `
-    <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}${newsCard(team)}</div>
+    <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}${missingCard(team)}${newsCard(team)}</div>
     ${facingBar(g, team, opp)}
     <div class="card tablewrap"><table><thead><tr>
       <th>${t("player_team",{t:team})}</th><th class="n hide-sm">${t("toi")}</th>
@@ -1357,6 +1379,7 @@ function detail(pr, g){
         <span class="chip">${t("c_def")} ${x(f.opp_def)}</span><span class="chip">${t("c_gk")} ${x(l.gr)}</span>
         <span class="chip">${pr.home?t("c_home"):t("c_away")} ${x(f.venue)}</span><span class="chip">${t("c_b2b")} ${x(f.b2b)}</span>
         <span class="chip">${t("c_env")} ${x(f.env)}</span>${l.sm!==1?`<span class="chip">${t("c_streak")} ${x(l.sm)}</span>`:""}
+        ${p.toi_boost?`<span class="chip" title="${esc(t("ms_boost_tip",{n:p.toi_boost.from.join(", ")}))}">${t("ms_boost")} <b class="up">+${fmt(p.toi_boost.min,1)}</b></span>`:""}
       </div>
       <div class="kv" style="margin-top:10px">
         <span>${t("k_xga")}</span><span>${fmt(l.g,3)} / ${fmt(l.a,3)}</span>

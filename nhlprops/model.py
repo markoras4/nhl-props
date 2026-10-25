@@ -441,6 +441,35 @@ def skater_frame(mp_sk: dict[int, pd.DataFrame]) -> pd.DataFrame:
     return f.groupby(["pid", "season", "posg"], as_index=False).sum()
 
 
+def onice_impact(mp_sk: dict, cur: int) -> dict:
+    """Per player at 5-on-5: expected goals for/against per 60 with him on the ice minus with him off it,
+    shrunk toward zero by ice time (this season + 0.6 x last season)."""
+    acc: dict[int, list] = {}
+    for y, wgt in ((cur, 1.0), (cur - 1, 0.6)):
+        df = (mp_sk or {}).get(y)
+        if df is None or not len(df):
+            continue
+        d = df[_sit(df) == "5on5"]
+        if not len(d) or "OnIce_F_xGoals" not in d.columns:
+            continue
+        on_h = _hours(d, "icetime")
+        off_h = _num(d, "timeOnBench") / 3600
+        for pid, a, b, c, e, f, g in zip(pd.to_numeric(d["playerId"], errors="coerce"), on_h, _num(d, "OnIce_F_xGoals"),
+                                         _num(d, "OnIce_A_xGoals"), off_h, _num(d, "OffIce_F_xGoals"), _num(d, "OffIce_A_xGoals")):
+            if pd.isna(pid):
+                continue
+            r = acc.setdefault(int(pid), [0.0] * 6)
+            for i, v in enumerate((a, b, c, e, f, g)):
+                r[i] += wgt * float(v)
+    out = {}
+    for pid, (onh, onf, ona, offh, offf, offa) in acc.items():
+        if onh <= 0 or offh <= 0:
+            continue
+        k = onh / (onh + 15.0)
+        out[pid] = {"rel_f": k * (onf / onh - offf / offh), "rel_a": k * (ona / onh - offa / offh), "h": onh}
+    return out
+
+
 def league_pos_rates(sf: pd.DataFrame, cur: int) -> dict:
     out = {}
     s = sf[sf.season.isin([cur, cur - 1, cur - 2])]
@@ -844,6 +873,51 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             else:
                 prof["why"] = None if prof["active"] else "Not in recent lineups"
             players_out[p["id"]] = prof
+
+    # ---------------- missing players: who's out, who gets their ice time, small team adjustment
+    impact = onice_impact(raw["mp"].get("skaters") or {}, cur)
+    for t in sk_by_team:
+        ctx = team_ctx(t)
+        plist = [profiles[p["id"]] for p in sk_by_team[t]]
+        tot_pts = sum((q["windows"]["cur"] or {}).get("p", 0) for q in plist) or 1
+        tot_g = sum((q["windows"]["cur"] or {}).get("g", 0) for q in plist) or 1
+        recent3 = set(team_dates.get(t, [])[-3:])
+        missing, adj_f, adj_a = [], 0.0, 0.0
+        for q in plist:
+            w = q["windows"]["cur"] or {}
+            regular = w.get("gp", 0) >= 5 and (q["toi_season"] or 0) >= (12 if q["posg"] == "F" else 15)
+            if q["active"] or not regular:
+                continue
+            played = {g["date"] for g in (raw["logs"].get(q["id"], {}) or {}).get("cur", [])}
+            new = len(played & recent3) >= 2
+            imp = impact.get(q["id"], {})
+            missing.append({"id": q["id"], "name": q["name"], "pos": q["pos"], "posg": q["posg"], "why": q.get("why"),
+                            "pts_share": w.get("p", 0) / tot_pts, "g_share": w.get("g", 0) / tot_g, "toi": q["toi_season"],
+                            "new": new, "rel_f": imp.get("rel_f"), "rel_a": imp.get("rel_a")})
+            if new and imp:
+                share = min((q["toi_season"] or 0) * 0.8 / 60, 0.5)   # his share of 5-on-5 time
+                adj_f -= 0.5 * imp["rel_f"] * share
+                adj_a -= 0.5 * imp["rel_a"] * share
+        # ice time to teammates at the same position (new absences only)
+        for m_ in [x for x in missing if x["new"]]:
+            rec = [q for q in plist if q["active"] and q["posg"] == m_["posg"]]
+            tot = sum(q["toi_proj"] for q in rec) or 1
+            # a replacement dresses and takes bottom-of-the-lineup minutes; teammates share the difference
+            freed = 0.9 * max(0.0, (m_["toi"] or 0) - (11.0 if m_["posg"] == "F" else 16.0))
+            for q in rec:
+                add = min(freed * q["toi_proj"] / tot, 2.0)
+                if add >= 0.2:
+                    q["toi_proj"] += add
+                    b = q.setdefault("toi_boost", {"min": 0.0, "from": []})
+                    b["min"] = round(b["min"] + add, 1); b["from"].append(m_["name"])
+        lg5 = tm.lg_rate("5on5", "xGF") or 2.5
+        f_mult = float(np.clip(1 + adj_f / lg5, 0.95, 1.05)) if missing else 1.0
+        a_mult = float(np.clip(1 + adj_a / lg5, 0.95, 1.05)) if missing else 1.0
+        if f_mult != 1.0 or a_mult != 1.0:
+            ctx["xgf5_base"], ctx["xga5_base"] = ctx["xgf5"], ctx["xga5"]
+            ctx["xgf5"] *= f_mult; ctx["xga5"] *= a_mult; ctx["xga_all"] *= a_mult
+        missing.sort(key=lambda x: -x["pts_share"])
+        ctx["missing"] = {"players": missing[:8], "att": f_mult - 1, "def": a_mult - 1}
 
     hit_fns = hit_markets(cfg)
     opp_pos = opponent_by_position(raw)
