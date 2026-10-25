@@ -101,11 +101,14 @@ def season_rows(sk: pd.DataFrame, games: pd.DataFrame, prev: pd.DataFrame | None
                 base = pos_avg.get((stat, r.posg), 2.0 if stat == "hit" else 1.2)
                 prior = prior_rate.get((stat, r.pid), base)
                 rate = shrink(c[idx], hours, prior, 6.0)
+                rate3 = shrink(c[idx], hours, prior, 3.0)
                 lam_plain = rate * toi / 60
                 if stat == "hit":
                     lam = lam_plain * arena * (opp_h ** 0.5)
+                    out["hit_lam_k3"] = rate3 * toi / 60 * arena * (opp_h ** 0.5)
                 else:
                     lam = lam_plain * opp_b
+                    out["blk_lam_k3"] = rate3 * toi / 60 * opp_b
                 out[f"{stat}_lam"], out[f"{stat}_lam_plain"] = lam, lam_plain
             rows.append(out)
         # update state after the day
@@ -178,6 +181,20 @@ def evaluate(df: pd.DataFrame) -> dict:
             per_line.append({"line": L, "n": int(len(y)), "base_rate": base,
                              "model": s_model, "no_arena_opp": s_plain, "last10": s_l10, "model_same_rows": s_model_ok})
         rep[f"{stat}_lines"] = per_line
+        # calibration variants: less regression (k=3 hours) and a logit stretch
+        def stretch(p, a):
+            p = np.clip(p, 1e-4, 1 - 1e-4); z = np.log(p / (1 - p)) * a
+            return 1 / (1 + np.exp(-z))
+        lam3 = d[f"{stat}_lam_k3"].values
+        var = []
+        for name, lm, a in (("base", lam, 1.0), ("k3", lam3, 1.0), ("stretch1.1", lam, 1.1), ("stretch1.2", lam, 1.2), ("k3+stretch1.1", lam3, 1.1)):
+            row = {"variant": name}
+            for L in lines:
+                y = (y_all > L).astype(int)
+                p = stretch(np.array([p_over(x, L, r_best) for x in lm]), a)
+                row[str(L)] = float(((p - y) ** 2).mean())
+            var.append(row)
+        rep[f"{stat}_variants"] = var
     return rep
 
 
@@ -217,6 +234,7 @@ def to_md(r: dict) -> str:
         for x in r[f"{stat}_lines"]:
             L.append(f"| over {x['line']} | {x['base_rate']:.1%} | {x['model']['brier']:.4f} | {x['model']['skill'] * 100:+.1f}% | "
                      f"{x['no_arena_opp']['skill'] * 100:+.1f}% | {x['last10']['brier']:.4f} | {x['last10']['skill'] * 100:+.1f}% | {x['model_same_rows']['skill'] * 100:+.1f}% |")
+        L += ["", "Variants (Brier, lower is better): " + " | ".join(f"{v['variant']}: " + " ".join(f"{k}={v[k]:.4f}" for k in v if k != 'variant') for v in r.get(f"{stat}_variants", [])), ""]
         L += ["", "Calibration (model, over the middle line):", "", "| Predicted | n | Predicted avg | Happened |", "|---|---|---|---|"]
         mid = r[f"{stat}_lines"][1]["model"]
         for b in mid.get("bins", []):
