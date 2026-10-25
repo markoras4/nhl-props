@@ -298,7 +298,7 @@ function logo(t, size){
 const rec = t => t ? `${t.w??0}-${t.l??0}-${t.otl??0}` : "";
 function statusPill(s){
   const k = (s||"").toLowerCase();
-  const cls = k==="confirmed"?"s-confirmed":k==="likely"?"s-likely":"";
+  const cls = k.includes("confirmed") && !k.includes("unconfirmed") ? "s-confirmed" : (k.includes("likely") ? "s-likely" : "");
   return `<span class="pill ${cls}"><i></i>${esc(s||"Projected")}</span>`;
 }
 function injPill(inj){ if(!inj) return ""; return inj.kind==="out" ? `<span class="pill s-out">${esc(inj.status||"Out")}</span>` : `<span class="pill s-q">${esc(inj.status||"Questionable")}</span>`; }

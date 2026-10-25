@@ -145,6 +145,24 @@ def parse_starting_goalies(html: str | None) -> list[dict]:
     return out
 
 
+# ------------------------------------------------- MoneyPuck likely starters
+MP_DAY_URL = "https://moneypuck.com/moneypuck/dates/{ymd}.htm"
+
+
+def parse_moneypuck_day(html: str | None) -> dict[int, list[dict]]:
+    """-> {game_id: [{name (last name), status ('Likely'...), pct}]} from a MoneyPuck day page."""
+    out: dict[int, list[dict]] = {}
+    for row in re.split(r"<tr[\s>]", html or "", flags=re.I)[1:]:
+        m = re.search(r"preview\.htm\?id=(\d+)", row)
+        if not m:
+            continue
+        gid = int(m.group(1))
+        for lvl, name, p in re.findall(r">\s*([A-Za-z ]*?)\s*Starter:\s*<br>\s*([^<:]+?)\s*:\s*([\d.]+)\s*%", row, flags=re.I):
+            out.setdefault(gid, []).append({"name": name.strip(), "status": (lvl.strip() or "Likely").title(),
+                                            "pct": float(p)})
+    return out
+
+
 # ---------------------------------------------------------------- line combos
 def parse_lines(html: str | None) -> list[dict]:
     """-> [{name, group, pos}] where group is f1..f4, d1..d3, pp1, pp2, g1, g2 ..."""
@@ -167,13 +185,18 @@ def parse_lines(html: str | None) -> list[dict]:
 
 def fetch_news(src, teams: list[str], dates: list[str], log=print) -> dict:
     injuries = parse_injuries(src.json(INJURIES_URL, "news/injuries.json", 2))
+    mp_starters: dict[int, list] = {}
+    for d in dates:
+        ymd = d.replace("-", "")
+        mp_starters.update(parse_moneypuck_day(src.text(MP_DAY_URL.format(ymd=ymd), f"news/mp_day_{ymd}.htm", 1)))
     goalies = {}
-    for d in dates[:2]:  # confirmations are only published for today/tomorrow
+    for d in dates[:2]:  # backup source, today/tomorrow only
         goalies[d] = parse_starting_goalies(src.text(GOALIES_URL.format(date=d), f"news/goalies_{d}.html", 1))
     lines = {t: parse_lines(src.text(LINES_URL.format(slug=slug(t)), f"news/lines_{t}.html", 4)) for t in teams}
     n_inj = sum(len(v) for v in injuries.values())
     n_g = sum(len(v) for v in goalies.values())
     n_l = sum(1 for v in lines.values() if v)
-    log(f"News: {n_inj} injuries, {n_g} starting-goalie reports, line combinations for {n_l}/{len(teams)} teams")
-    return {"injuries": injuries, "goalies": goalies, "lines": lines,
-            "status": {"injuries": n_inj > 0, "goalies": n_g > 0, "lines": n_l > 0}}
+    log(f"News: {n_inj} injuries, likely starters for {len(mp_starters)} games (+{n_g} backup reports), "
+        f"line combinations for {n_l}/{len(teams)} teams")
+    return {"injuries": injuries, "goalies": goalies, "mp_starters": mp_starters, "lines": lines,
+            "status": {"injuries": n_inj > 0, "goalies": bool(mp_starters) or n_g > 0, "lines": n_l > 0}}

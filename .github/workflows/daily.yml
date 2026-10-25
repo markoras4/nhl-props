@@ -18,9 +18,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +40,8 @@ jobs:
 
       - name: Build today's slate
         run: |
-          python -m nhlprops build --no-open || echo "No games today"
+          python -m nhlprops build --no-open 2>&1 | tee build.log || echo "No games today"
+          mkdir -p data && cp build.log data/last-build.log
           mkdir -p site
           if [ -f output/index.html ]; then cp output/index.html site/index.html; fi
           if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
@@ -52,12 +50,22 @@ jobs:
         run: |
           git config user.name "nhl-props-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/history data/logos || true
+          git add data/history data/logos data/last-build.log || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
 
+      - name: Keep a copy of the site on the "site" branch
+        run: |
+          cp site/index.html /tmp/index.html
+          git fetch -q origin site || true
+          git worktree add -q /tmp/sitebranch -B site 2>/dev/null || git worktree add -q --orphan -b site /tmp/sitebranch
+          cp /tmp/index.html /tmp/sitebranch/index.html
+          cd /tmp/sitebranch && git add index.html && (git commit -qm "Site $(date -u +%F-%H%M)" || true) && git push -qf origin site
+
       - uses: actions/configure-pages@v5
+        continue-on-error: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
       - id: deploy
         uses: actions/deploy-pages@v4
+        continue-on-error: true

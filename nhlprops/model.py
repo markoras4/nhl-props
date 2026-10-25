@@ -637,7 +637,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         sk_by_team.setdefault(p["team"], []).append(p)
 
     # ---------------- news: injuries, lineups
-    from .news import NameIndex
+    from .news import NameIndex, norm
     news = raw.get("news") or {"injuries": {}, "goalies": {}, "lines": {}, "status": {}}
     idx = NameIndex(raw["skaters"] + raw["goalies"])
     injury_of: dict[int, dict] = {}
@@ -711,7 +711,16 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             ids = [g["id"] for g in raw["goalies"] if g["team"] == t]
             starters[t] = probable_starter(ids, raw["glogs"], team_dates.get(t, []), b2b[t], yday)
             starter_status[t] = "Projected"
-            for rep_ in reports:
+            mp_hit = False
+            for rep_ in (news.get("mp_starters") or {}).get(gm["id"], []) + \
+                    (news.get("mp_starters") or {}).get(str(gm["id"]), []):
+                last = norm(rep_["name"]).split()[-1] if rep_["name"] else ""
+                cand = [i for i in ids if norm(goalies_out[i]["name"]).split()[-1:] == [last]]
+                if len(cand) == 1:
+                    starters[t], starter_status[t] = cand[0], f"{rep_['status']} {rep_['pct']:.0f}%"
+                    mp_hit = True
+                    break
+            for rep_ in ([] if mp_hit else reports):
                 if rep_.get("team") not in (None, t):
                     continue
                 m = idx.find(rep_["name"], t)
