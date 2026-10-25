@@ -18,8 +18,8 @@ jobs:
           page=get(f"https://sbapi.nj.sportsbook.fanduel.com/api/content-managed-page?page=CUSTOM&customPageId=nhl&_ak={AK}&timezone=America%2FNew_York")
           evs=page.get("attachments",{}).get("events",{})
           print("events", len(evs), [ (k,v.get("name"),v.get("openDate")) for k,v in list(evs.items())[:6]])
-          for eid,ev in list(evs.items())[:3]:
-              for tab in ["player-props","popular","player-points","goal-scorer","player-shots",""]:
+          for eid,ev in [(k,v) for k,v in evs.items() if "@" in str(v.get("name"))][-2:]:
+              for tab in ["","player-props","shots","player-shots","blocks","hits","skater-props"]:
                   u=f"https://sbapi.nj.sportsbook.fanduel.com/api/event-page?_ak={AK}&eventId={eid}" + (f"&tab={tab}" if tab else "")
                   try: js=get(u)
                   except Exception as e: print(eid, tab, "ERR", str(e)[:80]); continue
@@ -28,8 +28,7 @@ jobs:
                   names=sorted({m.get("marketName") for m in mk.values() if re.search("hit|block",str(m.get("marketName")),re.I)})
                   tabs=[t.get("title") for t in (js.get("layout",{}).get("tabs",{}) or {}).values()] if isinstance(js.get("layout",{}).get("tabs"),dict) else js.get("layout",{}).get("tabs")
                   print(eid, ev.get("name"), "tab", tab or "-", "markets", len(mk), "HB names", names[:12])
-                  if tab=="": print("  tabs:", str(tabs)[:400]); print("  types:", [t for t in types if t and re.search("HIT|BLOCK",t)])
-              break
+                  if tab=="": print("  tabs:", str(js.get("layout",{}).get("tabs"))[:1200]); print("  types sample:", list(types)[:40])
           PY
       - name: Save output to the probe branch
         run: |
