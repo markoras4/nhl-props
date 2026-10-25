@@ -200,7 +200,8 @@ def lineup_roles(slate: dict, lu_dir: Path) -> None:
 def write_closing(frozen_dir: Path, out: Path) -> None:
     """Closing player odds (last pre-game snapshot) for the last few days: {game: {player: {market: odds}}}."""
     res = {}
-    for f in sorted(frozen_dir.glob("20*.json"))[-4:]:
+    today = nhl_today()
+    for f in [x for x in sorted(frozen_dir.glob("20*.json")) if x.stem <= today][-4:]:
         for gid, snap in json.loads(f.read_text(encoding="utf-8")).items():
             pl = ((snap.get("odds") or {}).get("players") or {})
             res[gid] = {pid: {m: v.get("o") for m, v in mk.items() if v and v.get("o")} for pid, mk in pl.items()}
