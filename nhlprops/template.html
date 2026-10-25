@@ -13,7 +13,7 @@
 :root{
   --bg:#0a0e13; --panel:#111821; --panel2:#17202b; --line:#22303f; --text:#e7eef6; --mute:#8796a8;
   --accent:#3ddc97; --accent2:#5aa9ff; --warn:#ffb547; --bad:#ff6b6b; --good:#3ddc97; --chip:#1b2533;
-  --heat:61,220,151; --radius:12px; color-scheme:dark;
+  --heat:61,220,151; --line2:#7ff3ff; --radius:12px; color-scheme:dark;
   --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --f-disp:"Oxanium","Exo 2",-apple-system,"Segoe UI",sans-serif;
   --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
@@ -24,7 +24,7 @@
   :root:not([data-theme="dark"]){
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
-    --heat:13,154,96; color-scheme:light;
+    --heat:13,154,96; --line2:#0aa3c2; color-scheme:light;
   }
 }
 :root[data-theme="light"] .lg-d{display:none}
@@ -32,7 +32,7 @@
 :root[data-theme="light"]{
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
-    --heat:13,154,96; color-scheme:light;
+    --heat:13,154,96; --line2:#0aa3c2; color-scheme:light;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 var(--f-ui)}
@@ -169,14 +169,18 @@ td.h{text-align:center;padding:4px}
 .chartwrap .cg{stroke:var(--line);stroke-width:1}
 .chartwrap .ct{fill:var(--mute);font-size:11px;font-family:var(--f-ui)}
 .chartwrap .cx{fill:var(--text);font-size:12.5px;font-weight:600;font-family:var(--f-disp)}
-.chartwrap .cv{fill:var(--text);font-size:13px;font-weight:700;font-family:var(--f-disp)}
+.chartwrap .cv{fill:var(--text);font-size:13px;font-weight:700;font-family:var(--f-disp);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.chartwrap .crt,.chartwrap .cs{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
 .chartwrap .cb{fill:rgba(var(--heat),.55)}
 .chartwrap .cb.partial{fill:rgba(var(--heat),.25);stroke:rgba(var(--heat),.8);stroke-dasharray:4 3}
-.chartwrap .cl{fill:none;stroke:var(--accent2);stroke-width:2.5;stroke-linejoin:round}
-.chartwrap .cd{fill:var(--accent2);stroke:var(--panel);stroke-width:2}
+.chartwrap .cl{fill:none;stroke:url(#cgrad);stroke-width:2.6;stroke-linecap:round}
+.chartwrap .clh{fill:none;stroke:var(--accent2);stroke-width:10;stroke-opacity:.12;stroke-linecap:round}
+.chartwrap .cd{fill:var(--panel);stroke:var(--accent2);stroke-width:2.4}
+.chartwrap .cdh{fill:var(--accent2);fill-opacity:.16}
+.chartwrap .cdc{fill:var(--accent2)}
 .chartwrap .cb.small{fill:rgba(var(--heat),.22)}
 .chartwrap .cs{fill:var(--mute);font-size:10.5px;font-style:italic}
-.chartwrap .cl.x{stroke:var(--accent2);stroke-dasharray:6 4}
+.chartwrap .cl.x{stroke-dasharray:7 5}
 .chartwrap .cr{stroke-width:1.5;stroke-dasharray:6 5;stroke:var(--mute)}
 .chartwrap .cr.t{stroke:var(--good)}
 .chartwrap .crt{font-size:11px;fill:var(--mute);font-family:var(--f-ui);font-weight:600}
@@ -597,7 +601,7 @@ function chartRows(p){
   });
 }
 function barChart(rows, o){
-  const W = 960, H = 300, padL = 52, padR = 120, padT = 30, padB = 50;
+  const W = 960, H = 300, padL = 52, padR = 140, padT = 30, padB = 50;
   const vals = rows.flatMap(r=>[r.v, r.v2]).concat((o.refs||[]).map(x=>x.v)).filter(v=>v!=null && isFinite(v));
   if (!rows.some(r=>r.v!=null)) return `<p class="meta">No history to chart.</p>`;
   const top = Math.max(...vals) || 1;
@@ -608,28 +612,39 @@ function barChart(rows, o){
   const f = o.fmt;
   let g = "";
   for (let v=0; v<=ymax+1e-9; v+=step) g += `<line x1="${x0}" x2="${W-padR}" y1="${Y(v)}" y2="${Y(v)}" class="cg"/><text x="${x0-8}" y="${Y(v)+4}" text-anchor="end" class="ct">${o.axis(v)}</text>`;
-  const pts = [], pts2 = [];
+  const pts = [], pts2 = [], labels = [];
   const bars = rows.map((r,i)=>{ const cx = x0 + slot*i + slot/2;
     let out = `<text x="${cx}" y="${H-padB+18}" text-anchor="middle" class="cx">${esc(r.lab)}</text><text x="${cx}" y="${H-padB+33}" text-anchor="middle" class="ct">${esc(r.sub||"")}</text>`;
     if (r.v2!=null) pts2.push([cx, Y(r.v2), r.v2]);
     if (r.v==null) return out;
     const y = Y(r.v); pts.push([cx,y]);
     const cls = r.partial ? "partial" : r.small ? "small" : "";
-    out += `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,Y(0)-y)}" rx="5" class="cb ${cls}"><title>${esc(r.lab)}: ${f(r.v)}${r.v2!=null?` · expected ${f(r.v2)}`:""}${r.small?" · small sample":""}</title></rect>
-      <text x="${cx}" y="${y-8}" text-anchor="middle" class="cv">${f(r.v)}</text>`;
-    if (r.small) out += `<text x="${cx}" y="${Y(0)-8}" text-anchor="middle" class="cs">small sample</text>`;
+    out += `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,Y(0)-y)}" rx="5" class="cb ${cls}"><title>${esc(r.lab)}: ${f(r.v)}${r.v2!=null?` · expected ${f(r.v2)}`:""}${r.small?" · small sample":""}</title></rect>`;
+    labels.push(`<text x="${cx}" y="${y-10}" text-anchor="middle" class="cv">${f(r.v)}</text>`);
+    if (r.small) out += (Y(0)-y > 34) ? `<text x="${cx}" y="${Y(0)-8}" text-anchor="middle" class="cs">small sample</text>`
+                                      : `<text x="${cx}" y="${y-26}" text-anchor="middle" class="cs">small sample</text>`;
     return out; }).join("");
-  const refs = (o.refs||[]).filter(x=>x.v!=null).map(x=>`<line x1="${x0}" x2="${W-padR}" y1="${Y(x.v)}" y2="${Y(x.v)}" class="cr ${x.cls||""}"/><text x="${W-padR+6}" y="${Y(x.v)+4}" class="crt ${x.cls||""}">${esc(x.label)} ${f(x.v)}</text>`).join("");
+  const rl = (o.refs||[]).filter(x=>x.v!=null).map(x=>({...x, y:Y(x.v), ly:Y(x.v)})).sort((a,b)=>a.y-b.y);
+  for (let i=1;i<rl.length;i++){ if (rl[i].ly - rl[i-1].ly < 18){ const mid=(rl[i].ly+rl[i-1].ly)/2; rl[i-1].ly = mid-9; rl[i].ly = mid+9; } }
+  const refs = rl.map(x=>`<line x1="${x0}" x2="${W-padR}" y1="${x.y}" y2="${x.y}" class="cr ${x.cls||""}"/>
+    ${Math.abs(x.ly-x.y)>1?`<path d="M${W-padR} ${x.y} L${W-padR+6} ${x.ly}" class="cr ${x.cls||""}" style="stroke-dasharray:none"/>`:""}
+    <text x="${W-padR+9}" y="${x.ly+4}" class="crt ${x.cls||""}">${esc(x.label)} ${f(x.v)}</text>`).join("");
+  const smooth = P => { if (P.length<2) return ""; let d=`M${P[0][0]},${P[0][1]}`;
+    for (let i=1;i<P.length;i++){ const [x1,y1]=P[i-1],[x2,y2]=P[i], cx=(x1+x2)/2; d+=` C${cx},${y1} ${cx},${y2} ${x2},${y2}`; } return d; };
+  const glowLine = (P, cls) => P.length>1 ? `<path d="${smooth(P)}" class="clh ${cls}"/><path d="${smooth(P)}" class="cl ${cls}" filter="url(#cglow)"/>` : "";
+  const glowDot = (x,y,cls,t="") => `<circle cx="${x}" cy="${y}" r="9" class="cdh ${cls}"/><circle cx="${x}" cy="${y}" r="4.5" class="cd ${cls}">${t}</circle><circle cx="${x}" cy="${y}" r="1.8" class="cdc"/>`;
+  const defs = `<defs><filter id="cglow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="cgrad" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color:var(--accent2)"/><stop offset="1" style="stop-color:var(--line2)"/></linearGradient></defs>`;
   let line = "", dots = "";
   if (o.line2){
-    line = pts2.length>1 ? `<polyline points="${pts2.map(p=>p[0]+","+p[1]).join(" ")}" class="cl x"/>` : "";
-    dots = pts2.map(([x,y,v])=>`<circle cx="${x}" cy="${y}" r="5" class="cd x"><title>expected ${f(v)}</title></circle>`).join("")
+    line = glowLine(pts2.map(p=>[p[0],p[1]]), "x");
+    dots = pts2.map(([x,y,v])=>glowDot(x,y,"x",`<title>expected ${f(v)}</title>`)).join("")
       + (pts2.length ? `<text x="${pts2[pts2.length-1][0]+12}" y="${pts2[pts2.length-1][1]-10}" class="crt x">expected</text>` : "");
   } else {
-    line = pts.length>1 ? `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" class="cl"/>` : "";
-    dots = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" class="cd"/>`).join("");
+    line = glowLine(pts, "");
+    dots = pts.map(([x,y])=>glowDot(x,y,"")).join("");
   }
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(o.title)}">${g}${refs}${bars}${line}${dots}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(o.title)}">${defs}${g}${refs}${bars}${line}${dots}${labels.join("")}</svg>`;
 }
 function statsBox(p){
   const c = state.chart;
@@ -657,6 +672,7 @@ function statsBox(p){
   } else {
     note = `${STATS.find(x=>x[0]===k)[1]} ${c.unit==="pg"?"per game":c.unit==="pace"?"per 82 games at this rate":"per season"}. `
       + (c.unit==="ps" ? "The dashed bar is the current season, which isn't finished. Use 82-game pace to compare it fairly. " : "")
+      + (c.unit==="pace" ? "Pace shows the current rate stretched to 82 games. It isn't a forecast. The model's expectation for tonight is in the props grid. " : "")
       + (rows.some(r=>r.small) ? "Faded bars have fewer than 15 games, so treat them with care. " : "")
       + (k==="g" ? "For the reason behind a change, look at Shots (volume: reliable quickly) and Shooting % (finishing: mostly luck)." : "The line connects the top of each bar.");
   }
