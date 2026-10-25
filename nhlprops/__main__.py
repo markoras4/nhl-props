@@ -197,6 +197,45 @@ def lineup_roles(slate: dict, lu_dir: Path) -> None:
             f.unlink()
 
 
+def track_open(slate: dict, open_dir: Path) -> None:
+    """Remember the first price seen for every market (per game date) and attach it to the odds as 'open'."""
+    open_dir.mkdir(parents=True, exist_ok=True)
+    odds = slate.get("odds") or {}
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes")
+    by_date: dict[str, list] = {}
+    for g in slate["games"]:
+        by_date.setdefault(g["date"], []).append(g)
+    for d, games in by_date.items():
+        f = open_dir / f"{d}.json"
+        book = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+        changed = False
+        for g in games:
+            gid = str(g["id"])
+            o = odds.get(g["id"]) or odds.get(gid)
+            if not o or g.get("state") not in PRE_STATES:
+                if o and gid in book:
+                    o["open"] = book[gid]
+                continue
+            rec = book.setdefault(gid, {"players": {}, "winner": {}, "totals": {}, "at": now})
+            for pid, mk in (o.get("players") or {}).items():
+                for m, v in mk.items():
+                    if v and v.get("o") and m not in rec["players"].setdefault(str(pid), {}):
+                        rec["players"][str(pid)][m] = v["o"]; changed = True
+            for side, v in (o.get("winner") or {}).items():
+                if v and side not in rec["winner"]:
+                    rec["winner"][side] = v; changed = True
+            for line, v in (o.get("totals") or {}).items():
+                if v and line not in rec["totals"]:
+                    rec["totals"][line] = v; changed = True
+            o["open"] = rec
+        if changed:
+            f.write_text(json.dumps(book, separators=(",", ":")), encoding="utf-8")
+    cutoff = (dt.date.today() - dt.timedelta(days=10)).isoformat()
+    for f in open_dir.glob("20*.json"):
+        if f.stem < cutoff:
+            f.unlink()
+
+
 def write_closing(frozen_dir: Path, out: Path) -> None:
     """Closing player odds (last pre-game snapshot) for the last few days: {game: {player: {market: odds}}}."""
     res = {}
@@ -383,6 +422,7 @@ def main(argv=None):
         except Exception as e:  # odds are optional
             print("Odds unavailable:", e)
             slate["odds"] = {}
+    track_open(slate, data_dir / ("demo_odds_open" if args.demo else "odds_open"))
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
     lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
     write_closing(data_dir / ("demo_frozen" if args.demo else "frozen"), ROOT / "output" / "closing.json")

@@ -75,7 +75,7 @@ jobs:
         run: |
           git config user.name "nhl-props-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/history data/frozen data/lineups data/logos data/last-build.log || true
+          git add data/history data/frozen data/lineups data/odds_open data/logos data/last-build.log || true
           [ -f data/pregame.json ] && git add data/pregame.json || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
 

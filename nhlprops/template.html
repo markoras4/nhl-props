@@ -300,6 +300,9 @@ td.h{text-align:center;padding:4px}
 .l10lines-pick{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px}
 .l10lines-pick .seg button{padding:4px 9px;font-size:12px}
 .l10lines-pick .lpl{color:var(--mute)}
+.mv{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;white-space:nowrap;font-family:var(--f-ui)}
+.mv.to{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
+.mv.away{background:var(--chip);color:var(--mute)}
 .hrmini{font-size:11px;color:var(--mute);margin-top:3px;white-space:nowrap}
 .hrstrip{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .hrt{font-family:var(--f-disp);font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
@@ -517,6 +520,7 @@ const I18N = {
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
     st_live:"Live", st_final:"Final", st_int:"Intermission",
+    mv_from:"from", mv_opened:"opened {a} · {h}", mv_tip_to:"Opened at {a} today, now {b}: the market has moved toward the model's fair odds ({f}).", mv_tip_away:"Opened at {a} today, now {b}: the market has moved away from the model's fair odds ({f}).",
     login:"Log in", logout:"Log out", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
     au_in_h:"Log in", au_up_h:"Create a free account", au_sub:"Save picks and track how they do. Results are graded automatically after each game.",
     au_email:"Email", au_pass:"Password (8+ characters)", au_in_btn:"Log in", au_up_btn:"Create account", au_have:"I already have an account", au_new:"New here? Create an account",
@@ -620,6 +624,7 @@ const I18N = {
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
     st_live:"Live", st_final:"Slut", st_int:"Paus",
+    mv_from:"från", mv_opened:"öppnade {a} · {h}", mv_tip_to:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig mot modellens rättvisa odds ({f}).", mv_tip_away:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig bort från modellens rättvisa odds ({f}).",
     login:"Logga in", logout:"Logga ut", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
     au_in_h:"Logga in", au_up_h:"Skapa ett gratiskonto", au_sub:"Spara spel och följ hur de går. Resultaten rättas automatiskt efter varje match.",
     au_email:"E-post", au_pass:"Lösenord (minst 8 tecken)", au_in_btn:"Logga in", au_up_btn:"Skapa konto", au_have:"Jag har redan ett konto", au_new:"Ny här? Skapa ett konto",
@@ -766,6 +771,16 @@ function hitGame(gm, m){
 }
 const oddsKey = (gid, pid, m) => `odds:${gid}:${pid}:${m}`;
 const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
+const openOdds = (gid,pid,m) => DATA.odds?.[gid]?.open?.players?.[pid]?.[m] ?? null;
+// how the price moved since we first saw it today, and whether it moved toward the model's fair odds
+function moveTag(g, pr, m, compact){
+  const b = book(g.id, pr.id, m), o0 = openOdds(g.id, pr.id, m);
+  if (!b?.o || !o0 || Math.abs(b.o - o0) < 0.01) return "";
+  const fair = 1/Math.max(prob(pr, g, m), 1e-6), toward = Math.abs(b.o - fair) < Math.abs(o0 - fair);
+  const arrow = b.o < o0 ? "↓" : "↑";
+  const tip = t(toward ? "mv_tip_to" : "mv_tip_away", {a:o0.toFixed(2), b:b.o.toFixed(2), f:fair.toFixed(2)});
+  return `<span class="mv ${toward?"to":"away"}" title="${esc(tip)}">${arrow} ${compact?"":t("mv_from")+" "}${o0.toFixed(2)}</span>`;
+}
 const userOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
 const getOdds = (gid,pid,m) => userOdds(gid,pid,m) ?? book(gid,pid,m)?.o ?? null;
 const noVig = b => b && b.o && b.n ? (1/b.o)/((1/b.o)+(1/b.n)) : null;
@@ -926,7 +941,7 @@ function gamePage(){
     <div class="box"><h4>${t("win_prob")}</h4>
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
-      ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away?.toFixed(2)??"–", th:g.home, h:DATA.odds[g.id].winner.home?.toFixed(2)??"–", fa:(1/d.pa).toFixed(2), fh:(1/d.ph).toFixed(2)})}</p>` : ""}
+      ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away?.toFixed(2)??"–", th:g.home, h:DATA.odds[g.id].winner.home?.toFixed(2)??"–", fa:(1/d.pa).toFixed(2), fh:(1/d.ph).toFixed(2)})}${(()=>{ const w=DATA.odds[g.id].winner, o=DATA.odds[g.id].open?.winner; if(!o||(Math.abs((o.home||0)-(w.home||0))<0.01&&Math.abs((o.away||0)-(w.away||0))<0.01)) return ""; return ` · ${t("mv_opened",{a:o.away?.toFixed(2)??"–", h:o.home?.toFixed(2)??"–"})}`; })()}</p>` : ""}
       ${h2hBlock(g)}</div>
     <div class="box"><h4>${t("total_goals")}</h4>
       <div class="ou"><div class="h">${t("line")}</div><div class="h">${t("model")}</div><div class="h">${t("history")}</div><div class="h">${t("over_fair")}</div><div class="h">${t("over_odds")}</div>${ou}</div></div>
@@ -1009,7 +1024,7 @@ function bestPicksBox(g){
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
         <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?t("point1"):t("goal")}</span>
-          <div class="po">${c.od?c.od.toFixed(2):"–"}</div><div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
+          <div class="po">${c.od?c.od.toFixed(2):"–"}</div>${moveTag(g,c.pr,c.m)}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
       <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul>${saveBtn(g, c.pr, c.m)}</div>`; }).join("");
   const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
   const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
@@ -1270,7 +1285,7 @@ function detail(pr, g){
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
   const oddsRows = MKEYS.map(m=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
     return `<span>${mName(m)}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
-      <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""}`:`<span class="meta">–</span>`}</span>
+      <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):t("odds_ph")}" value="${uo??""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span>${saveBtn(g, pr, m)}`; }).join("");
   return `<div class="detail"><div class="dgrid">
@@ -1483,7 +1498,7 @@ function rowsTop(){
       <td class="n num hide-xs">${fmt(p.toi_proj,1)}</td>
       <td><div class="bar"><i style="width:${Math.min(100,v*100)}%"></i><span>${pct(v,1)}</span></div></td>
       <td class="n num hide-xs">${(1/v).toFixed(2)}</td>
-      <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}"></td>
+      <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
       <td>${regPills(p)} ${saveBtn(g, pr, m)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
