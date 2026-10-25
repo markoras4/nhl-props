@@ -281,18 +281,25 @@ td.h{text-align:center;padding:4px}
   .l10t,.l10d{font-size:9.5px}.l10o,.l10v{font-size:10.5px}}
 .l10svg{width:100%;height:auto;display:block}
 .l10g{stroke:var(--line);stroke-width:1}
-.l10t,.l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui)}
-.l10o{fill:var(--text);font-size:10.5px;font-weight:600;font-family:var(--f-disp)}
+.l10t{fill:var(--mute);font-size:10.5px;font-family:var(--f-ui)}
+.l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui);opacity:.8}
+.l10o{fill:var(--text);font-size:12.5px;font-weight:700;font-family:var(--f-disp);letter-spacing:.3px}
 .l10v{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
 .l10hi{fill:var(--accent)}
 .l10lo{fill:var(--bad);opacity:.85}
-.l10avg{stroke:var(--text);stroke-width:1.6;stroke-dasharray:6 5;opacity:.85}
-.l10exp{stroke:var(--accent2);stroke-width:1.6;stroke-dasharray:2 4}
+.l10avg{stroke:var(--text);stroke-width:2;stroke-dasharray:1 6;stroke-linecap:round;opacity:.75}
+.l10exp{stroke:var(--accent2);stroke-width:2;opacity:.95;filter:url(#l10glow)}
+.l10avg-tag{fill:var(--panel2);stroke:var(--line)}.l10avg-txt{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
+.l10exp-tag{fill:color-mix(in srgb,var(--accent2) 22%,var(--panel))}.l10exp-txt{fill:var(--accent2);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
+.l10seg button{position:relative}
+@media (max-width:600px){.l10o{font-size:9.5px;letter-spacing:0}.l10d{font-size:8.5px}.l10v{font-size:10px}.l10t{font-size:9.5px}}
+.l10seg button[data-tip]:hover::after,.l10seg button[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--text);color:var(--bg);font:600 11.5px/1 var(--f-ui);letter-spacing:0;text-transform:none;padding:6px 9px;border-radius:7px;z-index:5;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.l10seg button[data-tip]:hover::before,.l10seg button[data-tip]:focus-visible::before{content:"";position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--text);border-top:0;z-index:5}
 .l10leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--mute);margin-top:6px}
 .l10leg span{display:inline-flex;align-items:center;gap:6px}
 .l10leg b{color:var(--text)}
-.l10leg i.la,.l10leg i.le{width:18px;height:0;border-top:2px dashed var(--text)}
-.l10leg i.le{border-top:2px dotted var(--accent2)}
+.l10leg i.la,.l10leg i.le{width:18px;height:0;border-top:2px dotted var(--text);opacity:.8}
+.l10leg i.le{border-top:2px solid var(--accent2);opacity:1;box-shadow:0 0 6px var(--accent2)}
 .l10leg i.sw{width:10px;height:10px;border-radius:2px}.l10leg i.hi{background:var(--accent)}.l10leg i.lo{background:var(--bad)}
 @media (max-width:700px){.dgrid>.box{grid-column:auto!important}}
 .mini{font-size:12px}
@@ -437,7 +444,7 @@ const I18N = {
     reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
     k_spg:"Typical shots per goal", k_drought:"Chance of a drought this long",
-    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
+    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
     cmp:"Team comparison", c_ptspct:"Points %", c_tier:"Strength tier", c_streak2:"Streak", c_l5:"Last 5", c_l5gfga:"Last 5 GF / GA", c_gfga:"GF / GA per game",
     c_rh:"Road / Home GF – GA", c_xgf:"5v5 expected goals share", c_pdo:"PDO (luck, 1000 = normal)", c_hdf:"High-danger shots for /60", c_hda:"High-danger shots against /60",
     c_ppg:"Power play goals /60", c_pkga:"Penalty kill goals against /60", c_ppm:"Power play minutes / game", c_o55:"Over 5.5 this season", c_o55rh:"Over 5.5 road / home",
@@ -523,7 +530,7 @@ const I18N = {
     reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
     k_spg:"Typiskt antal skott per mål", k_drought:"Chans för en så lång torka",
-    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
+    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
     cmp:"Lagjämförelse", c_ptspct:"Poäng-%", c_tier:"Styrkenivå", c_streak2:"Svit", c_l5:"Senaste 5", c_l5gfga:"Senaste 5 GM / IM", c_gfga:"GM / IM per match",
     c_rh:"Borta / Hemma GM – IM", c_xgf:"Andel förväntade mål 5 mot 5", c_pdo:"PDO (tur, 1000 = normalt)", c_hdf:"Farliga skott för /60", c_hda:"Farliga skott mot /60",
     c_ppg:"Powerplaymål /60", c_pkga:"Insläppta mål i boxplay /60", c_ppm:"Powerplayminuter / match", c_o55:"Över 5.5 i år", c_o55rh:"Över 5.5 borta / hemma",
@@ -1220,7 +1227,7 @@ function l10Chart(pr, g){
   const avgLbl = (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
   const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0);
   const ymax = m==="s" ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
-  const narrow = innerWidth < 600, W = narrow ? 360 : 720, H = narrow ? 210 : 240, L = 22, R = 6, T = 14, B = 40, cw = (W - L - R) / games.length, bw = Math.min(30, cw * 0.58);
+  const narrow = innerWidth < 600, W = narrow ? 360 : 720, H = narrow ? 220 : 250, L = 22, R = narrow ? 44 : 64, T = 16, B = narrow ? 40 : 44, cw = (W - L - R) / games.length, bw = Math.min(30, cw * 0.58);
   const y = v => T + (H - T - B) * (1 - v / ymax);
   const ticks = []; const step = ymax <= 3 ? 1 : ymax <= 8 ? 2 : 3; for (let v = 0; v <= ymax; v += step) ticks.push(v);
   const grid = ticks.map(v => `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="l10g"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end" class="l10t">${v}</text>`).join("");
@@ -1229,12 +1236,19 @@ function l10Chart(pr, g){
     return `<g><title>${x.d} ${x.h?"vs":"@"} ${x.o}: ${x.g} ${t("h_g")} · ${x.a} ${t("h_a")} · ${x.s} ${t("h_s")} · ${fmt(x.t,1)} ${t("toi")}</title>
       <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="${below?"l10lo":"l10hi"}"/>
       ${v>0?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
-      <text x="${cx}" y="${H-B+15}" text-anchor="middle" class="l10o">${x.h?"":"@"}${x.o}</text>
-      <text x="${cx}" y="${H-B+28}" text-anchor="middle" class="l10d">${x.d.slice(5).replace("-","/")}</text></g>`; }).join("");
-  const line = (v, cls) => v==null ? "" : `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="${cls}"/>`;
-  const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}">${lbl}</button>`;
-  return `<h4>${t("l10_chart")} <span class="seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}</span></h4>
-    <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}">${grid}${bars}${line(avg,"l10avg")}${line(exp,"l10exp")}</svg>
+      <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
+      <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text></g>`; }).join("");
+  // reference lines: average (rounded dashes) and model tonight (solid, soft glow), labelled at the right edge without overlap
+  let ya = avg==null ? null : y(avg), ye = exp==null ? null : y(exp);
+  let la = ya, le = ye;
+  if (la!=null && le!=null && Math.abs(la-le) < 15){ const mid=(la+le)/2, up = la<=le; la = mid + (up?-8:8); le = mid + (up?8:-8); }
+  const tag = (yy, ly, v, cls) => yy==null ? "" : `<line x1="${L}" x2="${W-R+4}" y1="${yy}" y2="${yy}" class="${cls}"/>
+      <rect x="${W-R+8}" y="${ly-8}" width="${R-10}" height="16" rx="8" class="${cls}-tag"/><text x="${W-R+8+(R-10)/2}" y="${ly+3.5}" text-anchor="middle" class="${cls}-txt">${fmt(v,2)}</text>`;
+  const lines = `<g class="l10lines">${tag(ye, le, exp, "l10exp")}${tag(ya, la, avg, "l10avg")}</g>`;
+  const TIP = {s:t("l10_tip_s"), g:t("l10_tip_g"), a:t("l10_tip_a"), p:t("l10_tip_p")};
+  const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}" data-tip="${TIP[k]}" aria-label="${TIP[k]}">${lbl}</button>`;
+  return `<h4>${t("l10_chart")} <span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}</span></h4>
+    <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${grid}${bars}${lines}</svg>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
       <span><i class="sw hi"></i>${t("l10_hi")}</span><span><i class="sw lo"></i>${t("l10_lo")}</span></div>`;
 }
