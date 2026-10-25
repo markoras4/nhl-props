@@ -7,12 +7,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Live scores function
+      - name: Hits and blocks markets in the odds feed
         run: |
           exec >> probe-out.txt 2>&1
-          curl -s -m 20 -i "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores" | head -c 1500; echo
-          echo ----
-          curl -s -m 20 "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores?date=2026-10-25" | head -c 1500; echo
+          python3 - <<'PY'
+          import json, urllib.request, collections
+          B="https://eu-offering-api.kambicdn.com/offering/v2018/ubse"
+          get=lambda u: json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=30))
+          lst=get(B+"/listView/ice_hockey/nhl/all/all/matches.json?lang=en_GB&market=SE&useCombined=true")
+          evs=[e["event"] for e in lst.get("events",[])]
+          print("events", len(evs))
+          labels=collections.Counter()
+          sample=None
+          for e in evs[:12]:
+              b=get(B+f"/betoffer/event/{e['id']}.json?lang=en_GB&market=SE&includeParticipants=true")
+              for o in b.get("betOffers",[]):
+                  lab=(o.get("criterion",{}).get("englishLabel") or "")
+                  labels[lab]+=1
+                  if sample is None and any(k in lab.lower() for k in ("hit","block","tackl")):
+                      sample=json.dumps(o)[:1500]
+          for k,v in sorted(labels.items()):
+              if any(w in k.lower() for w in ("hit","block","player","+/-","plus")): print(v, k)
+          print("SAMPLE", sample)
+          PY
       - name: Save output to the probe branch
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
