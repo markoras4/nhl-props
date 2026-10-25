@@ -1292,7 +1292,7 @@ function calibChart(s){
 }
 function trackTab(){
   const T = DATA.graded;
-  if (!T || !T.days?.length){
+  if (!T || !T.days?.length || !Object.values(T.props||{}).some(x=>x && x.n)){
     $("#main").innerHTML = `<div class="card empty prose" style="margin:auto"><h3>${t("tr_none_h")}</h3><p>${t("tr_none_p")}</p></div>`; return; }
   const rows = obj => Object.entries(obj).filter(([,s])=>s).map(([k,s])=>`<tr><td>${esc(k)}</td><td class="n num">${s.n}</td><td class="n num">${pct(s.mean_pred,1)}</td><td class="n num">${pct(s.hit_rate,1)}</td><td class="n num">${s.brier.toFixed(4)}</td><td class="n num ${s.skill>0?"ev-pos":"ev-neg"}">${(s.skill*100).toFixed(1)}%</td></tr>`).join("");
   const rename = o => Object.fromEntries(Object.entries(o||{}).map(([k,v])=>[MKT_NAME(k),v]));
