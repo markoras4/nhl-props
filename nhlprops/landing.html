@@ -100,11 +100,12 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 .alt{background:var(--bg2);border-block:1px solid var(--line)}
 
 /* tonight strip */
-.strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:thin}
-.chip{scroll-snap-align:start;flex:0 0 250px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;transition:border-color .15s,transform .15s}
+.strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.chip{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;transition:border-color .15s,transform .15s}
 .chip:hover{border-color:var(--accent);transform:translateY(-2px)}
-.chip .t{font-size:12px;color:var(--mute);display:flex;justify-content:space-between;gap:8px}
-.chip .t span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .t{font-size:12px;color:var(--mute);display:flex;flex-direction:column;line-height:1.35}
+.chip .t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .t span:first-child{color:var(--text);font-weight:600}
 .chip .tm{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:10px 0 8px}
 .chip .tm div{display:flex;align-items:center;gap:7px;font-family:var(--f-disp);font-weight:800;font-size:17px;min-width:0}
 .chip .tm div:last-child{justify-content:flex-end}
@@ -185,7 +186,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   .links{display:none}
   .hgrid{grid-template-columns:1fr;gap:34px}
   .devices{max-width:680px;margin:0 auto;width:100%}
-  .pgrid,.fgrid{grid-template-columns:1fr 1fr}
+  .pgrid,.fgrid,.strip{grid-template-columns:1fr 1fr}
   .screens{grid-template-columns:minmax(0,1fr) minmax(0,.5fr);}
   .screens .laptop{grid-column:1/-1;order:-1}
 }
@@ -203,7 +204,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   .pgrid,.fgrid,.steps,.plans{grid-template-columns:1fr}
   .pgrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:6px}
   .pgrid .pcard{flex:0 0 84%;scroll-snap-align:start}
-  .chip{flex-basis:272px}
+  .strip{grid-template-columns:1fr}
   .ctas .btn{flex:1}
   .screens{grid-template-columns:1fr 1fr;gap:14px}
   .proof{gap:16px}
@@ -425,7 +426,7 @@ const $ = s => document.querySelector(s);
 function strip(){
   const games = LDATA?.games || [];
   $("#tonight_sub").textContent = t("tonight_sub",{n:games.length});
-  $("#strip").innerHTML = games.map(g => `<a class="chip" href="${APP}#g${g.id}">
+  $("#strip").innerHTML = games.slice(0,4).map(g => `<a class="chip" href="${APP}#g${g.id}">
     <div class="t"><span>${dayOf(g.start)} · ${timeOf(g.start)}</span><span>${esc(g.venue||"")}</span></div>
     <div class="tm"><div>${logo(g.away,30)}${g.away}</div><span>${g.ma.toFixed(1)}–${g.mh.toFixed(1)}</span><div>${g.home}${logo(g.home,30)}</div></div>
     <div class="wpb"><i style="width:${g.pa*100}%"></i><i style="width:${g.ph*100}%"></i></div>
