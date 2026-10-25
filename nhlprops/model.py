@@ -716,6 +716,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                     (news.get("mp_starters") or {}).get(str(gm["id"]), []):
                 last = norm(rep_["name"]).split()[-1] if rep_["name"] else ""
                 cand = [i for i in ids if norm(goalies_out[i]["name"]).split()[-1:] == [last]]
+                if not cand and last:  # spelling differences (Merilinen / Merilainen)
+                    import difflib
+                    cand = [i for i in ids if difflib.SequenceMatcher(
+                        None, (norm(goalies_out[i]["name"]).split() or [""])[-1], last).ratio() >= 0.8]
                 if len(cand) == 1:
                     starters[t], starter_status[t] = cand[0], f"{rep_['status']} {rep_['pct']:.0f}%"
                     mp_hit = True

@@ -180,6 +180,7 @@ class Source:
                       12 if current else None)
         if df is None:
             return None
+        df = df.copy()
         df.columns = [c.strip() for c in df.columns]
         if "team" in df.columns:
             df["team"] = df["team"].astype(str).map(lambda t: MP_TO_NHL.get(t, t))
