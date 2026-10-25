@@ -7,39 +7,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Kambi operators with hits/blocks
+      - name: Superbet NHL markets
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
           import json, urllib.request, collections
           def get(u):
               return json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=25))
-          for op in ["rsiuspa","rsiusnj","rsiusil","rsiusin","rsiusny","ubusnj","ubuspa","ub","ubdk","paf","888","leo","bbuk","nzbmww"]:
-              for host in ["eu-offering-api.kambicdn.com","us1-offering-api.kambicdn.com"]:
-                  B=f"https://{host}/offering/v2018/{op}"
+          for cc, lang in [("ro","ro-RO"),("pl","pl-PL"),("rs","sr-Latn-RS"),("br","pt-BR")]:
+              base=f"https://production-superbet-offer-{cc}.freetls.fastly.net/v2/{lang}"
+              try:
+                  d=get(base+"/events/by-date?offerState=prematch&startDate=2026-10-26+00:00:00&endDate=2026-10-28+00:00:00")
+              except Exception as e:
+                  print(cc,"ERR",e); continue
+              ev=[x for x in d.get("data",[]) if x.get("sportId")==3]
+              print(cc, "hockey events", len(ev), [ (x["eventId"], x["matchName"], x["tournamentId"]) for x in ev[:4]])
+              nhl=[x for x in ev if any(k in x["matchName"] for k in ("Rangers","Oilers","Flames","Kings","Maple","Red Wings"))]
+              if not nhl: continue
+              e=nhl[0]
+              for path in [f"/events/{e['eventId']}", f"/events/{e['eventId']}?matchIds={e['eventId']}"]:
                   try:
-                      lst=get(B+"/listView/ice_hockey/nhl/all/all/matches.json?lang=en_US&market=US&useCombined=true")
-                  except Exception as e:
-                      print(op, host, "ERR", str(e)[:60]); continue
-                  evs=[e["event"] for e in lst.get("events",[])]
-                  labs=collections.Counter()
-                  for e in evs[:4]:
-                      try:
-                          b=get(B+f"/betoffer/event/{e['id']}.json?lang=en_US&market=US&includeParticipants=true")
-                      except Exception as ex:
-                          continue
-                      for o in b.get("betOffers",[]):
-                          labs[(o.get("criterion",{}).get("englishLabel") or "")]+=1
-                  hb={k:v for k,v in labs.items() if any(w in k.lower() for w in ("hit","block"))}
-                  print(op, host, "events", len(evs), "markets", len(labs), "HITS/BLOCKS:", hb)
-                  break
+                      det=get(base+path); break
+                  except Exception as ex:
+                      det=None; print("detail err", path, ex)
+              if not det: continue
+              dd=det.get("data") or det
+              if isinstance(dd,list): dd=dd[0]
+              odds=dd.get("odds") or []
+              names=collections.Counter((o.get("marketName"), o.get("marketId")) for o in odds)
+              print(cc, e["matchName"], "odds rows", len(odds), "markets", len(names))
+              for (n,mid),c in sorted(names.items(), key=lambda z:str(z[0][0])): print("  ", c, mid, n)
+              hb=[o for o in odds if any(w in str(o.get("marketName","")).lower() for w in ("lovit","bloc","hit","block","uderz","zablok","blok","rebat","bloque"))]
+              print("SAMPLE", json.dumps(hb[:3])[:1500])
+              break
           PY
-      - name: Superbet
-        run: |
-          exec >> probe-out.txt 2>&1
-          for u in "https://production-superbet-offer-ro.freetls.fastly.net/sb-ro/api/v2/en-BR/sport/5/tournaments" "https://production-superbet-offer-pl.freetls.fastly.net/v2/pl-PL/events/by-date?offerState=prematch&startDate=2026-10-26+00:00:00&endDate=2026-10-27+00:00:00" "https://production-superbet-offer-ro.freetls.fastly.net/v2/ro-RO/events/by-date?offerState=prematch&startDate=2026-10-26+00:00:00&endDate=2026-10-27+00:00:00"; do
-            echo "== $u"; curl -s -m 20 -A "Mozilla/5.0" "$u" | head -c 600; echo
-          done
       - name: Save output to the probe branch
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
