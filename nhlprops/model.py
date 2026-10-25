@@ -783,7 +783,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 hrs = prof["toi_proj"] / 60
                 base = {"g": r["g60"] * hrs * d_xg * venue * bb * env,
                         "a": r["a60"] * hrs * d_xg * venue * bb * env,
-                        "s": r["s60"] * hrs * d_s * venue * bb}
+                        "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0)}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
                 props.append({
                     "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base,

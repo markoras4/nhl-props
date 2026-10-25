@@ -68,6 +68,8 @@ CONFIG = {
 
     # ---------- props ----------
     "sog_lines": [1.5, 2.5, 3.5, 4.5],
+    # Backtest 2021-2026 (213,885 player-games): expected shots ran ~6% high. Goals/assists/points were on target.
+    "sog_calibration": 0.94,
     "active_last_n_team_games": 2,   # skater must have played in one of team's last N games
 
     # ---------- regression flag ----------
