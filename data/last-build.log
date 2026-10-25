@@ -1,0 +1,31 @@
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+/home/runner/work/nhl-props/nhl-props/nhlprops/sources.py:186: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  df["season_start"] = start_year
+Season 2026-2027. Fetching schedule from 2026-10-25 ...
+  47 upcoming games over 7 days
+Fetching MoneyPuck season summaries ...
+  seasons loaded: skaters [2022, 2023, 2024, 2025, 2026], teams [2022, 2023, 2024, 2025, 2026]
+Fetching team schedules/results (all 32 teams, 4 seasons) ...
+  5280 league games
+Fetching rosters for 32 teams ...
+Fetching 726 skaters and 78 goalies (careers + game logs) ...
+News: 131 injuries, likely starters for 23 games (+16 backup reports), line combinations for 32/32 teams
+Model built: 47 games, 726 skaters (571 expected to play)
+Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-25.html
