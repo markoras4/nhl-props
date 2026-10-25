@@ -93,7 +93,7 @@ def parse_log(js: dict | None) -> list[dict]:
 
 def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
     cur = season_start_for(date)
-    n_mp = max(cfg["lookback_seasons"], cfg["league_env_seasons"], cfg["goalie_seasons"])
+    n_mp = max(cfg["lookback_seasons"], cfg["league_env_seasons"], cfg["goalie_seasons"], 6)  # 6 = charts
     mp_years = [cur - i for i in range(n_mp)]
     club_years = [cur - i for i in range(4)]
 

@@ -174,6 +174,14 @@ td.h{text-align:center;padding:4px}
 .chartwrap .cb.partial{fill:rgba(var(--heat),.25);stroke:rgba(var(--heat),.8);stroke-dasharray:4 3}
 .chartwrap .cl{fill:none;stroke:var(--accent2);stroke-width:2.5;stroke-linejoin:round}
 .chartwrap .cd{fill:var(--accent2);stroke:var(--panel);stroke-width:2}
+.chartwrap .cb.small{fill:rgba(var(--heat),.22)}
+.chartwrap .cs{fill:var(--mute);font-size:10.5px;font-style:italic}
+.chartwrap .cl.x{stroke:var(--accent2);stroke-dasharray:6 4}
+.chartwrap .cr{stroke-width:1.5;stroke-dasharray:6 5;stroke:var(--mute)}
+.chartwrap .cr.t{stroke:var(--good)}
+.chartwrap .crt{font-size:11px;fill:var(--mute);font-family:var(--f-ui);font-weight:600}
+.chartwrap .crt.t{fill:var(--good)}
+.chartwrap .crt.x{fill:var(--accent2)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:12px;color:var(--mute);margin:8px 2px 0}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:5px}
 .bar{position:relative;height:22px;min-width:110px;background:var(--chip);border-radius:6px;overflow:hidden}
@@ -551,56 +559,111 @@ function windowsTable(p){
 }
 
 // ------------------------------------------------------------ history chart
-const STATS = [["g","Goals"],["a","Assists"],["p","Points"],["s","Shots"]];
-function chartData(p){
-  const c = state.chart, k = c.stat;
+const STATS = [["g","Goals"],["a","Assists"],["p","Points"],["s","Shots"],["sh","Shooting %"],["gx","Goals vs expected"]];
+const UNITS = [["pg","Per game"],["pace","82-game pace"],["ps","Per season"]];
+const SMALL_SHOTS = 40;
+// one row per bar: {lab, sub, v (bar), v2 (expected, optional), small, partial}
+function chartRows(p){
+  const c = state.chart, k = c.stat, cur = DATA.season;
+  const scale = (tot, gp, seasons, isCur) => {
+    if (tot==null || !gp) return null;
+    if (c.unit==="pg") return tot/gp;
+    if (c.unit==="pace") return tot/gp*82;
+    return isCur ? tot : tot/(seasons||1);
+  };
+  let base;
   if (c.mode==="windows"){
-    const W = p.windows;
-    return [["cur","This season"],["prev3","Prev 3 seasons"],["prev5","Prev 5 seasons"],["career","Career"]].map(([key,lab])=>{
+    const W = p.windows, X = p.xg_windows||{};
+    base = [["cur","This season"],["prev3","Prev 3 seasons"],["prev5","Prev 5 seasons"],["career","Career"]].map(([key,lab])=>{
       const w = W[key]; if(!w) return {lab, v:null};
-      const v = c.unit==="pg" ? w[k+"_pg"] : (key==="cur" ? w[k] : w[k+"_ps"]);
-      return {lab, v, sub: key==="cur" ? `${w.gp} GP` : `${w.seasons} seas · ${w.gp} GP`, partial: key==="cur" && c.unit!=="pg"};
+      const x = X[key];
+      return {lab, key, w, isCur: key==="cur", gp:w.gp, seasons:w.seasons, g:w.g, a:w.a, p:w.p, s:w.s,
+              xg: x ? x.xg : null, xgp: x ? x.gp : null, sub: key==="cur" ? `${w.gp} GP` : `${w.seasons} seas · ${w.gp} GP`};
     });
+  } else {
+    base = (p.by_season||[]).slice().sort((a,b)=>a.y-b.y).map(r=>({
+      lab: `${String(r.y).slice(2)}–${String(r.y+1).slice(2)}`, isCur: r.y===cur, gp:r.gp, seasons:1,
+      g:r.g, a:r.a, p:r.p, s:r.s, xg: r.xg ?? null, xgp: r.xg_gp ?? null, sub: `${r.gp} GP`}));
   }
-  const cur = DATA.season;
-  return (p.by_season||[]).slice().sort((a,b)=>a.y-b.y).map(r=>({
-    lab: `${String(r.y).slice(2)}–${String(r.y+1).slice(2)}`, v: r.gp ? (c.unit==="pg" ? r[k]/r.gp : r[k]) : null,
-    sub: `${r.gp} GP`, partial: r.y===cur && c.unit!=="pg"}));
+  return base.map(r=>{
+    if (r.gp==null) return r;
+    if (k==="sh") return {...r, v: r.s ? r.g/r.s : null, small: (r.s||0) < SMALL_SHOTS, sub: `${r.g} G / ${r.s} S`};
+    if (k==="gx"){
+      const v = scale(r.g, r.gp, r.seasons, r.isCur);
+      const v2 = r.xg!=null && r.xgp ? scale(r.xg, r.xgp, r.seasons, r.isCur) : null;
+      return {...r, v, v2, small: (r.s||0) < SMALL_SHOTS, partial: r.isCur && c.unit==="ps"};
+    }
+    return {...r, v: scale(r[k], r.gp, r.seasons, r.isCur), small: r.gp < 15 && c.unit!=="ps", partial: r.isCur && c.unit==="ps"};
+  });
 }
-function barChart(rows, unit, mode){
-  const W = 960, H = 300, padL = 48, padR = 12, padT = 30, padB = 50;
-  const vals = rows.map(r=>r.v).filter(v=>v!=null);
-  if (!vals.length) return `<p class="meta">No history to chart.</p>`;
+function barChart(rows, o){
+  const W = 960, H = 300, padL = 52, padR = 120, padT = 30, padB = 50;
+  const vals = rows.flatMap(r=>[r.v, r.v2]).concat((o.refs||[]).map(x=>x.v)).filter(v=>v!=null && isFinite(v));
+  if (!rows.some(r=>r.v!=null)) return `<p class="meta">No history to chart.</p>`;
   const top = Math.max(...vals) || 1;
   const step = (()=>{ const raw = top/4, m = Math.pow(10, Math.floor(Math.log10(raw))); return [1,2,2.5,5,10].map(x=>x*m).find(x=>x>=raw); })();
   const ymax = Math.ceil(top/step)*step;
-  const x0 = padL, w = W-padL-padR, slot = w/rows.length, bw = Math.min(70, slot*0.56);
+  const x0 = padL, w = W-padL-padR, slot = w/rows.length, bw = Math.min(70, slot*0.5);
   const Y = v => padT + (H-padT-padB)*(1 - v/ymax);
-  const dec = unit==="pg" ? 2 : (mode==="seasons" ? 0 : 1);
-  let grid = "";
-  for (let v=0; v<=ymax+1e-9; v+=step) grid += `<line x1="${x0}" x2="${W-padR}" y1="${Y(v)}" y2="${Y(v)}" class="cg"/><text x="${x0-8}" y="${Y(v)+4}" text-anchor="end" class="ct">${unit==="pg"?v.toFixed(step<0.1?2:1):Math.round(v)}</text>`;
-  const pts = [];
+  const f = o.fmt;
+  let g = "";
+  for (let v=0; v<=ymax+1e-9; v+=step) g += `<line x1="${x0}" x2="${W-padR}" y1="${Y(v)}" y2="${Y(v)}" class="cg"/><text x="${x0-8}" y="${Y(v)+4}" text-anchor="end" class="ct">${o.axis(v)}</text>`;
+  const pts = [], pts2 = [];
   const bars = rows.map((r,i)=>{ const cx = x0 + slot*i + slot/2;
-    const lab = `<text x="${cx}" y="${H-padB+18}" text-anchor="middle" class="cx">${esc(r.lab)}</text><text x="${cx}" y="${H-padB+33}" text-anchor="middle" class="ct">${esc(r.sub||"")}</text>`;
-    if (r.v==null) return lab;
+    let out = `<text x="${cx}" y="${H-padB+18}" text-anchor="middle" class="cx">${esc(r.lab)}</text><text x="${cx}" y="${H-padB+33}" text-anchor="middle" class="ct">${esc(r.sub||"")}</text>`;
+    if (r.v2!=null) pts2.push([cx, Y(r.v2), r.v2]);
+    if (r.v==null) return out;
     const y = Y(r.v); pts.push([cx,y]);
-    return `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Y(0)-y}" rx="5" class="cb ${r.partial?"partial":""}"><title>${esc(r.lab)}: ${r.v.toFixed(dec)}</title></rect>
-      <text x="${cx}" y="${y-8}" text-anchor="middle" class="cv">${r.v.toFixed(dec)}</text>${lab}`; }).join("");
-  const line = pts.length>1 ? `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" class="cl"/>` : "";
-  const dots = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" class="cd"/>`).join("");
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Bar chart">${grid}${bars}${line}${dots}</svg>`;
+    const cls = r.partial ? "partial" : r.small ? "small" : "";
+    out += `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,Y(0)-y)}" rx="5" class="cb ${cls}"><title>${esc(r.lab)}: ${f(r.v)}${r.v2!=null?` · expected ${f(r.v2)}`:""}${r.small?" · small sample":""}</title></rect>
+      <text x="${cx}" y="${y-8}" text-anchor="middle" class="cv">${f(r.v)}</text>`;
+    if (r.small) out += `<text x="${cx}" y="${Y(0)-8}" text-anchor="middle" class="cs">small sample</text>`;
+    return out; }).join("");
+  const refs = (o.refs||[]).filter(x=>x.v!=null).map(x=>`<line x1="${x0}" x2="${W-padR}" y1="${Y(x.v)}" y2="${Y(x.v)}" class="cr ${x.cls||""}"/><text x="${W-padR+6}" y="${Y(x.v)+4}" class="crt ${x.cls||""}">${esc(x.label)} ${f(x.v)}</text>`).join("");
+  let line = "", dots = "";
+  if (o.line2){
+    line = pts2.length>1 ? `<polyline points="${pts2.map(p=>p[0]+","+p[1]).join(" ")}" class="cl x"/>` : "";
+    dots = pts2.map(([x,y,v])=>`<circle cx="${x}" cy="${y}" r="5" class="cd x"><title>expected ${f(v)}</title></circle>`).join("")
+      + (pts2.length ? `<text x="${pts2[pts2.length-1][0]+12}" y="${pts2[pts2.length-1][1]+4}" class="crt x">expected</text>` : "");
+  } else {
+    line = pts.length>1 ? `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" class="cl"/>` : "";
+    dots = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" class="cd"/>`).join("");
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(o.title)}">${g}${refs}${bars}${line}${dots}</svg>`;
 }
 function statsBox(p){
   const c = state.chart;
   const seg = (attr, opts, cur) => `<div class="seg sm">${opts.map(([v,l])=>`<button data-${attr}="${v}" class="${cur===v?"on":""}">${l}</button>`).join("")}</div>`;
   const head = `<h4>Averages: season, previous 3 & 5 seasons, career ${seg("cv",[["table","Table"],["chart","Chart"]],c.view)}</h4>`;
   if (c.view!=="chart") return `<div class="box" style="grid-column:1/-1">${head}<div class="tablewrap">${windowsTable(p)}</div></div>`;
-  const rows = chartData(p);
-  const statName = STATS.find(x=>x[0]===c.stat)[1];
+  const rows = chartRows(p), k = c.stat, isPct = k==="sh";
+  const dec = c.unit==="pg" ? 2 : 1;
+  const opts = isPct
+    ? {fmt: v=>(v*100).toFixed(1)+"%", axis: v=>(v*100).toFixed(0)+"%", title:"Shooting percentage",
+       refs:[{v:p.rates.recent_sh, label:"true talent", cls:"t"}, {v:p.rates.lg_sh, label:`league ${p.posg}`, cls:"l"}]}
+    : {fmt: v=>v.toFixed(dec), axis: v=>c.unit==="pg"?v.toFixed(v<1?2:1):Math.round(v), title:"Stat history", line2: k==="gx"};
+  const cur = rows.find(r=>r.isCur);
+  let note;
+  if (k==="sh"){
+    const n = cur?.s||0, gap = cur && cur.v!=null ? cur.v - p.rates.recent_sh : null;
+    note = `Goals ÷ shots on goal. The dashed green line is his true-talent shooting % (what the model uses); grey is the league average for his position. `
+      + (n < SMALL_SHOTS ? `This season is only ${n} shots, so it's mostly noise. Shooting % needs a few hundred shots to mean much.`
+         : gap!=null ? `This season he's ${gap>=0?"above":"below"} his talent by ${(Math.abs(gap)*100).toFixed(1)} points: expect ${gap>=0?"fewer goals per shot (negative":"more goals per shot (positive"} regression).` : "");
+  } else if (k==="gx"){
+    const d = cur && cur.v2!=null ? cur.g - cur.xg : null;
+    note = `Bars = actual goals, blue line = expected goals from the quality of his shots (location, type, rebounds). Bars above the line = finishing better than expected (often luck, sometimes skill); below = finishing worse. `
+      + (d!=null ? `This season: ${cur.g} goals vs ${cur.xg.toFixed(1)} expected (${d>=0?"+":""}${d.toFixed(1)}).` : "")
+      + (c.mode==="windows" ? " Expected goals aren't available for a full career." : "");
+  } else {
+    note = `${STATS.find(x=>x[0]===k)[1]} ${c.unit==="pg"?"per game":c.unit==="pace"?"per 82 games at this rate":"per season"}. `
+      + (c.unit==="ps" ? "The dashed bar is the current season, which isn't finished. Use 82-game pace to compare it fairly. " : "")
+      + (rows.some(r=>r.small) ? "Faded bars have fewer than 15 games, so treat them with care. " : "")
+      + (k==="g" ? "For the reason behind a change, look at Shots (volume: reliable quickly) and Shooting % (finishing: mostly luck)." : "The line connects the top of each bar.");
+  }
   return `<div class="box" style="grid-column:1/-1">${head}
-    <div class="controls" style="margin-bottom:6px">${seg("cs",STATS,c.stat)}${seg("cm",[["windows","Season, prev 3, prev 5, career"],["seasons","Season by season"]],c.mode)}${seg("cu",[["pg","Per game"],["ps","Per season"]],c.unit)}</div>
-    <div class="chartwrap">${barChart(rows, c.unit, c.mode)}</div>
-    <p class="note">${statName} ${c.unit==="pg"?"per game":(c.mode==="windows"?"per season (this season so far; others averaged per season)":"per season")}. ${c.unit!=="pg"?"The lighter bar is the current season, which isn't finished. ":""}The line connects the top of each bar.</p></div>`;
+    <div class="controls" style="margin-bottom:6px">${seg("cs",STATS,k)}${seg("cm",[["windows","Season, prev 3, prev 5, career"],["seasons","Season by season"]],c.mode)}${isPct?"":seg("cu",UNITS,c.unit)}</div>
+    <div class="chartwrap">${barChart(rows, opts)}</div>
+    <p class="note">${note}</p></div>`;
 }
 
 function detail(pr, g){

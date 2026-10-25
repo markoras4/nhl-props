@@ -526,6 +526,10 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         elif p_high < tail:
             flag = "hot"   # scoring above talent -> negative regression expected
 
+    def mp_season(y):
+        r = me[me.season == y].sum(numeric_only=True)
+        return {"xg": round(float(r.get("xg", 0)), 2), "xg_gp": int(r.get("gp", 0))} if r.get("gp", 0) else {}
+
     def xg_window(yrs):
         s = me[me.season.isin(yrs)].sum(numeric_only=True)
         return {"xg": float(s.get("xg", 0)), "g": float(s.get("g", 0)), "s": float(s.get("s", 0)),
@@ -561,8 +565,9 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
             "prev5": _window(seasons, [cur - i for i in range(1, 6)]),
             "career": _window(seasons, None),
         },
-        "xg_windows": {"cur": xg_window([cur]), "prev3": xg_window([cur - 1, cur - 2, cur - 3])},
-        "by_season": [{"y": y, **seasons[y]} for y in sorted(seasons, reverse=True)[:8] if y >= cur - 5],
+        "xg_windows": {"cur": xg_window([cur]), "prev3": xg_window([cur - 1, cur - 2, cur - 3]),
+                       "prev5": xg_window([cur - i for i in range(1, 6)])},
+        "by_season": [{"y": y, **seasons[y], **mp_season(y)} for y in sorted(seasons, reverse=True)[:8] if y >= cur - 5],
     }
 
 
