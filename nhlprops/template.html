@@ -47,6 +47,10 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:co
 .meta{color:var(--mute);font-size:12px}
 .demo{background:var(--warn);color:#111;font-weight:700;border-radius:6px;padding:2px 8px;font-size:11px}
 nav{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
+.tools{display:flex;gap:8px;align-items:center}
+.tools .seg button{padding:5px 9px;font-size:12px}
+.iconbtn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;width:34px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:15px}
+.iconbtn:hover{border-color:var(--accent)}
 nav button{background:none;border:0;color:var(--mute);font-weight:600;padding:8px 12px;border-radius:8px;cursor:pointer}
 nav button.on{color:var(--text);background:var(--panel2)}
 main{padding-block:18px 64px}
@@ -252,12 +256,8 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
   <div class="wrap top">
     <div class="brand" id="home">NHL Props <b>Lab</b></div>
     <div class="meta" id="meta"></div>
-    <nav id="nav">
-      <button data-tab="games" class="on">Games</button>
-      <button data-tab="props">Top props</button>
-      <button data-tab="track">Track record</button>
-      <button data-tab="how">How it works</button>
-    </nav>
+    <nav id="nav"></nav>
+    <div class="tools"><div class="seg" id="lang"></div><button class="iconbtn" id="theme" type="button"></button></div>
   </div>
 </header>
 <main class="wrap" id="main"></main>
@@ -274,6 +274,224 @@ const store = {
   get(k){ try{ return localStorage.getItem(k) }catch(e){ return null } },
   set(k,v){ try{ v==null||v==="" ? localStorage.removeItem(k) : localStorage.setItem(k,v) }catch(e){} }
 };
+// ------------------------------------------------------------ language
+const I18N = {
+  en: {
+    nav_games:"Games", nav_props:"Top props", nav_track:"Track record", nav_how:"How it works",
+    meta:"{n} upcoming games · updated {t}", demo:"DEMO DATA", theme_light:"Switch to light mode", theme_dark:"Switch to dark mode",
+    no_games:"No upcoming games in the schedule.", today:"Today", n_games:"{n} games", n_out:"{n} out",
+    over:"Over {l}", league_foot:"League this season: {a} goals per game (normal level {b}). Projected score, win % and over % update when you change a goalie.",
+    all_games:"← All games", proj_goals:"projected goals", win_prob:"Win probability", tied60:"tied after 60: {p}",
+    meetings:"Last {n} meetings: {list} ({t} first), avg {a} goals.", no_meetings:"No meetings in the last 4 seasons.",
+    total_goals:"Total goals", line:"Line", model:"Model", history:"History", over_fair:"Over · fair odds o/u", over_odds:"Over odds", over_ph:"over",
+    roster:"{t} roster", matchup:"Matchup",
+    bp_title:"Best picks in this game", bp_sub_odds:"highest edge · one per player · point preferred when the edge is similar", bp_sub_noodds:"no odds yet · most likely points",
+    bp_none_odds:"No goal or point bet has positive value at the current odds.", bp_none:"No players available.",
+    point1:"1+ point", goal:"Goal", edge:"edge {e}", likely:"{p} likely",
+    r_model:"Model {a} vs market {b}", r_plays:"Plays {m} min", r_on:" on {l}", r_pp1:", first power play", r_due:"Scoring below his true talent this season (due)",
+    r_dry:"{n} shots since his last goal", r_gk_weak:"Opposing goalie below average ({r})", r_gk_strong:"Opposing goalie above average ({r})",
+    r_form:"Last {n} games: {g} G, {a} A, {s} shots", r_hot:"Scoring above his true talent, may cool off", r_listed:"Listed {s}",
+    r_gk_unconf:"{t} goalie not confirmed", r_lineup_est:"Lineup estimated", r_short:"Short NHL history",
+    lopsided:"{n1} of the {n} value bets in this game are on {t} players. That usually means the model and the market disagree about {t}'s scoring as a whole, so these bets tend to win or lose together. Treat them as one opinion.",
+    bp_note:"A helper, not a tip: it lists the facts behind each option. Check the warnings and decide for yourself.",
+    st_goalie:"Starting goalie", st_goalie_team:"{t} starting goalie", goalie_team:"{t} goalie", your_pick:"Your pick", expected_tag:" (expected)", no_goalie:"No goalie data.",
+    sv_gaa_cur:"Save % · GAA this season", sv_gaa_3:"Save % · GAA last 3 seasons", gsax:"Goals saved above expected", y3:"3y", xga_ga:"Expected vs actual GA (season)",
+    qfactor:"Quality factor vs average", vs3:"vs {t} (3 seasons)", gp:"GP", q_note:"Quality factor below 1.000 = better than average. Opposing scorers' chances are multiplied by it.",
+    change_goalie:"Change goalie", facing:"Props below are against", unknown:"unknown", opp_goalie_q:"{t} goalie · quality factor", this_season_sv:"{v} this season",
+    injuries:"Injuries", n_out_q:"{o} out · {q} questionable", back_on:"expected back {d}", no_injuries:"No reported injuries.",
+    lu_proj:"Projected lineup", lu_est:"Lineup estimated from recent ice time", goal_pct:"goal %", no_lineup:"No lineup available.",
+    lu_note:"Projected lines weren't available, so players are ranked by recent ice time.",
+    m_g:"Goal", m_a:"Assist", m_pt:"Point", m_sog:"SOG {n}+", player_team:"{t} player", toi:"TOI", signals:"Signals",
+    g_fw:"Forwards", g_d:"Defense", g_ofw:"Other forwards", g_od:"Other defense", g_out:"Not expected to play", g_in:"Expected to play",
+    why_proj:"Not in projected lineup", why_recent:"Not in recent lineups",
+    tip:"Model {p} · fair {f}", tip_odds:" · odds {o} · EV {e}",
+    lg_prob:"= model probability", lg_mkt:"small number = market odds (green when the model sees +5% value or more)", lg_fair:"small number = fair odds (no market odds for this game yet)", lg_val:"value bet",
+    grid_foot:"Click a column to sort, click it again for lineup order. Click a player for his breakdown, charts, and to enter your own odds.", odds_upd:" Odds updated {t}.",
+    w_cur:"This season", w_p3:"Prev 3 seasons", w_p5:"Prev 5 seasons", w_car:"Career",
+    t_games:"Games", t_gap:"G / A / P", t_shots:"Shots", t_gpg:"Goals per game", t_apg:"Assists per game", t_ppg:"Points per game", t_spg:"Shots per game",
+    t_gps:"Goals per season", t_aps:"Assists per season", t_pps:"Points per season", t_sh:"Shooting %",
+    s_g:"Goals", s_a:"Assists", s_p:"Points", s_s:"Shots", s_sh:"Shooting %", s_gx:"Goals vs expected",
+    u_pg:"Per game", u_pace:"82-game pace", u_ps:"Per season", mode_w:"Season, prev 3, prev 5, career", mode_s:"Season by season",
+    avg_head:"Averages: season, previous 3 & 5 seasons, career", v_table:"Table", v_chart:"Chart",
+    seas_gp:"{s} seas · {g} GP", gp_n:"{g} GP", g_s:"{g} G / {s} S", small:"small sample", expected:"expected", no_hist:"No history to chart.",
+    ref_talent:"true talent", ref_league:"league {p}", exp_tip:" · expected {v}", small_tip:" · small sample",
+    n_sh_a:"Goals ÷ shots on goal. The dashed green line is his true-talent shooting % (what the model uses); grey is the league average for his position. ",
+    n_sh_small:"This season is only {n} shots, so it's mostly noise. Shooting % needs a few hundred shots to mean much.",
+    n_sh_above:"This season he's above his talent by {d} points: expect fewer goals per shot (negative regression).",
+    n_sh_below:"This season he's below his talent by {d} points: expect more goals per shot (positive regression).",
+    n_gx:"Bars = actual goals, blue line = expected goals from the quality of his shots (location, type, rebounds). Bars above the line = finishing better than expected (often luck, sometimes skill); below = finishing worse. ",
+    n_gx_cur:"This season: {g} goals vs {x} expected ({d}).", n_gx_car:" Expected goals aren't available for a full career.",
+    n_pg:"{s} per game. ", n_pace:"{s} per 82 games at this rate. ", n_ps:"{s} per season. ",
+    n_ps_note:"The dashed bar is the current season, which isn't finished. Use 82-game pace to compare it fairly. ",
+    n_pace_note:"Pace shows the current rate stretched to 82 games. It isn't a forecast. The model's expectation for tonight is in the props grid. ",
+    n_small:"Faded bars have fewer than 15 games, so treat them with care. ",
+    n_goals_hint:"For the reason behind a change, look at Shots (volume: reliable quickly) and Shooting % (finishing: mostly luck).", n_line:"The line connects the top of each bar.",
+    pv:"Prices & value", h_market:"Market", h_modelfair:"Model · fair", h_oddsmkt:"Odds · market %", h_yours:"Your odds", odds_ph:"odds",
+    pv_note:"\"Market %\" is the probability implied by the odds, with the margin removed. EV uses your odds if you type them, otherwise the market odds. EV = model probability × odds − 1.",
+    built:"How the number is built", c_g60:"Goals/60", c_a60:"Assists/60", c_s60:"Shots/60", c_def:"Opp defence", c_gk:"Opp goalie", c_home:"Home", c_away:"Away", c_b2b:"Back-to-back", c_env:"League scoring", c_streak:"Streak rule",
+    k_xga:"Expected goals / assists", k_xs:"Expected shots on goal", k_og:"Opposing goalie", k_toi:"TOI last 10 / season",
+    reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
+    k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
+    k_spg:"Typical shots per goal", k_drought:"Chance of a drought this long",
+    last10:"Last 10 games", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
+    cmp:"Team comparison", c_ptspct:"Points %", c_tier:"Strength tier", c_streak2:"Streak", c_l5:"Last 5", c_l5gfga:"Last 5 GF / GA", c_gfga:"GF / GA per game",
+    c_rh:"Road / Home GF – GA", c_xgf:"5v5 expected goals share", c_pdo:"PDO (luck, 1000 = normal)", c_hdf:"High-danger shots for /60", c_hda:"High-danger shots against /60",
+    c_ppg:"Power play goals /60", c_pkga:"Penalty kill goals against /60", c_ppm:"Power play minutes / game", c_o55:"Over 5.5 this season", c_o55rh:"Over 5.5 road / home",
+    c_o553:"Over 5.5 last 3 seasons", c_o65:"Over 6.5 this season", yes:"Yes", no:"No", rule6:"6-game rule", rule6_tip:"{tier} team, rule threshold {n}",
+    tier_strong:"strong", tier_average:"average", tier_weak:"weak", res_letters:"WLO",
+    all_days:"All days", all_games2:"All games", search:"Search player", reg_only:"regression signals only", most_likely:"Most likely", best_value:"Best value",
+    h_player:"Player", h_prob:"Probability", h_fair:"Fair", h_odds:"Odds", h_last10:"Last 10", no_match:"No players match.",
+    props_foot:"Only players expected to play. The odds box shows the market price in grey. Type your own to override it. Click a player to open his game.",
+    day:"Day", game:"Game",
+    tr_none_h:"No graded predictions yet", tr_none_p:"Every update saves the model's probabilities. The day after games are played they are graded automatically, and this page shows whether the percentages came true.",
+    tr_meta:"{d} days graded · {g} games · {p} player-games. Skill above 0% means better than guessing the base rate.",
+    tr_market:"Market", tr_bets:"Bets", tr_pred:"Predicted", tr_happ:"Happened", tr_skill:"Skill", tr_game_model:"Game {k} (model)", tr_game_hist:"Game {k} (history only)",
+    tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
+    tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
+    pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
+    tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
+    tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
+    st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
+    inj_out:"Out", inj_q:"Questionable",
+    footer:"Updated four times a day. Stats: MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
+  },
+  sv: {
+    nav_games:"Matcher", nav_props:"Toppspel", nav_track:"Facit", nav_how:"Så fungerar det",
+    meta:"{n} kommande matcher · uppdaterad {t}", demo:"DEMODATA", theme_light:"Byt till ljust läge", theme_dark:"Byt till mörkt läge",
+    no_games:"Inga kommande matcher i spelschemat.", today:"Idag", n_games:"{n} matcher", n_out:"{n} ute",
+    over:"Över {l}", league_foot:"Ligan i år: {a} mål per match (normalnivå {b}). Förväntat resultat, vinstchans och över-% uppdateras när du byter målvakt.",
+    all_games:"← Alla matcher", proj_goals:"förväntade mål", win_prob:"Vinstchans", tied60:"oavgjort efter 60 min: {p}",
+    meetings:"Senaste {n} mötena: {list} ({t} först), i snitt {a} mål.", no_meetings:"Inga möten de senaste 4 säsongerna.",
+    total_goals:"Totalt antal mål", line:"Linje", model:"Modell", history:"Historik", over_fair:"Över · rättvisa odds ö/u", over_odds:"Odds över", over_ph:"över",
+    roster:"{t} trupp", matchup:"Jämförelse",
+    bp_title:"Bästa spelen i matchen", bp_sub_odds:"störst edge · ett per spelare · poäng föredras när edgen är likvärdig", bp_sub_noodds:"inga odds än · mest troliga poäng",
+    bp_none_odds:"Inget mål- eller poängspel har positivt värde till nuvarande odds.", bp_none:"Inga spelare tillgängliga.",
+    point1:"1+ poäng", goal:"Mål", edge:"edge {e}", likely:"{p} chans",
+    r_model:"Modell {a} mot marknad {b}", r_plays:"Spelar {m} min", r_on:" i {l}", r_pp1:", första powerplay", r_due:"Gör färre mål än sin verkliga nivå i år (bör lyfta)",
+    r_dry:"{n} skott sedan senaste målet", r_gk_weak:"Motståndarmålvakten under snittet ({r})", r_gk_strong:"Motståndarmålvakten över snittet ({r})",
+    r_form:"Senaste {n} matcherna: {g} mål, {a} assist, {s} skott", r_hot:"Gör fler mål än sin verkliga nivå, kan svalna", r_listed:"Listad som {s}",
+    r_gk_unconf:"{t}:s målvakt inte bekräftad", r_lineup_est:"Uppställningen är uppskattad", r_short:"Kort NHL-historik",
+    lopsided:"{n1} av {n} värdespel i matchen gäller {t}-spelare. Det betyder oftast att modellen och marknaden har olika syn på {t}:s målproduktion som helhet, så spelen brukar vinna eller förlora tillsammans. Se dem som en enda bedömning.",
+    bp_note:"Ett hjälpmedel, inte ett tips: det visar fakta bakom varje alternativ. Kolla varningarna och bestäm själv.",
+    st_goalie:"Startande målvakt", st_goalie_team:"{t} startmålvakt", goalie_team:"{t} målvakt", your_pick:"Ditt val", expected_tag:" (väntad)", no_goalie:"Ingen målvaktsdata.",
+    sv_gaa_cur:"Räddningsprocent · GAA i år", sv_gaa_3:"Räddningsprocent · GAA senaste 3 säsongerna", gsax:"Räddade mål över förväntan", y3:"3 år", xga_ga:"Förväntade mot insläppta mål (säsong)",
+    qfactor:"Kvalitetsfaktor mot snittet", vs3:"mot {t} (3 säsonger)", gp:"M", q_note:"Kvalitetsfaktor under 1.000 = bättre än snittet. Motståndarnas målchanser multipliceras med den.",
+    change_goalie:"Byt målvakt", facing:"Spelen nedan gäller mot", unknown:"okänd", opp_goalie_q:"{t}:s målvakt · kvalitetsfaktor", this_season_sv:"{v} i år",
+    injuries:"Skador", n_out_q:"{o} ute · {q} osäkra", back_on:"väntas tillbaka {d}", no_injuries:"Inga rapporterade skador.",
+    lu_proj:"Förväntad uppställning", lu_est:"Uppställning uppskattad från istid", goal_pct:"mål-%", no_lineup:"Ingen uppställning tillgänglig.",
+    lu_note:"Förväntade kedjor saknades, så spelarna är rangordnade efter senaste istid.",
+    m_g:"Mål", m_a:"Assist", m_pt:"Poäng", m_sog:"Skott {n}+", player_team:"{t} spelare", toi:"Istid", signals:"Signaler",
+    g_fw:"Anfallare", g_d:"Backar", g_ofw:"Övriga anfallare", g_od:"Övriga backar", g_out:"Väntas inte spela", g_in:"Väntas spela",
+    why_proj:"Inte med i förväntad uppställning", why_recent:"Inte med i de senaste matcherna",
+    tip:"Modell {p} · rättvisa {f}", tip_odds:" · odds {o} · EV {e}",
+    lg_prob:"= modellens sannolikhet", lg_mkt:"litet tal = marknadsodds (grönt när modellen ser +5% värde eller mer)", lg_fair:"litet tal = rättvisa odds (inga marknadsodds för matchen än)", lg_val:"värdespel",
+    grid_foot:"Klicka på en kolumn för att sortera, klicka igen för uppställningsordning. Klicka på en spelare för detaljer, diagram och för att skriva in egna odds.", odds_upd:" Oddsen uppdaterades {t}.",
+    w_cur:"Denna säsong", w_p3:"Förra 3 säsongerna", w_p5:"Förra 5 säsongerna", w_car:"Karriär",
+    t_games:"Matcher", t_gap:"M / A / P", t_shots:"Skott", t_gpg:"Mål per match", t_apg:"Assist per match", t_ppg:"Poäng per match", t_spg:"Skott per match",
+    t_gps:"Mål per säsong", t_aps:"Assist per säsong", t_pps:"Poäng per säsong", t_sh:"Skottprocent",
+    s_g:"Mål", s_a:"Assist", s_p:"Poäng", s_s:"Skott", s_sh:"Skottprocent", s_gx:"Mål mot förväntat",
+    u_pg:"Per match", u_pace:"Takt över 82 matcher", u_ps:"Per säsong", mode_w:"Säsong, förra 3, förra 5, karriär", mode_s:"Säsong för säsong",
+    avg_head:"Snitt: säsong, förra 3 & 5 säsongerna, karriär", v_table:"Tabell", v_chart:"Diagram",
+    seas_gp:"{s} säs · {g} M", gp_n:"{g} M", g_s:"{g} mål / {s} skott", small:"litet underlag", expected:"förväntat", no_hist:"Ingen historik att visa.",
+    ref_talent:"verklig nivå", ref_league:"liga {p}", exp_tip:" · förväntat {v}", small_tip:" · litet underlag",
+    n_sh_a:"Mål ÷ skott på mål. Den streckade gröna linjen är hans verkliga skottprocent (den modellen använder); den grå är ligasnittet för hans position. ",
+    n_sh_small:"Den här säsongen är bara {n} skott, så det är mest slump. Skottprocent behöver några hundra skott för att säga något.",
+    n_sh_above:"I år ligger han {d} procentenheter över sin nivå: räkna med färre mål per skott (negativ regression).",
+    n_sh_below:"I år ligger han {d} procentenheter under sin nivå: räkna med fler mål per skott (positiv regression).",
+    n_gx:"Staplar = faktiska mål, blå linje = förväntade mål utifrån kvaliteten på hans skott (läge, typ, returer). Staplar över linjen = bättre avslut än förväntat (ofta tur, ibland skicklighet); under = sämre avslut. ",
+    n_gx_cur:"I år: {g} mål mot {x} förväntade ({d}).", n_gx_car:" Förväntade mål finns inte för en hel karriär.",
+    n_pg:"{s} per match. ", n_pace:"{s} per 82 matcher i den här takten. ", n_ps:"{s} per säsong. ",
+    n_ps_note:"Den streckade stapeln är innevarande säsong, som inte är färdigspelad. Använd takt över 82 matcher för en rättvis jämförelse. ",
+    n_pace_note:"Takten visar nuvarande nivå utsträckt till 82 matcher. Det är ingen prognos. Modellens förväntan för kvällen finns i spelarlistan. ",
+    n_small:"Bleka staplar bygger på färre än 15 matcher, så tolka dem försiktigt. ",
+    n_goals_hint:"För att se orsaken till en förändring, titta på Skott (volym: pålitligt snabbt) och Skottprocent (avslut: mest tur).", n_line:"Linjen binder ihop toppen av varje stapel.",
+    pv:"Priser & värde", h_market:"Spel", h_modelfair:"Modell · rättvisa", h_oddsmkt:"Odds · marknad-%", h_yours:"Dina odds", odds_ph:"odds",
+    pv_note:"\"Marknad-%\" är sannolikheten som oddsen motsvarar, med marginalen borträknad. EV använder dina odds om du skriver in dem, annars marknadsoddsen. EV = modellens sannolikhet × odds − 1.",
+    built:"Så räknas siffran fram", c_g60:"Mål/60", c_a60:"Assist/60", c_s60:"Skott/60", c_def:"Motst. försvar", c_gk:"Motst. målvakt", c_home:"Hemma", c_away:"Borta", c_b2b:"Back-to-back", c_env:"Ligans målnivå", c_streak:"Svitregeln",
+    k_xga:"Förväntade mål / assist", k_xs:"Förväntade skott på mål", k_og:"Motståndarmålvakt", k_toi:"Istid senaste 10 / säsong",
+    reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
+    k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
+    k_spg:"Typiskt antal skott per mål", k_drought:"Chans för en så lång torka",
+    last10:"Senaste 10 matcherna", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
+    cmp:"Lagjämförelse", c_ptspct:"Poäng-%", c_tier:"Styrkenivå", c_streak2:"Svit", c_l5:"Senaste 5", c_l5gfga:"Senaste 5 GM / IM", c_gfga:"GM / IM per match",
+    c_rh:"Borta / Hemma GM – IM", c_xgf:"Andel förväntade mål 5 mot 5", c_pdo:"PDO (tur, 1000 = normalt)", c_hdf:"Farliga skott för /60", c_hda:"Farliga skott mot /60",
+    c_ppg:"Powerplaymål /60", c_pkga:"Insläppta mål i boxplay /60", c_ppm:"Powerplayminuter / match", c_o55:"Över 5.5 i år", c_o55rh:"Över 5.5 borta / hemma",
+    c_o553:"Över 5.5 senaste 3 säsongerna", c_o65:"Över 6.5 i år", yes:"Ja", no:"Nej", rule6:"6-matchersregeln", rule6_tip:"{tier} lag, regelns gräns {n}",
+    tier_strong:"starkt", tier_average:"medel", tier_weak:"svagt", res_letters:"VFÖ",
+    all_days:"Alla dagar", all_games2:"Alla matcher", search:"Sök spelare", reg_only:"endast regressionssignaler", most_likely:"Mest troliga", best_value:"Bäst värde",
+    h_player:"Spelare", h_prob:"Sannolikhet", h_fair:"Rättvisa", h_odds:"Odds", h_last10:"Senaste 10", no_match:"Inga spelare matchar.",
+    props_foot:"Endast spelare som väntas spela. Oddsrutan visar marknadspriset i grått. Skriv in egna odds för att ersätta det. Klicka på en spelare för att öppna hans match.",
+    day:"Dag", game:"Match",
+    tr_none_h:"Inga rättade prognoser än", tr_none_p:"Varje uppdatering sparar modellens sannolikheter. Dagen efter att matcherna spelats rättas de automatiskt, och den här sidan visar om procentsatserna slog in.",
+    tr_meta:"{d} dagar rättade · {g} matcher · {p} spelarmatcher. Skicklighet över 0% betyder bättre än att gissa på grundfrekvensen.",
+    tr_market:"Spel", tr_bets:"Antal", tr_pred:"Förutsagt", tr_happ:"Utfall", tr_skill:"Skicklighet", tr_game_model:"Match {k} (modell)", tr_game_hist:"Match {k} (endast historik)",
+    tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
+    tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
+    pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
+    tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
+    tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
+    st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
+    inj_out:"Ute", inj_q:"Osäker",
+    footer:"Uppdateras fyra gånger om dagen. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
+  }
+};
+let LANG = (()=>{ const s = store.get("set:lang"); if (s==="sv"||s==="en") return s; return (navigator.language||"").toLowerCase().startsWith("sv") ? "sv" : "en"; })();
+const LOCALE = () => LANG==="sv" ? "sv-SE" : "en-GB";
+function t(key, vars){
+  let s = (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key] ?? key;
+  if (vars) s = s.replace(/\{(\w+)\}/g, (m,k)=> vars[k]!=null ? vars[k] : m);
+  return s;
+}
+// words that arrive in the data (injury reports, goalie reports)
+const SV_WORDS = {
+  "out":"Ute", "day-to-day":"Dag till dag", "injured reserve":"Skadelistan (IR)", "long-term injured reserve":"Långtidsskadelistan (LTIR)",
+  "questionable":"Osäker", "doubtful":"Tveksam", "probable":"Trolig", "suspension":"Avstängd", "suspended":"Avstängd", "game-time decision":"Avgörs inför match",
+  "upper body":"Överkropp", "lower body":"Underkropp", "illness":"Sjukdom", "knee":"Knä", "ankle":"Fotled", "shoulder":"Axel", "head":"Huvud",
+  "hand":"Hand", "foot":"Fot", "leg":"Ben", "back":"Rygg", "groin":"Ljumske", "hip":"Höft", "wrist":"Handled", "concussion":"Hjärnskakning",
+  "surgery":"Operation", "personal":"Personliga skäl", "undisclosed":"Ej angiven", "face":"Ansikte", "finger":"Finger", "thumb":"Tumme", "elbow":"Armbåge",
+  "neck":"Nacke", "rib":"Revben", "ribs":"Revben", "abdomen":"Mage", "achilles":"Hälsena", "hamstring":"Baksida lår", "quadriceps":"Framsida lår", "calf":"Vad",
+  "left":"vänster", "right":"höger", "lower":"nedre", "upper":"övre", "body":"kropp", "fracture":"Fraktur", "sprain":"Stukning", "strain":"Sträckning",
+};
+function trData(s){
+  if (LANG!=="sv" || !s) return s;
+  const whole = SV_WORDS[s.toLowerCase().trim()]; if (whole) return whole;
+  // longest phrases first ("upper body" before "upper"), then join the parts as a Swedish list
+  let out = " " + s.toLowerCase().replace(/[-_]/g," ") + " ";
+  const keys = Object.keys(SV_WORDS).sort((a,b)=>b.length-a.length);
+  const parts = [];
+  for (const k of keys){
+    const re = new RegExp("\\s" + k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "(?=\\s)", "g");
+    out = out.replace(re, m => { parts.push(SV_WORDS[k]); return " \u0001" + (parts.length-1) + " "; });
+  }
+  out = out.trim().split(/\s+/).map(w => w.startsWith("\u0001") ? parts[+w.slice(1)] : w).join(" ");
+  const words = out.split(" ").map(w=>w.toLowerCase()), items = [];
+  for (let i=0;i<words.length;i++){   // "vänster" + "knä" -> "vänster knä"
+    if (/^(vänster|höger|nedre|övre)$/.test(words[i]) && i+1<words.length){ items.push(words[i]+" "+words[i+1]); i++; }
+    else items.push(words[i]);
+  }
+  const res = items.join(", ");
+  return res.charAt(0).toUpperCase() + res.slice(1);
+}
+function trStatus(s){
+  if (!s) return t("st_projected");
+  const m = s.match(/^(very likely|likely|confirmed|unconfirmed|projected|your pick)\s*(.*)$/i);
+  if (!m) return trData(s);
+  const k = m[1].toLowerCase();
+  const word = k==="very likely" ? t("st_very") : k==="likely" ? t("st_likely") : k==="confirmed" ? t("st_confirmed") : k==="unconfirmed" ? t("st_unconfirmed") : k==="your pick" ? t("your_pick") : t("st_projected");
+  return (word + " " + m[2]).trim();
+}
+const trTier = x => x ? t("tier_"+x) : "–";
+const trResults = s => { if (!s) return "–"; const L = t("res_letters"); return s.replace(/[WLO]/g, c=>L["WLO".indexOf(c)]); };
+const trWhy = w => !w ? "" : w==="Not in projected lineup" ? t("why_proj") : w==="Not in recent lineups" ? t("why_recent") : trData(w);
+
+// ------------------------------------------------------------ theme
+function currentTheme(){
+  const a = document.documentElement.getAttribute("data-theme");
+  if (a==="light"||a==="dark") return a;
+  return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+(()=>{ const s = store.get("set:theme"); if (s==="light"||s==="dark") document.documentElement.setAttribute("data-theme", s); })();
+
 const P = id => DATA.players[String(id)];
 const G = id => DATA.goalies[String(id)];
 const gameById = Object.fromEntries(DATA.games.map(g => [String(g.id), g]));
@@ -288,7 +506,7 @@ const state = {
   chart: (()=>{ try { return Object.assign({view:"table", stat:"g", mode:"windows", unit:"pg"}, JSON.parse(store.get("set:chart")||"{}")); } catch(e){ return {view:"table", stat:"g", mode:"windows", unit:"pg"}; } })(),
 };
 DATA.games.forEach(g => { state.goalie[g.id] = {};
-  for (const t of [g.home, g.away]) state.goalie[g.id][t] = store.get(`goalie:${g.id}:${t}`) || g.starters[t]; });
+  for (const tm of [g.home, g.away]) state.goalie[g.id][tm] = store.get(`goalie:${g.id}:${tm}`) || g.starters[tm]; });
 
 // ------------------------------------------------------------ model math (mirrors model.py)
 function goalieRatio(game, team){ const id = state.goalie[game.id]?.[team]; const g = id && G(id); return g ? g.ratio : 1; }
@@ -304,7 +522,7 @@ function poisOver(lam, line){ const k=Math.floor(line); let term=Math.exp(-lam),
 function pmf(lam,n=16){ const o=[Math.exp(-lam)]; for(let i=1;i<n;i++) o.push(o[i-1]*lam/i); return o; }
 function gameDist(mh, ma){
   const ph=pmf(mh*0.985), pa=pmf(ma*0.985), tot=new Array(34).fill(0); let tie=0, hw=0;
-  for(let i=0;i<ph.length;i++) for(let j=0;j<pa.length;j++){ const p=ph[i]*pa[j]; let t=i+j; if(i===j){tie+=p;t+=1;} else if(i>j) hw+=p; tot[t]+=p; }
+  for(let i=0;i<ph.length;i++) for(let j=0;j<pa.length;j++){ const p=ph[i]*pa[j]; let s=i+j; if(i===j){tie+=p;s+=1;} else if(i>j) hw+=p; tot[s]+=p; }
   const ph_ = hw + tie*((mh+ma)>0 ? mh/(mh+ma) : 0.5);
   return {ph:ph_, pa:1-ph_, tie, over: L => tot.slice(Math.floor(L)+1).reduce((a,b)=>a+b,0)};
 }
@@ -323,8 +541,8 @@ function prob(pr, game, m){
   if (m==="pt") return atLeastOne(l.g + l.a);
   return poisOver(l.s, parseFloat(m.slice(1)));
 }
-const MARKETS = [["g","Goal"],["a","Assist"],["pt","Point"],...C.sog_lines.map(L=>["s"+L,`SOG ${Math.ceil(L)}+`])];
-const mName = m => (MARKETS.find(x=>x[0]===m)||[0,m])[1];
+const MKEYS = ["g","a","pt",...C.sog_lines.map(L=>"s"+L)];
+const mName = m => m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt") : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
 function hitGame(gm, m){
   if (m==="g") return gm.g>=1; if (m==="a") return gm.a>=1; if (m==="pt") return gm.g+gm.a>=1;
   return gm.s > parseFloat(m.slice(1));
@@ -334,73 +552,85 @@ const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
 const userOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
 const getOdds = (gid,pid,m) => userOdds(gid,pid,m) ?? book(gid,pid,m)?.o ?? null;
 const noVig = b => b && b.o && b.n ? (1/b.o)/((1/b.o)+(1/b.n)) : null;
-const bookName = gid => "Market";
 const VALUE = 0.05;
+const evTxt = ev => (ev>0?"+":"")+(ev*100).toFixed(1)+"%";
 
 // ------------------------------------------------------------ helpers
-const timeOf = g => g.start ? new Date(g.start).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}) : "TBD";
-const dayLabel = d => { const x = new Date(d+"T12:00:00"); return x.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"}); };
-function logo(t, size){
-  const L = DATA.logos && DATA.logos[t], st = size ? ` style="--lg:${size}px"` : "";
-  if (!L) return `<span class="lgfb"${st}>${t}</span>`;
-  return `<img class="lg lg-d" src="${L.dark||L.light}" alt="${t} logo"${st}><img class="lg lg-l" src="${L.light||L.dark}" alt="${t} logo"${st}>`;
+const timeOf = g => g.start ? new Date(g.start).toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"}) : "TBD";
+const dayLabel = d => new Date(d+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"short",day:"numeric",month:"short"});
+const dayShort = d => new Date(d+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"short"}).replace(".","");
+function logo(tm, size){
+  const L = DATA.logos && DATA.logos[tm], st = size ? ` style="--lg:${size}px"` : "";
+  if (!L) return `<span class="lgfb"${st}>${tm}</span>`;
+  return `<img class="lg lg-d" src="${L.dark||L.light}" alt="${tm}"${st}><img class="lg lg-l" src="${L.light||L.dark}" alt="${tm}"${st}>`;
 }
-const rec = t => t ? `${t.w??0}-${t.l??0}-${t.otl??0}` : "";
+const rec = x => x ? `${x.w??0}-${x.l??0}-${x.otl??0}` : "";
 function statusPill(s){
   const k = (s||"").toLowerCase();
   const cls = k.includes("confirmed") && !k.includes("unconfirmed") ? "s-confirmed" : (k.includes("likely") ? "s-likely" : "");
-  return `<span class="pill ${cls}"><i></i>${esc(s||"Projected")}</span>`;
+  return `<span class="pill ${cls}"><i></i>${esc(trStatus(s))}</span>`;
 }
-function injPill(inj){ if(!inj) return ""; return inj.kind==="out" ? `<span class="pill s-out">${esc(inj.status||"Out")}</span>` : `<span class="pill s-q">${esc(inj.status||"Questionable")}</span>`; }
+function injPill(inj){ if(!inj) return ""; return inj.kind==="out" ? `<span class="pill s-out">${esc(trData(inj.status)||t("inj_out"))}</span>` : `<span class="pill s-q">${esc(trData(inj.status)||t("inj_q"))}</span>`; }
 function regPills(p){
   const r = p.regress, d = p.drought, out = [];
-  if (r.flag==="due") out.push(`<span class="pill s-due" title="Scoring below his true talent this season: positive regression expected">▲ Due</span>`);
-  if (r.flag==="hot") out.push(`<span class="pill s-hot" title="Scoring above his true talent this season: negative regression expected">▼ Hot</span>`);
-  if (d.found && d.p!=null && d.p<0.15 && d.shots>=8) out.push(`<span class="pill s-dry" title="${d.shots} shots since his last goal. That long a drought happens ${pct(d.p)} of the time for his talent.">${d.shots} shots dry</span>`);
+  if (r.flag==="due") out.push(`<span class="pill s-due" title="${esc(t("tip_due"))}">${t("pill_due")}</span>`);
+  if (r.flag==="hot") out.push(`<span class="pill s-hot" title="${esc(t("tip_hot"))}">${t("pill_hot")}</span>`);
+  if (d.found && d.p!=null && d.p<0.15 && d.shots>=8) out.push(`<span class="pill s-dry" title="${esc(t("tip_dry",{n:d.shots,p:pct(d.p)}))}">${t("pill_dry",{n:d.shots})}</span>`);
   return out.join(" ");
 }
 const isReg = p => p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8);
 
 // ------------------------------------------------------------ chrome
 function header(){
-  $("#meta").innerHTML = `${DATA.games.length} upcoming games · updated ${DATA.built.replace("T"," ")}` + (DATA.demo ? ` <span class="demo">DEMO DATA</span>` : "");
+  document.documentElement.lang = LANG;
+  $("#meta").innerHTML = t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "");
+  $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["track","nav_track"],["how","nav_how"]]
+    .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}">${t(l)}</button>`).join("");
+  $("#lang").innerHTML = `<button data-l="en" class="${LANG==="en"?"on":""}" aria-label="English">EN</button><button data-l="sv" class="${LANG==="sv"?"on":""}" aria-label="Svenska">SV</button>`;
+  const th = currentTheme();
+  $("#theme").textContent = th==="dark" ? "☀" : "☾";
+  $("#theme").title = th==="dark" ? t("theme_light") : t("theme_dark");
+  $("#theme").setAttribute("aria-label", $("#theme").title);
+}
+function wireHeader(){
   $("#nav").onclick = e => { const b=e.target.closest("button"); if(!b) return; go({tab:b.dataset.tab, game:null}); };
   $("#home").onclick = () => go({tab:"games", game:null});
+  $("#lang").onclick = e => { const b=e.target.closest("button"); if(!b || b.dataset.l===LANG) return; LANG=b.dataset.l; store.set("set:lang", LANG); header(); render(); };
+  $("#theme").onclick = () => { const next = currentTheme()==="dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next); store.set("set:theme", next); header(); };
   window.onhashchange = () => { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) { state.tab="games"; state.game=m[1]; render(); } else if(!location.hash){ state.game=null; render(); } };
 }
 function go(patch){
   Object.assign(state, patch, {open:null});
   if (patch.game===null && location.hash) history.replaceState(null,"",location.pathname);
   if (patch.game) { history.replaceState(null,"","#g"+patch.game); }
-  [...$("#nav").children].forEach(x=>x.classList.toggle("on", x.dataset.tab===state.tab));
   render(); window.scrollTo(0,0);
 }
 
 // ------------------------------------------------------------ games list
 function gamesList(){
-  if (!dates.length){ $("#main").innerHTML = `<div class="card empty">No upcoming games in the schedule.</div>`; return; }
+  if (!dates.length){ $("#main").innerHTML = `<div class="card empty">${t("no_games")}</div>`; return; }
   if (!dates.includes(state.day)) state.day = dates[0];
   const games = DATA.games.filter(g=>g.date===state.day);
   const L = DATA.league;
-  let html = `<div class="days">${dates.map(d=>`<button class="day ${d===state.day?"on":""}" data-d="${d}"><b>${d===dates[0]?"Today":dayLabel(d).split(",")[0]}</b><span>${dayLabel(d)} · ${DATA.games.filter(g=>g.date===d).length} games</span></button>`).join("")}</div>
+  let html = `<div class="days">${dates.map(d=>`<button class="day ${d===state.day?"on":""}" data-d="${d}"><b>${d===dates[0]?t("today"):dayShort(d)}</b><span>${dayLabel(d)} · ${t("n_games",{n:DATA.games.filter(g=>g.date===d).length})}</span></button>`).join("")}</div>
   <div class="glist">`;
   for (const g of games){
     const A = DATA.teams[g.away]||{}, H = DATA.teams[g.home]||{};
     const mu = gameMu(g), d = gameDist(mu.h, mu.a);
     const ga = G(state.goalie[g.id][g.away]), gh = G(state.goalie[g.id][g.home]);
     const outA = (A.injuries||[]).filter(i=>i.kind==="out").length, outH = (H.injuries||[]).filter(i=>i.kind==="out").length;
-    html += `<div class="card grow" data-g="${g.id}" tabindex="0" role="button" aria-label="${g.away} at ${g.home}">
+    html += `<div class="card grow" data-g="${g.id}" tabindex="0" role="button" aria-label="${g.away} @ ${g.home}">
       <div class="gtime">${timeOf(g)}<small>${esc(g.venue||"")}</small></div>
       <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"} ${statusPill(g.starter_status[g.away])}</span>
-        <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${outA} out</span>`:""}</span></div>
+        <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
       <div class="gmid"><div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>
         <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div></div>
       <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"} · ${rec(H)}</span>
-        <span class="tags">${outH?`<span class="pill s-out">${outH} out</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
-      <div class="gou">${C.ou_lines.map(Lx=>`<span>Over ${Lx}</span><b>${pct(blendOver(g,d,Lx))}</b>`).join("")}</div>
+        <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
+      <div class="gou">${C.ou_lines.map(Lx=>`<span>${t("over",{l:Lx})}</span><b>${pct(blendOver(g,d,Lx))}</b>`).join("")}</div>
     </div>`;
   }
-  html += `</div><p class="foot">League this season: ${fmt(L.cur_gpg,2)} goals per game (normal level ${fmt(L.base_gpg,2)}). Projected score, win % and over % update when you change a goalie.</p>`;
+  html += `</div><p class="foot">${t("league_foot",{a:fmt(L.cur_gpg,2), b:fmt(L.base_gpg,2)})}</p>`;
   $("#main").innerHTML = html;
   $("#main").onclick = e => {
     const d = e.target.closest(".day"); if (d){ state.day = d.dataset.d; render(); return; }
@@ -422,27 +652,27 @@ function gamePage(){
     const od = !isNaN(uo) ? uo : (bt?.over ?? NaN), ev = isNaN(od)?null:b*od-1;
     return `<div><b>${Lx}</b></div><div>${pct(m,1)}</div><div>${pct(hst,1)}</div>
       <div><b>${pct(b,1)}</b> <span class="meta">${(1/b).toFixed(2)} / ${(1/(1-b)).toFixed(2)}</span></div>
-      <div><input class="odds ouodds" id="ou-${g.id}-${Lx}" data-k="${k}" placeholder="${bt?.over?bt.over.toFixed(2):"over"}" value="${isNaN(uo)?"":uo}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span></div>`;
+      <div><input class="odds ouodds" id="ou-${g.id}-${Lx}" data-k="${k}" placeholder="${bt?.over?bt.over.toFixed(2):t("over_ph")}" value="${isNaN(uo)?"":uo}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span></div>`;
   }).join("");
-  let html = `<button class="back" id="back">← All games</button>
+  let html = `<button class="back" id="back">${t("all_games")}</button>
   <div class="card ghero">
-    <div class="tm">${logo(g.away)}<div><div class="abbr">${g.away}</div><div class="meta">${rec(A)} · ${A.last5||""}</div></div></div>
-    <div class="big">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>projected goals · ${dayLabel(g.date)} ${timeOf(g)}</small></div>
-    <div class="tm r">${logo(g.home)}<div><div class="abbr">${g.home}</div><div class="meta">${H.last5||""} · ${rec(H)}</div></div></div>
+    <div class="tm">${logo(g.away)}<div><div class="abbr">${g.away}</div><div class="meta">${rec(A)} · ${trResults(A.last5)}</div></div></div>
+    <div class="big">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>${t("proj_goals")} · ${dayLabel(g.date)} ${timeOf(g)}</small></div>
+    <div class="tm r">${logo(g.home)}<div><div class="abbr">${g.home}</div><div class="meta">${trResults(H.last5)} · ${rec(H)}</div></div></div>
   </div>
   <div class="gsum">
-    <div class="box"><h4>Win probability</h4>
-      <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">tied after 60: ${pct(d.tie)}</span><span>${pct(d.ph)} ${g.home}</span></div>
+    <div class="box"><h4>${t("win_prob")}</h4>
+      <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
-      <p class="note">${g.h2h?.n?`Last ${g.h2h.n} meetings: ${g.h2h.games.map(x=>`${x.date.slice(2)} ${x.score}`).join(" · ")} (${g.away} first), avg ${fmt(g.h2h.avg_total,1)} goals.`:"No meetings in the last 4 seasons."}</p></div>
-    <div class="box"><h4>Total goals</h4>
-      <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Over odds</div>${ou}</div></div>
+      <p class="note">${g.h2h?.n ? t("meetings",{n:g.h2h.n, list:g.h2h.games.map(x=>`${x.date.slice(2)} ${x.score}`).join(" · "), t:g.away, a:fmt(g.h2h.avg_total,1)}) : t("no_meetings")}</p></div>
+    <div class="box"><h4>${t("total_goals")}</h4>
+      <div class="ou"><div class="h">${t("line")}</div><div class="h">${t("model")}</div><div class="h">${t("history")}</div><div class="h">${t("over_fair")}</div><div class="h">${t("over_odds")}</div>${ou}</div></div>
   </div>
   ${bestPicksBox(g)}
   <div class="sides"><div class="seg" id="sides">
-    <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${g.away} roster</button>
-    <button data-s="matchup" class="${state.side==="matchup"?"on":""}">Matchup</button>
-    <button data-s="${g.home}" class="${state.side===g.home?"on":""}">${logo(g.home)}${g.home} roster</button></div></div>
+    <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${t("roster",{t:g.away})}</button>
+    <button data-s="matchup" class="${state.side==="matchup"?"on":""}">${t("matchup")}</button>
+    <button data-s="${g.home}" class="${state.side===g.home?"on":""}">${logo(g.home)}${t("roster",{t:g.home})}</button></div></div>
   <div id="sidebody"></div>`;
   $("#main").innerHTML = html;
   $("#back").onclick = () => go({game:null});
@@ -482,81 +712,81 @@ function bestPicks(g){
 function pickReasons(c, g){
   const p = c.p, pr = c.pr, opp = pr.opp, why = [], warn = [];
   const b = book(g.id, pr.id, c.m), nv = noVig(b), imp = c.od ? 1/c.od : null;
-  if (c.od) why.push(`Model ${pct(c.v)} vs market ${pct(nv ?? imp)}`);
+  if (c.od) why.push(t("r_model",{a:pct(c.v), b:pct(nv ?? imp)}));
   const lu = DATA.teams[pr.team]?.lineup?.groups || {};
   const line = Object.entries(lu).find(([k,ids])=>/^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
   const pp1 = (lu.pp1||[]).includes(pr.id);
-  why.push(`Plays ${fmt(p.toi_proj,1)} min${line?` on ${line.toUpperCase()}`:""}${pp1?", first power play":""}`);
-  if (p.regress.flag==="due") why.push("Scoring below his true talent this season (due)");
-  if (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8) why.push(`${p.drought.shots} shots since his last goal`);
+  why.push(t("r_plays",{m:fmt(p.toi_proj,1)}) + (line ? t("r_on",{l:line.toUpperCase()}) : "") + (pp1 ? t("r_pp1") : ""));
+  if (p.regress.flag==="due") why.push(t("r_due"));
+  if (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8) why.push(t("r_dry",{n:p.drought.shots}));
   const og = G(state.goalie[g.id][opp]);
-  if (og && og.ratio>1.02) why.push(`Opposing goalie below average (${fmt(og.ratio,2)})`);
-  if (og && og.ratio<0.98) warn.push(`Opposing goalie above average (${fmt(og.ratio,2)})`);
-  const f = p.form; if (f.gp>=3) why.push(`Last ${f.gp} games: ${f.g} G, ${f.a} A, ${f.s} shots`);
-  if (p.regress.flag==="hot") warn.push("Scoring above his true talent, may cool off");
-  if (p.injury?.kind==="questionable") warn.push(`Listed ${p.injury.status}`);
+  if (og && og.ratio>1.02) why.push(t("r_gk_weak",{r:fmt(og.ratio,2)}));
+  if (og && og.ratio<0.98) warn.push(t("r_gk_strong",{r:fmt(og.ratio,2)}));
+  const f = p.form; if (f.gp>=3) why.push(t("r_form",{n:f.gp, g:f.g, a:f.a, s:f.s}));
+  if (p.regress.flag==="hot") warn.push(t("r_hot"));
+  if (p.injury?.kind==="questionable") warn.push(t("r_listed",{s:trData(p.injury.status)}));
   const st = (g.starter_status[opp]||"").toLowerCase();
-  if (!st.includes("confirmed") || st.includes("unconfirmed")) warn.push(`${opp} goalie not confirmed`);
-  if (DATA.teams[pr.team]?.lineup?.source!=="projected") warn.push("Lineup estimated");
-  if ((p.windows?.career?.gp||0) < 40) warn.push("Short NHL history");
+  if (!st.includes("confirmed") || st.includes("unconfirmed")) warn.push(t("r_gk_unconf",{t:opp}));
+  if (DATA.teams[pr.team]?.lineup?.source!=="projected") warn.push(t("r_lineup_est"));
+  if ((p.windows?.career?.gp||0) < 40) warn.push(t("r_short"));
   return {why, warn};
 }
 function bestPicksBox(g){
   const {picks, hasOdds, teamCount} = bestPicks(g);
-  if (!picks.length) return `<div class="box picks"><h4>Best picks in this game</h4><p class="meta">${hasOdds?"No goal or point bet has positive value at the current odds.":"No players available."}</p></div>`;
+  if (!picks.length) return `<div class="box picks"><h4>${t("bp_title")}</h4><p class="meta">${hasOdds?t("bp_none_odds"):t("bp_none")}</p></div>`;
   const cards = picks.map(c=>{ const {why, warn} = pickReasons(c, g);
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
-        <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?"1+ point":"Goal"}</span>
-          <div class="po">${c.od?c.od.toFixed(2):"–"}</div><div class="meta">${c.ev!=null?`edge ${(c.ev>0?"+":"")+(c.ev*100).toFixed(1)}%`:`${pct(c.v)} likely`}</div></div></div>
+        <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?t("point1"):t("goal")}</span>
+          <div class="po">${c.od?c.od.toFixed(2):"–"}</div><div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
       <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul></div>`; }).join("");
-  const [[t1,n1],[t2,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
-  const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${n1} of the ${n1+n2} value bets in this game are on ${t1} players. That usually means the model and the market disagree about ${t1}'s scoring as a whole, so these bets tend to win or lose together. Treat them as one opinion.</p>` : "";
-  return `<div class="box picks"><h4>Best picks in this game <span class="meta">${hasOdds?"highest edge · one per player · point preferred when the edge is similar":"no odds yet · most likely points"}</span></h4>
+  const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
+  const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
+  return `<div class="box picks"><h4>${t("bp_title")} <span class="meta">${hasOdds?t("bp_sub_odds"):t("bp_sub_noodds")}</span></h4>
     <div class="pgrid">${cards}</div>${lopsided}
-    <p class="note">A helper, not a tip: it lists the facts behind each option. The model hasn't been tested for profit yet, so check the warnings and decide for yourself.</p></div>`;
+    <p class="note">${t("bp_note")}</p></div>`;
 }
 
-function goalieCard(g, team){
+function goalieCard(g, team, title){
   const opp = team===g.home ? g.away : g.home;
   const id = state.goalie[g.id][team], q = G(id);
   const isProj = String(id)===String(g.starters[team]);
   const status = isProj ? g.starter_status[team] : "Your pick";
   const opts = (g.goalies[team]||[]).map(i=>{ const x=G(i); const inj = injuryOfName(team, x?.name);
-    return `<option value="${i}" ${String(i)===String(id)?"selected":""}>${esc(x?.name)}${String(i)===String(g.starters[team])?" (expected)":""}${inj?" – "+inj.status:""}</option>`; }).join("");
-  if (!q) return `<div class="box"><h4>Starting goalie</h4><p class="meta">No goalie data.</p></div>`;
+    return `<option value="${i}" ${String(i)===String(id)?"selected":""}>${esc(x?.name)}${String(i)===String(g.starters[team])?t("expected_tag"):""}${inj?" – "+esc(trData(inj.status)):""}</option>`; }).join("");
+  if (!q) return `<div class="box"><h4>${title}</h4><p class="meta">${t("no_goalie")}</p></div>`;
   const c=q.cur, l=q.last3, vs=q.vs&&q.vs[opp];
   const r = q.ratio, qc = r<0.98?"up":r>1.02?"down":"";
-  return `<div class="box"><h4>Starting goalie ${statusPill(status)}</h4>
+  return `<div class="box"><h4>${title} ${statusPill(status)}</h4>
     <div class="gname">${esc(q.name)}</div>
     <div class="kv">
-      <span>Save % · GAA this season</span><span>${c?`${sv3(c.sv)} · ${fmt(c.gaa,2)}`:"–"}</span>
-      <span>Save % · GAA last 3 seasons</span><span>${l?`${sv3(l.sv)} · ${fmt(l.gaa,2)}`:"–"}</span>
-      <span>Goals saved above expected</span><span>${c?fmt(c.gsax,1):"–"} <span class="meta">/ ${l?fmt(l.gsax,1):"–"} 3y</span></span>
-      <span>Expected vs actual GA (season)</span><span>${c?`${fmt(c.xga,1)} / ${c.ga}`:"–"}</span>
-      <span>Quality factor vs average</span><span class="${qc}">${fmt(r,3)}</span>
-      <span>vs ${opp} (3 seasons)</span><span>${vs?`${vs.gp} GP · ${sv3(vs.sv)}`:"–"}</span>
+      <span>${t("sv_gaa_cur")}</span><span>${c?`${sv3(c.sv)} · ${fmt(c.gaa,2)}`:"–"}</span>
+      <span>${t("sv_gaa_3")}</span><span>${l?`${sv3(l.sv)} · ${fmt(l.gaa,2)}`:"–"}</span>
+      <span>${t("gsax")}</span><span>${c?fmt(c.gsax,1):"–"} <span class="meta">/ ${l?fmt(l.gsax,1):"–"} ${t("y3")}</span></span>
+      <span>${t("xga_ga")}</span><span>${c?`${fmt(c.xga,1)} / ${c.ga}`:"–"}</span>
+      <span>${t("qfactor")}</span><span class="${qc}">${fmt(r,3)}</span>
+      <span>${t("vs3",{t:opp})}</span><span>${vs?`${vs.gp} ${t("gp")} · ${sv3(vs.sv)}`:"–"}</span>
     </div>
-    <p class="note">Quality factor below 1.000 = better than average. Opposing scorers' chances are multiplied by it.</p>
-    <select data-gteam="${team}" id="gk-${g.id}-${team}" style="width:100%;margin-top:8px" aria-label="Change goalie">${opts}</select></div>`;
+    <p class="note">${t("q_note")}</p>
+    <select data-gteam="${team}" id="gk-${g.id}-${team}" style="width:100%;margin-top:8px" aria-label="${t("change_goalie")}">${opts}</select></div>`;
 }
 function facingBar(g, team, opp){
   const id = state.goalie[g.id][opp], q = G(id);
   const isProj = String(id)===String(g.starters[opp]);
-  const opts = (g.goalies[opp]||[]).map(i=>`<option value="${i}" ${String(i)===String(id)?"selected":""}>${esc(G(i)?.name)}${String(i)===String(g.starters[opp])?" (expected)":""}</option>`).join("");
+  const opts = (g.goalies[opp]||[]).map(i=>`<option value="${i}" ${String(i)===String(id)?"selected":""}>${esc(G(i)?.name)}${String(i)===String(g.starters[opp])?t("expected_tag"):""}</option>`).join("");
   const r = q?.ratio ?? 1, c = r<0.98?"up":r>1.02?"down":"";
   return `<div class="card" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 14px;margin-bottom:12px">
-    <span class="meta">Props below are against</span><b>${esc(q?.name||"unknown")}</b>${statusPill(isProj?g.starter_status[opp]:"Your pick")}
-    <span class="meta">${opp} goalie · quality factor <b class="${c}">${fmt(r,3)}</b>${q?.cur?` · ${sv3(q.cur.sv)} this season`:""}</span>
-    <select data-gteam="${opp}" id="fb-${g.id}-${opp}" style="margin-left:auto" aria-label="Change opposing goalie">${opts}</select></div>`;
+    <span class="meta">${t("facing")}</span><b>${esc(q?.name||t("unknown"))}</b>${statusPill(isProj?g.starter_status[opp]:"Your pick")}
+    <span class="meta">${t("opp_goalie_q",{t:opp})} <b class="${c}">${fmt(r,3)}</b>${q?.cur?` · ${t("this_season_sv",{v:sv3(q.cur.sv)})}`:""}</span>
+    <select data-gteam="${opp}" id="fb-${g.id}-${opp}" style="margin-left:auto" aria-label="${t("change_goalie")}">${opts}</select></div>`;
 }
 function injuryOfName(team, name){ return (DATA.teams[team]?.injuries||[]).find(i=>i.name===name); }
 function injuriesCard(team){
   const inj = DATA.teams[team]?.injuries || [];
   const out = inj.filter(i=>i.kind==="out"), q = inj.filter(i=>i.kind!=="out");
-  const row = i => `<div class="inj">${injPill(i)}<b>${esc(i.name)}</b><span class="d">${esc(i.detail||"")}${i.return?` · expected back ${esc(i.return.slice(0,10))}`:""}</span></div>`;
-  return `<div class="box"><h4>Injuries <span class="meta">${out.length} out · ${q.length} questionable</span></h4>
-    ${inj.length ? `<div class="injl">${q.map(row).join("")}${out.map(row).join("")}</div>` : `<p class="meta">No reported injuries.</p>`}</div>`;
+  const row = i => `<div class="inj">${injPill(i)}<b>${esc(i.name)}</b><span class="d">${esc(trData(i.detail||""))}${i.return?` · ${t("back_on",{d:esc(i.return.slice(0,10))})}`:""}</span></div>`;
+  return `<div class="box"><h4>${t("injuries")} <span class="meta">${t("n_out_q",{o:out.length, q:q.length})}</span></h4>
+    ${inj.length ? `<div class="injl">${q.map(row).join("")}${out.map(row).join("")}</div>` : `<p class="meta">${t("no_injuries")}</p>`}</div>`;
 }
 function lineupCard(g, team){
   const lu = DATA.teams[team]?.lineup; if(!lu) return "";
@@ -565,15 +795,15 @@ function lineupCard(g, team){
   const counts = {}; Object.values(lu.groups).flat().forEach(id=>{ const p=P(id); if(p) counts[lastOf(p.name)] = (counts[lastOf(p.name)]||new Set()).add(id); });
   const name = id => { const p=P(id); if(!p) return ""; const pr=props[id]; const pg = pr?prob(pr,g,"g"):null;
     const ln = lastOf(p.name); const last = counts[ln]?.size>1 ? p.name[0]+". "+ln : ln;
-    return `<span class="${p.injury?.kind==="questionable"?"q":""}" title="${esc(p.name)}${p.injury?" – "+p.injury.status:""}">${esc(last)}${pg!=null?`<b>${pct(pg)}</b>`:""}</span>`; };
+    return `<span class="${p.injury?.kind==="questionable"?"q":""}" title="${esc(p.name)}${p.injury?" – "+esc(trData(p.injury.status)):""}">${esc(last)}${pg!=null?`<b>${pct(pg)}</b>`:""}</span>`; };
   const order = Object.keys(lu.groups).sort((a,b)=>{ const r=k=>k.startsWith("pp")?2:k[0]==="f"?0:k[0]==="d"?1:3; return r(a)-r(b) || a.localeCompare(b); });
   const rows = order.filter(k=>/^(f|d|pp)\d$/.test(k)).map(k=>`<div class="line"><span class="lab">${k.toUpperCase()}</span><div class="lp">${lu.groups[k].map(name).join("")}</div></div>`).join("");
-  return `<div class="box lineupbox"><h4>${lu.source==="projected"?"Projected lineup":"Lineup estimated from recent ice time"} <span class="meta">goal %</span></h4>
-    <div class="lines">${rows||`<p class="meta">No lineup available.</p>`}</div>
-    ${lu.source!=="projected"?`<p class="note">Projected lines weren't available, so players are ranked by recent ice time.</p>`:""}</div>`;
+  return `<div class="box lineupbox"><h4>${lu.source==="projected"?t("lu_proj"):t("lu_est")} <span class="meta">${t("goal_pct")}</span></h4>
+    <div class="lines">${rows||`<p class="meta">${t("no_lineup")}</p>`}</div>
+    ${lu.source!=="projected"?`<p class="note">${t("lu_note")}</p>`:""}</div>`;
 }
 
-const GRID = [["g","Goal"],["a","Assist"],["pt","Point"],...C.sog_lines.slice(0,3).map(L=>["s"+L,`SOG ${Math.ceil(L)}+`])];
+const GRID = ["g","a","pt",...C.sog_lines.slice(0,3).map(L=>"s"+L)];
 function heat(p, colMax){ const a = Math.min(1, p/Math.max(colMax,0.05)); return `background:rgba(var(--heat),${(0.06+0.42*a*a).toFixed(3)})`; }
 
 function sidePanel(g, team){
@@ -581,41 +811,42 @@ function sidePanel(g, team){
   const lu = DATA.teams[team]?.lineup || {groups:{}};
   const pos = {}; Object.entries(lu.groups).forEach(([k,ids])=>{ if(/^[fd]\d$/.test(k)) ids.forEach(id=>{ pos[id]=k; }); });
   const rows = g.props.filter(pr=>pr.team===team).map(pr=>{
-    const p = P(pr.id); const probs = Object.fromEntries(GRID.map(([m])=>[m, prob(pr,g,m)]));
+    const p = P(pr.id); const probs = Object.fromEntries(GRID.map(m=>[m, prob(pr,g,m)]));
     const k = p.active ? (pos[pr.id]||(p.posg==="D"?"d9":"f9")) : "zz";
     return {pr, p, probs, grp: k==="zz" ? "9" : (k[0]==="f"?"0":"1")+k};
   });
-  const colMax = Object.fromEntries(GRID.map(([m])=>[m, Math.max(...rows.filter(r=>r.p.active).map(r=>r.probs[m]), 0.01)]));
+  const colMax = Object.fromEntries(GRID.map(m=>[m, Math.max(...rows.filter(r=>r.p.active).map(r=>r.probs[m]), 0.01)]));
   if (state.sort) rows.sort((a,b)=> (b.p.active-a.p.active) || (b.probs[state.sort]-a.probs[state.sort]));
   else rows.sort((a,b)=> a.grp.localeCompare(b.grp) || b.p.toi_proj-a.p.toi_proj);
-  const gl = k => k==="9" ? "Not expected to play" : k[1]==="f" ? (k==="0f9"?"Other forwards":"Forwards") : (k==="1d9"?"Other defense":"Defense");
+  const gl = k => k==="9" ? t("g_out") : k[1]==="f" ? (k==="0f9"?t("g_ofw"):t("g_fw")) : (k==="1d9"?t("g_od"):t("g_d"));
   let lastG = null, body = "";
   for (const r of rows){
-    const label = state.sort ? (r.p.active ? "Expected to play" : "Not expected to play") : gl(r.grp);
+    const label = state.sort ? (r.p.active ? t("g_in") : t("g_out")) : gl(r.grp);
     if (label!==lastG){ body += `<tr class="grp"><td colspan="${GRID.length+3}">${label}</td></tr>`; lastG = label; }
     const open = String(state.open)===String(r.pr.id);
     body += `<tr class="row ${open?"open":""} ${r.p.active?"":"out"}" data-id="${r.pr.id}">
       <td><div class="pl"><div class="jersey">${r.p.num??""}</div><div><div class="nm">${esc(r.p.name)} ${injPill(r.p.injury)}</div>
-        <div class="sub">${r.p.pos}${pos[r.pr.id]?" · "+pos[r.pr.id].toUpperCase():""}${r.p.why && !r.p.injury?" · "+esc(r.p.why):""}</div></div></div></td>
+        <div class="sub">${r.p.pos}${pos[r.pr.id]?" · "+pos[r.pr.id].toUpperCase():""}${r.p.why && !r.p.injury?" · "+esc(trWhy(r.p.why)):""}</div></div></div></td>
       <td class="n hide-sm num">${fmt(r.p.toi_proj,1)}</td>
-      ${GRID.map(([m])=>{ const v=r.probs[m]; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
+      ${GRID.map(m=>{ const v=r.probs[m]; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
         const val = r.p.active && ev!=null && ev>=VALUE;
-        const tip = `Model ${pct(v,1)} · fair ${(1/v).toFixed(2)}${od?` · odds ${od.toFixed(2)} · EV ${(ev>0?"+":"")+(ev*100).toFixed(1)}%`:""}`;
-        return `<td class="h"><div class="cell ${val?"val":""}" title="${tip}" style="${r.p.active?heat(v,colMax[m]):""}"><b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${od.toFixed(2)}</span>`:(1/v).toFixed(2)}</small></div></td>`; }).join("")}
+        const tip = t("tip",{p:pct(v,1), f:(1/v).toFixed(2)}) + (od ? t("tip_odds",{o:od.toFixed(2), e:evTxt(ev)}) : "");
+        return `<td class="h"><div class="cell ${val?"val":""}" title="${esc(tip)}" style="${r.p.active?heat(v,colMax[m]):""}"><b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${od.toFixed(2)}</span>`:(1/v).toFixed(2)}</small></div></td>`; }).join("")}
       <td>${regPills(r.p)}</td></tr>
       ${open?`<tr><td colspan="${GRID.length+3}">${detail(r.pr, g)}</td></tr>`:""}`;
   }
+  const upd = DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? t("odds_upd",{t:new Date(DATA.odds[g.id].fetched).toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : "";
   $("#sidebody").innerHTML = `
-    <div class="sidegrid">${goalieCard(g, team).replace("<h4>Starting goalie", `<h4>${team} starting goalie`)}${injuriesCard(team)}${lineupCard(g, team)}</div>
+    <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}</div>
     ${facingBar(g, team, opp)}
     <div class="card tablewrap"><table><thead><tr>
-      <th>${team} player</th><th class="n hide-sm">TOI</th>
-      ${GRID.map(([m,n])=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${n}</th>`).join("")}<th>Signals</th></tr></thead>
+      <th>${t("player_team",{t:team})}</th><th class="n hide-sm">${t("toi")}</th>
+      ${GRID.map(m=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${mName(m)}</th>`).join("")}<th>${t("signals")}</th></tr></thead>
       <tbody>${body}</tbody></table></div>
-    <div class="legend"><span><b>38%</b> = model probability</span>
-      <span>${DATA.odds?.[g.id] ? `small number = market odds (green when the model sees +5% value or more)` : "small number = fair odds (no market odds for this game yet)"}</span>
-      <span><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>value bet</span></div>
-    <p class="foot">Click a column to sort, click it again for lineup order. Click a player for his breakdown, charts, and to enter your own odds.${DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? ` Odds updated ${new Date(DATA.odds[g.id].fetched).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})}.`:""}</p>`;
+    <div class="legend"><span><b>38%</b> ${t("lg_prob")}</span>
+      <span>${DATA.odds?.[g.id] ? t("lg_mkt") : t("lg_fair")}</span>
+      <span><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>${t("lg_val")}</span></div>
+    <p class="foot">${t("grid_foot")}${upd}</p>`;
   $("#sidebody").onclick = e => {
     if (e.target.closest("input,select")) return;
     const cb = e.target.closest("[data-cv],[data-cs],[data-cm],[data-cu]");
@@ -627,21 +858,21 @@ function sidePanel(g, team){
   };
 }
 
+const WINDOWS = () => [["cur",t("w_cur")],["prev3",t("w_p3")],["prev5",t("w_p5")],["career",t("w_car")]];
 function windowsTable(p){
-  const W = p.windows, cols = [["cur","This season"],["prev3","Prev 3 seasons"],["prev5","Prev 5 seasons"],["career","Career"]];
+  const W = p.windows, cols = WINDOWS();
   const r = (lab, f) => `<tr><td>${lab}</td>${cols.map(([k])=>`<td class="n">${W[k]?f(W[k]):"–"}</td>`).join("")}</tr>`;
   return `<table class="mini"><thead><tr><th></th>${cols.map(c=>`<th class="n">${c[1]}</th>`).join("")}</tr></thead><tbody>
-    ${r("Games", w=>w.gp)}${r("G / A / P", w=>`${w.g} / ${w.a} / ${w.p}`)}${r("Shots", w=>w.s)}
-    ${r("Goals per game", w=>fmt(w.g_pg,2))}${r("Assists per game", w=>fmt(w.a_pg,2))}${r("Points per game", w=>fmt(w.p_pg,2))}
-    ${r("Shots per game", w=>fmt(w.s_pg,2))}${r("Goals per season", w=>fmt(w.g_ps,1))}${r("Assists per season", w=>fmt(w.a_ps,1))}
-    ${r("Points per season", w=>fmt(w.p_ps,1))}${r("Shooting %", w=>pct(w.sh,1))}</tbody></table>`;
+    ${r(t("t_games"), w=>w.gp)}${r(t("t_gap"), w=>`${w.g} / ${w.a} / ${w.p}`)}${r(t("t_shots"), w=>w.s)}
+    ${r(t("t_gpg"), w=>fmt(w.g_pg,2))}${r(t("t_apg"), w=>fmt(w.a_pg,2))}${r(t("t_ppg"), w=>fmt(w.p_pg,2))}
+    ${r(t("t_spg"), w=>fmt(w.s_pg,2))}${r(t("t_gps"), w=>fmt(w.g_ps,1))}${r(t("t_aps"), w=>fmt(w.a_ps,1))}
+    ${r(t("t_pps"), w=>fmt(w.p_ps,1))}${r(t("t_sh"), w=>pct(w.sh,1))}</tbody></table>`;
 }
 
 // ------------------------------------------------------------ history chart
-const STATS = [["g","Goals"],["a","Assists"],["p","Points"],["s","Shots"],["sh","Shooting %"],["gx","Goals vs expected"]];
-const UNITS = [["pg","Per game"],["pace","82-game pace"],["ps","Per season"]];
+const STATS = () => [["g",t("s_g")],["a",t("s_a")],["p",t("s_p")],["s",t("s_s")],["sh",t("s_sh")],["gx",t("s_gx")]];
+const UNITS = () => [["pg",t("u_pg")],["pace",t("u_pace")],["ps",t("u_ps")]];
 const SMALL_SHOTS = 40;
-// one row per bar: {lab, sub, v (bar), v2 (expected, optional), small, partial}
 function chartRows(p){
   const c = state.chart, k = c.stat, cur = DATA.season;
   const scale = (tot, gp, seasons, isCur) => {
@@ -653,20 +884,20 @@ function chartRows(p){
   let base;
   if (c.mode==="windows"){
     const W = p.windows, X = p.xg_windows||{};
-    base = [["cur","This season"],["prev3","Prev 3 seasons"],["prev5","Prev 5 seasons"],["career","Career"]].map(([key,lab])=>{
+    base = WINDOWS().map(([key,lab])=>{
       const w = W[key]; if(!w) return {lab, v:null};
       const x = X[key];
       return {lab, key, w, isCur: key==="cur", gp:w.gp, seasons:w.seasons, g:w.g, a:w.a, p:w.p, s:w.s,
-              xg: x ? x.xg : null, xgp: x ? x.gp : null, sub: key==="cur" ? `${w.gp} GP` : `${w.seasons} seas · ${w.gp} GP`};
+              xg: x ? x.xg : null, xgp: x ? x.gp : null, sub: key==="cur" ? t("gp_n",{g:w.gp}) : t("seas_gp",{s:w.seasons, g:w.gp})};
     });
   } else {
     base = (p.by_season||[]).slice().sort((a,b)=>a.y-b.y).map(r=>({
       lab: `${String(r.y).slice(2)}–${String(r.y+1).slice(2)}`, isCur: r.y===cur, gp:r.gp, seasons:1,
-      g:r.g, a:r.a, p:r.p, s:r.s, xg: r.xg ?? null, xgp: r.xg_gp ?? null, sub: `${r.gp} GP`}));
+      g:r.g, a:r.a, p:r.p, s:r.s, xg: r.xg ?? null, xgp: r.xg_gp ?? null, sub: t("gp_n",{g:r.gp})}));
   }
   return base.map(r=>{
     if (r.gp==null) return r;
-    if (k==="sh") return {...r, v: r.s ? r.g/r.s : null, small: (r.s||0) < SMALL_SHOTS, sub: `${r.g} G / ${r.s} S`};
+    if (k==="sh") return {...r, v: r.s ? r.g/r.s : null, small: (r.s||0) < SMALL_SHOTS, sub: t("g_s",{g:r.g, s:r.s})};
     if (k==="gx"){
       const v = scale(r.g, r.gp, r.seasons, r.isCur);
       const v2 = r.xg!=null && r.xgp ? scale(r.xg, r.xgp, r.seasons, r.isCur) : null;
@@ -678,7 +909,7 @@ function chartRows(p){
 function barChart(rows, o){
   const W = 960, H = 300, padL = 52, padR = 140, padT = 30, padB = 50;
   const vals = rows.flatMap(r=>[r.v, r.v2]).concat((o.refs||[]).map(x=>x.v)).filter(v=>v!=null && isFinite(v));
-  if (!rows.some(r=>r.v!=null)) return `<p class="meta">No history to chart.</p>`;
+  if (!rows.some(r=>r.v!=null)) return `<p class="meta">${t("no_hist")}</p>`;
   const top = Math.max(...vals) || 1;
   const step = (()=>{ const raw = top/4, m = Math.pow(10, Math.floor(Math.log10(raw))); return [1,2,2.5,5,10].map(x=>x*m).find(x=>x>=raw); })();
   const ymax = Math.ceil(top/step)*step;
@@ -694,27 +925,27 @@ function barChart(rows, o){
     if (r.v==null) return out;
     const y = Y(r.v); pts.push([cx,y]);
     const cls = r.partial ? "partial" : r.small ? "small" : "";
-    out += `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,Y(0)-y)}" rx="5" class="cb ${cls}"><title>${esc(r.lab)}: ${f(r.v)}${r.v2!=null?` · expected ${f(r.v2)}`:""}${r.small?" · small sample":""}</title></rect>`;
+    out += `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Math.max(0,Y(0)-y)}" rx="5" class="cb ${cls}"><title>${esc(r.lab)}: ${f(r.v)}${r.v2!=null?t("exp_tip",{v:f(r.v2)}):""}${r.small?t("small_tip"):""}</title></rect>`;
     labels.push(`<text x="${cx}" y="${y-10}" text-anchor="middle" class="cv">${f(r.v)}</text>`);
-    if (r.small) out += (Y(0)-y > 34) ? `<text x="${cx}" y="${Y(0)-8}" text-anchor="middle" class="cs">small sample</text>`
-                                      : `<text x="${cx}" y="${y-26}" text-anchor="middle" class="cs">small sample</text>`;
+    if (r.small) out += (Y(0)-y > 34) ? `<text x="${cx}" y="${Y(0)-8}" text-anchor="middle" class="cs">${t("small")}</text>`
+                                      : `<text x="${cx}" y="${y-26}" text-anchor="middle" class="cs">${t("small")}</text>`;
     return out; }).join("");
   const rl = (o.refs||[]).filter(x=>x.v!=null).map(x=>({...x, y:Y(x.v), ly:Y(x.v)})).sort((a,b)=>a.y-b.y);
   for (let i=1;i<rl.length;i++){ if (rl[i].ly - rl[i-1].ly < 18){ const mid=(rl[i].ly+rl[i-1].ly)/2; rl[i-1].ly = mid-9; rl[i].ly = mid+9; } }
   const refs = rl.map(x=>`<line x1="${x0}" x2="${W-padR}" y1="${x.y}" y2="${x.y}" class="cr ${x.cls||""}"/>
     ${Math.abs(x.ly-x.y)>1?`<path d="M${W-padR} ${x.y} L${W-padR+6} ${x.ly}" class="cr ${x.cls||""}" style="stroke-dasharray:none"/>`:""}
     <text x="${W-padR+9}" y="${x.ly+4}" class="crt ${x.cls||""}">${esc(x.label)} ${f(x.v)}</text>`).join("");
-  const smooth = P => { if (P.length<2) return ""; let d=`M${P[0][0]},${P[0][1]}`;
-    for (let i=1;i<P.length;i++){ const [x1,y1]=P[i-1],[x2,y2]=P[i], cx=(x1+x2)/2; d+=` C${cx},${y1} ${cx},${y2} ${x2},${y2}`; } return d; };
-  const glowLine = (P, cls) => P.length>1 ? `<path d="${smooth(P)}" class="clh ${cls}"/><path d="${smooth(P)}" class="cl ${cls}" filter="url(#cglow)"/>` : "";
-  const glowDot = (x,y,cls,t="") => `<circle cx="${x}" cy="${y}" r="9" class="cdh ${cls}"/><circle cx="${x}" cy="${y}" r="4.5" class="cd ${cls}">${t}</circle><circle cx="${x}" cy="${y}" r="1.8" class="cdc"/>`;
+  const smooth = Pt => { if (Pt.length<2) return ""; let d=`M${Pt[0][0]},${Pt[0][1]}`;
+    for (let i=1;i<Pt.length;i++){ const [x1,y1]=Pt[i-1],[x2,y2]=Pt[i], cx=(x1+x2)/2; d+=` C${cx},${y1} ${cx},${y2} ${x2},${y2}`; } return d; };
+  const glowLine = (Pt, cls) => Pt.length>1 ? `<path d="${smooth(Pt)}" class="clh ${cls}"/><path d="${smooth(Pt)}" class="cl ${cls}" filter="url(#cglow)"/>` : "";
+  const glowDot = (x,y,cls,tt="") => `<circle cx="${x}" cy="${y}" r="9" class="cdh ${cls}"/><circle cx="${x}" cy="${y}" r="4.5" class="cd ${cls}">${tt}</circle><circle cx="${x}" cy="${y}" r="1.8" class="cdc"/>`;
   const defs = `<defs><filter id="cglow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="cgrad" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color:var(--accent2)"/><stop offset="1" style="stop-color:var(--line2)"/></linearGradient></defs>`;
   let line = "", dots = "";
   if (o.line2){
     line = glowLine(pts2.map(p=>[p[0],p[1]]), "x");
-    dots = pts2.map(([x,y,v])=>glowDot(x,y,"x",`<title>expected ${f(v)}</title>`)).join("")
-      + (pts2.length ? `<text x="${pts2[pts2.length-1][0]+12}" y="${pts2[pts2.length-1][1]-10}" class="crt x">expected</text>` : "");
+    dots = pts2.map(([x,y,v])=>glowDot(x,y,"x",`<title>${t("expected")} ${f(v)}</title>`)).join("")
+      + (pts2.length ? `<text x="${pts2[pts2.length-1][0]+12}" y="${pts2[pts2.length-1][1]-10}" class="crt x">${t("expected")}</text>` : "");
   } else {
     line = glowLine(pts, "");
     dots = pts.map(([x,y])=>glowDot(x,y,"")).join("");
@@ -724,35 +955,30 @@ function barChart(rows, o){
 function statsBox(p){
   const c = state.chart;
   const seg = (attr, opts, cur) => `<div class="seg sm">${opts.map(([v,l])=>`<button data-${attr}="${v}" class="${cur===v?"on":""}">${l}</button>`).join("")}</div>`;
-  const head = `<h4>Averages: season, previous 3 & 5 seasons, career ${seg("cv",[["table","Table"],["chart","Chart"]],c.view)}</h4>`;
+  const head = `<h4>${t("avg_head")} ${seg("cv",[["table",t("v_table")],["chart",t("v_chart")]],c.view)}</h4>`;
   if (c.view!=="chart") return `<div class="box" style="grid-column:1/-1">${head}<div class="tablewrap">${windowsTable(p)}</div></div>`;
   const rows = chartRows(p), k = c.stat, isPct = k==="sh";
   const dec = c.unit==="pg" ? 2 : 1;
+  const statName = STATS().find(x=>x[0]===k)[1];
   const opts = isPct
-    ? {fmt: v=>(v*100).toFixed(1)+"%", axis: v=>(v*100).toFixed(0)+"%", title:"Shooting percentage",
-       refs:[{v:p.rates.recent_sh, label:"true talent", cls:"t"}, {v:p.rates.lg_sh, label:`league ${p.posg}`, cls:"l"}]}
-    : {fmt: v=>v.toFixed(dec), axis: v=>c.unit==="pg"?v.toFixed(v<1?2:1):Math.round(v), title:"Stat history", line2: k==="gx"};
+    ? {fmt: v=>(v*100).toFixed(1)+"%", axis: v=>(v*100).toFixed(0)+"%", title:statName,
+       refs:[{v:p.rates.recent_sh, label:t("ref_talent"), cls:"t"}, {v:p.rates.lg_sh, label:t("ref_league",{p:p.posg}), cls:"l"}]}
+    : {fmt: v=>v.toFixed(dec), axis: v=>c.unit==="pg"?v.toFixed(v<1?2:1):Math.round(v), title:statName, line2: k==="gx"};
   const cur = rows.find(r=>r.isCur);
   let note;
   if (k==="sh"){
     const n = cur?.s||0, gap = cur && cur.v!=null ? cur.v - p.rates.recent_sh : null;
-    note = `Goals ÷ shots on goal. The dashed green line is his true-talent shooting % (what the model uses); grey is the league average for his position. `
-      + (n < SMALL_SHOTS ? `This season is only ${n} shots, so it's mostly noise. Shooting % needs a few hundred shots to mean much.`
-         : gap!=null ? `This season he's ${gap>=0?"above":"below"} his talent by ${(Math.abs(gap)*100).toFixed(1)} points: expect ${gap>=0?"fewer goals per shot (negative":"more goals per shot (positive"} regression).` : "");
+    note = t("n_sh_a") + (n < SMALL_SHOTS ? t("n_sh_small",{n}) : gap!=null ? t(gap>=0?"n_sh_above":"n_sh_below",{d:(Math.abs(gap)*100).toFixed(1)}) : "");
   } else if (k==="gx"){
     const d = cur && cur.v2!=null ? cur.g - cur.xg : null;
-    note = `Bars = actual goals, blue line = expected goals from the quality of his shots (location, type, rebounds). Bars above the line = finishing better than expected (often luck, sometimes skill); below = finishing worse. `
-      + (d!=null ? `This season: ${cur.g} goals vs ${cur.xg.toFixed(1)} expected (${d>=0?"+":""}${d.toFixed(1)}).` : "")
-      + (c.mode==="windows" ? " Expected goals aren't available for a full career." : "");
+    note = t("n_gx") + (d!=null ? t("n_gx_cur",{g:cur.g, x:cur.xg.toFixed(1), d:(d>=0?"+":"")+d.toFixed(1)}) : "") + (c.mode==="windows" ? t("n_gx_car") : "");
   } else {
-    note = `${STATS.find(x=>x[0]===k)[1]} ${c.unit==="pg"?"per game":c.unit==="pace"?"per 82 games at this rate":"per season"}. `
-      + (c.unit==="ps" ? "The dashed bar is the current season, which isn't finished. Use 82-game pace to compare it fairly. " : "")
-      + (c.unit==="pace" ? "Pace shows the current rate stretched to 82 games. It isn't a forecast. The model's expectation for tonight is in the props grid. " : "")
-      + (rows.some(r=>r.small) ? "Faded bars have fewer than 15 games, so treat them with care. " : "")
-      + (k==="g" ? "For the reason behind a change, look at Shots (volume: reliable quickly) and Shooting % (finishing: mostly luck)." : "The line connects the top of each bar.");
+    note = t(c.unit==="pg"?"n_pg":c.unit==="pace"?"n_pace":"n_ps",{s:statName})
+      + (c.unit==="ps" ? t("n_ps_note") : "") + (c.unit==="pace" ? t("n_pace_note") : "")
+      + (rows.some(r=>r.small) ? t("n_small") : "") + (k==="g" ? t("n_goals_hint") : t("n_line"));
   }
   return `<div class="box" style="grid-column:1/-1">${head}
-    <div class="controls" style="margin-bottom:6px">${seg("cs",STATS,k)}${seg("cm",[["windows","Season, prev 3, prev 5, career"],["seasons","Season by season"]],c.mode)}${isPct?"":seg("cu",UNITS,c.unit)}</div>
+    <div class="controls" style="margin-bottom:6px">${seg("cs",STATS(),k)}${seg("cm",[["windows",t("mode_w")],["seasons",t("mode_s")]],c.mode)}${isPct?"":seg("cu",UNITS(),c.unit)}</div>
     <div class="chartwrap">${barChart(rows, opts)}</div>
     <p class="note">${note}</p></div>`;
 }
@@ -761,44 +987,44 @@ function detail(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
-  const oddsRows = MARKETS.map(([m,n])=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
-    return `<span>${n}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
+  const oddsRows = MKEYS.map(m=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
+    return `<span>${mName(m)}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
       <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""}`:`<span class="meta">–</span>`}</span>
-      <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):"odds"}" value="${uo??""}">
-      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span>`; }).join("");
+      <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):t("odds_ph")}" value="${uo??""}">
+      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box" style="grid-column:span 2"><h4>Prices & value</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Model · fair</span><span class="h">Odds · market %</span><span class="h">Your odds</span><span class="h">EV</span>${oddsRows}</div>
-      <p class="note">"Market %" is the probability implied by the odds, with the margin removed. EV uses your odds if you type them, otherwise the market odds. EV = model probability × odds − 1.</p></div>
-    <div class="box"><h4>How the number is built</h4>
+    <div class="box" style="grid-column:span 2"><h4>${t("pv")}</h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span>${oddsRows}</div>
+      <p class="note">${t("pv_note")}</p></div>
+    <div class="box"><h4>${t("built")}</h4>
       <div class="chips">
-        <span class="chip">Goals/60 <b>${fmt(r.g60,2)}</b></span><span class="chip">Assists/60 <b>${fmt(r.a60,2)}</b></span>
-        <span class="chip">Shots/60 <b>${fmt(r.s60,2)}</b></span><span class="chip">TOI <b>${fmt(p.toi_proj,1)}</b></span>
-        <span class="chip">Opp defence ${x(f.opp_def)}</span><span class="chip">Opp goalie ${x(l.gr)}</span>
-        <span class="chip">${pr.home?"Home":"Away"} ${x(f.venue)}</span><span class="chip">Back-to-back ${x(f.b2b)}</span>
-        <span class="chip">League scoring ${x(f.env)}</span>${l.sm!==1?`<span class="chip">Streak rule ${x(l.sm)}</span>`:""}
+        <span class="chip">${t("c_g60")} <b>${fmt(r.g60,2)}</b></span><span class="chip">${t("c_a60")} <b>${fmt(r.a60,2)}</b></span>
+        <span class="chip">${t("c_s60")} <b>${fmt(r.s60,2)}</b></span><span class="chip">${t("toi")} <b>${fmt(p.toi_proj,1)}</b></span>
+        <span class="chip">${t("c_def")} ${x(f.opp_def)}</span><span class="chip">${t("c_gk")} ${x(l.gr)}</span>
+        <span class="chip">${pr.home?t("c_home"):t("c_away")} ${x(f.venue)}</span><span class="chip">${t("c_b2b")} ${x(f.b2b)}</span>
+        <span class="chip">${t("c_env")} ${x(f.env)}</span>${l.sm!==1?`<span class="chip">${t("c_streak")} ${x(l.sm)}</span>`:""}
       </div>
       <div class="kv" style="margin-top:10px">
-        <span>Expected goals / assists</span><span>${fmt(l.g,3)} / ${fmt(l.a,3)}</span>
-        <span>Expected shots on goal</span><span>${fmt(l.s,2)}</span>
-        <span>Opposing goalie</span><span>${og?esc(og.name):"unknown"}</span>
-        <span>TOI last 10 / season</span><span>${fmt(p.toi_recent,1)} / ${fmt(p.toi_season,1)}</span>
+        <span>${t("k_xga")}</span><span>${fmt(l.g,3)} / ${fmt(l.a,3)}</span>
+        <span>${t("k_xs")}</span><span>${fmt(l.s,2)}</span>
+        <span>${t("k_og")}</span><span>${og?esc(og.name):t("unknown")}</span>
+        <span>${t("k_toi")}</span><span>${fmt(p.toi_recent,1)} / ${fmt(p.toi_season,1)}</span>
       </div></div>
-    <div class="box"><h4>Regression to the mean</h4>
+    <div class="box"><h4>${t("reg")}</h4>
       <div class="kv">
-        <span>Shooting % this season</span><span>${pct(rg.sh,1)} <span class="meta">(${rg.g} G / ${rg.s} S)</span></span>
-        <span>True-talent shooting %</span><span>${pct(r.recent_sh,1)}</span>
-        <span>Career shooting % (regressed)</span><span>${pct(r.career_sh,1)}</span>
-        <span>League average (${p.posg})</span><span>${pct(r.lg_sh,1)}</span>
-        <span>Goals vs expected this season</span><span>${fmt(rg.g,0)} vs ${fmt(rg.exp,1)}</span>
-        <span>ixG this season / prev 3</span><span>${xgw.cur?fmt(xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.xg,1):"–"}</span>
-        <span>Goals − xG this season / prev 3</span><span>${xgw.cur?fmt(xgw.cur.g-xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.g-xgw.prev3.xg,1):"–"}</span>
-        <span>Shots since last goal</span><span>${d.found?d.shots:d.shots+"+"} <span class="meta">(${d.games} gm)</span></span>
-        <span>Typical shots per goal</span><span>${fmt(d.shots_per_goal,1)}</span>
-        <span>Chance of a drought this long</span><span>${pct(d.p,0)}</span>
+        <span>${t("k_shcur")}</span><span>${pct(rg.sh,1)} <span class="meta">(${t("g_s",{g:rg.g, s:rg.s})})</span></span>
+        <span>${t("k_shtrue")}</span><span>${pct(r.recent_sh,1)}</span>
+        <span>${t("k_shcar")}</span><span>${pct(r.career_sh,1)}</span>
+        <span>${t("k_lgavg",{p:p.posg})}</span><span>${pct(r.lg_sh,1)}</span>
+        <span>${t("k_gvx")}</span><span>${fmt(rg.g,0)} ${t("vs")} ${fmt(rg.exp,1)}</span>
+        <span>${t("k_ixg")}</span><span>${xgw.cur?fmt(xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.xg,1):"–"}</span>
+        <span>${t("k_gmx")}</span><span>${xgw.cur?fmt(xgw.cur.g-xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.g-xgw.prev3.xg,1):"–"}</span>
+        <span>${t("k_since")}</span><span>${d.found?d.shots:d.shots+"+"} <span class="meta">(${d.games} ${t("gm")})</span></span>
+        <span>${t("k_spg")}</span><span>${fmt(d.shots_per_goal,1)}</span>
+        <span>${t("k_drought")}</span><span>${pct(d.p,0)}</span>
       </div></div>
-    <div class="box"><h4>Last 10 games</h4>
-      <table class="mini"><thead><tr><th>Date</th><th>Opp</th><th class="n">G</th><th class="n">A</th><th class="n">S</th><th class="n">TOI</th></tr></thead>
-      <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">No games yet this season.</td></tr>`}</tbody></table></div>
+    <div class="box"><h4>${t("last10")}</h4>
+      <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
+      <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
     ${statsBox(p)}
   </div></div>`;
 }
@@ -809,29 +1035,30 @@ function matchup(g){
     if (typeof a==="number" && typeof h==="number" && a!==h && hb!==null){ const aw = hb ? a>h : a<h; ca = aw?"better":""; ch = aw?"":"better"; }
     return `<tr><td class="${ca}">${f(a)}</td><td>${label}</td><td class="${ch}">${f(h)}</td></tr>`; };
   const raw = (label, a, h) => `<tr><td>${a}</td><td>${label}</td><td>${h}</td></tr>`;
-  const streak = t => !t.streak_kind ? "–" : `${t.streak_kind}${t.streak}${t.streak_excess>0?` <span class="pill s-q" title="${t.tier} team, rule threshold ${t.streak_threshold}">6-game rule</span>`:` <span class="meta">/${t.streak_threshold}</span>`}`;
-  $("#sidebody").innerHTML = `<div class="gsum">${goalieCard(g,g.away).replace("<h4>Starting goalie",`<h4>${g.away} goalie`)}${goalieCard(g,g.home).replace("<h4>Starting goalie",`<h4>${g.home} goalie`)}</div>
+  const kindL = k => trResults(k);
+  const streak = x => !x.streak_kind ? "–" : `${kindL(x.streak_kind)}${x.streak}${x.streak_excess>0?` <span class="pill s-q" title="${esc(t("rule6_tip",{tier:trTier(x.tier), n:x.streak_threshold}))}">${t("rule6")}</span>`:` <span class="meta">/${x.streak_threshold}</span>`}`;
+  $("#sidebody").innerHTML = `<div class="gsum">${goalieCard(g,g.away,t("goalie_team",{t:g.away}))}${goalieCard(g,g.home,t("goalie_team",{t:g.home}))}</div>
   <div class="card" style="padding:6px 14px"><table class="cmp"><tbody>
-    <tr><td><b>${g.away}</b></td><td>Team comparison</td><td><b>${g.home}</b></td></tr>
-    ${row("Points %", A.pts_pct, H.pts_pct, v=>pct(v,1))}
-    ${raw("Strength tier", A.tier||"–", H.tier||"–")}
-    ${raw("Streak", streak(A), streak(H))}
-    ${raw("Last 5", A.last5||"–", H.last5||"–")}
-    ${raw("Last 5 GF / GA", `${fmt(A.l5_gf,1)} / ${fmt(A.l5_ga,1)}`, `${fmt(H.l5_gf,1)} / ${fmt(H.l5_ga,1)}`)}
-    ${raw("GF / GA per game", `${fmt(A.gf_pg,2)} / ${fmt(A.ga_pg,2)}`, `${fmt(H.gf_pg,2)} / ${fmt(H.ga_pg,2)}`)}
-    ${raw("Road / Home GF – GA", `${fmt(A.gf_away,2)} – ${fmt(A.ga_away,2)}`, `${fmt(H.gf_home,2)} – ${fmt(H.ga_home,2)}`)}
-    ${row("5v5 expected goals share", A.xgf_pct5, H.xgf_pct5, v=>pct(v,1))}
-    ${row("PDO (luck, 1000 = normal)", A.pdo, H.pdo, v=>v==null?"–":fmt(v*1000,0), null)}
-    ${row("High-danger shots for /60", A.hdsf60, H.hdsf60, v=>fmt(v,1))}
-    ${row("High-danger shots against /60", A.hdsa60, H.hdsa60, v=>fmt(v,1), false)}
-    ${row("Power play goals /60", A.pp_gf60, H.pp_gf60, v=>fmt(v,1))}
-    ${row("Penalty kill goals against /60", A.pk_ga60, H.pk_ga60, v=>fmt(v,1), false)}
-    ${row("Power play minutes / game", A.pp_min, H.pp_min, v=>fmt(v,1))}
-    ${row("Over 5.5 this season", A["over_5.5_reg"], H["over_5.5_reg"], v=>pct(v), null)}
-    ${row("Over 5.5 road / home", A["over_5.5_away"], H["over_5.5_home"], v=>pct(v), null)}
-    ${row("Over 5.5 last 3 seasons", A["over_5.5_3y"], H["over_5.5_3y"], v=>pct(v), null)}
-    ${row("Over 6.5 this season", A["over_6.5_reg"], H["over_6.5_reg"], v=>pct(v), null)}
-    ${raw("Back-to-back", g.b2b[g.away]?"Yes":"No", g.b2b[g.home]?"Yes":"No")}
+    <tr><td><b>${g.away}</b></td><td>${t("cmp")}</td><td><b>${g.home}</b></td></tr>
+    ${row(t("c_ptspct"), A.pts_pct, H.pts_pct, v=>pct(v,1))}
+    ${raw(t("c_tier"), trTier(A.tier), trTier(H.tier))}
+    ${raw(t("c_streak2"), streak(A), streak(H))}
+    ${raw(t("c_l5"), trResults(A.last5), trResults(H.last5))}
+    ${raw(t("c_l5gfga"), `${fmt(A.l5_gf,1)} / ${fmt(A.l5_ga,1)}`, `${fmt(H.l5_gf,1)} / ${fmt(H.l5_ga,1)}`)}
+    ${raw(t("c_gfga"), `${fmt(A.gf_pg,2)} / ${fmt(A.ga_pg,2)}`, `${fmt(H.gf_pg,2)} / ${fmt(H.ga_pg,2)}`)}
+    ${raw(t("c_rh"), `${fmt(A.gf_away,2)} – ${fmt(A.ga_away,2)}`, `${fmt(H.gf_home,2)} – ${fmt(H.ga_home,2)}`)}
+    ${row(t("c_xgf"), A.xgf_pct5, H.xgf_pct5, v=>pct(v,1))}
+    ${row(t("c_pdo"), A.pdo, H.pdo, v=>v==null?"–":fmt(v*1000,0), null)}
+    ${row(t("c_hdf"), A.hdsf60, H.hdsf60, v=>fmt(v,1))}
+    ${row(t("c_hda"), A.hdsa60, H.hdsa60, v=>fmt(v,1), false)}
+    ${row(t("c_ppg"), A.pp_gf60, H.pp_gf60, v=>fmt(v,1))}
+    ${row(t("c_pkga"), A.pk_ga60, H.pk_ga60, v=>fmt(v,1), false)}
+    ${row(t("c_ppm"), A.pp_min, H.pp_min, v=>fmt(v,1))}
+    ${row(t("c_o55"), A["over_5.5_reg"], H["over_5.5_reg"], v=>pct(v), null)}
+    ${row(t("c_o55rh"), A["over_5.5_away"], H["over_5.5_home"], v=>pct(v), null)}
+    ${row(t("c_o553"), A["over_5.5_3y"], H["over_5.5_3y"], v=>pct(v), null)}
+    ${row(t("c_o65"), A["over_6.5_reg"], H["over_6.5_reg"], v=>pct(v), null)}
+    ${raw(t("c_b2b"), g.b2b[g.away]?t("yes"):t("no"), g.b2b[g.home]?t("yes"):t("no"))}
   </tbody></table></div>`;
 }
 
@@ -839,14 +1066,14 @@ function matchup(g){
 function propsTab(){
   const gameOpts = DATA.games.filter(g=>state.pday==="all"||g.date===state.pday).map(g=>`<option value="${g.id}" ${state.pfilter==g.id?"selected":""}>${dayLabel(g.date)} · ${g.away} @ ${g.home}</option>`).join("");
   $("#main").innerHTML = `<div class="controls">
-    <div class="seg" id="mkt">${MARKETS.map(([k,n])=>`<button data-m="${k}" class="${state.market===k?"on":""}">${n}</button>`).join("")}</div>
-    <select id="fday" aria-label="Day"><option value="all">All days</option>${dates.map(d=>`<option value="${d}" ${state.pday===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
-    <select id="fgame" aria-label="Game"><option value="all">All games</option>${gameOpts}</select>
-    <input type="search" id="fq" placeholder="Search player" value="${esc(state.q)}">
-    <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> regression signals only</label>
-    <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">Most likely</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">Best value</button></div></div>
-  <div class="card tablewrap"><table><thead><tr><th>Player</th><th class="n">TOI</th><th>Probability</th><th class="n">Fair</th><th class="n">Odds</th><th class="n">EV</th><th class="hide-sm">Last 10</th><th>Signals</th></tr></thead><tbody id="ptb"></tbody></table></div>
-  <p class="foot">Only players expected to play. The odds box shows the market price in grey. Type your own to override it. Click a player to open his game.</p>`;
+    <div class="seg" id="mkt">${MKEYS.map(k=>`<button data-m="${k}" class="${state.market===k?"on":""}">${mName(k)}</button>`).join("")}</div>
+    <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${state.pday===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
+    <select id="fgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${gameOpts}</select>
+    <input type="search" id="fq" placeholder="${t("search")}" value="${esc(state.q)}">
+    <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> ${t("reg_only")}</label>
+    <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button></div></div>
+  <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n">${t("toi")}</th><th>${t("h_prob")}</th><th class="n">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th></tr></thead><tbody id="ptb"></tbody></table></div>
+  <p class="foot">${t("props_foot")}</p>`;
   $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
   $("#fgame").onchange = e => { state.pfilter=e.target.value; rowsTop(); };
@@ -874,14 +1101,15 @@ function rowsTop(){
       <td><div class="bar"><i style="width:${Math.min(100,v*100)}%"></i><span>${pct(v,1)}</span></div></td>
       <td class="n num">${(1/v).toFixed(2)}</td>
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}"></td>
-      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</td>
-      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g}G ${x.a}A ${x.s}S"></i>`).reverse().join("")}</div></td>
-      <td>${regPills(p)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">No players match.</td></tr>`;
-  $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); state.tab="games"; go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
+      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
+      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div></td>
+      <td>${regPills(p)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
+  $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
 
 // ------------------------------------------------------------ track record
+const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1}));
 function calibChart(s){
   if (!s || !s.bins?.length) return "";
   const W=260, Hh=180, pad=28, X=v=>pad+v*(W-pad-8), Y=v=>Hh-pad-v*(Hh-pad-8);
@@ -889,35 +1117,34 @@ function calibChart(s){
   return `<svg viewBox="0 0 ${W} ${Hh}" width="100%" style="max-width:320px">
     <line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(1)}" stroke="var(--mute)" stroke-dasharray="4 4"/>
     <line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" stroke="var(--line)"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(1)}" stroke="var(--line)"/>
-    <text x="${X(1)}" y="${Hh-8}" fill="var(--mute)" font-size="10" text-anchor="end">predicted → ${pct(mx)}</text>
-    <text x="4" y="12" fill="var(--mute)" font-size="10">actual</text>
-    ${s.bins.map(b=>`<circle cx="${X(sc(b.pred))}" cy="${Y(sc(b.actual))}" r="${Math.min(9,3+Math.sqrt(b.n)/3)}" fill="var(--accent)" fill-opacity=".75"><title>predicted ${pct(b.pred,1)} · actual ${pct(b.actual,1)} · n=${b.n}</title></circle>`).join("")}</svg>`;
+    <text x="${X(1)}" y="${Hh-8}" fill="var(--mute)" font-size="10" text-anchor="end">${t("predicted")} → ${pct(mx)}</text>
+    <text x="4" y="12" fill="var(--mute)" font-size="10">${t("actual")}</text>
+    ${s.bins.map(b=>`<circle cx="${X(sc(b.pred))}" cy="${Y(sc(b.actual))}" r="${Math.min(9,3+Math.sqrt(b.n)/3)}" fill="var(--accent)" fill-opacity=".75"><title>${t("predicted")} ${pct(b.pred,1)} · ${t("actual")} ${pct(b.actual,1)} · n=${b.n}</title></circle>`).join("")}</svg>`;
 }
 function trackTab(){
   const T = DATA.graded;
   if (!T || !T.days?.length){
-    $("#main").innerHTML = `<div class="card empty prose" style="margin:auto"><h3>No graded predictions yet</h3><p>Every update saves the model's probabilities. The day after games are played they are graded automatically, and this page shows whether the percentages came true.</p></div>`; return; }
-  const rows = obj => Object.entries(obj).filter(([,s])=>s).map(([k,s])=>`<tr><td>${k}</td><td class="n num">${s.n}</td><td class="n num">${pct(s.mean_pred,1)}</td><td class="n num">${pct(s.hit_rate,1)}</td><td class="n num">${s.brier.toFixed(4)}</td><td class="n num ${s.skill>0?"ev-pos":"ev-neg"}">${(s.skill*100).toFixed(1)}%</td></tr>`).join("");
+    $("#main").innerHTML = `<div class="card empty prose" style="margin:auto"><h3>${t("tr_none_h")}</h3><p>${t("tr_none_p")}</p></div>`; return; }
+  const rows = obj => Object.entries(obj).filter(([,s])=>s).map(([k,s])=>`<tr><td>${esc(k)}</td><td class="n num">${s.n}</td><td class="n num">${pct(s.mean_pred,1)}</td><td class="n num">${pct(s.hit_rate,1)}</td><td class="n num">${s.brier.toFixed(4)}</td><td class="n num ${s.skill>0?"ev-pos":"ev-neg"}">${(s.skill*100).toFixed(1)}%</td></tr>`).join("");
+  const rename = o => Object.fromEntries(Object.entries(o||{}).map(([k,v])=>[MKT_NAME(k),v]));
   const blends = Object.entries(T.ou_blends||{}).map(([L,arr])=>{ const best = arr.reduce((a,b)=>b.brier<a.brier?b:a);
-    return `<div class="box"><h4>Over ${L}: best history weight</h4><table class="mini"><thead><tr><th>Weight</th><th class="n">Brier</th></tr></thead><tbody>${arr.map(r=>`<tr><td>${(r.w*100).toFixed(0)}%</td><td class="n ${r===best?"ev-pos":""}">${r.brier.toFixed(4)}</td></tr>`).join("")}</tbody></table><p class="note">Lowest Brier so far: ${(best.w*100).toFixed(0)}%.</p></div>`; }).join("");
-  $("#main").innerHTML = `<p class="meta">${T.days.length} days graded · ${T.days.reduce((a,d)=>a+d.games_final,0)} games · ${T.days.reduce((a,d)=>a+d.props,0)} player-games. Skill above 0% means better than guessing the base rate.</p>
-    <div class="card tablewrap"><table><thead><tr><th>Market</th><th class="n">Bets</th><th class="n">Predicted</th><th class="n">Happened</th><th class="n">Brier</th><th class="n">Skill</th></tr></thead>
-    <tbody>${rows(T.props)}${rows(T.sog)}${rows(Object.fromEntries(Object.entries(T.ou_model).map(([k,v])=>["Game "+k+" (model)",v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist).map(([k,v])=>["Game "+k+" (history only)",v])))}</tbody></table></div>
-    ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>Value bets (model EV ≥ 5% at the market price)</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit (1 unit each)</th><th class="n">ROI</th></tr></thead><tbody>
-      ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${k}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
-    <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>Calibration: ${k}</h4>${calibChart(s)}</div>`).join("")}${blends}</div>`;
+    return `<div class="box"><h4>${t("tr_blend",{l:L})}</h4><table class="mini"><thead><tr><th>${t("tr_weight")}</th><th class="n">Brier</th></tr></thead><tbody>${arr.map(r=>`<tr><td>${(r.w*100).toFixed(0)}%</td><td class="n ${r===best?"ev-pos":""}">${r.brier.toFixed(4)}</td></tr>`).join("")}</tbody></table><p class="note">${t("tr_lowest",{w:(best.w*100).toFixed(0)})}</p></div>`; }).join("");
+  const ouName = (k, key) => t(key,{k:k.replace("Over ", t("over",{l:""}).trim()+" ")});
+  $("#main").innerHTML = `<p class="meta">${t("tr_meta",{d:T.days.length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
+    <div class="card tablewrap"><table><thead><tr><th>${t("tr_market")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_pred")}</th><th class="n">${t("tr_happ")}</th><th class="n">Brier</th><th class="n">${t("tr_skill")}</th></tr></thead>
+    <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
+    ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>${t("tr_val")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_won")}</th><th class="n">${t("tr_profit")}</th><th class="n">ROI</th></tr></thead><tbody>
+      ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${esc(MKT_NAME(k))}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
+    <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>${t("tr_calib",{k:MKT_NAME(k)})}</h4>${calibChart(s)}</div>`).join("")}${blends}</div>`;
 }
 
-// ------------------------------------------------------------ how it works + experiments
-function howTab(){
-  $("#main").innerHTML = `<div class="prose">
-  <h3>What the site does</h3>
+// ------------------------------------------------------------ how it works
+const HOW = {
+en: `<h3>What the site does</h3>
   <p>For every player in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point and reach a number of shots on goal. It shows those chances next to the market odds, so you can see where the two agree and where they don't. It's a tool to help you decide, not a tipster.</p>
-
   <h3>How a probability is built</h3>
   <p>Each player's chance is built from how much he plays, how well he really scores and creates chances, and who he faces tonight: the opponent's defence, the opposing goalie, home or away, and rest.</p>
   <p>At its core is <b>regression to the mean</b>. A hot or cold streak is mostly treated as luck until there's enough evidence that something has really changed, so the model leans on a player's true level rather than his last few games. Change the starting goalie on a game page and every probability updates.</p>
-
   <h3>Has it been tested?</h3>
   <p>Yes. The model was replayed over about 214,000 player-games, using only information available before each game.</p>
   <ul>
@@ -927,14 +1154,12 @@ function howTab(){
     <li>3 or 5 seasons of history made practically no difference.</li>
   </ul>
   <p>A good probability isn't a sure thing. A 35% chance misses two times out of three, and a single game is mostly chance.</p>
-
   <h3>Reading a game page</h3>
   <ul>
     <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the highest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Green lines are the facts behind the pick; orange lines are warnings. When most value sits on one team, it says so: those bets tend to win or lose together.</li>
     <li><b>Roster grid:</b> the model's probability in large print, and below it the market odds (green with an outline when the model sees +5% value or more) or the fair odds if the market has no price yet.</li>
     <li><b>Player breakdown</b> (click a player): model vs market for every market, how the number is built, regression to the mean, last 10 games, and his history as a table or chart.</li>
   </ul>
-
   <h3>Words used on the site</h3>
   <ul>
     <li><b>Fair odds</b> = 1 ÷ probability: the odds at which a bet would break even in the long run.</li>
@@ -945,24 +1170,56 @@ function howTab(){
     <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
     <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
   </ul>
-
   <h3>Charts</h3>
-  <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>
-
-  <p class="foot">Updated four times a day. Personal, non-commercial use. Gamble responsibly. Stödlinjen: 020-81 91 00.</p>
-  </div>`;
+  <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>`,
+sv: `<h3>Vad sajten gör</h3>
+  <p>För varje spelare i varje kommande match räknar modellen ut hans chans att göra mål, få en assist, ta en poäng och nå ett visst antal skott på mål. Chanserna visas bredvid marknadsoddsen, så att du ser var de är överens och var de skiljer sig åt. Det är ett verktyg som hjälper dig att bestämma, inte en tipstjänst.</p>
+  <h3>Hur en sannolikhet räknas fram</h3>
+  <p>Varje spelares chans bygger på hur mycket han spelar, hur bra han egentligen är på att göra mål och skapa chanser, och vem han möter i kväll: motståndarens försvar, motståndarmålvakten, hemma eller borta, och vila.</p>
+  <p>Kärnan är <b>regression mot medelvärdet</b>. En het eller kall svit behandlas främst som tur tills det finns tillräckligt med bevis för att något verkligen har förändrats, så modellen utgår från spelarens verkliga nivå snarare än hans senaste matcher. Byt startmålvakt på en matchsida så uppdateras alla sannolikheter.</p>
+  <h3>Har den testats?</h3>
+  <p>Ja. Modellen spelades upp på nytt över cirka 214 000 spelarmatcher, med bara den information som fanns före varje match.</p>
+  <ul>
+    <li><b>Procentsatserna stämmer.</b> Mål: förutsagt 15,5 %, utfall 15,4 %. Poäng: 35,8 % mot 35,2 %. När den säger ungefär 34 % för ett mål händer det ungefär 36 % av gångerna.</li>
+    <li><b>Den slår ett enkelt säsongssnitt</b> i alla spel (mål, assist, poäng, skott).</li>
+    <li><b>Skott på mål låg ungefär 6 % för högt</b>, och det är nu rättat.</li>
+    <li>3 eller 5 säsongers historik gjorde i praktiken ingen skillnad.</li>
+  </ul>
+  <p>En bra sannolikhet är ingen garanti. En chans på 35 % missar två gånger av tre, och en enskild match är till stor del slump.</p>
+  <h3>Så läser du en matchsida</h3>
+  <ul>
+    <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Gröna rader är fakta bakom spelet; orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
+    <li><b>Spelarlistan:</b> modellens sannolikhet i stor stil, och under den marknadsoddsen (gröna med ram när modellen ser +5 % värde eller mer) eller rättvisa odds om marknaden saknar pris än.</li>
+    <li><b>Spelardetaljer</b> (klicka på en spelare): modell mot marknad för alla spel, hur siffran räknas fram, regression mot medelvärdet, senaste 10 matcherna och hans historik som tabell eller diagram.</li>
+  </ul>
+  <h3>Ord som används på sajten</h3>
+  <ul>
+    <li><b>Rättvisa odds</b> = 1 ÷ sannolikheten: oddsen där ett spel går jämnt ut i längden.</li>
+    <li><b>Marknad-%</b> = sannolikheten som marknadsoddsen motsvarar, med marginalen borträknad.</li>
+    <li><b>Edge / EV</b> = modellens sannolikhet × odds − 1. +10 % betyder att modellen räknar med 10 % vinst per spel i längden, om modellen har rätt.</li>
+    <li><b>▲ Bör lyfta / ▼ Kan svalna</b> = gör tydligt färre / fler mål än sin verkliga nivå i år. I testerna gjorde spelare som "borde lyfta" <i>inte</i> fler mål än modellen redan räknade med, så det är bakgrund, inte ett skäl att spela i sig.</li>
+    <li><b>Skott utan mål</b> = skott sedan senaste målet, och hur ovanlig en så lång torka är för hans nivå.</li>
+    <li><b>Prognos / Trolig / Bekräftad</b> målvakt = från de senaste rapporterna om startmålvakter. "Prognos" betyder att ingen rapport finns än: målvakten med flest starter på sistone, och reservmålvakten vid back-to-back.</li>
+    <li><b>Ute / Dag till dag</b>: skadade spelare markerade Ute tas bort från spelen; osäkra spelare finns kvar med en gul markering.</li>
+  </ul>
+  <h3>Diagram</h3>
+  <p>I spelardetaljerna, byt från Tabell till Diagram. Välj mål, assist, poäng, skott, <b>skottprocent</b> (med hans verkliga nivå och ligasnittet) eller <b>mål mot förväntat</b> (staplar = faktiska mål, linje = målen hans chanser var värda). Jämför säsong, förra 3, förra 5 och karriär, eller säsong för säsong. Använd <b>per match</b> eller <b>takt över 82 matcher</b> för att jämföra en ofärdig säsong rättvist; takten är nuvarande nivå utsträckt till 82 matcher, inte en prognos. Bleka staplar bygger på litet underlag.</p>`
+};
+function howTab(){
+  $("#main").innerHTML = `<div class="prose">${HOW[LANG]||HOW.en}<p class="foot">${t("footer")}</p></div>`;
 }
 
 function render(){
-  [...$("#nav").children].forEach(x=>x.classList.toggle("on", x.dataset.tab===state.tab));
+  header();
   if (state.tab==="games") (state.game ? gamePage : gamesList)();
   else if (state.tab==="props") propsTab();
   else if (state.tab==="track") trackTab();
   else howTab();
 }
-header();
+wireHeader();
 { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) state.game = m[1]; }
 render();
+
 </script>
 </body>
 </html>
