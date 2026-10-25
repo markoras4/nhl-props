@@ -13,20 +13,31 @@ import json
 import re
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
 API = "https://commons.wikimedia.org/w/api.php"
-UA = "NHLPropsLab/1.0 (personal hockey analytics site; contact via GitHub markoras4)"
+UA = "NHLPropsLab/1.0 (https://nhl-props-lab.vercel.app; https://github.com/markoras4) python-urllib"
 OK_LICENSES = re.compile(r"^(cc0|public domain|pd|cc by(-sa)? ?\d(\.\d)?.*)$", re.I)
 
 
+def _open(url: str, timeout: int = 30):
+    for wait in (0, 5, 15, 40, 90):
+        time.sleep(wait)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Api-User-Agent": UA})
+            return urllib.request.urlopen(req, timeout=timeout).read()
+        except urllib.error.HTTPError as e:
+            if e.code not in (429, 503):
+                raise
+            print("rate limited, waiting", file=sys.stderr)
+    raise RuntimeError("Wikimedia kept rate-limiting")
+
+
 def _get(params: dict) -> dict:
-    url = API + "?" + urllib.parse.urlencode({**params, "format": "json"})
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+    return json.loads(_open(API + "?" + urllib.parse.urlencode({**params, "format": "json", "maxlag": 5})))
 
 
 def _plain(s: str | None) -> str:
@@ -61,9 +72,7 @@ def search(query: str, limit: int = 20, width: int = 1400) -> list[dict]:
 
 def download(url: str, path: Path) -> bool:
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=60) as r:
-            path.write_bytes(r.read())
+        path.write_bytes(_open(url, 60))
         return True
     except Exception as e:  # noqa: BLE001
         print("download failed", url, e)
@@ -82,7 +91,8 @@ def candidates(queries_file: str, out_dir: str, per_query: int = 4) -> None:
             fn = f"{key}_{i}.jpg"
             if c["thumb"] and download(c["thumb"], out / fn):
                 report[key].append({**c, "file": fn})
-            time.sleep(0.5)
+            time.sleep(1.5)
+        time.sleep(2)
     (out / "candidates.json").write_text(json.dumps(report, indent=1))
     print(json.dumps({k: [(x["file"], x["title"], x["license"], x["w"], x["date"]) for x in v] for k, v in report.items()}, indent=1))
 
