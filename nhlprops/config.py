@@ -73,6 +73,11 @@ CONFIG = {
 
     # ---------- props ----------
     "sog_lines": [1.5, 2.5, 3.5, 4.5],
+    # hits / blocked shots (backtest_hb: NB r=10; hits regress less, k=3 h beat 6 h on Brier)
+    "hit_lines": [0.5, 1.5, 2.5, 3.5],
+    "blk_lines": [0.5, 1.5, 2.5],
+    "hb_dispersion": 10.0,
+    "k_hb_hours": {"hit": 3.0, "blk": 6.0},
     # Backtest 2021-2026 (213,885 player-games): expected shots ran ~6% high. Goals/assists/points were on target.
     "sog_calibration": 0.94,
     "active_last_n_team_games": 2,   # skater must have played in one of team's last N games

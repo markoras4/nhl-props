@@ -167,6 +167,43 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
         landing[pid] = land
         glogs[pid] = gl
 
+    # recent box scores for hits / blocked shots (not in the NHL game logs): last 10 games of every team
+    hb_logs, venue_hits = {}, {}
+    try:
+        lgc = league_games[(league_games.season == cur) & (league_games.final)].sort_values("date")
+        ids = set()
+        for t in teams:
+            tg = lgc[(lgc.home == t) | (lgc.away == t)].tail(10)
+            ids |= set(int(x) for x in tg.id)
+        log(f"Fetching {len(ids)} recent box scores (hits, blocks) ...")
+        with ThreadPoolExecutor(cfg["workers"]) as ex:
+            boxes = list(ex.map(lambda i: (i, src.boxscore(i)), sorted(ids)))
+        for gid, box in boxes:
+            if not box:
+                continue
+            home = _team((box.get("homeTeam") or {}).get("abbrev")); away = _team((box.get("awayTeam") or {}).get("abbrev"))
+            gdate = box.get("gameDate")
+            pbg = box.get("playerByGameStats") or {}
+            tot_hits = 0
+            for side, team, opp, is_home in (("homeTeam", home, away, True), ("awayTeam", away, home, False)):
+                grp = pbg.get(side) or {}
+                for key in ("forwards", "defense", "defensemen"):
+                    for pl in grp.get(key) or []:
+                        h_, b_ = pl.get("hits", 0) or 0, pl.get("blockedShots", 0) or 0
+                        tot_hits += h_
+                        m_, s_ = (str(pl.get("toi") or "0:00").split(":") + ["0"])[:2]
+                        try:
+                            toi_ = int(m_) + int(s_) / 60
+                        except ValueError:
+                            toi_ = 0.0
+                        hb_logs.setdefault(int(pl["playerId"]), []).append(
+                            {"gid": gid, "date": gdate, "team": team, "opp": opp, "home": is_home, "hit": h_, "blk": b_, "toi": toi_})
+            v = venue_hits.setdefault(home, [0, 0]); v[0] += tot_hits; v[1] += 1
+        for k in hb_logs:
+            hb_logs[k].sort(key=lambda r: r["date"] or "", reverse=True)
+    except Exception as e:  # optional data
+        log(f"  box scores for hits/blocks skipped: {e}")
+
     from .news import fetch_news
     news = fetch_news(src, teams, sorted({g["date"] for g in games}), log)
 
@@ -177,6 +214,6 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
         "date": date, "season": cur, "games": games, "mp": mp,
         "league_games": league_games, "rosters": rosters,
         "skaters": skaters, "goalies": goalies,
-        "landing": landing, "logs": logs, "glogs": glogs, "news": news,
+        "landing": landing, "logs": logs, "glogs": glogs, "news": news, "hb_logs": hb_logs, "venue_hits": venue_hits,
         "errors": list(src.errors),
     }

@@ -45,7 +45,8 @@ def _box_players(box: dict) -> dict[int, dict]:
         for key in ("forwards", "defense", "defensemen"):
             for p in grp.get(key, []) or []:
                 out[int(p["playerId"])] = {"g": p.get("goals", 0) or 0, "a": p.get("assists", 0) or 0,
-                                           "s": p.get("sog", p.get("shots", 0)) or 0}
+                                           "s": p.get("sog", p.get("shots", 0)) or 0,
+                                           "h": p.get("hits", 0) or 0, "b": p.get("blockedShots", 0) or 0}
     return out
 
 
@@ -57,6 +58,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
     ou_model: dict[str, list] = {}
     ou_hist: dict[str, list] = {}
     days = []
+    hb: dict[str, list] = {}
     bets = {k: [] for k, _ in MARKETS}  # (stake 1 at book odds when model EV >= 5%)
     for f in files:
         h = json.loads(f.read_text(encoding="utf-8"))
@@ -89,6 +91,8 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
             for k, v in pr["p"].items():
                 if k.startswith("s"):
                     sog.setdefault(k[1:], []).append((v, int(st["s"] > float(k[1:]))))
+                elif k[0] in "hb" and k[1:2].isdigit():
+                    hb.setdefault(k, []).append((v, int(st[k[0]] > float(k[1:]))))
         days.append({"date": h["date"], "games_final": finals, "games": len(h["games"]), "props": n_props})
 
     blends = {}
@@ -104,6 +108,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
         "days": days,
         "props": {name: summarize(props[k]) for k, name in MARKETS},
         "sog": {f"Over {L} SOG": summarize(v) for L, v in sorted(sog.items())},
+        "hb": {f"Over {k[1:]} {'hits' if k[0] == 'h' else 'blocks'}": summarize(v) for k, v in sorted(hb.items())},
         "ou_model": {f"Over {L}": summarize(v) for L, v in ou_model.items()},
         "ou_hist": {f"Over {L}": summarize(v) for L, v in ou_hist.items()},
         "ou_blends": blends,

@@ -59,6 +59,19 @@ def p_over_poisson(lam: float, line: float) -> float:
     return max(0.0, 1.0 - cdf)
 
 
+def p_over_nb(lam: float, line: float, r: float = 10.0) -> float:
+    """P(X > line) for a negative binomial with mean lam and size r (hits and blocks are overdispersed)"""
+    if lam <= 0:
+        return 0.0
+    p = r / (r + lam)
+    term = p ** r
+    cdf = term
+    for k in range(1, int(math.floor(line)) + 1):
+        term *= (k + r - 1) / k * (1 - p)
+        cdf += term
+    return max(0.0, 1.0 - cdf)
+
+
 def poisson_cdf(k: int, lam: float) -> float:
     if k < 0:
         return 0.0
@@ -120,6 +133,7 @@ TEAM_COLS = {
     "HDxGF": "highDangerxGoalsFor", "HDxGA": "highDangerxGoalsAgainst",
     "CF": "shotAttemptsFor", "CA": "shotAttemptsAgainst",
     "FF": "unblockedShotAttemptsFor", "FA": "unblockedShotAttemptsAgainst",
+    "HITF": "hitsFor", "HITA": "hitsAgainst", "BLKF": "blockedShotAttemptsFor", "BLKA": "blockedShotAttemptsAgainst",
 }
 
 
@@ -434,9 +448,10 @@ def skater_frame(mp_sk: dict[int, pd.DataFrame]) -> pd.DataFrame:
             "gp": _num(d, "games_played"), "h": _hours(d, "icetime"),
             "s": _num(d, "I_F_shotsOnGoal"), "g": _num(d, "I_F_goals"), "xg": _num(d, "I_F_xGoals"),
             "a": _num(d, "I_F_primaryAssists") + _num(d, "I_F_secondaryAssists"),
+            "hit": _num(d, "I_F_hits"), "blk": _num(d, "shotsBlockedByPlayer"),
         }))
     if not frames:
-        return pd.DataFrame(columns=["pid", "season", "posg", "gp", "h", "s", "g", "xg", "a"])
+        return pd.DataFrame(columns=["pid", "season", "posg", "gp", "h", "s", "g", "xg", "a", "hit", "blk"])
     f = pd.concat(frames)
     return f.groupby(["pid", "season", "posg"], as_index=False).sum()
 
@@ -479,9 +494,10 @@ def league_pos_rates(sf: pd.DataFrame, cur: int) -> dict:
         if h <= 0:
             continue
         out[pg] = {"s60": sh_ / h, "xg60": float(d.get("xg", 0)) / h, "a60": float(d.get("a", 0)) / h,
-                   "sh": g_ / sh_ if sh_ else 0.0, "toi": h * 60 / gp_ if gp_ else 0.0}
-    defaults = {"F": {"s60": 7.0, "xg60": 0.75, "a60": 1.1, "sh": 0.11, "toi": 15.0},
-                "D": {"s60": 4.5, "xg60": 0.25, "a60": 0.9, "sh": 0.05, "toi": 20.0}}
+                   "sh": g_ / sh_ if sh_ else 0.0, "toi": h * 60 / gp_ if gp_ else 0.0,
+                   "hit60": float(d.get("hit", 0)) / h, "blk60": float(d.get("blk", 0)) / h}
+    defaults = {"F": {"s60": 7.0, "xg60": 0.75, "a60": 1.1, "sh": 0.11, "toi": 15.0, "hit60": 5.0, "blk60": 1.6},
+                "D": {"s60": 4.5, "xg60": 0.25, "a60": 0.9, "sh": 0.05, "toi": 20.0, "hit60": 4.6, "blk60": 4.4}}
     for pg in defaults:
         out.setdefault(pg, {})
         for k, v in defaults[pg].items():
@@ -568,6 +584,14 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
             "toi": float(np.mean([g["toi"] for g in l5])) if l5 else None,
             "games": [{"d": g["date"], "o": g["opp"], "h": g["home"], "g": g["g"], "a": g["a"],
                        "s": g["s"], "t": round(g["toi"], 1)} for g in lc[:10]]}
+    # ---- hits and blocked shots per 60 (validated in backtest_hb): this season shrunk to last season, shrunk to position
+    hb = {}
+    for stat in ("hit", "blk"):
+        pos60 = L.get(stat + "60") or 0.0
+        prev = me[me.season == cur - 1]
+        prior = shrink(float(prev[stat].sum()), float(prev.h.sum()), pos60, 8.0) if len(prev) else pos60
+        curr = me[me.season == cur]
+        hb[stat + "60"] = shrink(float(curr[stat].sum()), float(curr.h.sum()), prior, cfg["k_hb_hours"][stat])
     # ---- hit rates for the standard prop lines: last 5 / 10 / 20 games (this + last season) and this season
     allg = lc + lp
     hit_fns = hit_markets(cfg)
@@ -639,7 +663,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     return {
         "id": pid, "name": p["name"], "team": p["team"], "pos": p["pos"], "posg": posg, "num": p.get("num"),
         "age": age, "active": played_recent, "toi_proj": toi_proj, "toi_recent": toi_recent, "toi_season": toi_season,
-        "rates": {"s60": s60, "xg60": xg60, "a60": a60, "g60": g60, "career_sh": career_sh,
+        "rates": {"s60": s60, "xg60": xg60, "a60": a60, "g60": g60, "career_sh": career_sh, **hb,
                   "recent_sh": recent_sh, "finish": finish, "lg_sh": L["sh"]},
         "form": form, "hr": hr, "role": role,
         "drought": {"shots": shots_since, "games": games_since, "found": found,
@@ -658,6 +682,37 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
                        "prev5": xg_window([cur - i for i in range(1, 6)])},
         "by_season": [{"y": y, **seasons[y], **mp_season(y)} for y in sorted(seasons, reverse=True)[:8] if y >= cur - 5],
     }
+
+
+def hb_factors(tf: pd.DataFrame, cur: int, venue_hits: dict) -> dict:
+    """Matchup factors for hits and blocked shots (as in backtest_hb):
+    arena = hits recorded per game in that building (scorer bias), opp_hit = hits made against the opponent,
+    opp_blk = how many of the opponent's attempts get blocked. Each is shrunk to last season and then to 1.0."""
+    out = {"arena": {}, "opp_hit": {}, "opp_blk": {}}
+    try:
+        a = tf[tf.sit == "all"]
+        c, p = a[a.season == cur].set_index("team"), a[a.season == cur - 1].set_index("team")
+
+        def per_game(df, col):
+            return (df[col] / df.gp.where(df.gp > 0)).dropna()
+        for key, col in (("opp_hit", "HITA"), ("opp_blk", "BLKF")):
+            pc, pp = per_game(c, col), per_game(p, col)
+            lg = float(pc.mean()) if len(pc) else float(pp.mean()) if len(pp) else 0.0
+            if not lg:
+                continue
+            for t in set(pc.index) | set(pp.index):
+                prior = 0.5 * float(pp[t]) + 0.5 * lg if t in pp.index else lg
+                gp = float(c.gp.get(t, 0)) if t in c.index else 0.0
+                val = shrink(float(pc.get(t, 0)) * gp, gp, prior, 10.0)
+                out[key][t] = val / lg
+        tot = [v[0] / v[1] for v in venue_hits.values() if v[1]]
+        if tot:
+            lg_h = float(np.mean(tot))
+            for t, (h_, n_) in venue_hits.items():
+                out["arena"][t] = shrink(h_, n_, lg_h, 8.0) / lg_h
+    except Exception:
+        pass
+    return out
 
 
 def hit_markets(cfg: dict) -> dict:
@@ -821,6 +876,19 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         for p in plist:
             profiles[p["id"]] = skater_profile(p, sf, lgpos, raw["landing"].get(p["id"]), raw["logs"].get(p["id"], {}),
                                                team_dates.get(t, []), cur, cfg)
+    # hits / blocks: recent box scores (the NHL game logs don't carry them)
+    for pid_, prof_ in profiles.items():
+        rows_ = (raw.get("hb_logs") or {}).get(pid_) or []
+        rows_ = [r_ for r_ in rows_ if r_.get("toi", 0) > 0][:10]
+        if not rows_:
+            continue
+        prof_["hb_games"] = [{"d": r_["date"], "o": r_["opp"], "h": r_["home"], "hit": r_["hit"], "blk": r_["blk"]} for r_ in rows_]
+        w5, w10 = rows_[:5], rows_
+        prof_["hr"]["hbn"] = [len(w5), len(w10)]
+        for L in cfg["hit_lines"]:
+            prof_["hr"][f"h{L}"] = [sum(1 for r_ in w if r_["hit"] > L) for w in (w5, w10)]
+        for L in cfg["blk_lines"]:
+            prof_["hr"][f"b{L}"] = [sum(1 for r_ in w if r_["blk"] > L) for w in (w5, w10)]
 
     def lineup_for(t):
         groups, source = {}, "estimated"
@@ -923,6 +991,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     opp_pos = opponent_by_position(raw)
     lg_xga = tm.lg_rate("all", "xGA") or 2.9
     lg_sa = tm.lg_rate("all", "SA") or 30
+    hb_f = hb_factors(tf, cur, raw.get("venue_hits") or {})
     for gm in raw["games"]:
         H, A = gm["home"], gm["away"]
         gdate = gm["date"]
@@ -1021,11 +1090,19 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                         "a": r["a60"] * hrs * d_xg * venue * bb * env,
                         "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0)}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
+                if r.get("hit60") is not None:
+                    arena = hb_f["arena"].get(H, 1.0)
+                    base["hit"] = r["hit60"] * hrs * arena * hb_f["opp_hit"].get(opp, 1.0) ** 0.5
+                    base["blk"] = r["blk60"] * hrs * hb_f["opp_blk"].get(opp, 1.0)
+                    hbp = {**{f"h{L}": p_over_nb(base["hit"], L, cfg["hb_dispersion"]) for L in cfg["hit_lines"]},
+                           **{f"b{L}": p_over_nb(base["blk"], L, cfg["hb_dispersion"]) for L in cfg["blk_lines"]}}
+                else:
+                    hbp = {}
                 props.append({
                     "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base, "hv": hv,
                     "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr},
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
-                          **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}},
+                          **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}, **hbp},
                 })
         games_out.append({**gm, "mu": mu, "starters": starters, "starter_status": starter_status, "starter_alt": starter_alt, "b2b": b2b,
                           "h2h": hh, "hist_over": hist_p, "default": dist, "props": props,

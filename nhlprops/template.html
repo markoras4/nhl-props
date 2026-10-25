@@ -332,6 +332,7 @@ td.h{text-align:center;padding:4px}
 .hrt{font-family:var(--f-disp);font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
+.gridm{margin:10px 0 8px}
 .hr small{font-size:10.5px;color:var(--mute);font-weight:600}
 .hr b{font-family:var(--f-disp);font-size:15px}
 .hr.hr-hi b{color:var(--accent)}.hr.hr-lo b{color:var(--bad)}
@@ -492,7 +493,7 @@ const I18N = {
     injuries:"Injuries", n_out_q:"{o} out · {q} questionable", back_on:"expected back {d}", no_injuries:"No reported injuries.",
     lu_proj:"Projected lineup", lu_est:"Lineup estimated from recent ice time", goal_pct:"goal %", no_lineup:"No lineup available.",
     lu_note:"Projected lines weren't available, so players are ranked by recent ice time.",
-    m_g:"Goal", m_a:"Assist", m_pt:"Point", m_sog:"SOG {n}+", player_team:"{t} player", toi:"TOI", signals:"Signals",
+    m_g:"Goal", m_a:"Assist", m_pt:"Point", m_sog:"SOG {n}+", m_hit:"Hits {n}+", m_blk:"Blocks {n}+", mg_pts:"Points", mg_s:"Shots", mg_h:"Hits", mg_b:"Blocks", gm_std:"Scoring & shots", gm_hb:"Hits & blocks", h_hit:"hits", h_blk:"blocks", player_team:"{t} player", toi:"TOI", signals:"Signals",
     g_fw:"Forwards", g_d:"Defense", g_ofw:"Other forwards", g_od:"Other defense", g_out:"Not expected to play", g_in:"Expected to play",
     why_proj:"Not in projected lineup", why_recent:"Not in recent lineups",
     tip:"Model {p} · fair {f}", tip_odds:" · odds {o} · EV {e}",
@@ -524,9 +525,9 @@ const I18N = {
     reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
     k_spg:"Typical shots per goal", k_drought:"Chance of a drought this long",
-    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)",
+    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", l10_h:"H", l10_b:"B", l10_tip_h:"Hits", l10_tip_b:"Blocked shots", l10_avg_last:"Average, last {n}",
     l10_colour:"Colour bars by", l10_by_avg:"Average", l10_1plus:"1+", l10_line:"Line", l10_over:"Over the line", l10_under:"Under the line",
-    hr_over_s:"Over {l} shots: how often it happened", hr_g:"1+ goal: how often it happened", hr_a:"1+ assist: how often it happened", hr_p:"1+ point: how often it happened",
+    hr_over_s:"Over {l} shots: how often it happened", hr_g:"1+ goal: how often it happened", hr_a:"1+ assist: how often it happened", hr_p:"1+ point: how often it happened", hr_over_h:"Over {l} hits: how often it happened", hr_over_b:"Over {l} blocked shots: how often it happened",
     hr_season:"Season", hr_vs:"vs {t}", hr_model:"Model tonight", hr_market:"Market",
     pill_toi:"TOI", tip_toi_up:"Ice time up: {a} min a game over the last 5, usually {b}.", tip_toi_down:"Ice time down: {a} min a game over the last 5, usually {b}.",
     pill_pp1_new:"New on PP1", tip_pp1_new:"Moved onto the first power-play unit in the last few days.", pill_pp1_lost:"Off PP1", tip_pp1_lost:"Dropped off the first power-play unit in the last few days.",
@@ -616,7 +617,7 @@ const I18N = {
     injuries:"Skador", n_out_q:"{o} ute · {q} osäkra", back_on:"väntas tillbaka {d}", no_injuries:"Inga rapporterade skador.",
     lu_proj:"Förväntad uppställning", lu_est:"Uppställning uppskattad från istid", goal_pct:"mål-%", no_lineup:"Ingen uppställning tillgänglig.",
     lu_note:"Förväntade kedjor saknades, så spelarna är rangordnade efter senaste istid.",
-    m_g:"Mål", m_a:"Assist", m_pt:"Poäng", m_sog:"Skott {n}+", player_team:"{t} spelare", toi:"Istid", signals:"Signaler",
+    m_g:"Mål", m_a:"Assist", m_pt:"Poäng", m_sog:"Skott {n}+", m_hit:"Tacklingar {n}+", m_blk:"Blockeringar {n}+", mg_pts:"Poäng", mg_s:"Skott", mg_h:"Tacklingar", mg_b:"Blockeringar", gm_std:"Poäng & skott", gm_hb:"Tacklingar & blockeringar", h_hit:"tacklingar", h_blk:"blockeringar", player_team:"{t} spelare", toi:"Istid", signals:"Signaler",
     g_fw:"Anfallare", g_d:"Backar", g_ofw:"Övriga anfallare", g_od:"Övriga backar", g_out:"Väntas inte spela", g_in:"Väntas spela",
     why_proj:"Inte med i förväntad uppställning", why_recent:"Inte med i de senaste matcherna",
     tip:"Modell {p} · rättvisa {f}", tip_odds:" · odds {o} · EV {e}",
@@ -648,9 +649,9 @@ const I18N = {
     reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
     k_spg:"Typiskt antal skott per mål", k_drought:"Chans för en så lång torka",
-    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)",
+    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", l10_h:"T", l10_b:"B", l10_tip_h:"Tacklingar", l10_tip_b:"Blockerade skott", l10_avg_last:"Snitt, senaste {n}",
     l10_colour:"Färga staplar efter", l10_by_avg:"Snitt", l10_1plus:"1+", l10_line:"Linje", l10_over:"Över linjen", l10_under:"Under linjen",
-    hr_over_s:"Över {l} skott: hur ofta det hänt", hr_g:"1+ mål: hur ofta det hänt", hr_a:"1+ assist: hur ofta det hänt", hr_p:"1+ poäng: hur ofta det hänt",
+    hr_over_s:"Över {l} skott: hur ofta det hänt", hr_g:"1+ mål: hur ofta det hänt", hr_a:"1+ assist: hur ofta det hänt", hr_p:"1+ poäng: hur ofta det hänt", hr_over_h:"Över {l} tacklingar: hur ofta det hänt", hr_over_b:"Över {l} blockerade skott: hur ofta det hänt",
     hr_season:"Säsong", hr_vs:"mot {t}", hr_model:"Modellen i kväll", hr_market:"Marknaden",
     pill_toi:"Istid", tip_toi_up:"Mer istid: {a} min per match de senaste 5, brukar vara {b}.", tip_toi_down:"Mindre istid: {a} min per match de senaste 5, brukar vara {b}.",
     pill_pp1_new:"Ny i PP1", tip_pp1_new:"Flyttad till första powerplayfemman de senaste dagarna.", pill_pp1_lost:"Ute ur PP1", tip_pp1_lost:"Petad från första powerplayfemman de senaste dagarna.",
@@ -799,6 +800,7 @@ function streakMult(team, opp){
   return m;
 }
 const atLeastOne = lam => 1 - Math.exp(-Math.max(lam,0));
+function nbOver(lam, line, r){ if(!(lam>0)) return 0; r=r||10; const p=r/(r+lam); let term=Math.pow(p,r), cdf=term; for(let k=1;k<=Math.floor(line);k++){ term*=(k+r-1)/k*(1-p); cdf+=term; } return Math.max(0,1-cdf); }
 function poisOver(lam, line){ const k=Math.floor(line); let term=Math.exp(-lam), cdf=0; for(let i=0;i<=k;i++){ if(i>0) term*=lam/i; cdf+=term; } return Math.max(0,1-cdf); }
 function pmf(lam,n=16){ const o=[Math.exp(-lam)]; for(let i=1;i<n;i++) o.push(o[i-1]*lam/i); return o; }
 // regulation scores: independent Poisson with ties boosted to the league's real tie rate (backtest: 16% -> 22%)
@@ -830,14 +832,26 @@ function prob(pr, game, m){
   if (m==="g") return atLeastOne(l.g);
   if (m==="a") return atLeastOne(l.a);
   if (m==="pt") return atLeastOne(l.g + l.a);
+  if (m[0]==="h") return nbOver(pr.base.hit, parseFloat(m.slice(1)), C.hb_dispersion);
+  if (m[0]==="b") return nbOver(pr.base.blk, parseFloat(m.slice(1)), C.hb_dispersion);
   return poisOver(l.s, parseFloat(m.slice(1)));
 }
-const MKEYS = ["g","a","pt",...C.sog_lines.map(L=>"s"+L)];
-const mName = m => m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt") : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
+const HIT_LINES = C.hit_lines || [], BLK_LINES = C.blk_lines || [];
+const MGROUPS = {pts:["g","a","pt"], s:C.sog_lines.map(L=>"s"+L), h:HIT_LINES.map(L=>"h"+L), b:BLK_LINES.map(L=>"b"+L)};
+const MKEYS = [...MGROUPS.pts, ...MGROUPS.s];
+const isHB = m => m[0]==="h" || m[0]==="b";
+const hasHB = pr => pr && pr.base && pr.base.hit != null;
+const mkeysFor = pr => hasHB(pr) ? [...MKEYS, ...MGROUPS.h, ...MGROUPS.b] : MKEYS;
+const mGroup = m => m==="g"||m==="a"||m==="pt" ? "pts" : m[0];
+const mName = m => m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt") : m[0]==="h" ? t("m_hit",{n:Math.ceil(parseFloat(m.slice(1)))}) : m[0]==="b" ? t("m_blk",{n:Math.ceil(parseFloat(m.slice(1)))}) : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
 function hitGame(gm, m){
   if (m==="g") return gm.g>=1; if (m==="a") return gm.a>=1; if (m==="pt") return gm.g+gm.a>=1;
+  if (m[0]==="h") return gm.hit > parseFloat(m.slice(1));
+  if (m[0]==="b") return gm.blk > parseFloat(m.slice(1));
   return gm.s > parseFloat(m.slice(1));
 }
+const lastGames = (p, m) => isHB(m) ? (p.hb_games || []) : p.form.games;
+const gameTip = (x, m) => isHB(m) ? `${x.d} ${x.o}: ${x.hit} ${t("h_hit")} · ${x.blk} ${t("h_blk")}` : `${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}`;
 const oddsKey = (gid, pid, m) => `odds:${gid}:${pid}:${m}`;
 const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
 const openOdds = (gid,pid,m) => DATA.odds?.[gid]?.open?.players?.[pid]?.[m] ?? null;
@@ -1180,15 +1194,19 @@ function newsCard(team){
     <ul class="newsl">${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
 }
 
-const GRID = ["g","a","pt",...C.sog_lines.slice(0,3).map(L=>"s"+L)];
+const GRID_STD = ["g","a","pt",...C.sog_lines.slice(0,3).map(L=>"s"+L)];
+const GRID_HB = [...HIT_LINES.slice(0,3).map(L=>"h"+L), ...BLK_LINES.slice(0,3).map(L=>"b"+L)];
+let GRID = GRID_STD;
 function heat(p, colMax){ const a = Math.min(1, p/Math.max(colMax,0.05)); return `background:rgba(var(--heat),${(0.06+0.42*a*a).toFixed(3)})`; }
 
 function sidePanel(g, team){
   const opp = team===g.home ? g.away : g.home;
   const lu = DATA.teams[team]?.lineup || {groups:{}};
   const pos = {}; Object.entries(lu.groups).forEach(([k,ids])=>{ if(/^[fd]\d$/.test(k)) ids.forEach(id=>{ pos[id]=k; }); });
+  GRID = state.gridm==="hb" && g.props.some(hasHB) ? GRID_HB : GRID_STD;
+  if (state.sort && !GRID.includes(state.sort)) state.sort = null;
   const rows = g.props.filter(pr=>pr.team===team).map(pr=>{
-    const p = P(pr.id); const probs = Object.fromEntries(GRID.map(m=>[m, prob(pr,g,m)]));
+    const p = P(pr.id); const probs = Object.fromEntries(GRID.map(m=>[m, hasHB(pr)||!isHB(m) ? prob(pr,g,m) : 0]));
     const k = p.active ? (pos[pr.id]||(p.posg==="D"?"d9":"f9")) : "zz";
     return {pr, p, probs, grp: k==="zz" ? "9" : (k[0]==="f"?"0":"1")+k};
   });
@@ -1216,6 +1234,7 @@ function sidePanel(g, team){
   $("#sidebody").innerHTML = `
     <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}${missingCard(team)}${newsCard(team)}</div>
     ${facingBar(g, team, opp)}
+    ${g.props.some(hasHB) ? `<div class="seg gridm" id="gridm"><button data-gm="std" class="${state.gridm!=="hb"?"on":""}">${t("gm_std")}</button><button data-gm="hb" class="${state.gridm==="hb"?"on":""}">${t("gm_hb")}</button></div>` : ""}
     <div class="card tablewrap"><table><thead><tr>
       <th>${t("player_team",{t:team})}</th><th class="n hide-sm">${t("toi")}</th>
       ${GRID.map(m=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${mName(m)}</th>`).join("")}<th>${t("signals")}</th></tr></thead>
@@ -1226,6 +1245,8 @@ function sidePanel(g, team){
     <p class="foot">${t("grid_foot")}${upd}</p>`;
   $("#sidebody").onclick = e => {
     if (e.target.closest("input,select")) return;
+    const gmb = e.target.closest("[data-gm]");
+    if (gmb){ state.gridm = gmb.dataset.gm; state.sort = null; sidePanel(g, team); return; }
     const cb = e.target.closest("[data-cv],[data-cs],[data-cm],[data-cu]");
     if (cb){ const d = cb.dataset;
       if (d.cv) state.chart.view = d.cv; if (d.cs) state.chart.stat = d.cs; if (d.cm) state.chart.mode = d.cm; if (d.cu) state.chart.unit = d.cu;
@@ -1364,7 +1385,7 @@ function detail(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
-  const oddsRows = MKEYS.map(m=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
+  const oddsRows = mkeysFor(pr).map(m=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
     return `<span>${mName(m)}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
       <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):t("odds_ph")}" value="${uo??""}">
@@ -1411,25 +1432,27 @@ function detail(pr, g){
 
 // ------------------------------------------------------------ last-10 bar chart
 function l10Chart(pr, g){
-  const p = P(pr.id), m = state.l10m || "s", l = lambdas(pr, g);
-  const lines = m==="s" ? C.sog_lines : [0.5];
+  const p = P(pr.id), l = lambdas(pr, g), hbOk = hasHB(pr) && (p.hb_games||[]).length >= 3;
+  let m = state.l10m || "s"; if ((m==="h"||m==="b") && !hbOk) m = "s";
+  const hb = m==="h" || m==="b", cnt = m==="s" || hb;
+  const lines = m==="s" ? C.sog_lines : m==="h" ? HIT_LINES : m==="b" ? BLK_LINES : [0.5];
   state.l10line = state.l10line || {};
   const line = state.l10line[m] ?? null;
-  const games = p.form.games.slice(0,10).reverse();
-  const val = x => m==="g" ? x.g : m==="a" ? x.a : m==="p" ? x.g + x.a : x.s;
+  const games = (hb ? p.hb_games : p.form.games).slice(0,10).reverse();
+  const val = x => m==="g" ? x.g : m==="a" ? x.a : m==="p" ? x.g + x.a : m==="h" ? x.hit : m==="b" ? x.blk : x.s;
   const w = p.windows || {}, base = (w.cur && w.cur.gp >= 5) ? w.cur : (w.prev3 || w.cur || {});
-  const avg = m==="g" ? base.g_pg : m==="a" ? base.a_pg : m==="p" ? base.p_pg : base.s_pg;
-  const exp = m==="g" ? l.g : m==="a" ? l.a : m==="p" ? l.g + l.a : l.s;
-  const avgLbl = (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
+  const avg = hb ? games.reduce((a,x)=>a+val(x),0)/Math.max(1,games.length) : m==="g" ? base.g_pg : m==="a" ? base.a_pg : m==="p" ? base.p_pg : base.s_pg;
+  const exp = m==="g" ? l.g : m==="a" ? l.a : m==="p" ? l.g + l.a : m==="h" ? pr.base.hit : m==="b" ? pr.base.blk : l.s;
+  const avgLbl = hb ? t("l10_avg_last",{n:games.length}) : (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
   const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0, line||0);
-  const ymax = m==="s" ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
+  const ymax = cnt ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
   const narrow = innerWidth < 600, W = narrow ? 360 : 720, H = narrow ? 220 : 250, L = 22, R = narrow ? 44 : 64, T = 16, B = narrow ? 40 : 44, cw = (W - L - R) / games.length, bw = Math.min(30, cw * 0.58);
   const y = v => T + (H - T - B) * (1 - v / ymax);
   const ticks = []; const step = ymax <= 3 ? 1 : ymax <= 8 ? 2 : 3; for (let v = 0; v <= ymax; v += step) ticks.push(v);
   const grid = ticks.map(v => `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="l10g"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end" class="l10t">${v}</text>`).join("");
   const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = line!=null ? v < line : (avg != null && v < avg - 1e-9);
     const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax);
-    return `<g><title>${x.d} ${x.h?"vs":"@"} ${x.o}: ${x.g} ${t("h_g")} · ${x.a} ${t("h_a")} · ${x.s} ${t("h_s")} · ${fmt(x.t,1)} ${t("toi")}</title>
+    return `<g><title>${hb ? `${x.d} ${x.h?"vs":"@"} ${x.o}: ${x.hit} ${t("h_hit")} · ${x.blk} ${t("h_blk")}` : `${x.d} ${x.h?"vs":"@"} ${x.o}: ${x.g} ${t("h_g")} · ${x.a} ${t("h_a")} · ${x.s} ${t("h_s")} · ${fmt(x.t,1)} ${t("toi")}`}</title>
       <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="${below?"l10lo":"l10hi"}"/>
       ${v>0?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
       <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
@@ -1444,11 +1467,11 @@ function l10Chart(pr, g){
   for (let i=0;i<order.length;i++) order[i].ly = order[i].y;
   for (let it=0; it<6; it++) for (let i=1;i<order.length;i++){ const gap = order[i].ly - order[i-1].ly; if (gap < 17){ const sh=(17-gap)/2; order[i-1].ly -= sh; order[i].ly += sh; } }
   const linesG = `<g class="l10lines">${refs.map(r=>`<line x1="${L}" x2="${W-R+4}" y1="${r.y}" y2="${r.y}" class="${r.cls}"/>`).join("")}${refs.map(r=>`<rect x="${W-R+8}" y="${r.ly-8}" width="${R-10}" height="16" rx="8" class="${r.cls}-tag"/><text x="${W-R+8+(R-10)/2}" y="${r.ly+3.5}" text-anchor="middle" class="${r.cls}-txt">${r.txt||fmt(r.v,2)}</text>`).join("")}</g>`;
-  const TIP = {s:t("l10_tip_s"), g:t("l10_tip_g"), a:t("l10_tip_a"), p:t("l10_tip_p")};
+  const TIP = {s:t("l10_tip_s"), g:t("l10_tip_g"), a:t("l10_tip_a"), p:t("l10_tip_p"), h:t("l10_tip_h"), b:t("l10_tip_b")};
   const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}" data-tip="${TIP[k]}" aria-label="${TIP[k]}">${lbl}</button>`;
-  return `<h4>${t("l10_chart")} <span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}</span></h4>
+  return `<h4>${t("l10_chart")} <span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}${hbOk?btn("h",t("l10_h"))+btn("b",t("l10_b")):""}</span></h4>
     <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${grid}${bars}${linesG}</svg>
-    <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""}">${v==null?t("l10_by_avg"):(m==="s"?v:t("l10_1plus"))}</button>`).join("")}</span></div>
+    <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
       ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b></span>`:""}
       <span><i class="sw hi"></i>${line!=null?t("l10_over"):t("l10_hi")}</span><span><i class="sw lo"></i>${line!=null?t("l10_under"):t("l10_lo")}</span></div>
@@ -1458,9 +1481,17 @@ function hitStrip(pr, g, m, line){
   const p = P(pr.id), hr = p.hr, hv = pr.hv; if (!hr) return "";
   // market key and line used for the hit rates (default for shots: the line closest to a 50/50 call tonight)
   let L = line;
-  if (m==="s" && L==null){ L = C.sog_lines.reduce((b,x)=>Math.abs(prob(pr,g,"s"+x)-0.5) < Math.abs(prob(pr,g,"s"+b)-0.5) ? x : b, C.sog_lines[0]); }
-  const mk = m==="s" ? "s"+L : m==="p" ? "pt" : m;
+  const cntM = m==="s"||m==="h"||m==="b", LS = m==="s" ? C.sog_lines : m==="h" ? HIT_LINES : BLK_LINES;
+  if (cntM && L==null){ L = LS.reduce((b,x)=>Math.abs(prob(pr,g,m+x)-0.5) < Math.abs(prob(pr,g,m+b)-0.5) ? x : b, LS[0]); }
+  const mk = cntM ? m+L : m==="p" ? "pt" : m;
   const H = hr[mk]; if (!H) return "";
+  if (m==="h" || m==="b"){
+    const n = hr.hbn || [0,0], pm_ = prob(pr, g, mk), b_ = book(g.id, pr.id, mk), mk_ = noVig(b_) ?? (b_?.o ? 1/b_.o : null);
+    const c_ = (lbl, h, nn) => { if (!nn) return ""; const r = h/nn, c = nn>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : ""; return `<span class="hr ${c}"><small>${lbl}</small><b>${h}/${nn}</b></span>`; };
+    return `<div class="hrstrip"><div class="hrt">${t(m==="h"?"hr_over_h":"hr_over_b",{l:L})}</div><div class="hrc">
+      ${c_("L5",H[0],n[0])}${c_("L10",H[1],n[1])}<span class="hr hr-model"><small>${t("hr_model")}</small><b>${pct(pm_)}</b></span>
+      ${mk_!=null?`<span class="hr"><small>${t("hr_market")}</small><b>${pct(mk_)}</b></span>`:""}</div></div>`;
+  }
   const cell = (lbl, h, n) => { if (!n) return ""; const r = h/n, c = n>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : "";
     return `<span class="hr ${c}"><small>${lbl}</small><b>${h}/${n}</b></span>`; };
   const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), mkt = noVig(b) ?? (b?.o ? 1/b.o : null);
@@ -1580,9 +1611,12 @@ function oppPosPlayer(pr, p){
 
 // ------------------------------------------------------------ top props
 function propsTab(){
+  const hbOn = DATA.games.some(g=>g.props.some(hasHB));
+  if (!hbOn && isHB(state.market)) state.market = "pt";
   const gameOpts = DATA.games.filter(g=>state.pday==="all"||g.date===state.pday).map(g=>`<option value="${g.id}" ${state.pfilter==g.id?"selected":""}>${dayLabel(g.date)} · ${g.away} @ ${g.home}</option>`).join("");
   $("#main").innerHTML = `<div class="controls">
-    <div class="seg" id="mkt">${MKEYS.map(k=>`<button data-m="${k}" class="${state.market===k?"on":""}">${mName(k)}</button>`).join("")}</div>
+    ${hbOn ? `<div class="seg" id="mgrp">${["pts","s","h","b"].map(k=>`<button data-g="${k}" class="${mGroup(state.market)===k?"on":""}">${t("mg_"+k)}</button>`).join("")}</div>` : ""}
+    <div class="seg" id="mkt">${(hbOn ? MGROUPS[mGroup(state.market)] : MKEYS).map(k=>`<button data-m="${k}" class="${state.market===k?"on":""}">${mName(k)}</button>`).join("")}</div>
     <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${state.pday===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
     <select id="fgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${gameOpts}</select>
     <input type="search" id="fq" placeholder="${t("search")}" value="${esc(state.q)}">
@@ -1591,6 +1625,7 @@ function propsTab(){
   <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n hide-xs">${t("toi")}</th><th>${t("h_prob")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th></tr></thead><tbody id="ptb"></tbody></table></div>
   <p class="foot">${t("props_foot")}</p>`;
   $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
+  if ($("#mgrp")) $("#mgrp").onclick = e => { const b=e.target.closest("button"); if(b){ const G_=MGROUPS[b.dataset.g]; state.market = b.dataset.g==="pts" ? "pt" : G_[Math.min(1, G_.length-1)]; propsTab(); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
   $("#fgame").onchange = e => { state.pfilter=e.target.value; rowsTop(); };
   $("#fq").oninput = e => { state.q=e.target.value.toLowerCase(); rowsTop(); };
@@ -1604,13 +1639,14 @@ function rowsTop(){
     if (state.pday!=="all" && g.date!==state.pday) continue;
     if (state.pfilter!=="all" && String(g.id)!==String(state.pfilter)) continue;
     for (const pr of g.props){ const p = P(pr.id); if(!p.active) continue;
+      if (isHB(m) && !hasHB(pr)) continue;
       if (state.q && !p.name.toLowerCase().includes(state.q)) continue;
       if (state.onlyReg && !isReg(p)) continue;
       const v = prob(pr,g,m), od = getOdds(g.id,pr.id,m); rows.push({g,pr,p,v,od,ev:od==null?null:v*od-1}); }
   }
   if (state.psort==="ev") rows.sort((a,b)=>(b.ev??-9)-(a.ev??-9)); else rows.sort((a,b)=>b.v-a.v);
   $("#ptb").innerHTML = rows.slice(0,300).map(({g,pr,p,v,od,ev})=>{
-    const last = p.form.games.slice(0,10);
+    const last = lastGames(p, m).slice(0,10);
     return `<tr class="row" data-g="${g.id}" data-id="${pr.id}">
       <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</div></div></div></td>
       <td class="n num hide-xs">${fmt(p.toi_proj,1)}</td>
@@ -1618,14 +1654,14 @@ function rowsTop(){
       <td class="n num hide-xs">${(1/v).toFixed(2)}</td>
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
-      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
+      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${esc(gameTip(x,m))}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
       <td>${regPills(p)} ${saveBtn(g, pr, m)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
 
 // ------------------------------------------------------------ track record
-const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1}));
+const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1})).replace(/^Over (\d)\.5 hits$/, (_,n)=>t("m_hit",{n:+n+1})).replace(/^Over (\d)\.5 blocks$/, (_,n)=>t("m_blk",{n:+n+1}));
 function calibChart(s){
   if (!s || !s.bins?.length) return "";
   const W=260, Hh=180, pad=28, X=v=>pad+v*(W-pad-8), Y=v=>Hh-pad-v*(Hh-pad-8);
@@ -1648,7 +1684,7 @@ function trackTab(){
   const ouName = (k, key) => t(key,{k:k.replace("Over ", t("over",{l:""}).trim()+" ")});
   $("#main").innerHTML = `<p class="meta">${t("tr_meta",{d:T.days.length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
     <div class="card tablewrap"><table><thead><tr><th>${t("tr_market")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_pred")}</th><th class="n">${t("tr_happ")}</th><th class="n">Brier</th><th class="n">${t("tr_skill")}</th></tr></thead>
-    <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
+    <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(rename(T.hb))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
     ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>${t("tr_val")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_won")}</th><th class="n">${t("tr_profit")}</th><th class="n">ROI</th></tr></thead><tbody>
       ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${esc(MKT_NAME(k))}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
     <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>${t("tr_calib",{k:MKT_NAME(k)})}</h4>${calibChart(s)}</div>`).join("")}${blends}</div>`;
