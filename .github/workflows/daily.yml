@@ -91,6 +91,17 @@ jobs:
           git add -A && git commit -qm "Site $(date -u +%F-%H%M)"
           git push -qf "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git" site
 
+      - name: Publish to Vercel
+        if: steps.gate.outputs.run == 'true'
+        continue-on-error: true
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then echo "No VERCEL_TOKEN secret yet - skipping"; exit 0; fi
+          rm -rf /tmp/nhl-props-lab && cp -r site /tmp/nhl-props-lab
+          cd /tmp/nhl-props-lab
+          npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tail -5
+
       - uses: actions/configure-pages@v5
         if: steps.gate.outputs.run == 'true'
         continue-on-error: true
