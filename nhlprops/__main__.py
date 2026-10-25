@@ -143,6 +143,60 @@ def freeze_started(slate: dict, frozen_dir: Path) -> None:
             f.unlink()
 
 
+def lineup_roles(slate: dict, lu_dir: Path) -> None:
+    """Save today's lines/PP units; compare with a lineup from 2-10 days ago to flag promotions."""
+    lu_dir.mkdir(parents=True, exist_ok=True)
+    today = {}
+    for t, ctx in (slate.get("teams") or {}).items():
+        lu = ctx.get("lineup") or {}
+        if lu.get("source") not in ("projected", "gameday"):
+            continue
+        today[t] = {str(pid): k for k, ids in (lu.get("groups") or {}).items() for pid in ids}
+    d0 = dt.date.fromisoformat(slate["date"])
+    f_today = lu_dir / f"{slate['date']}.json"
+    old = {}
+    if f_today.exists():
+        old = json.loads(f_today.read_text())
+    f_today.write_text(json.dumps({**old, **today}))
+    past = sorted(f for f in lu_dir.glob("20*.json")
+                  if (d0 - dt.date.fromisoformat(f.stem)).days >= 2 and (d0 - dt.date.fromisoformat(f.stem)).days <= 10)
+    if not past:
+        return
+    before = json.loads(past[-1].read_text())
+    for t, now in today.items():
+        prev = before.get(t)
+        if not prev:
+            continue
+        inv_now, inv_prev = {}, {}
+        for pid, k in now.items():
+            inv_now.setdefault(pid, []).append(k)
+        for pid, k in prev.items():
+            inv_prev.setdefault(pid, []).append(k)
+        for pid, ks in inv_now.items():
+            pl = slate["players"].get(pid) or slate["players"].get(int(pid)) if pid.isdigit() else None
+            if not pl or pid not in inv_prev:
+                continue
+            tags = []
+            was, isn = inv_prev[pid], ks
+            if "pp1" in isn and "pp1" not in was:
+                tags.append("pp1_new")
+            if "pp1" in was and "pp1" not in isn:
+                tags.append("pp1_lost")
+            ln = lambda arr, c: min((int(k[1]) for k in arr if k[0] == c and k[1:].isdigit()), default=None)
+            for c in ("f", "d"):
+                a, b = ln(was, c), ln(isn, c)
+                if a and b and b < a and b <= 2:
+                    tags.append("line_up")
+                elif a and b and b > a and a <= 2:
+                    tags.append("line_down")
+            if tags:
+                pl["role_tags"] = tags
+    cutoff = (d0 - dt.timedelta(days=14)).isoformat()
+    for f in lu_dir.glob("20*.json"):
+        if f.stem < cutoff:
+            f.unlink()
+
+
 def team_logos(src: Source, slate: dict, logo_dir: Path) -> dict:
     import base64
     teams = sorted({g["home"] for g in slate["games"]} | {g["away"] for g in slate["games"]})
@@ -318,6 +372,7 @@ def main(argv=None):
             print("Odds unavailable:", e)
             slate["odds"] = {}
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
+    lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None

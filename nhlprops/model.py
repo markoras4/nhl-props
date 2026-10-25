@@ -497,6 +497,21 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
             "toi": float(np.mean([g["toi"] for g in l5])) if l5 else None,
             "games": [{"d": g["date"], "o": g["opp"], "h": g["home"], "g": g["g"], "a": g["a"],
                        "s": g["s"], "t": round(g["toi"], 1)} for g in lc[:10]]}
+    # ---- hit rates for the standard prop lines: last 5 / 10 / 20 games (this + last season) and this season
+    allg = lc + lp
+    hit_fns = hit_markets(cfg)
+    wins = [allg[:5], allg[:10], allg[:20], lc]
+    hr = {"n": [len(w) for w in wins]}
+    for mk, fn in hit_fns.items():
+        hr[mk] = [sum(1 for g in w if fn(g)) for w in wins]
+    # ---- role: ice time over the last 5 games vs his usual (games 6-25)
+    base_g = allg[5:25]
+    role = None
+    if len(l5) >= 4 and len(base_g) >= 8:
+        t5 = float(np.mean([g["toi"] for g in l5]))
+        tb = float(np.mean([g["toi"] for g in base_g]))
+        role = {"toi5": round(t5, 1), "toi_base": round(tb, 1), "toi_delta": round(t5 - tb, 1),
+                "ppp5": sum(g.get("ppp", 0) for g in l5)}
     shots_since, games_since = 0, 0
     found = False
     for g in lc + lp:
@@ -555,7 +570,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         "age": age, "active": played_recent, "toi_proj": toi_proj, "toi_recent": toi_recent, "toi_season": toi_season,
         "rates": {"s60": s60, "xg60": xg60, "a60": a60, "g60": g60, "career_sh": career_sh,
                   "recent_sh": recent_sh, "finish": finish, "lg_sh": L["sh"]},
-        "form": form,
+        "form": form, "hr": hr, "role": role,
         "drought": {"shots": shots_since, "games": games_since, "found": found,
                     "shots_per_goal": 1 / recent_sh if recent_sh else None,
                     # chance a shooter of his talent goes this many shots without scoring
@@ -572,6 +587,14 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
                        "prev5": xg_window([cur - i for i in range(1, 6)])},
         "by_season": [{"y": y, **seasons[y], **mp_season(y)} for y in sorted(seasons, reverse=True)[:8] if y >= cur - 5],
     }
+
+
+def hit_markets(cfg: dict) -> dict:
+    """market -> test on one game log row (same keys the site uses for props)"""
+    fns = {"g": lambda g: g["g"] >= 1, "a": lambda g: g["a"] >= 1, "pt": lambda g: g["g"] + g["a"] >= 1}
+    for L in cfg["sog_lines"]:
+        fns[f"s{L}"] = (lambda L_: (lambda g: g["s"] > L_))(L)
+    return fns
 
 
 # ---------------------------------------------------------------- slate
@@ -745,6 +768,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 prof["why"] = None if prof["active"] else "Not in recent lineups"
             players_out[p["id"]] = prof
 
+    hit_fns = hit_markets(cfg)
     lg_xga = tm.lg_rate("all", "xGA") or 2.9
     lg_sa = tm.lg_rate("all", "SA") or 30
     for gm in raw["games"]:
@@ -837,13 +861,16 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             for p in sk_by_team.get(t, []):
                 prof = profiles[p["id"]]
                 r = prof["rates"]
+                lg_ = raw["logs"].get(p["id"], {}) or {}
+                vs = [g for g in (lg_.get("cur", []) + lg_.get("prev", [])) if g.get("opp") == opp]
+                hv = {"n": len(vs), **{mk: sum(1 for g in vs if fn(g)) for mk, fn in hit_fns.items()}}
                 hrs = prof["toi_proj"] / 60
                 base = {"g": r["g60"] * hrs * d_xg * venue * bb * env,
                         "a": r["a60"] * hrs * d_xg * venue * bb * env,
                         "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0)}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
                 props.append({
-                    "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base,
+                    "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base, "hv": hv,
                     "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr},
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
                           **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}},

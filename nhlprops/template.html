@@ -73,6 +73,8 @@ h2{font-size:20px;margin:0}
 .frozen{margin-top:8px;font-size:12px;color:var(--mute);font-family:var(--f-ui);font-weight:500;letter-spacing:0;text-transform:none}
 .s-out{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
 .s-q{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.s-up{background:color-mix(in srgb,var(--accent2) 16%,transparent);color:var(--accent2)}
+.s-down{background:var(--chip);color:var(--mute)}
 .s-due{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
 .s-hot{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
 .s-dry{background:color-mix(in srgb,var(--accent2) 16%,transparent);color:var(--accent2)}
@@ -292,6 +294,21 @@ td.h{text-align:center;padding:4px}
 .l10avg-tag{fill:var(--panel2);stroke:var(--line)}.l10avg-txt{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
 .l10exp-tag{fill:color-mix(in srgb,var(--accent2) 22%,var(--panel))}.l10exp-txt{fill:var(--accent2);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
 .l10seg button{position:relative}
+.l10line{stroke:var(--warn);stroke-width:2;stroke-dasharray:8 5}
+.l10line-tag{fill:color-mix(in srgb,var(--warn) 22%,var(--panel))}.l10line-txt{fill:var(--warn);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
+.l10leg i.ll{width:18px;height:0;border-top:2px dashed var(--warn)}
+.l10lines-pick{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px}
+.l10lines-pick .seg button{padding:4px 9px;font-size:12px}
+.l10lines-pick .lpl{color:var(--mute)}
+.hrmini{font-size:11px;color:var(--mute);margin-top:3px;white-space:nowrap}
+.hrstrip{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.hrt{font-family:var(--f-disp);font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
+.hrc{display:flex;flex-wrap:wrap;gap:8px}
+.hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
+.hr small{font-size:10.5px;color:var(--mute);font-weight:600}
+.hr b{font-family:var(--f-disp);font-size:15px}
+.hr.hr-hi b{color:var(--accent)}.hr.hr-lo b{color:var(--bad)}
+.hr.hr-model{border-color:color-mix(in srgb,var(--accent2) 50%,var(--line))}.hr.hr-model b{color:var(--accent2)}
 @media (max-width:600px){.l10o{font-size:9.5px;letter-spacing:0}.l10d{font-size:8.5px}.l10v{font-size:10px}.l10t{font-size:9.5px}}
 .l10seg button[data-tip]:hover::after,.l10seg button[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--text);color:var(--bg);font:600 11.5px/1 var(--f-ui);letter-spacing:0;text-transform:none;padding:6px 9px;border-radius:7px;z-index:5;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .l10seg button[data-tip]:hover::before,.l10seg button[data-tip]:focus-visible::before{content:"";position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--text);border-top:0;z-index:5}
@@ -444,7 +461,13 @@ const I18N = {
     reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
     k_spg:"Typical shots per goal", k_drought:"Chance of a drought this long",
-    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
+    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)",
+    l10_colour:"Colour bars by", l10_by_avg:"Average", l10_1plus:"1+", l10_line:"Line", l10_over:"Over the line", l10_under:"Under the line",
+    hr_over_s:"Over {l} shots: how often it happened", hr_g:"1+ goal: how often it happened", hr_a:"1+ assist: how often it happened", hr_p:"1+ point: how often it happened",
+    hr_season:"Season", hr_vs:"vs {t}", hr_model:"Model tonight", hr_market:"Market",
+    pill_toi:"TOI", tip_toi_up:"Ice time up: {a} min a game over the last 5, usually {b}.", tip_toi_down:"Ice time down: {a} min a game over the last 5, usually {b}.",
+    pill_pp1_new:"New on PP1", tip_pp1_new:"Moved onto the first power-play unit in the last few days.", pill_pp1_lost:"Off PP1", tip_pp1_lost:"Dropped off the first power-play unit in the last few days.",
+    pill_line_up:"Promoted", tip_line_up:"Moved up to a top line or pair in the last few days.", pill_line_down:"Moved down", tip_line_down:"Moved down from a top line or pair in the last few days.", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
     cmp:"Team comparison", c_ptspct:"Points %", c_tier:"Strength tier", c_streak2:"Streak", c_l5:"Last 5", c_l5gfga:"Last 5 GF / GA", c_gfga:"GF / GA per game",
     c_rh:"Road / Home GF – GA", c_xgf:"5v5 expected goals share", c_pdo:"PDO (luck, 1000 = normal)", c_hdf:"High-danger shots for /60", c_hda:"High-danger shots against /60",
     c_ppg:"Power play goals /60", c_pkga:"Penalty kill goals against /60", c_ppm:"Power play minutes / game", c_o55:"Over 5.5 this season", c_o55rh:"Over 5.5 road / home",
@@ -530,7 +553,13 @@ const I18N = {
     reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
     k_spg:"Typiskt antal skott per mål", k_drought:"Chans för en så lång torka",
-    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
+    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)",
+    l10_colour:"Färga staplar efter", l10_by_avg:"Snitt", l10_1plus:"1+", l10_line:"Linje", l10_over:"Över linjen", l10_under:"Under linjen",
+    hr_over_s:"Över {l} skott: hur ofta det hänt", hr_g:"1+ mål: hur ofta det hänt", hr_a:"1+ assist: hur ofta det hänt", hr_p:"1+ poäng: hur ofta det hänt",
+    hr_season:"Säsong", hr_vs:"mot {t}", hr_model:"Modellen i kväll", hr_market:"Marknaden",
+    pill_toi:"Istid", tip_toi_up:"Mer istid: {a} min per match de senaste 5, brukar vara {b}.", tip_toi_down:"Mindre istid: {a} min per match de senaste 5, brukar vara {b}.",
+    pill_pp1_new:"Ny i PP1", tip_pp1_new:"Flyttad till första powerplayfemman de senaste dagarna.", pill_pp1_lost:"Ute ur PP1", tip_pp1_lost:"Petad från första powerplayfemman de senaste dagarna.",
+    pill_line_up:"Uppflyttad", tip_line_up:"Flyttad upp till en toppkedja eller ett toppar de senaste dagarna.", pill_line_down:"Nedflyttad", tip_line_down:"Flyttad ner från en toppkedja eller ett toppar de senaste dagarna.", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
     cmp:"Lagjämförelse", c_ptspct:"Poäng-%", c_tier:"Styrkenivå", c_streak2:"Svit", c_l5:"Senaste 5", c_l5gfga:"Senaste 5 GM / IM", c_gfga:"GM / IM per match",
     c_rh:"Borta / Hemma GM – IM", c_xgf:"Andel förväntade mål 5 mot 5", c_pdo:"PDO (tur, 1000 = normalt)", c_hdf:"Farliga skott för /60", c_hda:"Farliga skott mot /60",
     c_ppg:"Powerplaymål /60", c_pkga:"Insläppta mål i boxplay /60", c_ppm:"Powerplayminuter / match", c_o55:"Över 5.5 i år", c_o55rh:"Över 5.5 borta / hemma",
@@ -711,7 +740,16 @@ function regPills(p){
   if (r.flag==="due") out.push(`<span class="pill s-due" title="${esc(t("tip_due"))}">${t("pill_due")}</span>`);
   if (r.flag==="hot") out.push(`<span class="pill s-hot" title="${esc(t("tip_hot"))}">${t("pill_hot")}</span>`);
   if (d.found && d.p!=null && d.p<0.15 && d.shots>=8) out.push(`<span class="pill s-dry" title="${esc(t("tip_dry",{n:d.shots,p:pct(d.p)}))}">${t("pill_dry",{n:d.shots})}</span>`);
-  return out.join(" ");
+  return out.concat(roleTags(p)).join(" ");
+}
+function roleTags(p){
+  const out = [], r = p.role, tags = p.role_tags || [];
+  if (r && r.toi_delta >= 2) out.push(`<span class="pill s-up" title="${esc(t("tip_toi_up",{a:fmt(r.toi5,1),b:fmt(r.toi_base,1)}))}">▲ ${t("pill_toi")} +${fmt(r.toi_delta,1)}</span>`);
+  if (r && r.toi_delta <= -2) out.push(`<span class="pill s-down" title="${esc(t("tip_toi_down",{a:fmt(r.toi5,1),b:fmt(r.toi_base,1)}))}">▼ ${t("pill_toi")} ${fmt(r.toi_delta,1)}</span>`);
+  const T = {pp1_new:["s-up","pill_pp1_new","tip_pp1_new"], pp1_lost:["s-down","pill_pp1_lost","tip_pp1_lost"],
+             line_up:["s-up","pill_line_up","tip_line_up"], line_down:["s-down","pill_line_down","tip_line_down"]};
+  tags.forEach(k => { const x = T[k]; if (x) out.push(`<span class="pill ${x[0]}" title="${esc(t(x[2]))}">${t(x[1])}</span>`); });
+  return out;
 }
 const isReg = p => p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8);
 
@@ -1219,40 +1257,69 @@ function detail(pr, g){
 // ------------------------------------------------------------ last-10 bar chart
 function l10Chart(pr, g){
   const p = P(pr.id), m = state.l10m || "s", l = lambdas(pr, g);
+  const lines = m==="s" ? C.sog_lines : [0.5];
+  state.l10line = state.l10line || {};
+  const line = state.l10line[m] ?? null;
   const games = p.form.games.slice(0,10).reverse();
   const val = x => m==="g" ? x.g : m==="a" ? x.a : m==="p" ? x.g + x.a : x.s;
   const w = p.windows || {}, base = (w.cur && w.cur.gp >= 5) ? w.cur : (w.prev3 || w.cur || {});
   const avg = m==="g" ? base.g_pg : m==="a" ? base.a_pg : m==="p" ? base.p_pg : base.s_pg;
   const exp = m==="g" ? l.g : m==="a" ? l.a : m==="p" ? l.g + l.a : l.s;
   const avgLbl = (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
-  const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0);
+  const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0, line||0);
   const ymax = m==="s" ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
   const narrow = innerWidth < 600, W = narrow ? 360 : 720, H = narrow ? 220 : 250, L = 22, R = narrow ? 44 : 64, T = 16, B = narrow ? 40 : 44, cw = (W - L - R) / games.length, bw = Math.min(30, cw * 0.58);
   const y = v => T + (H - T - B) * (1 - v / ymax);
   const ticks = []; const step = ymax <= 3 ? 1 : ymax <= 8 ? 2 : 3; for (let v = 0; v <= ymax; v += step) ticks.push(v);
   const grid = ticks.map(v => `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="l10g"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end" class="l10t">${v}</text>`).join("");
-  const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = avg != null && v < avg - 1e-9;
+  const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = line!=null ? v < line : (avg != null && v < avg - 1e-9);
     const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax);
     return `<g><title>${x.d} ${x.h?"vs":"@"} ${x.o}: ${x.g} ${t("h_g")} · ${x.a} ${t("h_a")} · ${x.s} ${t("h_s")} · ${fmt(x.t,1)} ${t("toi")}</title>
       <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="${below?"l10lo":"l10hi"}"/>
       ${v>0?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
       <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
       <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text></g>`; }).join("");
-  // reference lines: average (rounded dashes) and model tonight (solid, soft glow), labelled at the right edge without overlap
-  let ya = avg==null ? null : y(avg), ye = exp==null ? null : y(exp);
-  let la = ya, le = ye;
-  if (la!=null && le!=null && Math.abs(la-le) < 15){ const mid=(la+le)/2, up = la<=le; la = mid + (up?-8:8); le = mid + (up?8:-8); }
-  const tag = (yy, ly, v, cls) => yy==null ? "" : `<line x1="${L}" x2="${W-R+4}" y1="${yy}" y2="${yy}" class="${cls}"/>
-      <rect x="${W-R+8}" y="${ly-8}" width="${R-10}" height="16" rx="8" class="${cls}-tag"/><text x="${W-R+8+(R-10)/2}" y="${ly+3.5}" text-anchor="middle" class="${cls}-txt">${fmt(v,2)}</text>`;
-  const lines = `<g class="l10lines">${tag(ye, le, exp, "l10exp")}${tag(ya, la, avg, "l10avg")}</g>`;
+  // reference lines (model, average, chosen line), each with a value tag at the right edge; tags never overlap
+  const refs = [];
+  if (exp!=null) refs.push({v:exp, y:y(exp), cls:"l10exp"});
+  if (avg!=null) refs.push({v:avg, y:y(avg), cls:"l10avg"});
+  if (line!=null) refs.push({v:line, y:y(line), cls:"l10line", txt:String(line)});
+  const tagsY = refs.map(r=>r.y).slice().sort((a,b)=>a-b);
+  const order = refs.slice().sort((a,b)=>a.y-b.y);
+  for (let i=0;i<order.length;i++) order[i].ly = order[i].y;
+  for (let it=0; it<6; it++) for (let i=1;i<order.length;i++){ const gap = order[i].ly - order[i-1].ly; if (gap < 17){ const sh=(17-gap)/2; order[i-1].ly -= sh; order[i].ly += sh; } }
+  const linesG = `<g class="l10lines">${refs.map(r=>`<line x1="${L}" x2="${W-R+4}" y1="${r.y}" y2="${r.y}" class="${r.cls}"/>`).join("")}${refs.map(r=>`<rect x="${W-R+8}" y="${r.ly-8}" width="${R-10}" height="16" rx="8" class="${r.cls}-tag"/><text x="${W-R+8+(R-10)/2}" y="${r.ly+3.5}" text-anchor="middle" class="${r.cls}-txt">${r.txt||fmt(r.v,2)}</text>`).join("")}</g>`;
   const TIP = {s:t("l10_tip_s"), g:t("l10_tip_g"), a:t("l10_tip_a"), p:t("l10_tip_p")};
   const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}" data-tip="${TIP[k]}" aria-label="${TIP[k]}">${lbl}</button>`;
   return `<h4>${t("l10_chart")} <span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}</span></h4>
-    <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${grid}${bars}${lines}</svg>
+    <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${grid}${bars}${linesG}</svg>
+    <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""}">${v==null?t("l10_by_avg"):(m==="s"?v:t("l10_1plus"))}</button>`).join("")}</span></div>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
-      <span><i class="sw hi"></i>${t("l10_hi")}</span><span><i class="sw lo"></i>${t("l10_lo")}</span></div>`;
+      ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b></span>`:""}
+      <span><i class="sw hi"></i>${line!=null?t("l10_over"):t("l10_hi")}</span><span><i class="sw lo"></i>${line!=null?t("l10_under"):t("l10_lo")}</span></div>
+    ${hitStrip(pr, g, m, line)}`;
+}
+function hitStrip(pr, g, m, line){
+  const p = P(pr.id), hr = p.hr, hv = pr.hv; if (!hr) return "";
+  // market key and line used for the hit rates (default for shots: the line closest to a 50/50 call tonight)
+  let L = line;
+  if (m==="s" && L==null){ L = C.sog_lines.reduce((b,x)=>Math.abs(prob(pr,g,"s"+x)-0.5) < Math.abs(prob(pr,g,"s"+b)-0.5) ? x : b, C.sog_lines[0]); }
+  const mk = m==="s" ? "s"+L : m==="p" ? "pt" : m;
+  const H = hr[mk]; if (!H) return "";
+  const cell = (lbl, h, n) => { if (!n) return ""; const r = h/n, c = n>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : "";
+    return `<span class="hr ${c}"><small>${lbl}</small><b>${h}/${n}</b></span>`; };
+  const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), mkt = noVig(b) ?? (b?.o ? 1/b.o : null);
+  const name = m==="s" ? t("hr_over_s",{l:L}) : m==="g" ? t("hr_g") : m==="a" ? t("hr_a") : t("hr_p");
+  return `<div class="hrstrip"><div class="hrt">${name}</div><div class="hrc">
+      ${cell("L5",H[0],hr.n[0])}${cell("L10",H[1],hr.n[1])}${cell("L20",H[2],hr.n[2])}${hr.n[3]?`<span class="hr ${hr.n[3]>=5?(H[3]/hr.n[3]>=0.6?"hr-hi":H[3]/hr.n[3]<=0.4?"hr-lo":""):""}"><small>${t("hr_season")}</small><b>${pct(H[3]/hr.n[3])}</b></span>`:""}
+      ${hv && hv.n ? cell(t("hr_vs",{t:pr.opp}), hv[mk], hv.n) : `<span class="hr"><small>${t("hr_vs",{t:pr.opp})}</small><b>–</b></span>`}
+      <span class="hr hr-model"><small>${t("hr_model")}</small><b>${pct(pm)}</b></span>
+      ${mkt!=null?`<span class="hr"><small>${t("hr_market")}</small><b>${pct(mkt)}</b></span>`:""}</div></div>`;
 }
 document.addEventListener("click", e => {
+  const lb = e.target.closest("[data-l10line]");
+  if (lb){ const box = lb.closest(".l10box"); state.l10line = state.l10line || {}; state.l10line[state.l10m||"s"] = lb.dataset.l10line==="" ? null : +lb.dataset.l10line;
+    const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); return; }
   const b = e.target.closest("[data-l10]"); if (!b) return;
   const box = b.closest(".l10box"); state.l10m = b.dataset.l10;
   const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid);
@@ -1361,7 +1428,7 @@ function rowsTop(){
       <td class="n num hide-xs">${(1/v).toFixed(2)}</td>
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}"></td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
-      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div></td>
+      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
       <td>${regPills(p)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
@@ -1428,6 +1495,8 @@ en: `<h3>What the site does</h3>
     <li><b>Shots dry</b> = shots since his last goal, and how rare a drought that long is for his talent.</li>
     <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
     <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
+    <li><b>Hit rates</b>: how often a player went over a line in his last 5, 10 and 20 games, this season and against tonight's opponent, next to the model's chance tonight and the market's. A short record is a weak guide on its own; read it together with the model.</li>
+    <li><b>Role tags</b>: <i>TOI ▲/▼</i> when his ice time over the last 5 games is 2+ minutes above or below his usual; <i>New on PP1</i>, <i>Promoted</i> and similar when his power-play unit or line changed in the last few days. Role changes often show up in the numbers before the scoring does.</li>
     <li><b>Game-day lineup</b>: about an hour before each puck drop the site refreshes with the final lineups. Questionable players who are in the lineup are marked Playing, scratched and injured players are removed, and the expected starting goalie is updated. It refreshes again about 30 minutes before puck drop, when starters are usually confirmed. If the sources disagree on the goalie and nobody has confirmed, he is marked Not decided and the alternative is shown, so you can switch and see the effect.</li>
   </ul>
   <h3>Charts</h3>
@@ -1461,6 +1530,8 @@ sv: `<h3>Vad sajten gör</h3>
     <li><b>Skott utan mål</b> = skott sedan senaste målet, och hur ovanlig en så lång torka är för hans nivå.</li>
     <li><b>Prognos / Trolig / Bekräftad</b> målvakt = från de senaste rapporterna om startmålvakter. "Prognos" betyder att ingen rapport finns än: målvakten med flest starter på sistone, och reservmålvakten vid back-to-back.</li>
     <li><b>Ute / Dag till dag</b>: skadade spelare markerade Ute tas bort från spelen; osäkra spelare finns kvar med en gul markering.</li>
+    <li><b>Träffprocent</b>: hur ofta en spelare gått över en linje de senaste 5, 10 och 20 matcherna, den här säsongen och mot kvällens motståndare, bredvid modellens chans i kväll och marknadens. Ett kort facit är en svag vägledning i sig; läs det tillsammans med modellen.</li>
+    <li><b>Rolltaggar</b>: <i>Istid ▲/▼</i> när istiden de senaste 5 matcherna är 2+ minuter över eller under det vanliga; <i>Ny i PP1</i>, <i>Uppflyttad</i> och liknande när powerplayfemman eller kedjan ändrats de senaste dagarna. Rolländringar syns ofta i siffrorna innan målen kommer.</li>
     <li><b>Matchdagens uppställning</b>: ungefär en timme före varje nedsläpp uppdateras sidan med de slutliga uppställningarna. Osäkra spelare som finns med markeras Spelar, petade och skadade spelare tas bort, och den väntade startmålvakten uppdateras. Sidan uppdateras igen ungefär 30 minuter före nedsläpp, när startmålvakterna brukar bekräftas. Om källorna är oense om målvakten och ingen har bekräftat markeras han Inte avgjort och alternativet visas, så att du kan byta och se effekten.</li>
   </ul>
   <h3>Diagram</h3>
