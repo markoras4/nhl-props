@@ -27,10 +27,13 @@ def _odds(o):
 
 def parse_event(js: dict | None) -> dict:
     """-> {'players': [(name, market, yes, no)], 'totals': {line: {'over','under'}}}"""
-    players, totals = [], {}
+    players, totals, winner = [], {}, []
     for bo in (js or {}).get("betOffers", []) or []:
         lab = ((bo.get("criterion") or {}).get("englishLabel") or "").lower().strip()
         outs = bo.get("outcomes") or []
+        if lab.startswith("moneyline - including overtime"):
+            winner = [(o.get("participant") or o.get("englishLabel") or "", _odds(o), o.get("type")) for o in outs]
+            continue
         if lab.startswith("total goals - including overtime and penalty shootout"):
             for o in outs:
                 line = (o.get("line") or 0) / 1000
@@ -56,7 +59,7 @@ def parse_event(js: dict | None) -> dict:
                     by.setdefault(o["participant"], {})["yes" if o.get("type") == "OT_YES" else "no"] = _odds(o)
             for name, v in by.items():
                 players.append((name, mk, v.get("yes"), v.get("no")))
-    return {"players": players, "totals": totals}
+    return {"players": players, "totals": totals, "winner": winner}
 
 
 def fetch_odds(src, games: list[dict], players: list[dict], log=print) -> dict:
@@ -87,7 +90,13 @@ def fetch_odds(src, games: list[dict], players: list[dict], log=print) -> dict:
             if m and yes:
                 po.setdefault(m["id"], {})[mk] = {"o": yes, "n": no}
         n_p += len(po)
-        out[g["id"]] = {"book": "Bookmaker", "players": po, "totals": parsed["totals"],
+        win = {}
+        for name, od, typ in parsed["winner"]:
+            tm = team_from_name(name)
+            side = "home" if tm == home else "away" if tm == away else ("home" if typ == "OT_ONE" else "away")
+            if od:
+                win[side] = od
+        out[g["id"]] = {"book": "Bookmaker", "players": po, "totals": parsed["totals"], "winner": win,
                         "fetched": dt.datetime.utcnow().isoformat(timespec="minutes") + "Z"}
     log(f"Odds: bookmaker prices for {len(out)} games, {n_p} players")
     return out

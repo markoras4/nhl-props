@@ -99,7 +99,16 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .gmid .sc{font-family:var(--f-disp);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .gmid .wpb{display:flex;height:5px;border-radius:3px;overflow:hidden;margin-top:6px;background:var(--chip)}
 .wpb i:first-child{background:var(--accent2)}.wpb i:last-child{background:var(--accent)}
-.gou{display:grid;grid-template-columns:auto auto;gap:2px 12px;font-size:12px;justify-content:end}
+.gou{display:grid;grid-template-columns:auto auto auto;gap:2px 10px;font-size:12px;justify-content:end;align-items:baseline}
+.gou .go{font-family:var(--f-disp);font-weight:600;color:var(--mute);font-variant-numeric:tabular-nums;min-width:30px;text-align:right}
+.gou .go.val,.godds .val{color:var(--good);font-weight:700}
+.godds{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-family:var(--f-disp);font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}
+.godds small{font-family:var(--f-ui);font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.totop{position:fixed;right:calc(18px + env(safe-area-inset-right, 0px));bottom:calc(18px + env(safe-area-inset-bottom, 0px));z-index:40;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(8px);color:var(--text);font-size:20px;cursor:pointer;
+  display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s,border-color .15s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{border-color:var(--accent);color:var(--accent)}
 .gou span:nth-child(odd){color:var(--mute)}
 .gou b{font-variant-numeric:tabular-nums}
 .tags{display:flex;gap:5px;flex-wrap:wrap}
@@ -261,6 +270,7 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
   </div>
 </header>
 <main class="wrap" id="main"></main>
+<button class="totop" id="totop" type="button">↑</button>
 
 <script>
 const DATA=/*__DATA__*/null;
@@ -353,6 +363,7 @@ const I18N = {
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
     inj_out:"Out", inj_q:"Questionable",
+    to_top:"Back to top", odds_word:"odds", win_odds:"Market odds: {ta} {a} · {th} {h} (fair {fa} · {fh})",
     footer:"Updated four times a day. Stats: MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   },
   sv: {
@@ -432,6 +443,7 @@ const I18N = {
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
     inj_out:"Ute", inj_q:"Osäker",
+    to_top:"Till toppen", odds_word:"odds", win_odds:"Marknadsodds: {ta} {a} · {th} {h} (rättvisa {fa} · {fh})",
     footer:"Uppdateras fyra gånger om dagen. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
@@ -591,12 +603,17 @@ function header(){
   $("#theme").textContent = th==="dark" ? "☀" : "☾";
   $("#theme").title = th==="dark" ? t("theme_light") : t("theme_dark");
   $("#theme").setAttribute("aria-label", $("#theme").title);
+  $("#totop").title = t("to_top"); $("#totop").setAttribute("aria-label", t("to_top"));
 }
 function wireHeader(){
   $("#nav").onclick = e => { const b=e.target.closest("button"); if(!b) return; go({tab:b.dataset.tab, game:null}); };
   $("#home").onclick = () => go({tab:"games", game:null});
   $("#lang").onclick = e => { const b=e.target.closest("button"); if(!b || b.dataset.l===LANG) return; LANG=b.dataset.l; store.set("set:lang", LANG); header(); render(); };
   $("#theme").onclick = () => { const next = currentTheme()==="dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next); store.set("set:theme", next); header(); };
+  const tt = $("#totop");
+  tt.onclick = () => window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  const onScroll = () => tt.classList.toggle("show", window.scrollY > 400);
+  window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
   window.onhashchange = () => { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) { state.tab="games"; state.game=m[1]; render(); } else if(!location.hash){ state.game=null; render(); } };
 }
 function go(patch){
@@ -624,10 +641,11 @@ function gamesList(){
       <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
       <div class="gmid"><div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>
-        <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div></div>
+        <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
       <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
-      <div class="gou">${C.ou_lines.map(Lx=>`<span>${t("over",{l:Lx})}</span><b>${pct(blendOver(g,d,Lx))}</b>`).join("")}</div>
+      <div class="gou">${C.ou_lines.map(Lx=>{ const p = blendOver(g,d,Lx), o = DATA.odds?.[g.id]?.totals?.[String(Lx)]?.over;
+        return `<span>${t("over",{l:Lx})}</span><b>${pct(p)}</b><span class="go ${o && p*o-1>=VALUE ? "val":""}">${o?o.toFixed(2):""}</span>`; }).join("")}</div>
     </div>`;
   }
   html += `</div><p class="foot">${t("league_foot",{a:fmt(L.cur_gpg,2), b:fmt(L.base_gpg,2)})}</p>`;
@@ -637,6 +655,11 @@ function gamesList(){
     const r = e.target.closest(".grow"); if (r) go({game:r.dataset.g, side:null});
   };
   $("#main").onkeydown = e => { const r=e.target.closest(".grow"); if(r && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); go({game:r.dataset.g, side:null}); } };
+}
+function winOdds(g, d){
+  const w = DATA.odds?.[g.id]?.winner; if (!w || (!w.home && !w.away)) return "";
+  const cell = (o, p) => o ? `<span class="${p*o-1>=VALUE?"val":""}">${o.toFixed(2)}</span>` : `<span>–</span>`;
+  return `<div class="godds">${cell(w.away, d.pa)}<small>${t("odds_word")}</small>${cell(w.home, d.ph)}</div>`;
 }
 const blendOver = (g, d, L) => { const w = state.histW/100; return (1-w)*d.over(L) + w*g.hist_over[String(L)]; };
 
@@ -664,6 +687,7 @@ function gamePage(){
     <div class="box"><h4>${t("win_prob")}</h4>
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
+      ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away?.toFixed(2)??"–", th:g.home, h:DATA.odds[g.id].winner.home?.toFixed(2)??"–", fa:(1/d.pa).toFixed(2), fh:(1/d.ph).toFixed(2)})}</p>` : ""}
       <p class="note">${g.h2h?.n ? t("meetings",{n:g.h2h.n, list:g.h2h.games.map(x=>`${x.date.slice(2)} ${x.score}`).join(" · "), t:g.away, a:fmt(g.h2h.avg_total,1)}) : t("no_meetings")}</p></div>
     <div class="box"><h4>${t("total_goals")}</h4>
       <div class="ou"><div class="h">${t("line")}</div><div class="h">${t("model")}</div><div class="h">${t("history")}</div><div class="h">${t("over_fair")}</div><div class="h">${t("over_odds")}</div>${ou}</div></div>
