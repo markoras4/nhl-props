@@ -118,6 +118,8 @@ TEAM_COLS = {
     "SF": "shotsOnGoalFor", "SA": "shotsOnGoalAgainst",
     "HDSF": "highDangerShotsFor", "HDSA": "highDangerShotsAgainst",
     "HDxGF": "highDangerxGoalsFor", "HDxGA": "highDangerxGoalsAgainst",
+    "CF": "shotAttemptsFor", "CA": "shotAttemptsAgainst",
+    "FF": "unblockedShotAttemptsFor", "FA": "unblockedShotAttemptsAgainst",
 }
 
 
@@ -213,6 +215,46 @@ class TeamModel:
         pp_h = 0.5 * (att["pp_min"] + deff["pk_min"]) / 60
         pp = pp_h * att["xgf_pp"] * deff["xga_pk"] / lgpk * self.fin_pp
         return {"ev": ev, "pp": pp, "other": self.lg_other_gpg}
+
+
+def team_ranks(tf: pd.DataFrame, cur: int) -> dict:
+    """League ranks (1 = best) for attack, defence, shot share, chance quality, special teams, goaltending, luck.
+    Early in the season last season is blended in, worth ~10 games, fading out by game 30."""
+    def sums(team, season, sit):
+        r = tf[(tf.team == team) & (tf.season == season) & (tf.sit == sit)].sum(numeric_only=True)
+        return r
+    teams = sorted(set(tf[tf.season == cur].team))
+    vals, blended = {}, False
+    for t in teams:
+        gp = float(sums(t, cur, "all").get("gp", 0))
+        w = max(0.0, 10 * (1 - gp / 30))
+        pgp = float(sums(t, cur - 1, "all").get("gp", 0))
+        pw = (w / pgp) if pgp else 0.0
+        blended |= pw > 0
+
+        def S(sit):
+            a, b = sums(t, cur, sit), sums(t, cur - 1, sit)
+            return {k: float(a.get(k, 0)) + pw * float(b.get(k, 0)) for k in ("h", "gp", *TEAM_COLS)}
+        e, a, pp, pk = S("5on5"), S("all"), S("5on4"), S("4on5")
+        d = lambda x, y: x / y if y else None
+        sh = d(e["GF"], e["SF"]); sv = 1 - d(e["GA"], e["SA"]) if e["SA"] else None
+        vals[t] = {
+            "att": d(e["xGF"], e["h"]), "def": d(e["xGA"], e["h"]),
+            "cf": d(e["CF"], e["CF"] + e["CA"]) if e["CF"] + e["CA"] else None,
+            "xgf": d(e["xGF"], e["xGF"] + e["xGA"]) if e["xGF"] + e["xGA"] else None,
+            "hdcf": d(e["HDSF"], e["HDSF"] + e["HDSA"]) if e["HDSF"] + e["HDSA"] else None,
+            "pp": d(pp["xGF"], pp["h"]), "pk": d(pk["xGA"], pk["h"]),
+            "gsax": d(a["xGA"] - a["GA"], a["gp"]),
+            "pdo": (sh + sv) if (sh is not None and sv is not None) else None,
+        }
+    lower_better = {"def", "pk"}
+    out = {t: {} for t in teams}
+    for m in ("att", "def", "cf", "xgf", "hdcf", "pp", "pk", "gsax", "pdo"):
+        have = [t for t in teams if vals[t][m] is not None]
+        order = sorted(have, key=lambda t: vals[t][m], reverse=m not in lower_better)
+        for i, t in enumerate(order):
+            out[t][m] = {"v": round(vals[t][m], 4), "rk": i + 1}
+    return {"teams": out, "n": len(teams), "blended": blended}
 
 
 # ---------------------------------------------------------- team history
@@ -918,6 +960,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     log(f"Model built: {len(games_out)} games, {len(players_out)} skaters "
         f"({sum(p['active'] for p in players_out.values())} expected to play)")
     return {"date": date, "season": cur, "league": league, "teams": teams_out, "games": games_out, "opp_pos": opp_pos,
+            "team_ranks": team_ranks(tf, cur),
             "players": {str(k): v for k, v in players_out.items()},
             "goalies": {str(k): v for k, v in goalies_out.items()},
             "news_status": news.get("status", {})}
