@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NHL Props Lab</title>
-<meta name="description" content="NHL player prop probabilities for every skater: goals, assists, points and shots, built on regression to the mean.">
+<meta name="description" content="NHL player prop probabilities for every skater: goals, assists, points, shots, hits and blocks, tested on thousands of games.">
 <meta name="theme-color" content="#0a0e13">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -360,7 +360,7 @@ const I18N = {
   login:"Log in", start_free:"Start free",
   eyebrow:"Updated before every puck drop",
   h1:"Pick NHL props with <em>numbers</em>, not hunches.",
-  lead:"The chance of a goal, assist, point and shots for every skater, every game. Built on regression to the mean and tested on five seasons of games.",
+  lead:"The chance of a goal, assist, point and shots for every skater, every game. Tested on thousands of real games, so the percentages mean what they say.",
   cta_free:"Create free account", cta_tonight:"See tonight's games", cta_pro:"Go Pro",
   p1:"player-games tested", p2:"games replayed", p3n:"2×", p3:"lineup checks per game",
   tonight_h:"Tonight", all_games:"All games →",
@@ -375,7 +375,7 @@ const I18N = {
   s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
   plans_h:"Start free. Upgrade when it pays.", plans_sub:"A free account shows how it works. Pro unlocks every player and every edge.",
   free_n:"Free", per_month:"/ month", pro_n:"Pro", pro_badge:"Full access", pro_price:"– <small>price at launch</small>",
-  free_items:[["y","Tonight's games: projected score, win chance, total goals"],["y","Game previews, injuries, lineups and starting goalies"],["y","One forward and one defenceman per team, fully open"],["y","Top 3 players in each market"],["y","Player pages: last 10 games and regression table"],["n","Every player's goal, assist, point and shot chances"],["n","Best picks and value against the market"]],
+  free_items:[["y","Tonight's games: projected score, win chance, total goals"],["y","Game previews, injuries, lineups and starting goalies"],["y","One forward and one defenceman per team, fully open"],["y","Top 3 players in each market"],["y","Player pages: last 10 games and hit rates"],["n","Every player's goal, assist, point and shot chances"],["n","Best picks and value against the market"]],
   pro_items:[["y","Everything in Free"],["y","Every player's goal, assist, point and shot chances"],["y","Best picks in every game"],["y","Value against the market on every prop"],["y","Full Top props with filters and sorting"],["y","Player charts, full history and how each number is built"],["y","Lineup and goalie refreshes before every puck drop"]],
   how_h:"How it works",
   st1h:"Real talent, not hot streaks", st1p:"Each player's scoring rate is pulled toward his true level, so a lucky week doesn't fool the numbers.",
@@ -390,7 +390,7 @@ const I18N = {
   login:"Logga in", start_free:"Börja gratis",
   eyebrow:"Uppdateras före varje nedsläpp",
   h1:"Välj NHL-spel med <em>siffror</em>, inte magkänsla.",
-  lead:"Chansen till mål, assist, poäng och skott för varje spelare i varje match. Byggt på regression mot medelvärdet och testat på fem säsonger av matcher.",
+  lead:"Chansen till mål, assist, poäng och skott för varje spelare i varje match. Testat på tusentals riktiga matcher, så att procenten betyder det de säger.",
   cta_free:"Skapa gratiskonto", cta_tonight:"Se kvällens matcher", cta_pro:"Uppgradera till Pro",
   p1:"testade spelarmatcher", p2:"matcher omspelade", p3n:"2×", p3:"uppställningskontroller per match",
   tonight_h:"I kväll", all_games:"Alla matcher →",
@@ -405,7 +405,7 @@ const I18N = {
   s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
   plans_h:"Börja gratis. Uppgradera när det lönar sig.", plans_sub:"Ett gratiskonto visar hur det fungerar. Pro låser upp varje spelare och varje edge.",
   free_n:"Gratis", per_month:"/ månad", pro_n:"Pro", pro_badge:"Full tillgång", pro_price:"– <small>pris vid lansering</small>",
-  free_items:[["y","Kvällens matcher: beräknat resultat, vinstchans, totalt antal mål"],["y","Förhandstittar, skador, uppställningar och startmålvakter"],["y","En forward och en back per lag, helt öppna"],["y","Topp 3 spelare i varje marknad"],["y","Spelarsidor: senaste 10 matcherna och regressionstabell"],["n","Varje spelares chans till mål, assist, poäng och skott"],["n","Bästa spelen och värde mot marknaden"]],
+  free_items:[["y","Kvällens matcher: beräknat resultat, vinstchans, totalt antal mål"],["y","Förhandstittar, skador, uppställningar och startmålvakter"],["y","En forward och en back per lag, helt öppna"],["y","Topp 3 spelare i varje marknad"],["y","Spelarsidor: senaste 10 matcherna och träffprocent"],["n","Varje spelares chans till mål, assist, poäng och skott"],["n","Bästa spelen och värde mot marknaden"]],
   pro_items:[["y","Allt i Gratis"],["y","Varje spelares chans till mål, assist, poäng och skott"],["y","Bästa spelen i varje match"],["y","Värde mot marknaden på varje spel"],["y","Fullständiga toppspel med filter och sortering"],["y","Spelargrafer, full historik och hur varje siffra byggs"],["y","Uppställnings- och målvaktsuppdateringar före varje nedsläpp"]],
   how_h:"Så fungerar det",
   st1h:"Verklig talang, inte heta sviter", st1p:"Varje spelares målfrekvens dras mot hans verkliga nivå, så en tursam vecka lurar inte siffrorna.",

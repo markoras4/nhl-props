@@ -374,6 +374,7 @@ th.tip:hover::before,th.tip:focus::before{bottom:auto;top:calc(100% + 3px);borde
 .better{color:var(--good);font-weight:700}
 .empty{padding:40px;text-align:center;color:var(--mute)}
 .prose{max-width:760px}
+.prose.how{margin:0 auto;padding:0 4px 24px}.prose.how h3:first-child{margin-top:8px}.prose.how li{margin-bottom:6px}
 .prose h3{margin:26px 0 6px}
 .prose p,.prose li{color:color-mix(in srgb,var(--text) 86%,var(--mute))}
 .prose .exp{margin:12px 0;padding:14px}
@@ -1741,86 +1742,152 @@ function trackTab(){
 // ------------------------------------------------------------ how it works
 const HOW = {
 en: `<h3>What the site does</h3>
-  <p>For every player in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point and reach a number of shots on goal. It shows those chances next to the market odds, so you can see where the two agree and where they don't. It's a tool to help you decide, not a tipster.</p>
+  <p>For every skater in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point, reach a number of shots on goal, and make a number of hits and blocked shots. For each game it also projects the score, the win chances and the total goals. Every number is shown next to the sportsbook odds, so you can see where the model and the market agree and where they don't. It's a tool to help you decide, not a tipster.</p>
+
   <h3>How a probability is built</h3>
-  <p>Each player's chance is built from how much he plays, how well he really scores and creates chances, and who he faces tonight: the opponent's defence, the opposing goalie, home or away, and rest.</p>
-  <p>At its core is <b>regression to the mean</b>. A hot or cold streak is mostly treated as luck until there's enough evidence that something has really changed, so the model leans on a player's true level rather than his last few games. Change the starting goalie on a game page and every probability updates.</p>
+  <p>Each player's chance starts from his real level: how much he plays, how many shots and chances he creates, and how well he finishes them over a long stretch, not just his last few games. A hot or cold run is mostly treated as noise until there's enough evidence that something has really changed.</p>
+  <p>That level is then adjusted for tonight: the opponent's defence, the opposing goalie, home or away, back-to-backs, his current line and power-play role, and who is missing on both teams. Change the starting goalie on a game page and every probability updates straight away.</p>
+  <p>Game projections use both teams' attack and defence, the goalies, and how often games really go to overtime, so ties and totals come out realistic.</p>
+
   <h3>Has it been tested?</h3>
-  <p>Yes. The model was replayed over about 214,000 player-games, using only information available before each game.</p>
+  <p>Yes. Every market was replayed over more than 200,000 past player-games, using only information that was available before each game.</p>
   <ul>
-    <li><b>The percentages are honest.</b> Goals: predicted 15.5%, happened 15.4%. Points: 35.8% vs 35.2%. When it says about 34% for a goal, it happens about 36% of the time.</li>
-    <li><b>It beats a simple season average</b> in every market (goals, assists, points, shots).</li>
-    <li><b>Shots on goal ran about 6% high</b>, and this is now corrected.</li>
-    <li>3 or 5 seasons of history made practically no difference.</li>
+    <li><b>The percentages are honest.</b> Goals: predicted 15.5%, happened 15.4%. Points: 35.8% vs 35.2%.</li>
+    <li><b>It beats a player's simple average</b> in every market: goals, assists, points, shots, hits and blocks.</li>
+    <li><b>It keeps being checked.</b> Every prediction the site makes is graded after the game on the Track record page.</li>
   </ul>
   <p>A good probability isn't a sure thing. A 35% chance misses two times out of three, and a single game is mostly chance.</p>
-  <h3>Reading a game page</h3>
+
+  <h3>Always up to date</h3>
   <ul>
-    <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the highest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Green lines are the facts behind the pick; orange lines are warnings. When most value sits on one team, it says so: those bets tend to win or lose together.</li>
-    <li><b>Roster grid:</b> the model's probability in large print, and below it the market odds (green with an outline when the model sees +5% value or more) or the fair odds if the market has no price yet.</li>
-    <li><b>Player breakdown</b> (click a player): model vs market for every market, how the number is built, regression to the mean, last 10 games, and his history as a table or chart.</li>
+    <li><b>Lineups and goalies:</b> about an hour before each puck drop the site refreshes with the official game-day lineups, and again about 30 minutes before, when starting goalies are usually confirmed. Scratched and injured players are removed, questionable players who dress are marked <i>Playing</i>.</li>
+    <li><b>Goalie disagreements:</b> if the sources disagree on the starter and nobody has confirmed, he is marked <i>Not decided</i> and the alternative is shown, so you can switch and see the effect.</li>
+    <li><b>Live scores:</b> games in progress show the score and period above the projection.</li>
+    <li><b>Started games are locked:</b> once a game starts, its probabilities, odds and best picks stay as they were at puck drop.</li>
   </ul>
+
+  <h3>The game page</h3>
+  <ul>
+    <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the biggest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Green lines are the facts behind the pick, orange lines are warnings. When most of the value sits on one team it says so: those bets tend to win or lose together.</li>
+    <li><b>Matchup:</b> the projected score, win and overtime chances, over/under for total goals, and recent form and head-to-head.</li>
+    <li><b>Team ranks:</b> both teams ranked 1–32 on attack, defence, shot share (CF%), expected-goals share (xGF%), high-danger chances (HDCF%), power play, penalty kill, goaltending (GSAx) and PDO. Green = top 8, red = bottom 8. PDO is shown as normal, running lucky or running unlucky, because it usually returns to normal.</li>
+    <li><b>What each defence allows, by position:</b> shots and points each team gives up per game to centres, wingers and defencemen. #1 allows the most (the easiest matchup for that position), #32 the least. Hover a number for the details.</li>
+    <li><b>Who's missing:</b> key absences for each team and their effect. When a regular is out, his ice time is shared among the players who step in, and the team's attack or defence is adjusted a little.</li>
+    <li><b>Roster grid:</b> every player's chances, with the market odds below (green with an outline when the model sees +5% value or more) or the fair odds if there's no price yet. Switch between <i>Scoring &amp; shots</i> and <i>Hits &amp; blocks</i>.</li>
+  </ul>
+
+  <h3>The player breakdown</h3>
+  <p>Click any player to open it.</p>
+  <ul>
+    <li><b>Prices &amp; value:</b> model probability, fair odds, market odds and EV for every market. Type the odds your sportsbook offers and the EV updates; save the pick to track it.</li>
+    <li><b>Game by game:</b> his last 10 games as bars for shots, goals, assists, points, hits or blocks. The dotted line is his average, the blue line is the model's expectation tonight; pick a betting line to colour each game over or under it.</li>
+    <li><b>Hit rates:</b> how often he went over the line in his last 5, 10 and 20 games, this season and against tonight's opponent, next to the model and the market. A short record is a weak guide on its own; read it together with the model.</li>
+    <li><b>Role tags:</b> <i>TOI ▲/▼</i> when his ice time over the last 5 games is 3+ minutes (and at least 18%) above or below his usual; <i>New on PP1</i>, <i>Promoted</i> and similar when his power-play unit or line changed. Role changes often show in the numbers before the scoring does.</li>
+    <li><b>Odds movement:</b> the first price we saw for the prop that day and where it went since. Green means the market moved toward the model's fair odds, a good sign the model saw something real.</li>
+    <li><b>History:</b> his seasons as a table or chart. Choose goals, assists, points, shots, shooting % (with his real level and the league average) or goals vs expected. Compare this season, the previous 3 or 5, or his career, per game or at an 82-game pace. Faded bars are small samples.</li>
+  </ul>
+
+  <h3>Top props</h3>
+  <p>Every player on the slate in one list. Pick Points, Shots, Hits or Blocks, then the line, and sort by <i>Most likely</i> or <i>Best value</i>. Filter by day, game or player, and type your own odds to see your EV.</p>
+
+  <h3>Hits &amp; blocks</h3>
+  <p>Built from each player's hits and blocked shots per minute of ice time, times his projected ice time tonight, adjusted for the opponent (how often they get hit and how many of their shots get blocked) and the arena, since some buildings record far more hits than others. Tested on more than 128,000 player-games, it was clearly more accurate than a player's last-10 average at every line.</p>
+
+  <h3>Your account</h3>
+  <ul>
+    <li><b>My picks:</b> save any prop with the odds you got. Picks are graded automatically after each game, with hit rate, profit, ROI and whether you beat the closing odds, the best long-run sign of a good bettor.</li>
+    <li><b>Alerts:</b> push notifications when a prop passes the edge level you choose, or when a starting goalie is confirmed.</li>
+  </ul>
+
+  <h3>Track record</h3>
+  <p>The model's scorecard. Every prediction is saved before the game and checked afterwards: how often things happened compared with what the model said, how accurate the probabilities were (Brier and Skill), and calibration charts. <i>Value bets</i> there are not picks: they test whether every prop with 5%+ edge at the market price would have made money. Open <i>How to read this page</i> on that tab for the details.</p>
+
   <h3>Words used on the site</h3>
   <ul>
-    <li><b>Fair odds</b> = 1 ÷ probability: the odds at which a bet would break even in the long run.</li>
-    <li><b>Market %</b> = the probability implied by the market odds, with the margin removed.</li>
+    <li><b>Fair odds</b> = 1 ÷ probability: the odds at which a bet breaks even in the long run.</li>
+    <li><b>Market %</b> = the probability implied by the market odds, with the bookmaker's margin removed.</li>
     <li><b>Edge / EV</b> = model probability × odds − 1. +10% means the model expects 10% profit per bet in the long run, if the model is right.</li>
-    <li><b>▲ Due / ▼ Hot</b> = scoring clearly below / above his true talent this season. In testing, "due" players did <i>not</i> score more than the model already expected, so it's context, not a reason to bet on its own.</li>
-    <li><b>Shots dry</b> = shots since his last goal, and how rare a drought that long is for his talent.</li>
-    <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
-    <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
-    <li><b>Odds movement</b>: the first price we see for each prop that day, and an arrow showing where it went since. Green means the market moved toward the model's fair odds, which is a good sign the model saw something real.</li>
-    <li><b>Opponent by position</b>: how many shots, goals and points each team has allowed this season to centres, wingers and defencemen, ranked 1–32 (1 = allows the most).</li>
-    <li><b>My picks and alerts</b>: with a free account you can save picks with the odds you got. They are graded automatically after each game, with hit rate, profit and whether you beat the closing odds. You can also get push notifications when a prop passes your edge level or a starting goalie is confirmed.</li>
-    <li><b>Hit rates</b>: how often a player went over a line in his last 5, 10 and 20 games, this season and against tonight's opponent, next to the model's chance tonight and the market's. A short record is a weak guide on its own; read it together with the model.</li>
-    <li><b>Role tags</b>: <i>TOI ▲/▼</i> when his ice time over the last 5 games is 3+ minutes (and at least 18%) above or below his usual; <i>New on PP1</i>, <i>Promoted</i> and similar when his power-play unit or line changed in the last few days. Role changes often show up in the numbers before the scoring does.</li>
-    <li><b>Hits &amp; blocks</b>: his hits and blocked shots per 60 minutes (this season, pulled toward last season and his position's average), times tonight's projected ice time, adjusted for the arena (some scorers count far more hits) and the opponent (how often they get hit, and how many of their shots get blocked). Tested on 128,000 player-games from 2023-2025: clearly better than his last-10 average at every line.</li>
-    <li><b>Game-day lineup</b>: about an hour before each puck drop the site refreshes with the final lineups. Questionable players who are in the lineup are marked Playing, scratched and injured players are removed, and the expected starting goalie is updated. It refreshes again about 30 minutes before puck drop, when starters are usually confirmed. If the sources disagree on the goalie and nobody has confirmed, he is marked Not decided and the alternative is shown, so you can switch and see the effect.</li>
-  </ul>
-  <h3>Charts</h3>
-  <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>`,
+    <li><b>▲ Due / ▼ Hot</b> = scoring clearly below / above his real level this season. In testing, "due" players did <i>not</i> score more than the model already expected, so it's context, not a reason to bet on its own.</li>
+    <li><b>Shots dry</b> = shots since his last goal, and how rare a drought that long is for a player of his level.</li>
+    <li><b>Projected / Likely / Confirmed / Not decided</b> goalie = from the latest starting-goalie reports. Projected means no report yet: the goalie with the most recent starts, or the backup on a back-to-back.</li>
+    <li><b>Out / Day-to-Day / Playing</b>: Out players are removed from the props; questionable players stay in with a yellow mark until the lineup shows them dressed.</li>
+    <li><b>B2B</b> = the team played yesterday.</li>
+  </ul>`,
 sv: `<h3>Vad sajten gör</h3>
-  <p>För varje spelare i varje kommande match räknar modellen ut hans chans att göra mål, få en assist, ta en poäng och nå ett visst antal skott på mål. Chanserna visas bredvid marknadsoddsen, så att du ser var de är överens och var de skiljer sig åt. Det är ett verktyg som hjälper dig att bestämma, inte en tipstjänst.</p>
+  <p>För varje spelare i varje kommande match räknar modellen ut hans chans att göra mål, få en assist, ta en poäng, nå ett visst antal skott på mål och göra ett visst antal tacklingar och blockerade skott. För varje match beräknas också resultatet, vinstchanserna och det totala antalet mål. Allt visas bredvid spelbolagens odds, så att du ser var modellen och marknaden är överens och var de skiljer sig åt. Det är ett verktyg som hjälper dig att bestämma, inte en tipstjänst.</p>
+
   <h3>Hur en sannolikhet räknas fram</h3>
-  <p>Varje spelares chans bygger på hur mycket han spelar, hur bra han egentligen är på att göra mål och skapa chanser, och vem han möter i kväll: motståndarens försvar, motståndarmålvakten, hemma eller borta, och vila.</p>
-  <p>Kärnan är <b>regression mot medelvärdet</b>. En het eller kall svit behandlas främst som tur tills det finns tillräckligt med bevis för att något verkligen har förändrats, så modellen utgår från spelarens verkliga nivå snarare än hans senaste matcher. Byt startmålvakt på en matchsida så uppdateras alla sannolikheter.</p>
+  <p>Varje spelares chans utgår från hans verkliga nivå: hur mycket han spelar, hur många skott och chanser han skapar och hur bra han gör mål på dem över en längre period, inte bara de senaste matcherna. En het eller kall svit behandlas främst som brus tills det finns tillräckligt med bevis för att något verkligen förändrats.</p>
+  <p>Nivån justeras sedan för kvällen: motståndarens försvar, motståndarmålvakten, hemma eller borta, back-to-back, hans kedja och powerplayroll just nu, och vilka som saknas i båda lagen. Byt startmålvakt på en matchsida så uppdateras alla sannolikheter direkt.</p>
+  <p>Matchprognoserna bygger på båda lagens anfall och försvar, målvakterna och hur ofta matcher faktiskt går till förlängning, så att oavgjort och totalmål blir realistiska.</p>
+
   <h3>Har den testats?</h3>
-  <p>Ja. Modellen spelades upp på nytt över cirka 214 000 spelarmatcher, med bara den information som fanns före varje match.</p>
+  <p>Ja. Varje spelform spelades upp på nytt över mer än 200 000 tidigare spelarmatcher, med bara den information som fanns före varje match.</p>
   <ul>
-    <li><b>Procentsatserna stämmer.</b> Mål: förutsagt 15,5 %, utfall 15,4 %. Poäng: 35,8 % mot 35,2 %. När den säger ungefär 34 % för ett mål händer det ungefär 36 % av gångerna.</li>
-    <li><b>Den slår ett enkelt säsongssnitt</b> i alla spel (mål, assist, poäng, skott).</li>
-    <li><b>Skott på mål låg ungefär 6 % för högt</b>, och det är nu rättat.</li>
-    <li>3 eller 5 säsongers historik gjorde i praktiken ingen skillnad.</li>
+    <li><b>Procentsatserna stämmer.</b> Mål: förutsagt 15,5 %, utfall 15,4 %. Poäng: 35,8 % mot 35,2 %.</li>
+    <li><b>Den slår spelarens enkla snitt</b> i alla spel: mål, assist, poäng, skott, tacklingar och blockeringar.</li>
+    <li><b>Den kontrolleras hela tiden.</b> Varje prognos sajten gör rättas efter matchen på sidan Facit.</li>
   </ul>
   <p>En bra sannolikhet är ingen garanti. En chans på 35 % missar två gånger av tre, och en enskild match är till stor del slump.</p>
-  <h3>Så läser du en matchsida</h3>
+
+  <h3>Alltid uppdaterat</h3>
   <ul>
-    <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Gröna rader är fakta bakom spelet; orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
-    <li><b>Spelarlistan:</b> modellens sannolikhet i stor stil, och under den marknadsoddsen (gröna med ram när modellen ser +5 % värde eller mer) eller rättvisa odds om marknaden saknar pris än.</li>
-    <li><b>Spelardetaljer</b> (klicka på en spelare): modell mot marknad för alla spel, hur siffran räknas fram, regression mot medelvärdet, senaste 10 matcherna och hans historik som tabell eller diagram.</li>
+    <li><b>Uppställningar och målvakter:</b> ungefär en timme före varje nedsläpp uppdateras sajten med de officiella uppställningarna för matchdagen, och igen ungefär 30 minuter före, när startmålvakterna brukar bekräftas. Petade och skadade spelare tas bort, osäkra spelare som är med markeras <i>Spelar</i>.</li>
+    <li><b>Oenighet om målvakten:</b> om källorna är oense och ingen har bekräftat markeras han <i>Inte avgjort</i> och alternativet visas, så att du kan byta och se effekten.</li>
+    <li><b>Liveresultat:</b> pågående matcher visar ställning och period ovanför prognosen.</li>
+    <li><b>Startade matcher låses:</b> när en match börjar ligger sannolikheter, odds och bästa spel kvar som de var vid nedsläpp.</li>
   </ul>
+
+  <h3>Matchsidan</h3>
+  <ul>
+    <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Gröna rader är fakta bakom spelet, orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
+    <li><b>Matchup:</b> beräknat resultat, vinst- och förlängningschanser, över/under för totalmål samt form och inbördes möten.</li>
+    <li><b>Lagrankning:</b> båda lagen rankade 1–32 i anfall, försvar, skottandel (CF%), andel förväntade mål (xGF%), farliga chanser (HDCF%), powerplay, boxplay, målvaktsspel (GSAx) och PDO. Grönt = topp 8, rött = botten 8. PDO visas som normal, tur eller otur, eftersom den brukar återgå till det normala.</li>
+    <li><b>Vad varje försvar släpper till, per position:</b> skott och poäng varje lag släpper till per match mot centrar, yttrar och backar. #1 släpper till mest (lättast för den positionen), #32 minst. Håll muspekaren över en siffra för detaljer.</li>
+    <li><b>Vilka saknas:</b> viktiga frånvaron i varje lag och vad de betyder. När en ordinarie spelare saknas fördelas hans istid på dem som kliver in, och lagets anfall eller försvar justeras något.</li>
+    <li><b>Spelarlistan:</b> varje spelares chanser, med marknadsoddsen under (gröna med ram när modellen ser +5 % värde eller mer) eller rättvisa odds om priset saknas. Växla mellan <i>Poäng &amp; skott</i> och <i>Tacklingar &amp; blockeringar</i>.</li>
+  </ul>
+
+  <h3>Spelardetaljer</h3>
+  <p>Klicka på en spelare för att öppna dem.</p>
+  <ul>
+    <li><b>Priser &amp; värde:</b> modellens sannolikhet, rättvisa odds, marknadsodds och EV för alla spel. Skriv in oddset ditt spelbolag ger så uppdateras EV; spara spelet för att följa det.</li>
+    <li><b>Match för match:</b> hans senaste 10 matcher som staplar för skott, mål, assist, poäng, tacklingar eller blockeringar. Den prickade linjen är hans snitt, den blå linjen modellens förväntan i kväll; välj en linje för att färga varje match över eller under.</li>
+    <li><b>Träffprocent:</b> hur ofta han gått över linjen de senaste 5, 10 och 20 matcherna, i år och mot kvällens motståndare, bredvid modellen och marknaden. Ett kort facit är en svag vägledning i sig; läs det tillsammans med modellen.</li>
+    <li><b>Rolltaggar:</b> <i>Istid ▲/▼</i> när istiden de senaste 5 matcherna är 3+ minuter (och minst 18 %) över eller under det vanliga; <i>Ny i PP1</i>, <i>Uppflyttad</i> och liknande när powerplayfemman eller kedjan ändrats. Rolländringar syns ofta i siffrorna innan målen kommer.</li>
+    <li><b>Oddsrörelse:</b> det första priset vi såg för spelet under dagen och vart det gått sedan. Grönt betyder att marknaden rört sig mot modellens rättvisa odds, ett gott tecken på att modellen såg något verkligt.</li>
+    <li><b>Historik:</b> hans säsonger som tabell eller diagram. Välj mål, assist, poäng, skott, skottprocent (med hans verkliga nivå och ligasnittet) eller mål mot förväntat. Jämför i år, förra 3 eller 5 säsongerna eller karriären, per match eller i 82-matcherstakt. Bleka staplar bygger på litet underlag.</li>
+  </ul>
+
+  <h3>Toppspel</h3>
+  <p>Alla spelare i kvällens matcher i en lista. Välj Poäng, Skott, Tacklingar eller Blockeringar, sedan linjen, och sortera efter <i>Mest troliga</i> eller <i>Bäst värde</i>. Filtrera på dag, match eller spelare, och skriv in dina egna odds för att se din EV.</p>
+
+  <h3>Tacklingar &amp; blockeringar</h3>
+  <p>Bygger på varje spelares tacklingar och blockerade skott per minut istid, gånger hans beräknade istid i kväll, justerat för motståndaren (hur ofta de tacklas och hur många av deras skott som blockeras) och arenan, eftersom vissa arenor registrerar betydligt fler tacklingar än andra. Testat på mer än 128 000 spelarmatcher var det klart träffsäkrare än spelarens snitt de senaste 10 matcherna på alla linjer.</p>
+
+  <h3>Ditt konto</h3>
+  <ul>
+    <li><b>Mina spel:</b> spara vilket spel som helst med oddset du fick. Spelen rättas automatiskt efter varje match, med träffprocent, vinst, ROI och om du slog stängningsoddset, det bästa långsiktiga tecknet på en bra spelare.</li>
+    <li><b>Aviseringar:</b> pushnotiser när ett spel når den edge-nivå du väljer, eller när en startmålvakt bekräftas.</li>
+  </ul>
+
+  <h3>Facit</h3>
+  <p>Modellens protokoll. Varje prognos sparas före matchen och kontrolleras efteråt: hur ofta saker hände jämfört med vad modellen sa, hur träffsäkra sannolikheterna var (Brier och Skicklighet) och kalibreringsdiagram. <i>Värdespel</i> där är inga tips: de testar om alla spel med 5 %+ edge till marknadspris hade gått med vinst. Öppna <i>Så läser du sidan</i> på den fliken för detaljer.</p>
+
   <h3>Ord som används på sajten</h3>
   <ul>
     <li><b>Rättvisa odds</b> = 1 ÷ sannolikheten: oddsen där ett spel går jämnt ut i längden.</li>
-    <li><b>Marknad-%</b> = sannolikheten som marknadsoddsen motsvarar, med marginalen borträknad.</li>
+    <li><b>Marknad-%</b> = sannolikheten som marknadsoddsen motsvarar, med spelbolagets marginal borträknad.</li>
     <li><b>Edge / EV</b> = modellens sannolikhet × odds − 1. +10 % betyder att modellen räknar med 10 % vinst per spel i längden, om modellen har rätt.</li>
     <li><b>▲ Bör lyfta / ▼ Kan svalna</b> = gör tydligt färre / fler mål än sin verkliga nivå i år. I testerna gjorde spelare som "borde lyfta" <i>inte</i> fler mål än modellen redan räknade med, så det är bakgrund, inte ett skäl att spela i sig.</li>
-    <li><b>Skott utan mål</b> = skott sedan senaste målet, och hur ovanlig en så lång torka är för hans nivå.</li>
-    <li><b>Prognos / Trolig / Bekräftad</b> målvakt = från de senaste rapporterna om startmålvakter. "Prognos" betyder att ingen rapport finns än: målvakten med flest starter på sistone, och reservmålvakten vid back-to-back.</li>
-    <li><b>Ute / Dag till dag</b>: skadade spelare markerade Ute tas bort från spelen; osäkra spelare finns kvar med en gul markering.</li>
-    <li><b>Oddsrörelse</b>: det första priset vi ser för varje spel under dagen, och en pil som visar vart det gått sedan dess. Grönt betyder att marknaden rört sig mot modellens rättvisa odds, ett gott tecken på att modellen såg något verkligt.</li>
-    <li><b>Motståndare per position</b>: hur många skott, mål och poäng varje lag släppt till i år mot centrar, yttrar och backar, rangordnat 1–32 (1 = släpper till mest).</li>
-    <li><b>Mina spel och aviseringar</b>: med ett gratiskonto kan du spara spel med oddset du fick. De rättas automatiskt efter varje match, med träffprocent, vinst och om du slog stängningsoddset. Du kan också få pushnotiser när ett spel når din edge-nivå eller en startmålvakt bekräftas.</li>
-    <li><b>Träffprocent</b>: hur ofta en spelare gått över en linje de senaste 5, 10 och 20 matcherna, den här säsongen och mot kvällens motståndare, bredvid modellens chans i kväll och marknadens. Ett kort facit är en svag vägledning i sig; läs det tillsammans med modellen.</li>
-    <li><b>Rolltaggar</b>: <i>Istid ▲/▼</i> när istiden de senaste 5 matcherna är 3+ minuter (och minst 18 %) över eller under det vanliga; <i>Ny i PP1</i>, <i>Uppflyttad</i> och liknande när powerplayfemman eller kedjan ändrats de senaste dagarna. Rolländringar syns ofta i siffrorna innan målen kommer.</li>
-    <li><b>Tacklingar &amp; blockeringar</b>: hans tacklingar och blockerade skott per 60 minuter (den här säsongen, dragna mot förra säsongen och snittet för hans position), gånger kvällens beräknade istid, justerat för arenan (vissa statistiker räknar betydligt fler tacklingar) och motståndaren (hur ofta de tacklas och hur många av deras skott som blockeras). Testat på 128 000 spelarmatcher 2023–2025: klart bättre än hans snitt de senaste 10 matcherna på alla linjer.</li>
-    <li><b>Matchdagens uppställning</b>: ungefär en timme före varje nedsläpp uppdateras sidan med de slutliga uppställningarna. Osäkra spelare som finns med markeras Spelar, petade och skadade spelare tas bort, och den väntade startmålvakten uppdateras. Sidan uppdateras igen ungefär 30 minuter före nedsläpp, när startmålvakterna brukar bekräftas. Om källorna är oense om målvakten och ingen har bekräftat markeras han Inte avgjort och alternativet visas, så att du kan byta och se effekten.</li>
-  </ul>
-  <h3>Diagram</h3>
-  <p>I spelardetaljerna, byt från Tabell till Diagram. Välj mål, assist, poäng, skott, <b>skottprocent</b> (med hans verkliga nivå och ligasnittet) eller <b>mål mot förväntat</b> (staplar = faktiska mål, linje = målen hans chanser var värda). Jämför säsong, förra 3, förra 5 och karriär, eller säsong för säsong. Använd <b>per match</b> eller <b>takt över 82 matcher</b> för att jämföra en ofärdig säsong rättvist; takten är nuvarande nivå utsträckt till 82 matcher, inte en prognos. Bleka staplar bygger på litet underlag.</p>`
+    <li><b>Skott utan mål</b> = skott sedan senaste målet, och hur ovanlig en så lång torka är för en spelare på hans nivå.</li>
+    <li><b>Prognos / Trolig / Bekräftad / Inte avgjort</b> målvakt = från de senaste rapporterna om startmålvakter. Prognos betyder att ingen rapport finns än: målvakten med flest starter på sistone, eller reserven vid back-to-back.</li>
+    <li><b>Ute / Dag till dag / Spelar</b>: spelare som är Ute tas bort från spelen; osäkra spelare finns kvar med gul markering tills uppställningen visar att de spelar.</li>
+    <li><b>B2B</b> = laget spelade i går.</li>
+  </ul>`
 };
 function howTab(){
-  $("#main").innerHTML = `<div class="prose">${HOW[LANG]||HOW.en}<p class="foot">${t("footer")}</p></div>`;
+  $("#main").innerHTML = `<div class="prose how">${HOW[LANG]||HOW.en}<p class="foot">${t("footer")}</p></div>`;
 }
 
 function render(){
