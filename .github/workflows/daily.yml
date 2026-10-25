@@ -113,7 +113,9 @@ jobs:
           if [ -z "$VERCEL_TOKEN" ]; then echo "No VERCEL_TOKEN secret yet - skipping"; exit 0; fi
           rm -rf /tmp/nhl-props-lab && cp -r site /tmp/nhl-props-lab
           cd /tmp/nhl-props-lab
-          npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tail -5
+          npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN" > /tmp/vercel.log 2>&1 || true
+          tail -15 /tmp/vercel.log
+          echo "::notice title=Vercel::$(tail -8 /tmp/vercel.log | tr '\n' ' ' | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-900)"
 
       - uses: actions/configure-pages@v5
         if: steps.gate.outputs.run == 'true'
