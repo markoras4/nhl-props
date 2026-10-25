@@ -333,6 +333,16 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.tip{position:relative;cursor:help;outline:none}
+.tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:260px;white-space:normal;text-align:left;background:var(--text);color:var(--bg);font:500 12px/1.4 var(--f-ui);letter-spacing:0;text-transform:none;padding:8px 10px;border-radius:8px;z-index:30;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.tip:hover::before,.tip:focus::before{content:"";position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--text);border-bottom:0;z-index:30}
+th.tip{text-decoration:underline dotted var(--mute);text-underline-offset:3px}
+th.tip:hover::after,th.tip:focus::after{bottom:auto;top:calc(100% + 8px);left:auto;right:0;transform:none;font-weight:500}
+th.tip:hover::before,th.tip:focus::before{bottom:auto;top:calc(100% + 3px);border-top:0;border-bottom:5px solid var(--text)}
+.trhow{margin:0 0 14px}.trhow summary{cursor:pointer;font-weight:700;padding:12px 16px;list-style:none}.trhow summary::before{content:"ⓘ ";color:var(--accent)}
+.trhow .prose{padding:0 16px 14px}.trhow dl{display:grid;grid-template-columns:max-content 1fr;gap:8px 14px;margin:0}.trhow dt{font-weight:700}.trhow dd{margin:0;color:var(--mute)}
+@media (max-width:600px){.trhow dl{grid-template-columns:1fr}.trhow dd{margin-bottom:6px}}
+.gmid .stp{margin-bottom:4px}
 .hr small{font-size:10.5px;color:var(--mute);font-weight:600}
 .hr b{font-family:var(--f-disp);font-size:15px}
 .hr.hr-hi b{color:var(--accent)}.hr.hr-lo b{color:var(--bad)}
@@ -544,6 +554,22 @@ const I18N = {
     tr_none_h:"No graded predictions yet", tr_none_p:"Every update saves the model's probabilities. The day after games are played they are graded automatically, and this page shows whether the percentages came true.",
     tr_meta:"{d} days graded · {g} games · {p} player-games. Skill above 0% means better than guessing the base rate.",
     tr_market:"Market", tr_bets:"Bets", tr_pred:"Predicted", tr_happ:"Happened", tr_skill:"Skill", tr_game_model:"Game {k} (model)", tr_game_hist:"Game {k} (history only)",
+    tr_n:"Predictions", tr_n_tip:"How many predictions were graded: one per player per game (36 = 36 player-games), or one per game for game totals. Not bets.",
+    tr_pred_tip:"The model's average probability across those predictions.", tr_happ_tip:"How often it actually happened. Close to Predicted = the percentages are honest on average.",
+    tr_brier_tip:"Average squared error of the probabilities (0 = perfect). Compare it only within the same row: a rare event always has a low Brier.",
+    tr_skill_tip:"How much better than a naive guess that uses only how often this happens in general. Above 0% = the model adds information. Noisy until there are a few hundred predictions.",
+    tr_calib_note:"Each dot groups predictions with similar probabilities. On the dashed line = what the model said happened that often. Above = it happened more than predicted, below = less.",
+    tr_blend_note:"The game total mixes the model with team scoring history. 0% = model only, 100% = history only. This shows which mix would have been most accurate so far.",
+    tr_how_h:"How to read this page",
+    tr_how:`<p>Every update saves the model's probabilities before the games. After the games they are checked against what actually happened. This is a scorecard for the model, not a list of bets.</p><dl>
+      <dt>Predictions</dt><dd>How many were graded. Every active player in every finished game gets a goal, assist, point and shots prediction, so one game with 36 players gives 36 in every row.</dd>
+      <dt>Predicted vs Happened</dt><dd>The average probability against the real frequency. If the model gives 25% for an assist across 400 player-games, about 100 of them should get one.</dd>
+      <dt>Brier</dt><dd>The average squared error of the probabilities. 0 is perfect, lower is better. Rare events always score low, so compare within a row over time, not between rows.</dd>
+      <dt>Skill</dt><dd>Brier compared with a naive forecast that gives every player the league-wide rate. +15% means 15% less error than that. Above 0 means the model adds something.</dd>
+      <dt>Calibration</dt><dd>Dots on the dashed diagonal mean that when the model says 30%, it happens about 30% of the time. That is what makes EV calculations trustworthy.</dd>
+      <dt>History weight</dt><dd>The game total (over 5.5 / 6.5) can blend the model with teams' scoring history. The table shows which mix would have scored best so far.</dd>
+      <dt>Value bets</dt><dd>Not our picks. Every prop where the model's EV was 5% or more at the sportsbook price we had, staked at 1 unit each, to test whether those edges pay off. It is a check on the model, not advice.</dd></dl>
+      <p>With few games graded all of this is noise: one game can swing a row from +30% to −30%. Judge it after several hundred player-games.</p>`,
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
@@ -561,7 +587,9 @@ const I18N = {
     tr_gsax_tip:"Goals saved above expected per game by the team's goalies (all situations).", tr_pdo_tip:"Shooting % + save % at 5-on-5, ×1000. Far above 1000 = running lucky, far below = unlucky; it usually returns toward 1000. Not ranked as good or bad.",
     tr_pdo_norm:"normal", tr_pdo_lucky:"running lucky", tr_pdo_unlucky:"running unlucky", tr_note:"This season's numbers. Green = top 8, red = bottom 8.", tr_note_blend:"Early in the season, last season is blended in (worth about 10 games, fading out by game 30). Green = top 8, red = bottom 8.",
     op_title:"What each defence allows, by position", op_sub:"per game this season · #1 = allows the most", op_allows:"{t} allows",
-    op_shots:"Shots", op_pts:"Points", op_C:"Centres", op_W:"Wingers", op_D:"Defencemen", op_rank_tip:"Rank {r} of 32 (1 = allows the most, the easiest matchup).",
+    op_shots:"Shots", op_pts:"Points", op_C:"Centres", op_W:"Wingers", op_D:"Defencemen", op_rank_tip:"Rank {r} of 32. #1 = this defence allows the most, so it's the easiest matchup for players in that position; #32 = allows the least, the toughest. Green = top 8 (soft), red = bottom 8 (tough).",
+    op_cell_tip:"{t} allow {v} {st} per game to opposing {p} this season (league average {lg}). Rank #{r} of 32: #1 allows the most (easiest matchup for {p}), #32 the least (toughest).", op_st_s:"shots on goal", op_st_pt:"points",
+    op_read:"Read it as: how much do opposing centres, wingers and defencemen produce against this team. Green rank (#1–8) = soft for that position, red (#25–32) = tough. Hover a number for details.",
     op_note:"From this season's game logs ({a} and {h} games). Early in the season a few games can swing these numbers.",
     op_player:"{t} against {p}", op_shots_pg:"Shots allowed per game", op_goals_pg:"Goals allowed per game", op_pts_pg:"Points allowed per game", op_vs_lg:"(avg {v})",
     op_pnote:"What this opponent has given up this season to players in his position. Green rank = one of the 8 most generous defences.",
@@ -668,6 +696,22 @@ const I18N = {
     tr_none_h:"Inga rättade prognoser än", tr_none_p:"Varje uppdatering sparar modellens sannolikheter. Dagen efter att matcherna spelats rättas de automatiskt, och den här sidan visar om procentsatserna slog in.",
     tr_meta:"{d} dagar rättade · {g} matcher · {p} spelarmatcher. Skicklighet över 0% betyder bättre än att gissa på grundfrekvensen.",
     tr_market:"Spel", tr_bets:"Antal", tr_pred:"Förutsagt", tr_happ:"Utfall", tr_skill:"Skicklighet", tr_game_model:"Match {k} (modell)", tr_game_hist:"Match {k} (endast historik)",
+    tr_n:"Prognoser", tr_n_tip:"Hur många prognoser som rättats: en per spelare och match (36 = 36 spelarmatcher), eller en per match för matchtotaler. Inte spel.",
+    tr_pred_tip:"Modellens genomsnittliga sannolikhet för de prognoserna.", tr_happ_tip:"Hur ofta det faktiskt hände. Nära Förutsagt = procentsatserna stämmer i snitt.",
+    tr_brier_tip:"Genomsnittligt kvadratfel för sannolikheterna (0 = perfekt). Jämför bara inom samma rad: en ovanlig händelse har alltid låg Brier.",
+    tr_skill_tip:"Hur mycket bättre än en naiv gissning som bara använder hur ofta det här händer i allmänhet. Över 0 % = modellen tillför något. Brusigt tills det finns några hundra prognoser.",
+    tr_calib_note:"Varje punkt samlar prognoser med liknande sannolikhet. På den streckade linjen = det modellen sa hände så ofta. Över = det hände oftare än förutsagt, under = mer sällan.",
+    tr_blend_note:"Matchtotalen blandar modellen med lagens målhistorik. 0 % = bara modellen, 100 % = bara historiken. Visar vilken blandning som hittills hade träffat bäst.",
+    tr_how_h:"Så läser du sidan",
+    tr_how:`<p>Varje uppdatering sparar modellens sannolikheter före matcherna. Efteråt jämförs de med vad som faktiskt hände. Det här är modellens protokoll, inte en lista med spel.</p><dl>
+      <dt>Prognoser</dt><dd>Hur många som rättats. Varje spelare i varje färdigspelad match får en prognos för mål, assist, poäng och skott, så en match med 36 spelare ger 36 på varje rad.</dd>
+      <dt>Förutsagt mot utfall</dt><dd>Genomsnittlig sannolikhet mot verklig frekvens. Ger modellen 25 % för assist på 400 spelarmatcher ska ungefär 100 av dem få en.</dd>
+      <dt>Brier</dt><dd>Genomsnittligt kvadratfel för sannolikheterna. 0 är perfekt, lägre är bättre. Ovanliga händelser får alltid lågt värde, så jämför inom en rad över tid, inte mellan rader.</dd>
+      <dt>Skicklighet</dt><dd>Brier jämfört med en naiv prognos som ger alla spelare ligasnittet. +15 % betyder 15 % mindre fel än den. Över 0 betyder att modellen tillför något.</dd>
+      <dt>Kalibrering</dt><dd>Punkter på den streckade diagonalen betyder att när modellen säger 30 % händer det ungefär 30 % av gångerna. Det är det som gör EV-beräkningarna pålitliga.</dd>
+      <dt>Historikvikt</dt><dd>Matchtotalen (över 5,5 / 6,5) kan blanda modellen med lagens målhistorik. Tabellen visar vilken blandning som hittills hade träffat bäst.</dd>
+      <dt>Värdespel</dt><dd>Inte våra tips. Alla spel där modellens EV var 5 % eller mer till spelbolagets pris, med 1 enhet per spel, för att testa om de övervärdena lönar sig. En kontroll av modellen, inte råd.</dd></dl>
+      <p>Med få rättade matcher är allt detta brus: en match kan svänga en rad från +30 % till −30 %. Döm efter flera hundra spelarmatcher.</p>`,
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
@@ -685,7 +729,9 @@ const I18N = {
     tr_gsax_tip:"Räddade mål över förväntan per match för lagets målvakter (alla spellägen).", tr_pdo_tip:"Skottprocent + räddningsprocent i 5 mot 5, ×1000. Långt över 1000 = tur, långt under = otur; brukar gå tillbaka mot 1000. Rangordnas inte som bra eller dålig.",
     tr_pdo_norm:"normal", tr_pdo_lucky:"tur just nu", tr_pdo_unlucky:"otur just nu", tr_note:"Årets siffror. Grönt = topp 8, rött = botten 8.", tr_note_blend:"Tidigt på säsongen vägs förra säsongen in (värd ungefär 10 matcher, avtar till match 30). Grönt = topp 8, rött = botten 8.",
     op_title:"Vad varje försvar släpper till, per position", op_sub:"per match i år · #1 = släpper till mest", op_allows:"{t} släpper till",
-    op_shots:"Skott", op_pts:"Poäng", op_C:"Centrar", op_W:"Yttrar", op_D:"Backar", op_rank_tip:"Plats {r} av 32 (1 = släpper till mest, lättast motstånd).",
+    op_shots:"Skott", op_pts:"Poäng", op_C:"Centrar", op_W:"Yttrar", op_D:"Backar", op_rank_tip:"Plats {r} av 32. #1 = försvaret släpper till mest, alltså lättast motstånd för spelare på den positionen; #32 = släpper till minst, tuffast. Grönt = topp 8 (mjukt), rött = botten 8 (tufft).",
+    op_cell_tip:"{t} släpper i år till {v} {st} per match till motståndarnas {p} (ligasnitt {lg}). Plats #{r} av 32: #1 släpper till mest (lättast för {p}), #32 minst (tuffast).", op_st_s:"skott på mål", op_st_pt:"poäng",
+    op_read:"Läs det så här: hur mycket motståndarnas centrar, yttrar och backar producerar mot det här laget. Grön plats (#1–8) = mjukt för den positionen, röd (#25–32) = tufft. Håll muspekaren över en siffra för detaljer.",
     op_note:"Från årets matchloggar ({a} och {h} matcher). Tidigt på säsongen kan några få matcher svänga siffrorna.",
     op_player:"{t} mot {p}", op_shots_pg:"Insläppta skott per match", op_goals_pg:"Insläppta mål per match", op_pts_pg:"Insläppta poäng per match", op_vs_lg:"(snitt {v})",
     op_pnote:"Vad motståndaren har släppt till i år mot spelare på hans position. Grön placering = ett av de 8 generösaste försvaren.",
@@ -956,10 +1002,10 @@ function gamesList(){
     const ga = G(state.goalie[g.id][g.away]), gh = G(state.goalie[g.id][g.home]);
     const outA = (A.injuries||[]).filter(i=>i.kind==="out").length, outH = (H.injuries||[]).filter(i=>i.kind==="out").length;
     html += `<div class="card grow" data-g="${g.id}" tabindex="0" role="button" aria-label="${g.away} @ ${g.home}">
-      <div class="gtime">${statePill(g)||timeOf(g)}<small>${esc(g.venue||"")}</small></div>
+      <div class="gtime">${timeOf(g)}<small>${esc(g.venue||"")}</small></div>
       <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"}${altTxt(g,g.away)} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
-      <div class="gmid">${liveScore(g)?`<div class="sc live">${liveScore(g)}</div><div class="meta">${t("proj_short")} ${fmt(mu.a,1)} – ${fmt(mu.h,1)} · ${pct(d.pa)} · ${pct(d.ph)}</div>`:`<div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>`}
+      <div class="gmid">${statePill(g)?`<div class="stp">${statePill(g)}</div>`:""}${liveScore(g)?`<div class="sc live">${liveScore(g)}</div><div class="meta">${t("proj_short")} ${fmt(mu.a,1)} – ${fmt(mu.h,1)} · ${pct(d.pa)} · ${pct(d.ph)}</div>`:`<div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>`}
         <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
       <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"}${altTxt(g,g.home)} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
@@ -1591,15 +1637,17 @@ function ranksBox(g){
 // ------------------------------------------------------------ what each defence allows, by position
 const posGroup = pos => pos==="D" ? "D" : pos==="C" ? "C" : "W";
 const rkCls = r => r<=8 ? "rk-good" : r>=25 ? "rk-bad" : "";
-const rkTxt = r => `<span class="rk ${rkCls(r)}" title="${esc(t("op_rank_tip",{r}))}">#${r}</span>`;
+const rkTxt = r => `<span class="rk ${rkCls(r)} tip" tabindex="0" data-tip="${esc(t("op_rank_tip",{r}))}">#${r}</span>`;
 function oppPosBox(g){
   const O = DATA.opp_pos || {}, A = O[g.away], H = O[g.home]; if (!A || !H) return "";
-  const cell = (x, m) => x ? `${fmt(x[m], m==="s"?1:2)} ${rkTxt(x[m+"_rk"])}` : "–";
-  const rows = ["C","W","D"].map(k => `<tr><td>${cell(A[k],"s")}</td><td>${cell(A[k],"pt")}</td><td class="opg">${t("op_"+k)}</td><td>${cell(H[k],"s")}</td><td>${cell(H[k],"pt")}</td></tr>`).join("");
+  const cell = (tm, x, m, k) => { if (!x) return "<td>–</td>";
+    const tip = t("op_cell_tip",{t:tm, v:fmt(x[m], m==="s"?1:2), st:t(m==="s"?"op_st_s":"op_st_pt"), p:t("op_"+k).toLowerCase(), lg:fmt(x[m+"_lg"], m==="s"?1:2), r:x[m+"_rk"]});
+    return `<td><span class="tip" tabindex="0" data-tip="${esc(tip)}">${fmt(x[m], m==="s"?1:2)} <span class="rk ${rkCls(x[m+"_rk"])}">#${x[m+"_rk"]}</span></span></td>`; };
+  const rows = ["C","W","D"].map(k => `<tr>${cell(g.away,A[k],"s",k)}${cell(g.away,A[k],"pt",k)}<td class="opg">${t("op_"+k)}</td>${cell(g.home,H[k],"s",k)}${cell(g.home,H[k],"pt",k)}</tr>`).join("");
   return `<div class="box opbox"><h4>${t("op_title")} <span class="meta">${t("op_sub")}</span></h4>
     <table class="optab"><thead><tr><th colspan="2">${t("op_allows",{t:g.away})}</th><th></th><th colspan="2">${t("op_allows",{t:g.home})}</th></tr>
     <tr><th>${t("op_shots")}</th><th>${t("op_pts")}</th><th></th><th>${t("op_shots")}</th><th>${t("op_pts")}</th></tr></thead><tbody>${rows}</tbody></table>
-    <p class="note">${t("op_note",{a:A.gp,h:H.gp})}</p></div>`;
+    <p class="note">${t("op_read")} ${t("op_note",{a:A.gp,h:H.gp})}</p></div>`;
 }
 function oppPosPlayer(pr, p){
   const x = DATA.opp_pos?.[pr.opp]?.[posGroup(p.pos)]; if (!x) return "";
@@ -1680,14 +1728,14 @@ function trackTab(){
   const rows = obj => Object.entries(obj).filter(([,s])=>s).map(([k,s])=>`<tr><td>${esc(k)}</td><td class="n num">${s.n}</td><td class="n num">${pct(s.mean_pred,1)}</td><td class="n num">${pct(s.hit_rate,1)}</td><td class="n num">${s.brier.toFixed(4)}</td><td class="n num ${s.skill>0?"ev-pos":"ev-neg"}">${(s.skill*100).toFixed(1)}%</td></tr>`).join("");
   const rename = o => Object.fromEntries(Object.entries(o||{}).map(([k,v])=>[MKT_NAME(k),v]));
   const blends = Object.entries(T.ou_blends||{}).map(([L,arr])=>{ const best = arr.reduce((a,b)=>b.brier<a.brier?b:a);
-    return `<div class="box"><h4>${t("tr_blend",{l:L})}</h4><table class="mini"><thead><tr><th>${t("tr_weight")}</th><th class="n">Brier</th></tr></thead><tbody>${arr.map(r=>`<tr><td>${(r.w*100).toFixed(0)}%</td><td class="n ${r===best?"ev-pos":""}">${r.brier.toFixed(4)}</td></tr>`).join("")}</tbody></table><p class="note">${t("tr_lowest",{w:(best.w*100).toFixed(0)})}</p></div>`; }).join("");
+    return `<div class="box"><h4>${t("tr_blend",{l:L})}</h4><table class="mini"><thead><tr><th>${t("tr_weight")}</th><th class="n">Brier</th></tr></thead><tbody>${arr.map(r=>`<tr><td>${(r.w*100).toFixed(0)}%</td><td class="n ${r===best?"ev-pos":""}">${r.brier.toFixed(4)}</td></tr>`).join("")}</tbody></table><p class="note">${t("tr_lowest",{w:(best.w*100).toFixed(0)})} ${t("tr_blend_note")}</p></div>`; }).join("");
   const ouName = (k, key) => t(key,{k:k.replace("Over ", t("over",{l:""}).trim()+" ")});
-  $("#main").innerHTML = `<p class="meta">${t("tr_meta",{d:T.days.length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
-    <div class="card tablewrap"><table><thead><tr><th>${t("tr_market")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_pred")}</th><th class="n">${t("tr_happ")}</th><th class="n">Brier</th><th class="n">${t("tr_skill")}</th></tr></thead>
+  $("#main").innerHTML = `<details class="card trhow"><summary>${t("tr_how_h")}</summary><div class="prose">${t("tr_how")}</div></details><p class="meta">${t("tr_meta",{d:T.days.filter(d=>d.games_final>0).length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
+    <div class="card tablewrap"><table><thead><tr><th>${t("tr_market")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_n_tip"))}">${t("tr_n")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_pred_tip"))}">${t("tr_pred")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_happ_tip"))}">${t("tr_happ")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_brier_tip"))}">Brier</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_skill_tip"))}">${t("tr_skill")}</th></tr></thead>
     <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(rename(T.hb))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
     ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>${t("tr_val")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_won")}</th><th class="n">${t("tr_profit")}</th><th class="n">ROI</th></tr></thead><tbody>
       ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${esc(MKT_NAME(k))}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
-    <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>${t("tr_calib",{k:MKT_NAME(k)})}</h4>${calibChart(s)}</div>`).join("")}${blends}</div>`;
+    <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>${t("tr_calib",{k:MKT_NAME(k)})}</h4>${calibChart(s)}<p class="note">${t("tr_calib_note")}</p></div>`).join("")}${blends}</div>`;
 }
 
 // ------------------------------------------------------------ how it works
