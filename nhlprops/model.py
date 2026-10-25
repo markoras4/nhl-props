@@ -824,6 +824,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         lg_tot, c = league["cur_gpg_reg"], cfg.get("total_compression", 1.0)
         sc = (lg_tot + c * (m_h + m_a - lg_tot)) / (m_h + m_a) if lg_tot and m_h + m_a > 0 else 1.0
         dist = game_distribution(m_h * sc, m_a * sc, cfg["ou_lines"], cfg.get("tie_boost", 1.0))
+        dist["proj_h"], dist["proj_a"] = m_h * sc, m_a * sc
 
         props = []
         for t, opp, is_home in ((H, A, True), (A, H, False)):

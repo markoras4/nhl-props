@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NHL Props Lab</title>
+<meta name="theme-color" content="#0b1118">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Props Lab">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -295,6 +300,28 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
   .grow .lg,.grow .lgfb{--lg:30px}
   .hide-sm{display:none}
 }
+.nico{display:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:640px){
+  /* app-like phone layout: compact sticky header + bottom tab bar */
+  header{position:sticky;backdrop-filter:none;background:var(--bg)}
+  .top{gap:8px 10px;padding-block:9px}
+  .brand{font-size:16px}
+  .meta{order:3;flex-basis:100%;font-size:11px}
+  .tools{margin-left:auto}
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:35;margin:0;flex-wrap:nowrap;justify-content:space-around;gap:0;
+      background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+      padding:4px max(6px,env(safe-area-inset-left,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-right,0px))}
+  nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:10.5px;border-radius:10px;background:none!important}
+  nav button.on{color:var(--accent)}
+  .nico{display:block}
+  main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .totop{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  .box h4{flex-wrap:wrap}.box h4 .meta{flex-basis:100%;margin-left:0;text-align:left}
+  .hide-xs{display:none}
+  .sides .seg{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%}
+  .sides .seg button{justify-content:center;padding:8px 4px;font-size:13px}
+}
+@media (max-width:420px){.gmid .odds-row,.gmid .godds{gap:6px}.gmid .sc{font-size:19px}.grow .abbr{font-size:17px}.grow{padding:12px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
 </head>
@@ -654,8 +681,11 @@ const isReg = p => p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.d
 function header(){
   document.documentElement.lang = LANG;
   $("#meta").innerHTML = t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "");
+  const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
+    props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
+    how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>'};
   $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["track","nav_track"],["how","nav_how"]]
-    .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}">${t(l)}</button>`).join("");
+    .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}"><svg class="nico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${t(l)}</span></button>`).join("");
   $("#lang").innerHTML = `<button data-l="en" class="${LANG==="en"?"on":""}" aria-label="English">EN</button><button data-l="sv" class="${LANG==="sv"?"on":""}" aria-label="Svenska">SV</button>`;
   const th = currentTheme();
   $("#theme").textContent = th==="dark" ? "☀" : "☾";
@@ -1211,7 +1241,7 @@ function propsTab(){
     <input type="search" id="fq" placeholder="${t("search")}" value="${esc(state.q)}">
     <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> ${t("reg_only")}</label>
     <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button></div></div>
-  <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n">${t("toi")}</th><th>${t("h_prob")}</th><th class="n">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th></tr></thead><tbody id="ptb"></tbody></table></div>
+  <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n hide-xs">${t("toi")}</th><th>${t("h_prob")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th></tr></thead><tbody id="ptb"></tbody></table></div>
   <p class="foot">${t("props_foot")}</p>`;
   $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
@@ -1236,9 +1266,9 @@ function rowsTop(){
     const last = p.form.games.slice(0,10);
     return `<tr class="row" data-g="${g.id}" data-id="${pr.id}">
       <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</div></div></div></td>
-      <td class="n num">${fmt(p.toi_proj,1)}</td>
+      <td class="n num hide-xs">${fmt(p.toi_proj,1)}</td>
       <td><div class="bar"><i style="width:${Math.min(100,v*100)}%"></i><span>${pct(v,1)}</span></div></td>
-      <td class="n num">${(1/v).toFixed(2)}</td>
+      <td class="n num hide-xs">${(1/v).toFixed(2)}</td>
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}"></td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div></td>

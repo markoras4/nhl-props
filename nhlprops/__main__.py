@@ -116,6 +116,33 @@ def team_logos(src: Source, slate: dict, logo_dir: Path) -> dict:
     return out
 
 
+LANDING = Path(__file__).resolve().parent / "landing.html"
+
+
+def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
+    """Public landing page: next slate's games (score/win chance only), previews if written."""
+    now = dt.datetime.now(dt.timezone.utc).isoformat()
+    upcoming = [g for g in slate["games"] if g.get("state") in (None, "FUT", "PRE")]
+    dates = sorted({g["date"] for g in upcoming})
+    day = dates[0] if dates else slate["date"]
+    games = []
+    for g in sorted([g for g in upcoming if g["date"] == day], key=lambda x: x.get("start") or ""):
+        d = g["default"]
+        games.append({"id": g["id"], "home": g["home"], "away": g["away"], "start": g.get("start"), "venue": g.get("venue"),
+                      "mh": d.get("proj_h", 3.0), "ma": d.get("proj_a", 3.0), "ph": d["p_home"], "pa": d["p_away"],
+                      "exp": d["exp_total"]})
+    prev_file = ROOT / "data" / "previews" / f"{day}.json"
+    previews = json.loads(prev_file.read_text(encoding="utf-8")).get("previews", []) if prev_file.exists() else []
+    teams = {x for g in games for x in (g["home"], g["away"])}
+    payload = clean({"date": day, "games": games, "previews": previews, "built": now,
+                     "logos": {k: v for k, v in (slate.get("logos") or {}).items() if k in teams}})
+    js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
+    html = LANDING.read_text(encoding="utf-8").replace("/*__DATA__*/null", js).replace("APP_URL", app_url)
+    out = out_dir / "landing.html"
+    out.write_text(html, encoding="utf-8")
+    return out
+
+
 def render(slate: dict, graded: dict | None, out_dir: Path, demo: bool) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     payload = clean({**slate, "graded": graded, "config": CONFIG, "demo": demo,
@@ -208,6 +235,7 @@ def main(argv=None):
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))
     out = render(slate, graded, ROOT / "output", args.demo)
+    render_landing(slate, ROOT / "output")
     print(f"Dashboard written: {out}")
     if raw["errors"]:
         print(f"Note: {len(raw['errors'])} downloads failed - see data/errors.log")

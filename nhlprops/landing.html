@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NHL Props Lab</title>
+<meta name="description" content="NHL player prop probabilities for every skater: goals, assists, points and shots, built on regression to the mean.">
+<meta name="theme-color" content="#0a0e13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Props Lab">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#0a0e13; --bg2:#0d131a; --panel:#111821; --panel2:#17202b; --line:#22303f; --text:#e7eef6; --mute:#8796a8;
+  --accent:#3ddc97; --accent-ink:#06210f; --glow:61,220,151; --radius:14px; color-scheme:dark;
+  --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-disp:"Oxanium","Exo 2",-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f3f5f8; --bg2:#eaeef3; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
+    --accent:#0d9a60; --accent-ink:#ffffff; --glow:13,154,96; color-scheme:light;
+  }
+  :root:not([data-theme="dark"]) .lg-d{display:none} :root:not([data-theme="dark"]) .lg-l{display:inline-block}
+}
+:root[data-theme="light"]{
+  --bg:#f3f5f8; --bg2:#eaeef3; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
+  --accent:#0d9a60; --accent-ink:#ffffff; --glow:13,154,96; color-scheme:light;
+}
+:root[data-theme="light"] .lg-d{display:none} :root[data-theme="light"] .lg-l{display:inline-block}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 var(--f-ui)}
+main{overflow-x:clip}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lg-l{display:none}
+.show-m{display:none!important}
+.fl{align-items:center}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
+header.scrolled{border-bottom-color:var(--line)}
+.top{display:flex;align-items:center;gap:18px;height:64px;padding-top:env(safe-area-inset-top,0px)}
+.brand{font-family:var(--f-disp);font-weight:800;font-size:19px;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap}
+.brand b{color:var(--accent)}
+.links{display:flex;gap:4px;margin-left:12px}
+.links a{color:var(--mute);font-weight:600;font-size:14px;padding:8px 12px;border-radius:8px}
+.links a:hover{color:var(--text);background:var(--panel2)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:8px}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:2px}
+.seg button{border:0;background:none;padding:5px 9px;font-size:12px;font-weight:700;border-radius:8px;color:var(--mute)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.iconbtn{border:1px solid var(--line);background:var(--panel);border-radius:10px;width:36px;height:34px;display:grid;place-items:center;font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:15px;border-radius:11px;padding:12px 20px;border:1px solid transparent;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.btn.pri{background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 24px -8px rgba(var(--glow),.7)}
+.btn.pri:hover{transform:translateY(-1px);box-shadow:0 10px 30px -8px rgba(var(--glow),.8)}
+.btn.ghost{border-color:var(--line);background:var(--panel)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btn.sm{padding:8px 14px;font-size:14px;border-radius:9px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:56px 0 40px}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto auto;width:760px;height:760px;background:radial-gradient(closest-side,rgba(var(--glow),.16),transparent 70%);pointer-events:none}
+.hgrid{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-disp);font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);padding:6px 12px;border-radius:999px}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(36px,5.2vw,60px);line-height:1.04;letter-spacing:-.5px;margin:18px 0 16px}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:18px;color:var(--mute);max-width:520px;margin:0 0 26px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap}
+.proof{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;color:var(--mute);font-size:13px}
+.proof b{display:block;font-family:var(--f-disp);font-size:22px;color:var(--text);line-height:1.1}
+
+/* device frames */
+.devices{position:relative;aspect-ratio:16/11.2}
+.laptop{position:absolute;left:0;top:4%;width:88%}
+.laptop .scr{border:10px solid #1c232c;border-bottom-width:14px;border-radius:14px 14px 4px 4px;overflow:hidden;background:#000;box-shadow:0 30px 70px -30px rgba(0,0,0,.7),0 0 0 1px #2c3642}
+.laptop .scr img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
+.laptop .base{height:12px;margin:0 -6%;background:linear-gradient(#2a333e,#151b22);border-radius:0 0 12px 12px;position:relative}
+.laptop .base::after{content:"";position:absolute;left:42%;right:42%;top:0;height:5px;background:#0f141a;border-radius:0 0 6px 6px}
+.phone{position:absolute;right:0;bottom:0;width:30%;border:7px solid #1a2028;border-radius:34px;overflow:hidden;background:#000;box-shadow:0 30px 60px -20px rgba(0,0,0,.75),0 0 0 1px #2c3642}
+.phone::before{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);width:30%;height:16px;background:#000;border-radius:10px;z-index:2}
+.phone img{width:100%;aspect-ratio:390/844;object-fit:cover;object-position:top}
+.tablet{border:9px solid #1a2028;border-radius:24px;overflow:hidden;background:#000;box-shadow:0 30px 60px -25px rgba(0,0,0,.7),0 0 0 1px #2c3642}
+.tablet img{width:100%;aspect-ratio:820/1180;object-fit:cover;object-position:top}
+
+/* sections */
+section{padding:64px 0}
+.sh{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);line-height:1.1;margin:0}
+.sub{color:var(--mute);margin:8px 0 0;max-width:620px}
+.more{color:var(--accent);font-weight:700;font-size:14px;white-space:nowrap}
+.alt{background:var(--bg2);border-block:1px solid var(--line)}
+
+/* tonight strip */
+.strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:thin}
+.chip{scroll-snap-align:start;flex:0 0 250px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;transition:border-color .15s,transform .15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-2px)}
+.chip .t{font-size:12px;color:var(--mute);display:flex;justify-content:space-between;gap:8px}
+.chip .t span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .tm{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:10px 0 8px}
+.chip .tm div{display:flex;align-items:center;gap:7px;font-family:var(--f-disp);font-weight:800;font-size:17px;min-width:0}
+.chip .tm div:last-child{justify-content:flex-end}
+.chip .tm span{font-family:var(--f-disp);font-weight:700;color:var(--mute);font-size:13px;white-space:nowrap}
+.chip img.lg{width:30px;height:30px;object-fit:contain}
+.wpb{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--panel2)}
+.wpb i:first-child{background:#5aa9ff}.wpb i:last-child{background:var(--accent)}
+.chip .pc{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-top:6px}
+.chip .pc b{color:var(--text)}
+
+/* previews */
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
+.pcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.pimg{position:relative;aspect-ratio:16/9;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.pimg .side{display:grid;place-items:center;position:relative}
+.pimg .side img{width:46%;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45))}
+.pimg .vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) skewX(-12deg);background:var(--bg);color:var(--text);font-family:var(--f-disp);font-weight:800;font-size:13px;padding:6px 10px;border-radius:6px;letter-spacing:1px}
+.pimg .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pimg .credit{position:absolute;right:6px;bottom:4px;font-size:10px;color:#fff;opacity:.75;text-shadow:0 1px 2px #000}
+.pbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pmeta{font-size:12px;color:var(--mute);display:flex;gap:8px;align-items:center}
+.ptag{font-family:var(--f-disp);font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);padding:2px 8px;border-radius:999px}
+.pcard h3{font-family:var(--f-disp);font-size:19px;line-height:1.2;margin:0}
+.pcard p{margin:0;color:var(--mute);font-size:14px}
+.pcard ul{margin:2px 0 0;padding-left:18px;color:var(--mute);font-size:13.5px;display:flex;flex-direction:column;gap:3px}
+.pcard ul li::marker{color:var(--accent)}
+
+/* features */
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.fshot{background:#0a0e13;border-bottom:1px solid var(--line);aspect-ratio:16/9.5;overflow:hidden}
+.fshot img{width:100%;height:100%;object-fit:cover;object-position:left top}
+.ftext{padding:18px 20px 20px}
+.ftext h3{font-family:var(--f-disp);font-size:19px;margin:0 0 6px}
+.ftext p{margin:0;color:var(--mute);font-size:14.5px}
+
+/* every screen */
+.screens{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,2.3fr) minmax(0,.62fr);gap:22px;align-items:end}
+.screens .laptop{position:relative;left:auto;top:auto;width:calc(100% - 8%);margin:0 4%}
+.screens .phone{position:relative;right:auto;bottom:auto;width:100%}
+.scap{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:26px;color:var(--mute);font-size:14px}
+.scap span{display:flex;align-items:center;gap:8px}
+.scap svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.8}
+
+/* plans */
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:900px;margin:0 auto}
+.plan{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 26px 28px;display:flex;flex-direction:column;gap:14px}
+.plan.pro{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 20px 60px -30px rgba(var(--glow),.6)}
+.plan h3{font-family:var(--f-disp);font-size:22px;margin:0;display:flex;align-items:center;gap:10px}
+.plan .badge{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);padding:3px 9px;border-radius:999px}
+.price{font-family:var(--f-disp);font-size:34px;font-weight:800;line-height:1}
+.price small{font-size:14px;color:var(--mute);font-weight:600}
+.plan ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:14.5px;flex:1}
+.plan li{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start}
+.plan li svg{width:18px;height:18px;margin-top:3px;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.plan li.y svg{stroke:var(--accent)}
+.plan li.n{color:var(--mute)} .plan li.n svg{stroke:var(--mute)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:s}
+.step{padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:var(--f-disp);font-weight:800;font-size:28px;color:var(--accent);display:block;margin-bottom:6px}
+.step h3{font-family:var(--f-disp);margin:0 0 6px;font-size:18px}
+.step p{margin:0;color:var(--mute);font-size:14.5px}
+.final{text-align:center;padding-block:56px 72px}
+.final h2{margin-bottom:10px}
+.final .ctas{justify-content:center;margin-top:22px}
+
+footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:13px}
+.fgrid2{display:flex;gap:18px 30px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.fl{display:flex;gap:18px;flex-wrap:wrap}
+.age{display:inline-grid;place-items:center;width:34px;height:34px;border:2px solid var(--mute);border-radius:50%;font-weight:800;font-size:12px;color:var(--text);margin-right:10px}
+.rg{display:flex;align-items:center;max-width:560px}
+
+/* responsive */
+@media (max-width:1000px){
+  .links{display:none}
+  .hgrid{grid-template-columns:1fr;gap:34px}
+  .devices{max-width:680px;margin:0 auto;width:100%}
+  .pgrid,.fgrid{grid-template-columns:1fr 1fr}
+  .screens{grid-template-columns:minmax(0,1fr) minmax(0,.5fr);}
+  .screens .laptop{grid-column:1/-1;order:-1}
+}
+@media (max-width:720px){
+  .links,.hide-m{display:none}
+  .show-m{display:grid!important}
+  .hright{gap:6px}
+  .seg button{padding:5px 7px}
+  .btn.sm{padding:8px 11px;font-size:13.5px}
+  .top{gap:10px;height:58px}
+  .brand{font-size:16px}
+  .hero{padding:34px 0 26px}
+  .lead{font-size:16.5px}
+  section{padding:46px 0}
+  .pgrid,.fgrid,.steps,.plans{grid-template-columns:1fr}
+  .pgrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:6px}
+  .pgrid .pcard{flex:0 0 84%;scroll-snap-align:start}
+  .chip{flex-basis:272px}
+  .ctas .btn{flex:1}
+  .screens{grid-template-columns:1fr 1fr;gap:14px}
+  .proof{gap:16px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="wrap top">
+    <a class="brand" href="#">NHL Props <b>Lab</b></a>
+    <nav class="links">
+      <a href="#tonight" data-t="nav_tonight"></a>
+      <a href="#previews" data-t="nav_previews"></a>
+      <a href="#features" data-t="nav_features"></a>
+      <a href="#plans" data-t="nav_plans"></a>
+    </nav>
+    <div class="hright">
+      <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
+      <button class="iconbtn hide-m themebtn" id="theme" type="button" aria-label="Theme"></button>
+      <a class="btn ghost sm hide-m" href="APP_URL" data-t="login"></a>
+      <a class="btn pri sm" href="APP_URL" data-t="start_free"></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap hgrid">
+      <div>
+        <span class="eyebrow"><i></i><span data-t="eyebrow"></span></span>
+        <h1 data-t="h1" data-html></h1>
+        <p class="lead" data-t="lead"></p>
+        <div class="ctas">
+          <a class="btn pri" href="APP_URL" data-t="cta_free"></a>
+          <a class="btn ghost" href="#tonight" data-t="cta_tonight"></a>
+        </div>
+        <div class="proof">
+          <div><b>214,000</b><span data-t="p1"></span></div>
+          <div><b>6,128</b><span data-t="p2"></span></div>
+          <div><b data-t="p3n"></b><span data-t="p3"></span></div>
+        </div>
+      </div>
+      <div class="devices" aria-hidden="true">
+        <div class="laptop"><div class="scr"><img src="assets/desk-game.webp" alt="" loading="eager"></div><div class="base"></div></div>
+        <div class="phone"><img src="assets/phone-game.webp" alt="" loading="eager"></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="tonight" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sh"><div><h2 data-t="tonight_h"></h2><p class="sub" id="tonight_sub"></p></div><a class="more" href="APP_URL" data-t="all_games"></a></div>
+      <div class="strip" id="strip"></div>
+    </div>
+  </section>
+
+  <section id="previews" class="alt">
+    <div class="wrap">
+      <div class="sh"><div><h2 data-t="prev_h"></h2><p class="sub" data-t="prev_sub"></p></div></div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sh"><div><h2 data-t="feat_h"></h2><p class="sub" data-t="feat_sub"></p></div></div>
+      <div class="fgrid">
+        <div class="fcard"><div class="fshot"><img src="assets/el-props.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f1h"></h3><p data-t="f1p"></p></div></div>
+        <div class="fcard"><div class="fshot"><img src="assets/el-picks.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f2h"></h3><p data-t="f2p"></p></div></div>
+        <div class="fcard"><div class="fshot"><img src="assets/el-grid.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f3h"></h3><p data-t="f3p"></p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <div class="sh" style="justify-content:center;text-align:center"><div><h2 data-t="scr_h"></h2><p class="sub" data-t="scr_sub" style="margin-inline:auto"></p></div></div>
+      <div class="screens" aria-hidden="true">
+        <div class="tablet"><img src="assets/tablet-roster.webp" alt="" loading="lazy"></div>
+        <div class="laptop"><div class="scr"><img src="assets/desk-games.webp" alt="" loading="lazy"></div><div class="base"></div></div>
+        <div class="phone"><img src="assets/phone-props.webp" alt="" loading="lazy"></div>
+      </div>
+      <div class="scap">
+        <span><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/></svg><span data-t="s1"></span></span>
+        <span><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/></svg><span data-t="s2"></span></span>
+        <span><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M1 20h22"/></svg><span data-t="s3"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="plans">
+    <div class="wrap">
+      <div class="sh" style="justify-content:center;text-align:center"><div><h2 data-t="plans_h"></h2><p class="sub" data-t="plans_sub" style="margin-inline:auto"></p></div></div>
+      <div class="plans">
+        <div class="plan">
+          <h3 data-t="free_n"></h3>
+          <div class="price">0 kr <small data-t="per_month"></small></div>
+          <ul id="free_list"></ul>
+          <a class="btn ghost" href="APP_URL" data-t="cta_free"></a>
+        </div>
+        <div class="plan pro">
+          <h3><span data-t="pro_n"></span><span class="badge" data-t="pro_badge"></span></h3>
+          <div class="price" data-t="pro_price" data-html></div>
+          <ul id="pro_list"></ul>
+          <a class="btn pri" href="APP_URL" data-t="cta_pro"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap">
+      <div class="sh"><div><h2 data-t="how_h"></h2></div></div>
+      <div class="steps">
+        <div class="step"><h3 data-t="st1h"></h3><p data-t="st1p"></p></div>
+        <div class="step"><h3 data-t="st2h"></h3><p data-t="st2p"></p></div>
+        <div class="step"><h3 data-t="st3h"></h3><p data-t="st3p"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="final wrap">
+    <h2 data-t="final_h"></h2>
+    <p class="sub" data-t="final_p" style="margin-inline:auto"></p>
+    <div class="ctas"><a class="btn pri" href="APP_URL" data-t="cta_free"></a></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap fgrid2">
+    <div class="rg"><span class="age">18+</span><span data-t="rg"></span></div>
+    <div class="fl"><button class="iconbtn show-m themebtn" type="button" aria-label="Theme"></button><a href="#" data-t="terms"></a><a href="#" data-t="privacy"></a><span>Stats: MoneyPuck.com</span><span>© <span id="yr"></span> NHL Props Lab</span></div>
+  </div>
+</footer>
+
+<script>
+const LDATA = /*__DATA__*/null;
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+const I18N = {
+ en:{
+  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans",
+  login:"Log in", start_free:"Start free",
+  eyebrow:"Updated before every puck drop",
+  h1:"Pick NHL props with <em>numbers</em>, not hunches.",
+  lead:"The chance of a goal, assist, point and shots for every skater, every game. Built on regression to the mean and tested on five seasons of games.",
+  cta_free:"Create free account", cta_tonight:"See tonight's games", cta_pro:"Go Pro",
+  p1:"player-games tested", p2:"games replayed", p3n:"2×", p3:"lineup checks per game",
+  tonight_h:"Tonight", all_games:"All games →",
+  tonight_sub:"{n} games · projected score and win chance from the model",
+  prev_h:"Game previews", prev_sub:"A short read on every game: the angle, the news, and the streaks and milestones worth knowing.",
+  prev_soon:"Preview publishes on game day", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
+  feat_h:"Everything you need, nothing you don't", feat_sub:"Three views do most of the work.",
+  f1h:"Every skater, every market", f1p:"Goal, assist, point and shots on goal for the whole lineup, with the market's price next to the model's.",
+  f2h:"Two picks per game, with reasons", f2p:"The two strongest options in each game and the facts behind them: ice time, opponent, goalie, recent form.",
+  f3h:"The whole game in one view", f3p:"Win chance, total goals and the most likely final scores, updated when the starting goalie changes.",
+  scr_h:"Phone, tablet or desktop", scr_sub:"Built for every screen. Add it to your home screen and it opens like an app.",
+  s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
+  plans_h:"Start free. Upgrade when it pays.", plans_sub:"A free account shows how it works. Pro unlocks every player and every edge.",
+  free_n:"Free", per_month:"/ month", pro_n:"Pro", pro_badge:"Full access", pro_price:"– <small>price at launch</small>",
+  free_items:[["y","Tonight's games: projected score, win chance, total goals"],["y","Game previews, injuries, lineups and starting goalies"],["y","One forward and one defenceman per team, fully open"],["y","Top 3 players in each market"],["y","Player pages: last 10 games and regression table"],["n","Every player's goal, assist, point and shot chances"],["n","Best picks and value against the market"]],
+  pro_items:[["y","Everything in Free"],["y","Every player's goal, assist, point and shot chances"],["y","Best picks in every game"],["y","Value against the market on every prop"],["y","Full Top props with filters and sorting"],["y","Player charts, full history and how each number is built"],["y","Lineup and goalie refreshes before every puck drop"]],
+  how_h:"How it works",
+  st1h:"Real talent, not hot streaks", st1p:"Each player's scoring rate is pulled toward his true level, so a lucky week doesn't fool the numbers.",
+  st2h:"Tonight's context", st2p:"Ice time, the opponent's defence, the starting goalie, home ice and rest, all checked against the latest lineups.",
+  st3h:"A chance you can compare", st3p:"Every number is a probability you can hold up against the odds. You decide.",
+  final_h:"Tonight's numbers are ready.", final_p:"Free to start. No card needed.",
+  rg:"Gambling can be addictive. Play responsibly. Need help? Call Stödlinjen 020-81 91 00 (stodlinjen.se).",
+  terms:"Terms", privacy:"Privacy"
+ },
+ sv:{
+  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer",
+  login:"Logga in", start_free:"Börja gratis",
+  eyebrow:"Uppdateras före varje nedsläpp",
+  h1:"Välj NHL-spel med <em>siffror</em>, inte magkänsla.",
+  lead:"Chansen till mål, assist, poäng och skott för varje spelare i varje match. Byggt på regression mot medelvärdet och testat på fem säsonger av matcher.",
+  cta_free:"Skapa gratiskonto", cta_tonight:"Se kvällens matcher", cta_pro:"Uppgradera till Pro",
+  p1:"testade spelarmatcher", p2:"matcher omspelade", p3n:"2×", p3:"uppställningskontroller per match",
+  tonight_h:"I kväll", all_games:"Alla matcher →",
+  tonight_sub:"{n} matcher · beräknat resultat och vinstchans från modellen",
+  prev_h:"Förhandstittar", prev_sub:"En kort genomgång av varje match: vinkeln, nyheterna och sviterna och milstolparna värda att känna till.",
+  prev_soon:"Förhandstitten publiceras på matchdagen", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
+  feat_h:"Allt du behöver, inget du inte behöver", feat_sub:"Tre vyer gör det mesta av jobbet.",
+  f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng och skott på mål för hela uppställningen, med marknadens odds bredvid modellens.",
+  f2h:"Två spel per match, med skäl", f2p:"De två starkaste alternativen i varje match och fakta bakom dem: istid, motstånd, målvakt, aktuell form.",
+  f3h:"Hela matchen i en vy", f3p:"Vinstchans, totalt antal mål och de mest troliga slutresultaten, uppdaterat när startmålvakten ändras.",
+  scr_h:"Mobil, surfplatta eller dator", scr_sub:"Byggd för alla skärmar. Lägg den på hemskärmen så öppnas den som en app.",
+  s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
+  plans_h:"Börja gratis. Uppgradera när det lönar sig.", plans_sub:"Ett gratiskonto visar hur det fungerar. Pro låser upp varje spelare och varje edge.",
+  free_n:"Gratis", per_month:"/ månad", pro_n:"Pro", pro_badge:"Full tillgång", pro_price:"– <small>pris vid lansering</small>",
+  free_items:[["y","Kvällens matcher: beräknat resultat, vinstchans, totalt antal mål"],["y","Förhandstittar, skador, uppställningar och startmålvakter"],["y","En forward och en back per lag, helt öppna"],["y","Topp 3 spelare i varje marknad"],["y","Spelarsidor: senaste 10 matcherna och regressionstabell"],["n","Varje spelares chans till mål, assist, poäng och skott"],["n","Bästa spelen och värde mot marknaden"]],
+  pro_items:[["y","Allt i Gratis"],["y","Varje spelares chans till mål, assist, poäng och skott"],["y","Bästa spelen i varje match"],["y","Värde mot marknaden på varje spel"],["y","Fullständiga toppspel med filter och sortering"],["y","Spelargrafer, full historik och hur varje siffra byggs"],["y","Uppställnings- och målvaktsuppdateringar före varje nedsläpp"]],
+  how_h:"Så fungerar det",
+  st1h:"Verklig talang, inte heta sviter", st1p:"Varje spelares målfrekvens dras mot hans verkliga nivå, så en tursam vecka lurar inte siffrorna.",
+  st2h:"Kvällens sammanhang", st2p:"Istid, motståndarens försvar, startmålvakten, hemmaplan och vila, allt kontrollerat mot de senaste uppställningarna.",
+  st3h:"En chans du kan jämföra", st3p:"Varje siffra är en sannolikhet du kan ställa mot oddsen. Du bestämmer.",
+  final_h:"Kvällens siffror är klara.", final_p:"Gratis att börja. Inget kort behövs.",
+  rg:"Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? Ring Stödlinjen 020-81 91 00 (stodlinjen.se).",
+  terms:"Villkor", privacy:"Integritet"
+ }
+};
+let LANG = (()=>{ const s=store.get("set:lang"); if(s==="en"||s==="sv") return s; return (navigator.language||"").toLowerCase().startsWith("sv")?"sv":"en"; })();
+const t = (k, v={}) => { let s = I18N[LANG][k] ?? I18N.en[k] ?? k; if (typeof s === "string") for (const [a,b] of Object.entries(v)) s = s.replaceAll("{"+a+"}", b); return s; };
+const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pct = p => Math.round(p*100) + "%";
+const LOCALE = () => LANG==="sv" ? "sv-SE" : "en-GB";
+// primary team colours for preview headers
+const TC = {ANA:"#F47A38",BOS:"#FFB81C",BUF:"#003087",CGY:"#C8102E",CAR:"#CE1126",CHI:"#CF0A2C",COL:"#6F263D",CBJ:"#002654",DAL:"#006847",DET:"#CE1126",EDM:"#041E42",FLA:"#C8102E",LAK:"#111111",MIN:"#154734",MTL:"#AF1E2D",NSH:"#FFB81C",NJD:"#CE1126",NYI:"#00539B",NYR:"#0038A8",OTT:"#C52032",PHI:"#F74902",PIT:"#000000",SJS:"#006D75",SEA:"#001628",STL:"#002F87",TBL:"#002868",TOR:"#00205B",UTA:"#6CACE4",VAN:"#00205B",VGK:"#B4975A",WSH:"#C8102E",WPG:"#041E42"};
+const logo = (tm, size) => { const L = LDATA?.logos?.[tm]; if (!L) return `<span style="font-family:var(--f-disp);font-weight:800">${tm}</span>`;
+  return `<img class="lg lg-d" src="${L.dark||L.light}" alt="${tm}" style="width:${size}px;height:${size}px"><img class="lg lg-l" src="${L.light||L.dark}" alt="${tm}" style="width:${size}px;height:${size}px">`; };
+const timeOf = iso => { try { return new Date(iso).toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"}); } catch(e){ return ""; } };
+const dayOf = iso => { try { return new Date(iso).toLocaleDateString(LOCALE(),{weekday:"short",day:"numeric",month:"short"}); } catch(e){ return ""; } };
+const APP = "APP_URL";
+
+function currentTheme(){ return document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"); }
+function applyTheme(th){ if (th) document.documentElement.dataset.theme = th; else delete document.documentElement.dataset.theme; document.querySelectorAll(".themebtn").forEach(b => b.textContent = currentTheme()==="light" ? "☾" : "☀"); }
+const $ = s => document.querySelector(s);
+
+function strip(){
+  const games = LDATA?.games || [];
+  $("#tonight_sub").textContent = t("tonight_sub",{n:games.length});
+  $("#strip").innerHTML = games.map(g => `<a class="chip" href="${APP}#g${g.id}">
+    <div class="t"><span>${dayOf(g.start)} · ${timeOf(g.start)}</span><span>${esc(g.venue||"")}</span></div>
+    <div class="tm"><div>${logo(g.away,30)}${g.away}</div><span>${g.ma.toFixed(1)}–${g.mh.toFixed(1)}</span><div>${g.home}${logo(g.home,30)}</div></div>
+    <div class="wpb"><i style="width:${g.pa*100}%"></i><i style="width:${g.ph*100}%"></i></div>
+    <div class="pc"><b>${pct(g.pa)}</b><span>${t("prev_total",{x:g.exp.toFixed(1)})}</span><b>${pct(g.ph)}</b></div></a>`).join("");
+}
+function previews(){
+  const P = LDATA?.previews || [];
+  const games = LDATA?.games || [];
+  const cards = (P.length ? P.slice(0,3) : games.slice(0,3).map(g => ({game:g, auto:true})));
+  $("#pgrid").innerHTML = cards.map(c => {
+    const g = c.game || games.find(x=>String(x.id)===String(c.id)) || {};
+    const head = c.photo
+      ? `<img class="photo" src="${esc(c.photo.src)}" alt="${esc(c.photo.alt||"")}" loading="lazy"><span class="credit">${esc(c.photo.credit||"")}</span>`
+      : `<div class="side" style="background:linear-gradient(135deg,${TC[g.away]||"#334"} 0%,color-mix(in srgb,${TC[g.away]||"#334"} 55%,#000) 100%)">${logo(g.away,96)}</div>
+         <div class="side" style="background:linear-gradient(225deg,${TC[g.home]||"#334"} 0%,color-mix(in srgb,${TC[g.home]||"#334"} 55%,#000) 100%)">${logo(g.home,96)}</div><span class="vs">VS</span>`;
+    const L = LANG==="sv" && c.sv ? c.sv : c;
+    const title = L.title || `${g.away} @ ${g.home}`;
+    const body = c.auto
+      ? `<p>${t("prev_soon")}</p><ul><li>${t("prev_proj",{a:g.away,sa:g.ma.toFixed(1),sh:g.mh.toFixed(1),h:g.home})}</li><li>${t("prev_win",{t:g.ph>=g.pa?g.home:g.away,p:pct(Math.max(g.ph,g.pa))})}</li><li>${t("prev_total",{x:g.exp.toFixed(1)})}</li></ul>`
+      : `<p>${esc(L.angle||"")}</p><ul>${(L.bullets||[]).slice(0,3).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
+    return `<a class="pcard" href="${c.url ? esc(c.url) : APP+"#g"+g.id}"><div class="pimg">${head}</div>
+      <div class="pbody"><div class="pmeta"><span class="ptag">${dayOf(g.start)}</span><span>${timeOf(g.start)}${g.venue?" · "+esc(g.venue):""}</span></div>
+      <h3>${esc(title)}</h3>${body}</div></a>`;
+  }).join("");
+}
+function plans(){
+  const ico = { y:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', n:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' };
+  const li = ([k,txt]) => `<li class="${k}">${ico[k]}<span>${esc(txt)}</span></li>`;
+  $("#free_list").innerHTML = t("free_items").map(li).join("");
+  $("#pro_list").innerHTML = t("pro_items").map(li).join("");
+}
+function render(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-t]").forEach(el => { const v = t(el.dataset.t); if (el.hasAttribute("data-html")) el.innerHTML = v; else el.textContent = v; });
+  document.querySelectorAll("#lang button").forEach(b => b.classList.toggle("on", b.dataset.l===LANG));
+  strip(); previews(); plans();
+  $("#yr").textContent = new Date().getFullYear();
+}
+$("#lang").addEventListener("click", e => { const b = e.target.closest("button[data-l]"); if (!b) return; LANG = b.dataset.l; store.set("set:lang", LANG); render(); });
+document.querySelectorAll(".themebtn").forEach(btn => btn.addEventListener("click", () => { const nx = currentTheme()==="light" ? "dark" : "light"; store.set("set:theme", nx); applyTheme(nx); }));
+addEventListener("scroll", () => $("#hdr").classList.toggle("scrolled", scrollY > 8), {passive:true});
+applyTheme(store.get("set:theme"));
+render();
+</script>
+</body>
+</html>
