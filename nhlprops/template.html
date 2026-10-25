@@ -104,6 +104,22 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .gou .go.val,.godds .val{color:var(--good);font-weight:700}
 .godds{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-family:var(--f-disp);font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}
 .godds small{font-family:var(--f-ui);font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.h2h{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:12.5px}
+.h2s{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-bottom:6px}
+.h2s span{color:var(--mute);font-size:12px}
+.h2r,.h2head{display:grid;grid-template-columns:96px 1fr 18px 1fr 40px;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.h2head{padding:0 0 2px;border-bottom:0;font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px}
+.h2r:last-child{border-bottom:0}
+.h2d{color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap}
+.h2t{display:flex;align-items:center;gap:6px;color:var(--mute)}
+.h2t b{font-family:var(--f-disp);font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:14px;text-align:center}
+.h2t.l{justify-content:flex-end}
+.h2t.r{flex-direction:row-reverse;justify-content:flex-end}
+.h2head .l{text-align:right}
+.h2t.w{color:var(--text);font-weight:700}.h2t.w b{color:var(--text)}
+.h2at{text-align:center;color:var(--mute);font-size:11px}
+.h2tot{text-align:right;font-family:var(--f-disp);font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.h2r,.h2head{grid-template-columns:72px 1fr 14px 1fr 30px}.h2t img,.h2t .lgfb{display:none!important}}
 .totop{position:fixed;right:calc(18px + env(safe-area-inset-right, 0px));bottom:calc(18px + env(safe-area-inset-bottom, 0px));z-index:40;width:44px;height:44px;border-radius:50%;
   border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(8px);color:var(--text);font-size:20px;cursor:pointer;
   display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s,border-color .15s}
@@ -363,6 +379,7 @@ const I18N = {
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
     inj_out:"Out", inj_q:"Questionable",
+    h2h_title:"Last meetings", h2h_sum:"{a} {aw} – {hw} {h} in wins · avg {avg} goals · over {l} in {o} of {n}", h2h_total:"Goals", h2h_away:"Away", h2h_home:"Home",
     to_top:"Back to top", odds_word:"odds", win_odds:"Market odds: {ta} {a} · {th} {h} (fair {fa} · {fh})",
     footer:"Updated four times a day. Stats: MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   },
@@ -443,6 +460,7 @@ const I18N = {
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
     inj_out:"Ute", inj_q:"Osäker",
+    h2h_title:"Senaste mötena", h2h_sum:"{a} {aw} – {hw} {h} i vinster · snitt {avg} mål · över {l} i {o} av {n}", h2h_total:"Mål", h2h_away:"Borta", h2h_home:"Hemma",
     to_top:"Till toppen", odds_word:"odds", win_odds:"Marknadsodds: {ta} {a} · {th} {h} (rättvisa {fa} · {fh})",
     footer:"Uppdateras fyra gånger om dagen. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
@@ -656,6 +674,24 @@ function gamesList(){
   };
   $("#main").onkeydown = e => { const r=e.target.closest(".grow"); if(r && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); go({game:r.dataset.g, side:null}); } };
 }
+function h2hBlock(g){
+  const h = g.h2h;
+  if (!h?.n) return `<p class="note">${t("no_meetings")}</p>`;
+  const H = g.home, A = g.away, line = C.ou_lines[0];
+  // scores are stored from the home team's point of view (H goals - A goals)
+  const games = h.games.map(x=>{ const [hg, ag] = x.score.split("-").map(Number); return {date:x.date, hg, ag, hHome:x.home}; });
+  const hw = games.filter(x=>x.hg>x.ag).length, aw = games.length - hw;
+  const over = games.filter(x=>x.hg+x.ag>line).length;
+  const team = (tm, goals, win, side) => `<span class="h2t ${side} ${win?"w":""}">${logo(tm,18)}<span>${tm}</span><b>${goals}</b></span>`;
+  const rows = games.map(x=>{
+    const left = x.hHome ? team(A, x.ag, x.ag>x.hg, "l") : team(H, x.hg, x.hg>x.ag, "l");    // away side of that meeting
+    const right = x.hHome ? team(H, x.hg, x.hg>x.ag, "r") : team(A, x.ag, x.ag>x.hg, "r");   // home side of that meeting
+    const d = new Date(x.date+"T12:00:00").toLocaleDateString(LOCALE(),{day:"numeric",month:"short",year:"numeric"});
+    return `<div class="h2r"><span class="h2d">${d}</span>${left}<span class="h2at">–</span>${right}<span class="h2tot">${x.hg+x.ag}</span></div>`;
+  }).join("");
+  return `<div class="h2h"><div class="h2s"><b>${t("h2h_title")}</b><span>${t("h2h_sum",{a:A, aw, hw, h:H, avg:fmt(h.avg_total,1), l:line, o:over, n:games.length})}</span></div>
+    <div class="h2head"><span></span><span class="l">${t("h2h_away")}</span><span></span><span>${t("h2h_home")}</span><span class="h2tot">${t("h2h_total")}</span></div>${rows}</div>`;
+}
 function winOdds(g, d){
   const w = DATA.odds?.[g.id]?.winner; if (!w || (!w.home && !w.away)) return "";
   const cell = (o, p) => o ? `<span class="${p*o-1>=VALUE?"val":""}">${o.toFixed(2)}</span>` : `<span>–</span>`;
@@ -688,7 +724,7 @@ function gamePage(){
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
       ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away?.toFixed(2)??"–", th:g.home, h:DATA.odds[g.id].winner.home?.toFixed(2)??"–", fa:(1/d.pa).toFixed(2), fh:(1/d.ph).toFixed(2)})}</p>` : ""}
-      <p class="note">${g.h2h?.n ? t("meetings",{n:g.h2h.n, list:g.h2h.games.map(x=>`${x.date.slice(2)} ${x.score}`).join(" · "), t:g.away, a:fmt(g.h2h.avg_total,1)}) : t("no_meetings")}</p></div>
+      ${h2hBlock(g)}</div>
     <div class="box"><h4>${t("total_goals")}</h4>
       <div class="ou"><div class="h">${t("line")}</div><div class="h">${t("model")}</div><div class="h">${t("history")}</div><div class="h">${t("over_fair")}</div><div class="h">${t("over_odds")}</div>${ou}</div></div>
   </div>
