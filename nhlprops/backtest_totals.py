@@ -41,11 +41,18 @@ def totals_dist(mh, ma):
     ph, pa = pois(mh * 0.985), pois(ma * 0.985)
     j = np.outer(ph, pa)
     tot = np.zeros(34)
+    hw = tie = 0.0
     for i in range(16):
         for k in range(16):
             t = i + k + (1 if i == k else 0)
             tot[t] += j[i, k]
-    return {L: float(tot[int(L) + 1:].sum()) for L in LINES}, float((tot * np.arange(34)).sum())
+            if i == k:
+                tie += j[i, k]
+            elif i > k:
+                hw += j[i, k]
+    po = {L: float(tot[int(L) + 1:].sum()) for L in LINES}
+    po["res"] = (hw, tie, 1 - hw - tie)          # regulation: home win, tie, away win
+    return po, float((tot * np.arange(34)).sum())
 
 
 def team_prior(src, season):
@@ -134,14 +141,29 @@ def season_rows(src, season, cfg, prev_games: pd.DataFrame, log=print) -> pd.Dat
                                     shrink(sum(1 for x in hm if x > L), len(hm), lg_hist_over[L], cfg["k_h2h_games"])]))
                   for L in LINES}
         recent = [x[4] for x in hh_[-5:]] + [x[4] for x in ha_[-5:]]
+        def state(h):
+            n = len(h)
+            since_tie = next((i for i, x in enumerate(reversed(h)) if x[5]), n)
+            over_run = next((i for i, x in enumerate(reversed(h)) if x[4] <= 6), n)    # games in a row with 7+ goals
+            under_run = next((i for i, x in enumerate(reversed(h)) if x[4] >= 6), n)   # games in a row with 5 or fewer
+            hgames = [x for x in h if x[6]]; agames = [x for x in h if not x[6]]
+            return {"n": n, "since_tie": since_tie, "ties": sum(x[5] for x in h), "over_run": over_run,
+                    "under_run": under_run,
+                    "home_n": len(hgames), "home_w": sum(1 for x in hgames if not x[5] and x[0] > x[1]),
+                    "away_n": len(agames), "away_w": sum(1 for x in agames if not x[5] and x[0] > x[1])}
+        sH, sA = state(hh_), state(ha_)
+        tie_act = g.last != "REG"
+        res = "T" if tie_act else ("H" if g.hs > g.as_ else "A")
         rows.append({"season": season, "id": g.id, "date": g.date, "home": H, "away": A,
                      "total": int(g.hs + g.as_), "exp": exp_total, "mh": mh, "ma": ma,
                      **{f"p{L}": po[L] for L in LINES}, **{f"h{L}": hist_p[L] for L in LINES},
                      "recent5": float(np.mean(recent)) if len(recent) >= 8 else np.nan,
-                     "recent_lg": 2 * lg_now, "gp_min": min(len(hh_), len(ha_))})
+                     "recent_lg": 2 * lg_now, "gp_min": min(len(hh_), len(ha_)),
+                     "pH": po["res"][0], "pT": po["res"][1], "pA": po["res"][2], "res": res,
+                     **{f"H_{k}": v for k, v in sH.items()}, **{f"A_{k}": v for k, v in sA.items()}})
         # update after the game
-        hist.setdefault(H, []).append((g.hs, g.as_, g.hsog, g.asog, g.hs + g.as_))
-        hist.setdefault(A, []).append((g.as_, g.hs, g.asog, g.hsog, g.hs + g.as_))
+        hist.setdefault(H, []).append((g.hs, g.as_, g.hsog, g.asog, g.hs + g.as_, g.last != "REG", True))
+        hist.setdefault(A, []).append((g.as_, g.hs, g.asog, g.hsog, g.hs + g.as_, g.last != "REG", False))
         h2h.setdefault(key, []).append(g.hs + g.as_)
         lg_sum += g.hs + g.as_; lg_n += 1
         if g.hsog is not None and g.asog is not None and not (pd.isna(g.hsog) or pd.isna(g.asog)):
@@ -163,8 +185,8 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         df, games = season_rows(src, y, cfg, prev[prev.season >= y - 3] if len(prev) else prev, log)
         frames.append(df)
         prev = pd.concat([prev, games])
-    d = pd.concat(frames)
-    d = d[d.gp_min >= 5]
+    d_all = pd.concat(frames)
+    d = d_all[d_all.gp_min >= 5].copy()
     rep = {"seasons": seasons, "games": int(len(d))}
 
     # 1. can the model separate low and high scoring games?
@@ -198,11 +220,96 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         rep[f"blend_{L}"] = res
         rep[f"model_{L}"] = summarize(list(zip(d[f"p{L}"].clip(1e-4, 1 - 1e-4), y)))
         rep[f"hist_{L}"] = summarize(list(zip(d[f"h{L}"].clip(1e-4, 1 - 1e-4), y)))
+    rep.update(results_tests(d_all, d))
     (out_dir / "totals.json").write_text(json.dumps(rep, indent=1, default=float), encoding="utf-8")
     md = to_md(rep)
     (out_dir / "totals.md").write_text(md, encoding="utf-8")
     log(md)
     return rep
+
+
+def _rate_rows(m, key, act, pred):
+    """grouped actual rate vs model rate with standard error"""
+    out = []
+    for k, x in m.groupby(key, observed=True):
+        a = x[act].astype(float)
+        out.append({"group": str(k), "n": int(len(x)), "actual": float(a.mean()), "model": float(x[pred].mean()),
+                    "diff": float((a - x[pred]).mean()), "se": float(a.std() / math.sqrt(max(len(x), 1)))})
+    return out
+
+
+def _qlabel(series, q=5):
+    b = pd.qcut(series, q, duplicates="drop")
+    return b.map(lambda iv: f"{max(iv.left, 0):.0%}-{iv.right:.0%}")
+
+
+def results_tests(d_all, d):
+    r = {}
+    # 4. league home / tie / away by season (regulation result)
+    r["league_1x2"] = [{"season": int(y), "games": int(len(m)), "home": float((m.res == "H").mean()),
+                        "tie": float((m.res == "T").mean()), "away": float((m.res == "A").mean()),
+                        "model_home": float(m.pH.mean()), "model_tie": float(m.pT.mean()), "model_away": float(m.pA.mean()),
+                        "goals": float(m.total.mean())}
+                       for y, m in d_all.groupby("season")]
+    # 5. do early-season team rates hold up? first 18 games (~6 weeks) vs the rest of the season
+    split = []
+    for (y, t), _ in d_all.groupby(["season", "home"]):
+        m = d_all[(d_all.season == y) & ((d_all.home == t) | (d_all.away == t))].sort_values("date")
+        first, rest = m.iloc[:18], m.iloc[18:]
+        if len(rest) < 30:
+            continue
+        def rates(x):
+            hm = x[x.home == t]; aw = x[x.away == t]
+            return {"home_win": float((hm.res == "H").mean()), "away_win": float((aw.res == "A").mean()),
+                    "tie": float((x.res == "T").mean()), "goals": float(x.total.mean())}
+        split.append({"season": y, "team": t, **{f"f_{k}": v for k, v in rates(first).items()},
+                      **{f"r_{k}": v for k, v in rates(rest).items()}})
+    sp = pd.DataFrame(split)
+    persist = {}
+    for k in ("home_win", "away_win", "tie", "goals"):
+        f, rr = sp[f"f_{k}"], sp[f"r_{k}"]
+        slope = float(np.cov(f, rr)[0, 1] / f.var()) if f.var() > 0 else 0.0
+        hi, lo = sp[f >= f.quantile(0.8)], sp[f <= f.quantile(0.2)]
+        persist[k] = {"teams": int(len(sp)), "league_rest": float(rr.mean()), "carry_over": slope,
+                      "top20_first": float(hi[f"f_{k}"].mean()), "top20_rest": float(hi[f"r_{k}"].mean()),
+                      "bottom20_first": float(lo[f"f_{k}"].mean()), "bottom20_rest": float(lo[f"r_{k}"].mean())}
+    r["early_season_persistence"] = persist
+    # team-level rows (each game counted once per team)
+    tm = pd.concat([pd.DataFrame({"since_tie": d[f"{s}_since_tie"], "over_run": d[f"{s}_over_run"],
+                                  "under_run": d[f"{s}_under_run"], "ties": d[f"{s}_ties"], "n": d[f"{s}_n"],
+                                  "tie": (d.res == "T").astype(int), "pT": d.pT, "total": d.total, "exp": d.exp,
+                                  "o65": (d.total > 6.5).astype(int), "u55": (d.total < 5.5).astype(int),
+                                  "p65": d["p6.5"], "p55u": 1 - d["p5.5"]})
+                    for s in ("H", "A")])
+    tm["tie_bucket"] = pd.cut(tm.since_tie, [-1, 0, 2, 5, 8, 11, 999],
+                              labels=["tied last game", "1-2 games", "3-5", "6-8", "9-11", "12+ games"])
+    r["games_since_tie"] = _rate_rows(tm, "tie_bucket", "tie", "pT")
+    tm["tie_rate"] = tm.ties / tm.n.clip(lower=1)
+    tm["tie_rate_b"] = pd.cut(tm.tie_rate, [-0.01, 0.12, 0.18, 0.26, 0.32, 1.0],
+                              labels=["under 12%", "12-18%", "18-26%", "26-32%", "over 32%"])
+    r["tie_rate_to_date"] = _rate_rows(tm[tm.n >= 15], "tie_rate_b", "tie", "pT")
+    tm["over_b"] = pd.cut(tm.over_run, [-1, 0, 1, 2, 3, 99], labels=["0", "1", "2", "3", "4+"])
+    tm["under_b"] = pd.cut(tm.under_run, [-1, 0, 1, 2, 3, 99], labels=["0", "1", "2", "3", "4+"])
+    r["after_over_run"] = _rate_rows(tm, "over_b", "o65", "p65")
+    r["after_under_run"] = _rate_rows(tm, "under_b", "u55", "p55u")
+    r["over_run_goals"] = _rate_rows(tm, "over_b", "total", "exp")
+    r["under_run_goals"] = _rate_rows(tm, "under_b", "total", "exp")
+    # 8. home team's home record / away team's road record so far vs what the model expected
+    hr = d[d.H_home_n >= 6].copy()
+    hr["hw_rate"] = hr.H_home_w / hr.H_home_n
+    hr["hw_b"] = _qlabel(hr.hw_rate)
+    hr["home_won"] = (hr.res == "H").astype(int)
+    r["home_record_to_date"] = _rate_rows(hr, "hw_b", "home_won", "pH")
+    ar = d[d.A_away_n >= 6].copy()
+    ar["aw_rate"] = ar.A_away_w / ar.A_away_n
+    ar["aw_b"] = _qlabel(ar.aw_rate)
+    ar["away_won"] = (ar.res == "A").astype(int)
+    r["away_record_to_date"] = _rate_rows(ar, "aw_b", "away_won", "pA")
+    # 9. calibration slope of the projected total, and blends after compressing it
+    x = d.exp - d.exp.mean()
+    slope = float((x * (d.total - d.total.mean())).sum() / (x ** 2).sum())
+    r["total_slope"] = slope
+    return r
 
 
 def to_md(r):
@@ -223,4 +330,28 @@ def to_md(r):
         L += [f"## 3. Over {Lx}: history blend", "",
               f"Model Brier {m['brier']:.4f} (skill {m['skill'] * 100:+.1f}%) · history only {h['brier']:.4f} (skill {h['skill'] * 100:+.1f}%) · best weight {best['w'] * 100:.0f}% (Brier {best['brier']:.4f})", "",
               " · ".join(f"{x['w'] * 100:.0f}%: {x['brier']:.4f}" for x in r[f"blend_{Lx}"]), ""]
+    L += ["## 4. League results by season (after 60 minutes)", "",
+          "| Season | Games | Home win | Tie | Away win | Model home | Model tie | Model away | Goals/game |", "|---|---|---|---|---|---|---|---|---|"]
+    for x in r["league_1x2"]:
+        L.append(f"| {x['season']} | {x['games']} | {x['home']:.1%} | {x['tie']:.1%} | {x['away']:.1%} | {x['model_home']:.1%} | {x['model_tie']:.1%} | {x['model_away']:.1%} | {x['goals']:.2f} |")
+    L += ["", "## 5. First 18 games vs rest of season (team level)", "",
+          "| Stat | Teams | Carry-over | Top 20% first | → rest | Bottom 20% first | → rest | League rest |", "|---|---|---|---|---|---|---|---|"]
+    for k, x in r["early_season_persistence"].items():
+        f = (lambda v: f"{v:.2f}") if k == "goals" else (lambda v: f"{v:.1%}")
+        L.append(f"| {k} | {x['teams']} | {x['carry_over']:.2f} | {f(x['top20_first'])} | {f(x['top20_rest'])} | {f(x['bottom20_first'])} | {f(x['bottom20_rest'])} | {f(x['league_rest'])} |")
+    def tbl(title, rows, pct=True):
+        f = (lambda v: f"{v:.1%}") if pct else (lambda v: f"{v:.2f}")
+        out = ["", f"## {title}", "", "| Group | Team-games | Actual | Model | Actual − model | ± |", "|---|---|---|---|---|---|"]
+        for x in rows:
+            out.append(f"| {x['group']} | {x['n']} | {f(x['actual'])} | {f(x['model'])} | {x['diff'] * (100 if pct else 1):+.{1 if pct else 2}f}{' pts' if pct else ''} | {x['se'] * (100 if pct else 1):.{1 if pct else 2}f} |")
+        return out
+    L += tbl("6. Games since the team's last tie → tie in next game", r["games_since_tie"])
+    L += tbl("6b. Team tie rate so far (15+ games) → tie in next game", r["tie_rate_to_date"])
+    L += tbl("7. Games in a row with 7+ goals → next game over 6.5", r["after_over_run"])
+    L += tbl("7b. Games in a row with 7+ goals → next game goals", r["over_run_goals"], False)
+    L += tbl("7c. Games in a row with 5 or fewer → next game under 5.5", r["after_under_run"])
+    L += tbl("7d. Games in a row with 5 or fewer → next game goals", r["under_run_goals"], False)
+    L += tbl("8. Home team's home win rate so far (6+ home games) → home win", r["home_record_to_date"])
+    L += tbl("8b. Away team's road win rate so far (6+ road games) → away win", r["away_record_to_date"])
+    L += ["", f"## 9. Calibration slope of projected total: {r['total_slope']:.2f} (1.00 = perfect spread)", ""]
     return "\n".join(L) + "\n"
