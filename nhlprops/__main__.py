@@ -235,7 +235,7 @@ def main(argv=None):
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))
     out = render(slate, graded, ROOT / "output", args.demo)
-    render_landing(slate, ROOT / "output")
+    render_landing(slate, ROOT / "output", app_url="app/")
     print(f"Dashboard written: {out}")
     if raw["errors"]:
         print(f"Note: {len(raw['errors'])} downloads failed - see data/errors.log")

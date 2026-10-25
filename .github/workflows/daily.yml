@@ -63,10 +63,13 @@ jobs:
           python -m nhlprops build --no-open 2>&1 | tee build.log || echo "No games today"
           mkdir -p data && cp build.log data/last-build.log
           mkdir -p site
-          if [ -f output/index.html ]; then cp output/index.html site/index.html; fi
-          if [ -f output/landing.html ]; then cp output/landing.html site/landing.html; fi
-          mkdir -p site/assets && cp site-assets/*.webp site/assets/
+          mkdir -p site/app site/assets
+          if [ -f output/index.html ]; then cp output/index.html site/app/index.html; fi
+          if [ -f output/landing.html ]; then cp output/landing.html site/index.html; cp output/landing.html site/landing.html; fi
+          cp site-assets/*.webp site/assets/
+          cp vercel.json site/vercel.json
           if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
+          if [ ! -f site/app/index.html ]; then cp site/index.html site/app/index.html; fi
 
       - name: Save prediction history to the repository
         if: steps.gate.outputs.run == 'true'
