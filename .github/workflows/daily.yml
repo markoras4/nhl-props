@@ -1,0 +1,63 @@
+name: Daily build
+
+on:
+  schedule:
+    - cron: "15 13 * * *"   # 14:15 Stockholm (winter) - morning in North America
+    - cron: "45 21 * * *"   # 22:45 Stockholm - refresh before puck drop
+  workflow_dispatch:         # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Restore downloaded data
+        uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: nhl-cache-${{ github.run_id }}
+          restore-keys: nhl-cache-
+
+      - name: Grade yesterday's predictions
+        run: python -m nhlprops grade || true
+
+      - name: Build today's slate
+        run: |
+          python -m nhlprops build --no-open || echo "No games today"
+          mkdir -p site
+          if [ -f output/index.html ]; then cp output/index.html site/index.html; fi
+          if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
+
+      - name: Save prediction history to the repository
+        run: |
+          git config user.name "nhl-props-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/history || true
+          git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

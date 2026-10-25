@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NHL Props Lab</title>
+<style>
+:root{
+  --bg:#0b0f14; --panel:#121821; --panel2:#18202b; --line:#243041; --text:#e6edf5; --mute:#8b98a9;
+  --accent:#3ddc97; --accent2:#4aa8ff; --warn:#ffb547; --bad:#ff6b6b; --good:#3ddc97;
+  --chip:#1d2735; --radius:10px;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f4f6f9; --panel:#ffffff; --panel2:#f0f3f7; --line:#dde3ea; --text:#121821; --mute:#5c6b7d;
+    --accent:#0f9d63; --accent2:#1f6fd1; --warn:#b26b00; --bad:#c93434; --good:#0f9d63; --chip:#eef2f6;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif}
+.num,td.n,th.n{font-variant-numeric:tabular-nums}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1320px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:16px;padding:12px 0 8px;flex-wrap:wrap}
+.brand{font-weight:800;letter-spacing:.3px;font-size:18px}
+.brand b{color:var(--accent)}
+.meta{color:var(--mute);font-size:12px}
+.demo{background:var(--warn);color:#000;font-weight:700;border-radius:6px;padding:2px 8px;font-size:12px}
+nav{display:flex;gap:4px;margin-left:auto}
+nav button{background:none;border:0;color:var(--mute);font:inherit;font-weight:600;padding:8px 12px;border-radius:8px;cursor:pointer}
+nav button.on{color:var(--text);background:var(--panel2)}
+.settings{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:6px 0 12px;font-size:12px;color:var(--mute)}
+.settings label{display:flex;align-items:center;gap:8px}
+.settings input[type=range]{width:120px;accent-color:var(--accent)}
+.settings output{color:var(--text);font-weight:600;min-width:42px}
+main{padding:16px 0 60px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+select,input[type=search],input.odds{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit}
+input.odds{width:72px;padding:5px 7px;text-align:right}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;color:var(--mute);font:inherit;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--accent);color:#04140d}
+.toggle{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:13px;cursor:pointer}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+th.n,td.n{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--panel2)}
+tr.open td{background:var(--panel2)}
+.pl{display:flex;align-items:center;gap:10px;min-width:190px}
+.jersey{width:30px;height:30px;border-radius:7px;background:var(--chip);display:grid;place-items:center;font-weight:700;font-size:12px;color:var(--mute)}
+.pl .nm{font-weight:650}
+.pl .sub{font-size:12px;color:var(--mute)}
+.bar{position:relative;height:22px;min-width:110px;background:var(--chip);border-radius:6px;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 55%,transparent),var(--accent));border-radius:6px}
+.bar span{position:relative;display:block;text-align:right;padding:0 7px;line-height:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;white-space:nowrap}
+.b-due{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.b-hot{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+.b-dry{background:color-mix(in srgb,var(--accent2) 18%,transparent);color:var(--accent2)}
+.b-warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.b-mute{background:var(--chip);color:var(--mute)}
+.ev-pos{color:var(--good);font-weight:700}.ev-neg{color:var(--bad)}
+.hits{display:flex;gap:3px}
+.hits i{width:9px;height:18px;border-radius:3px;background:var(--chip)}
+.hits i.y{background:var(--accent)}
+.detail{padding:14px 10px 18px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.box h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13px}
+.kv span:nth-child(odd){color:var(--mute)}
+.kv span:nth-child(even){font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.mini{font-size:12px}
+.mini th,.mini td{padding:5px 6px}
+.mini th{cursor:default}
+.hit{color:var(--accent);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--chip);border-radius:7px;padding:4px 8px;font-size:12px}
+.chip b{font-variant-numeric:tabular-nums}
+.up{color:var(--good)}.down{color:var(--bad)}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:14px}
+.game{padding:14px}
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:12px 0}
+.team{font-weight:800;font-size:22px}
+.team.r{text-align:right}
+.score{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;text-align:center}
+.score small{display:block;font-size:11px;color:var(--mute);font-weight:600}
+.wp{display:flex;height:6px;border-radius:3px;overflow:hidden;margin:4px 0 12px}
+.wp i:first-child{background:var(--accent2)}.wp i:last-child{background:var(--accent)}
+.cmp{width:100%;font-size:12.5px}
+.cmp td{padding:5px 4px;border-bottom:1px solid var(--line)}
+.cmp td:nth-child(2){text-align:center;color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.cmp td:first-child{text-align:left;font-variant-numeric:tabular-nums}
+.cmp td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.better{color:var(--good);font-weight:700}
+.ou{display:grid;grid-template-columns:auto repeat(4,1fr);gap:6px 10px;align-items:center;font-size:13px;margin:10px 0}
+.ou .h{font-size:11px;color:var(--mute);text-transform:uppercase}
+.gsel{display:flex;gap:8px;margin:8px 0}
+.gl{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:4px 0 10px;font-size:12.5px}
+.gl .kv{font-size:12px}
+.gsel select{flex:1;font-size:12px;padding:5px 6px}
+.empty{padding:40px;text-align:center;color:var(--mute)}
+.prose{max-width:820px}
+.prose h3{margin:22px 0 6px}
+.prose p,.prose li{color:color-mix(in srgb,var(--text) 85%,var(--mute))}
+code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
+.foot{color:var(--mute);font-size:12px;margin-top:26px}
+.leaguebar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{padding:10px 14px}
+.stat .l{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
+.stat .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto}
+@media (max-width:640px){.games{grid-template-columns:1fr} nav{margin-left:0} .hide-sm{display:none} header{position:static} .gl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">NHL Props <b>Lab</b></div>
+      <div class="meta" id="meta"></div>
+      <nav id="nav">
+        <button data-tab="props" class="on">Props</button>
+        <button data-tab="games">Games</button>
+        <button data-tab="track">Track record</button>
+        <button data-tab="how">How it works</button>
+      </nav>
+    </div>
+    <div class="settings">
+      <label title="Effect per game beyond each team's streak threshold. 0 = flag only.">6-game rule weight
+        <input type="range" id="sw" min="0" max="5" step="0.5"><output id="swo"></output></label>
+      <label title="Blend historical over/under rates into the model's game totals.">History weight (O/U)
+        <input type="range" id="hw" min="0" max="60" step="5"><output id="hwo"></output></label>
+      <label class="toggle"><input type="checkbox" id="showInactive"> show inactive players</label>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+
+<script>
+const DATA=/*__DATA__*/null;
+const C = DATA.config;
+const $ = (s, el=document) => el.querySelector(s);
+const fmt = (x, d=1) => x==null || isNaN(x) ? "–" : Number(x).toFixed(d);
+const pct = (x, d=0) => x==null || isNaN(x) ? "–" : (100*x).toFixed(d)+"%";
+const sv3 = x => x==null ? "–" : x.toFixed(3).replace(/^0/,"");
+const esc = s => String(s??"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = {
+  get(k){ try{ return localStorage.getItem(k) }catch(e){ return null } },
+  set(k,v){ try{ v==null||v==="" ? localStorage.removeItem(k) : localStorage.setItem(k,v) }catch(e){} }
+};
+
+const state = {
+  tab: "props", market: "g", game: "all", team: "all", pos: "all", q: "", onlyReg: false,
+  sort: "p", open: null,
+  streakW: (C.streak_weight_default||0)*100, histW: (C.history_weight_default||0)*100,
+  showInactive: false, goalie: {},
+};
+const gameById = Object.fromEntries(DATA.games.map(g => [g.id, g]));
+DATA.games.forEach(g => { for (const t of [g.home, g.away]) state.goalie[t] = store.get(`goalie:${DATA.date}:${t}`) || g.starters[t]; });
+const oppOf = {}; DATA.games.forEach(g => { oppOf[g.home]=g.away; oppOf[g.away]=g.home; });
+
+// ------------------------------------------------------------ model math (mirrors model.py)
+function goalieRatio(team){ const id = state.goalie[team]; const g = id && DATA.goalies[id]; return g ? g.ratio : 1; }
+function streakMult(team){
+  const w = state.streakW/100; if (!w) return 1;
+  let m = 1; const own = DATA.teams[team], opp = DATA.teams[oppOf[team]];
+  if (own && own.streak_excess>0) { const ex=Math.min(own.streak_excess,3); m *= own.streak_kind==="W" ? 1-w*ex : 1+w*ex; }
+  if (opp && opp.streak_excess>0) { const ex=Math.min(opp.streak_excess,3); m *= opp.streak_kind==="W" ? 1+w*ex : 1-w*ex; }
+  return m;
+}
+const atLeastOne = lam => 1 - Math.exp(-Math.max(lam,0));
+function poisOver(lam, line){ const k=Math.floor(line); let term=Math.exp(-lam), cdf=0; for(let i=0;i<=k;i++){ if(i>0) term*=lam/i; cdf+=term; } return Math.max(0,1-cdf); }
+function pmf(lam,n=16){ const o=[Math.exp(-lam)]; for(let i=1;i<n;i++) o.push(o[i-1]*lam/i); return o; }
+function gameDist(mh, ma){
+  const ph=pmf(mh*0.985), pa=pmf(ma*0.985), tot=new Array(34).fill(0); let tie=0, hw=0;
+  for(let i=0;i<ph.length;i++) for(let j=0;j<pa.length;j++){ const p=ph[i]*pa[j]; let t=i+j; if(i===j){tie+=p;t+=1;} else if(i>j) hw+=p; tot[t]+=p; }
+  const ph_ = hw + tie*((mh+ma)>0 ? mh/(mh+ma) : 0.5);
+  const over = L => tot.slice(Math.floor(L)+1).reduce((a,b)=>a+b,0);
+  return {ph:ph_, pa:1-ph_, tie, over, exp: tot.reduce((a,p,i)=>a+p*i,0)};
+}
+function lambdas(p){
+  const gr = goalieRatio(p.opp), sm = streakMult(p.team);
+  return { g: p.base.g*gr*sm, a: p.base.a*gr*sm, s: p.base.s*sm, gr, sm };
+}
+function prob(p, market){
+  const l = lambdas(p);
+  if (market==="g") return atLeastOne(l.g);
+  if (market==="a") return atLeastOne(l.a);
+  if (market==="pt") return atLeastOne(l.g + l.a);
+  return poisOver(l.s, parseFloat(market.slice(1)));
+}
+function gameMu(g){
+  return {
+    h: g.mu.home.g*goalieRatio(g.away)*streakMult(g.home) + g.mu.home.o,
+    a: g.mu.away.g*goalieRatio(g.home)*streakMult(g.away) + g.mu.away.o,
+  };
+}
+const MARKETS = [["g","Goal"],["a","Assist"],["pt","Point"],...C.sog_lines.map(L=>["s"+L,`SOG ${Math.ceil(L)}+`])];
+const marketName = m => (MARKETS.find(x=>x[0]===m)||[0,m])[1];
+const sogLabel = m => `Over ${m.slice(1)} shots`;
+function hitGame(gm, market){
+  if (market==="g") return gm.g>=1;
+  if (market==="a") return gm.a>=1;
+  if (market==="pt") return gm.g+gm.a>=1;
+  return gm.s > parseFloat(market.slice(1));
+}
+const oddsKey = (pid, m) => `odds:${DATA.date}:${pid}:${m}`;
+
+// ------------------------------------------------------------ header + settings
+function header(){
+  const d = new Date(DATA.date+"T12:00:00");
+  $("#meta").innerHTML = `${d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"})} · ${DATA.games.length} games · built ${DATA.built.replace("T"," ")}`
+    + (DATA.demo ? ` <span class="demo">DEMO DATA – simulated</span>` : "");
+  const sw=$("#sw"), hw=$("#hw");
+  sw.value = state.streakW; hw.value = state.histW;
+  const upd = () => { $("#swo").textContent = (+sw.value).toFixed(1)+"%"; $("#hwo").textContent = hw.value+"%"; };
+  upd();
+  sw.oninput = () => { state.streakW=+sw.value; upd(); render(); };
+  hw.oninput = () => { state.histW=+hw.value; upd(); render(); };
+  $("#showInactive").onchange = e => { state.showInactive = e.target.checked; render(); };
+  $("#nav").onclick = e => { const b=e.target.closest("button"); if(!b) return; state.tab=b.dataset.tab;
+    [...$("#nav").children].forEach(x=>x.classList.toggle("on", x===b)); render(); };
+}
+
+// ------------------------------------------------------------ props tab
+function propsTab(){
+  const gameOpts = DATA.games.map(g=>`<option value="${g.id}" ${state.game==g.id?"selected":""}>${g.away} @ ${g.home}</option>`).join("");
+  const teams = [...new Set(DATA.players.map(p=>p.team))].sort();
+  const html = `
+  <div class="controls">
+    <div class="seg" id="mkt">${MARKETS.map(([k,n])=>`<button data-m="${k}" class="${state.market===k?"on":""}">${n}</button>`).join("")}</div>
+    <select id="fgame"><option value="all">All games</option>${gameOpts}</select>
+    <select id="fteam"><option value="all">All teams</option>${teams.map(t=>`<option ${state.team===t?"selected":""}>${t}</option>`).join("")}</select>
+    <select id="fpos">${[["all","F + D"],["F","Forwards"],["D","Defense"]].map(([v,n])=>`<option value="${v}" ${state.pos===v?"selected":""}>${n}</option>`).join("")}</select>
+    <input type="search" id="fq" placeholder="Search player" value="${esc(state.q)}">
+    <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> regression signals only</label>
+  </div>
+  <div class="card tablewrap"><table id="ptab"><thead><tr>
+    <th>Player</th><th class="n" data-s="toi">TOI proj</th><th class="n hide-sm" data-s="lam">Exp.</th>
+    <th data-s="p">Probability</th><th class="n" data-s="fair">Fair odds</th><th class="n">Your odds</th><th class="n" data-s="ev">EV</th>
+    <th class="hide-sm">Last 10</th><th data-s="reg">Regression</th></tr></thead><tbody></tbody></table></div>
+  <p class="foot">Fair odds = 1 / probability. Enter the bookmaker's decimal odds to see expected value (EV = probability × odds − 1). Click a player for the full breakdown.</p>`;
+  $("#main").innerHTML = html;
+  $("#mkt").onclick = e => { const b=e.target.closest("button"); if(!b) return; state.market=b.dataset.m; render(); };
+  $("#fgame").onchange = e => { state.game=e.target.value; drawRows(); };
+  $("#fteam").onchange = e => { state.team=e.target.value; drawRows(); };
+  $("#fpos").onchange = e => { state.pos=e.target.value; drawRows(); };
+  $("#fq").oninput = e => { state.q=e.target.value.toLowerCase(); drawRows(); };
+  $("#freg").onchange = e => { state.onlyReg=e.target.checked; drawRows(); };
+  $("#ptab thead").onclick = e => { const th=e.target.closest("th[data-s]"); if(th){ state.sort=th.dataset.s; drawRows(); } };
+  drawRows();
+}
+
+function regBadge(p){
+  const r = p.regress, d = p.drought, out = [];
+  if (r.flag==="due") out.push(`<span class="badge b-due" title="Scoring below his talent this season – positive regression expected">▲ Due</span>`);
+  if (r.flag==="hot") out.push(`<span class="badge b-hot" title="Scoring above his talent this season – negative regression expected">▼ Hot</span>`);
+  if (d.found && d.p!=null && d.p < 0.15 && d.shots>=8) out.push(`<span class="badge b-dry" title="${d.shots} shots since his last goal. A shooter of his talent goes this long only ${pct(d.p)} of the time.">${d.shots} shots dry</span>`);
+  return out.join(" ") || `<span class="badge b-mute">–</span>`;
+}
+
+function rowsData(){
+  const m = state.market;
+  let rows = DATA.players.filter(p =>
+    (state.showInactive || p.active) &&
+    (state.game==="all" || p.game==state.game) &&
+    (state.team==="all" || p.team===state.team) &&
+    (state.pos==="all" || p.posg===state.pos) &&
+    (!state.q || p.name.toLowerCase().includes(state.q)) &&
+    (!state.onlyReg || p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8))
+  ).map(p => {
+    const pr = prob(p, m), l = lambdas(p);
+    const lam = m==="g" ? l.g : m==="a" ? l.a : m==="pt" ? l.g+l.a : l.s;
+    const odds = parseFloat(store.get(oddsKey(p.id,m)));
+    return {p, pr, lam, odds: isNaN(odds)?null:odds, ev: isNaN(odds)?null:pr*odds-1};
+  });
+  const key = {p:r=>r.pr, toi:r=>r.p.toi_proj, lam:r=>r.lam, fair:r=>-r.pr, ev:r=>r.ev??-9,
+               reg:r=>(r.p.regress.flag==="due"?2:r.p.regress.flag==="hot"?-1:0)+(r.p.drought.p<0.15?1:0)}[state.sort] || (r=>r.pr);
+  rows.sort((a,b)=>key(b)-key(a));
+  return rows;
+}
+
+function drawRows(){
+  const m = state.market, tb = $("#ptab tbody");
+  const rows = rowsData();
+  if (!rows.length){ tb.innerHTML = `<tr><td colspan="9" class="empty">No players match these filters.</td></tr>`; return; }
+  tb.innerHTML = rows.slice(0, 400).map(({p,pr,lam,odds,ev}) => {
+    const last = p.form.games.slice(0,10);
+    const hits = last.map(g=>`<i class="${hitGame(g,m)?"y":""}" title="${g.d} vs ${g.o}: ${g.g}G ${g.a}A ${g.s}S"></i>`).reverse().join("");
+    const nh = last.filter(g=>hitGame(g,m)).length;
+    const open = state.open===p.id;
+    return `<tr class="row ${open?"open":""}" data-id="${p.id}">
+      <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)}${p.active?"":` <span class="badge b-warn">not in recent lineup</span>`}</div>
+        <div class="sub">${p.pos} · ${p.team} ${p.home?"vs":"@"} ${p.opp}${DATA.teams[p.team]?.b2b?" · B2B":""}</div></div></div></td>
+      <td class="n">${fmt(p.toi_proj,1)}</td>
+      <td class="n hide-sm">${fmt(lam,2)}</td>
+      <td><div class="bar"><i style="width:${Math.min(100,pr*100)}%"></i><span>${pct(pr,1)}</span></div></td>
+      <td class="n">${pr>0?(1/pr).toFixed(2):"–"}</td>
+      <td class="n"><input class="odds" inputmode="decimal" placeholder="—" data-pid="${p.id}" value="${odds??""}"></td>
+      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</td>
+      <td class="hide-sm"><div class="hits" title="${nh}/${last.length} hit">${hits}</div></td>
+      <td>${regBadge(p)}</td></tr>
+      ${open?`<tr><td colspan="9">${detail(p)}</td></tr>`:""}`;
+  }).join("");
+  tb.onclick = e => {
+    if (e.target.closest("input")) return;
+    const tr = e.target.closest("tr.row"); if(!tr) return;
+    state.open = state.open==+tr.dataset.id ? null : +tr.dataset.id; drawRows();
+  };
+  tb.onchange = e => {
+    const inp = e.target.closest("input.odds"); if(!inp) return;
+    const v = inp.value.replace(",","."); store.set(oddsKey(inp.dataset.pid, m), isNaN(parseFloat(v))?"":parseFloat(v)); drawRows();
+  };
+}
+
+function windowsTable(p){
+  const W = p.windows, cols = [["cur","This season"],["prev3","Prev 3 seasons"],["prev5","Prev 5 seasons"],["career","Career"]];
+  const r = (lab, f) => `<tr><td>${lab}</td>${cols.map(([k])=>`<td class="n">${W[k]?f(W[k]):"–"}</td>`).join("")}</tr>`;
+  return `<table class="mini"><thead><tr><th></th>${cols.map(c=>`<th class="n">${c[1]}</th>`).join("")}</tr></thead><tbody>
+    ${r("Games", w=>w.gp)}${r("G / A / P", w=>`${w.g} / ${w.a} / ${w.p}`)}${r("Shots", w=>w.s)}
+    ${r("Goals per game", w=>fmt(w.g_pg,2))}${r("Assists per game", w=>fmt(w.a_pg,2))}${r("Points per game", w=>fmt(w.p_pg,2))}
+    ${r("Shots per game", w=>fmt(w.s_pg,2))}${r("Goals per season", w=>fmt(w.g_ps,1))}${r("Assists per season", w=>fmt(w.a_ps,1))}
+    ${r("Points per season", w=>fmt(w.p_ps,1))}${r("Shooting %", w=>pct(w.sh,1))}</tbody></table>`;
+}
+
+function detail(p){
+  const l = lambdas(p), r = p.rates, f = p.factors, rg = p.regress, d = p.drought;
+  const og = state.goalie[p.opp] && DATA.goalies[state.goalie[p.opp]];
+  const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
+  const xgw = p.xg_windows;
+  return `<div class="detail"><div class="dgrid">
+    <div class="box"><h4>How the number is built</h4>
+      <div class="chips">
+        <span class="chip">Goals/60 <b>${fmt(r.g60,2)}</b></span><span class="chip">Assists/60 <b>${fmt(r.a60,2)}</b></span>
+        <span class="chip">Shots/60 <b>${fmt(r.s60,2)}</b></span><span class="chip">TOI <b>${fmt(p.toi_proj,1)}</b> min</span>
+        <span class="chip">Opp defence ${x(f.opp_def)}</span><span class="chip">Opp goalie ${x(l.gr)}</span>
+        <span class="chip">${p.home?"Home":"Away"} ${x(f.venue)}</span><span class="chip">Back-to-back ${x(f.b2b)}</span>
+        <span class="chip">League scoring ${x(f.env)}</span><span class="chip">6-game rule ${x(l.sm)}</span>
+      </div>
+      <div class="kv" style="margin-top:10px">
+        <span>Expected goals tonight</span><span>${fmt(l.g,3)}</span><span>Expected assists</span><span>${fmt(l.a,3)}</span>
+        <span>Expected shots on goal</span><span>${fmt(l.s,2)}</span>
+        <span>Opposing goalie</span><span>${og?esc(og.name):"unknown"}</span>
+        <span>TOI last 10 / season</span><span>${fmt(p.toi_recent,1)} / ${fmt(p.toi_season,1)}</span>
+      </div></div>
+    <div class="box"><h4>Regression to the mean</h4>
+      <div class="kv">
+        <span>Shooting % this season</span><span>${pct(rg.sh,1)} <span class="meta">(${rg.g} G on ${rg.s} S)</span></span>
+        <span>True-talent shooting % (regressed)</span><span>${pct(r.recent_sh,1)}</span>
+        <span>Career shooting % (regressed)</span><span>${pct(r.career_sh,1)}</span>
+        <span>League average (${p.posg})</span><span>${pct(r.lg_sh,1)}</span>
+        <span>Goals this season vs expected</span><span>${fmt(rg.g,0)} vs ${fmt(rg.exp,1)}</span>
+        <span>Chance of ≤ this many goals</span><span>${pct(rg.p_low,0)}</span>
+        <span>Chance of ≥ this many goals</span><span>${pct(rg.p_high,0)}</span>
+        <span>Individual xG this season / prev 3</span><span>${xgw.cur?fmt(xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.xg,1):"–"}</span>
+        <span>Goals − xG this season / prev 3</span><span>${xgw.cur?fmt(xgw.cur.g-xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.g-xgw.prev3.xg,1):"–"}</span>
+        <span>Finishing (goals ÷ xG, regressed)</span><span>${fmt(r.finish,2)}</span>
+        <span>Shots since last goal</span><span>${d.found?d.shots:d.shots+"+"} <span class="meta">(${d.games} games)</span></span>
+        <span>Typical shots per goal</span><span>${fmt(d.shots_per_goal,1)}</span>
+        <span>Chance of a drought this long</span><span>${pct(d.p,0)}</span>
+      </div>
+      <p class="meta" style="margin:8px 0 0">A drought does not make a goal "owed". The model already uses his true talent. A drought matters because bookmakers often price off recent results.</p></div>
+    <div class="box"><h4>Form – last 5 games</h4>
+      <div class="kv"><span>Goals / Assists / Points</span><span>${p.form.g} / ${p.form.a} / ${p.form.p}</span>
+        <span>Shots on goal</span><span>${p.form.s}</span><span>Avg TOI</span><span>${fmt(p.form.toi,1)}</span></div>
+      <table class="mini" style="margin-top:8px"><thead><tr><th>Date</th><th>Opp</th><th class="n">G</th><th class="n">A</th><th class="n">S</th><th class="n">TOI</th></tr></thead>
+      <tbody>${p.form.games.map(g=>`<tr><td>${g.d.slice(5)}</td><td>${g.h?"":"@"}${g.o}</td><td class="n ${g.g?"hit":""}">${g.g}</td><td class="n ${g.a?"hit":""}">${g.a}</td><td class="n">${g.s}</td><td class="n">${fmt(g.t,1)}</td></tr>`).join("")}</tbody></table></div>
+    <div class="box" style="grid-column:1/-1"><h4>Averages – season, previous 3 & 5 seasons, career</h4><div class="tablewrap">${windowsTable(p)}</div></div>
+  </div></div>`;
+}
+
+// ------------------------------------------------------------ games tab
+function streakBadge(t){
+  if (!t || !t.streak_kind) return "–";
+  const s = `${t.streak_kind}${t.streak}`;
+  if (t.streak_excess>0) return `<span class="badge b-warn" title="${t.tier} team: threshold ${t.streak_threshold} ${t.streak_kind==="W"?"wins":"losses"}">${s} · rule ⚠</span>`;
+  return `${s} <span class="meta">/${t.streak_threshold}</span>`;
+}
+function cmpRow(label, a, h, fa, higherBetter=true){
+  const va = typeof a==="number"?a:null, vh = typeof h==="number"?h:null;
+  let ca="", ch="";
+  if (va!=null && vh!=null && va!==vh && higherBetter!==null){ const aw = higherBetter ? va>vh : va<vh; ca = aw?"better":""; ch = aw?"":"better"; }
+  return `<tr><td class="${ca}">${fa(a)}</td><td>${label}</td><td class="${ch}">${fa(h)}</td></tr>`;
+}
+const pairRow = (label, a, h) => `<tr><td>${a}</td><td>${label}</td><td>${h}</td></tr>`;
+function goalieLine(id, opp){
+  const g = DATA.goalies[id]; if(!g) return "–";
+  const c = g.cur, l = g.last3, vs = g.vs && g.vs[opp];
+  const q = g.ratio<0.98?"up":g.ratio>1.02?"down":"";
+  return `<b>${esc(g.name)}</b>
+    <div class="kv mini" style="margin-top:4px">
+      <span>Season SV% · GAA</span><span>${c?`${sv3(c.sv)} · ${fmt(c.gaa,2)}`:"–"}</span>
+      <span>3 yrs SV% · GAA</span><span>${l?`${sv3(l.sv)} · ${fmt(l.gaa,2)}`:"–"}</span>
+      <span>GSAx season · 3y</span><span>${c?fmt(c.gsax,1):"–"} · ${l?fmt(l.gsax,1):"–"}</span>
+      <span>xGA / GA season</span><span>${c?`${fmt(c.xga,1)} / ${c.ga}`:"–"}</span>
+      <span>GA ÷ xGA (reg.)</span><span class="${q}">${fmt(g.ratio,3)}</span>
+      <span>vs ${opp}</span><span>${vs?`${vs.gp} GP · ${sv3(vs.sv)} · ${fmt(vs.gaa,2)}`:"–"}</span>
+    </div>`;
+}
+function gamesTab(){
+  const L = DATA.league;
+  const seasons = Object.keys(L.gpg_by_season).sort();
+  const res = L.results || {};
+  const curY = String(DATA.season);
+  let html = `<div class="leaguebar">
+    <div class="card stat"><div class="l">League goals/game this season</div><div class="v">${fmt(L.cur_gpg,2)}</div></div>
+    <div class="card stat"><div class="l">Normal level (prior ${seasons.length-1} seasons)</div><div class="v">${fmt(L.base_gpg,2)}</div></div>
+    <div class="card stat"><div class="l">Over 5.5 this season / history</div><div class="v">${pct(res[curY]?.["over_5.5"])} <span class="meta">/ ${pct(L.hist_over["over_5.5"])}</span></div></div>
+    <div class="card stat"><div class="l">Over 6.5 this season / history</div><div class="v">${pct(res[curY]?.["over_6.5"])} <span class="meta">/ ${pct(L.hist_over["over_6.5"])}</span></div></div>
+    <div class="card stat"><div class="l">Goals/game by season</div><div class="meta" style="margin-top:4px">${seasons.map(s=>`${s.slice(2)}/${String(+s+1).slice(2)}: <b>${fmt(L.gpg_by_season[s],2)}</b>`).join(" · ")}</div></div>
+  </div><div class="games">`;
+  for (const g of DATA.games){
+    const H = DATA.teams[g.home]||{}, A = DATA.teams[g.away]||{};
+    const mu = gameMu(g), dist = gameDist(mu.h, mu.a), w = state.histW/100;
+    const t = g.start ? new Date(g.start).toLocaleString(undefined,{weekday:"short",hour:"2-digit",minute:"2-digit"}) : "";
+    const ou = C.ou_lines.map(Lx => {
+      const m = dist.over(Lx), hst = g.hist_over[String(Lx)], b = (1-w)*m + w*hst;
+      const k = `ou:${DATA.date}:${g.id}:${Lx}`, od = parseFloat(store.get(k)), ev = isNaN(od)?null:b*od-1;
+      return `<div><b>${Lx}</b></div><div>${pct(m,1)}</div><div>${pct(hst,1)}</div>
+        <div><b>${pct(b,1)}</b> <span class="meta">${(1/b).toFixed(2)} / ${(1/(1-b)).toFixed(2)}</span></div>
+        <div><input class="odds ouodds" data-k="${k}" placeholder="over" value="${isNaN(od)?"":od}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span></div>`;
+    }).join("");
+    const gsel = side => { const team = side==="a"?g.away:g.home; return `<select data-team="${team}">${(g.goalies[team]||[]).map(id=>`<option value="${id}" ${state.goalie[team]==id?"selected":""}>${esc(DATA.goalies[id]?.name)}${g.starters[team]==id?" (projected)":""}</option>`).join("")}</select>`; };
+    const ha = H.b2b?" · B2B":"", aa = A.b2b?" · B2B":"";
+    html += `<div class="card game">
+      <div class="ghead"><span class="meta">${t} · ${esc(g.venue||"")}</span><span class="meta">${g.h2h?.n?`H2H (4 seasons): ${g.h2h.n} games, avg ${fmt(g.h2h.avg_total,1)} goals`:"No recent H2H"}</span></div>
+      <div class="teams"><div class="team">${g.away}<div class="meta">${A.w??0}-${A.l??0}-${A.otl??0}${aa}</div></div>
+        <div class="score">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>projected goals</small></div>
+        <div class="team r">${g.home}<div class="meta">${H.w??0}-${H.l??0}-${H.otl??0}${ha}</div></div></div>
+      <div class="meta" style="display:flex;justify-content:space-between"><span>Win ${pct(dist.pa)}</span><span>Tie after 60: ${pct(dist.tie)}</span><span>Win ${pct(dist.ph)}</span></div>
+      <div class="wp"><i style="width:${dist.pa*100}%"></i><i style="width:${dist.ph*100}%"></i></div>
+      <div class="ou"><div class="h">Total</div><div class="h">Model</div><div class="h">History</div><div class="h">Blend · fair o/u</div><div class="h">Your odds</div>${ou}</div>
+      <div class="gsel">${gsel("a")}${gsel("h")}</div>
+      <div class="gl"><div>${goalieLine(state.goalie[g.away], g.home)}</div><div class="r">${goalieLine(state.goalie[g.home], g.away)}</div></div>
+      <table class="cmp"><tbody>
+        ${cmpRow("Points %", A.pts_pct, H.pts_pct, v=>pct(v,1))}
+        ${cmpRow("Strength tier", A.tier, H.tier, v=>v??"–", null)}
+        <tr><td>${streakBadge(A)}</td><td>Streak</td><td>${streakBadge(H)}</td></tr>
+        <tr><td>${A.last5||"–"}</td><td>Last 5</td><td>${H.last5||"–"}</td></tr>
+        ${pairRow("Last 5 GF / GA", `${fmt(A.l5_gf,1)} / ${fmt(A.l5_ga,1)}`, `${fmt(H.l5_gf,1)} / ${fmt(H.l5_ga,1)}`)}
+        ${pairRow("GF / GA per game", `${fmt(A.gf_pg,2)} / ${fmt(A.ga_pg,2)}`, `${fmt(H.gf_pg,2)} / ${fmt(H.ga_pg,2)}`)}
+        ${pairRow("Road / Home GF–GA", `${fmt(A.gf_away,2)}–${fmt(A.ga_away,2)}`, `${fmt(H.gf_home,2)}–${fmt(H.ga_home,2)}`)}
+        ${cmpRow("5v5 xGF %", A.xgf_pct5, H.xgf_pct5, v=>pct(v,1))}
+        ${cmpRow("PDO (5v5)", A.pdo, H.pdo, v=>v==null?"–":fmt(v*1000,0), null)}
+        ${cmpRow("HD shots for /60", A.hdsf60, H.hdsf60, v=>fmt(v,1))}
+        ${cmpRow("HD shots against /60", A.hdsa60, H.hdsa60, v=>fmt(v,1), false)}
+        ${cmpRow("PP goals /60", A.pp_gf60, H.pp_gf60, v=>fmt(v,1))}
+        ${cmpRow("PP xG /60", A.pp_xgf60_cur, H.pp_xgf60_cur, v=>fmt(v,1))}
+        ${cmpRow("PK goals against /60", A.pk_ga60, H.pk_ga60, v=>fmt(v,1), false)}
+        ${cmpRow("PP min / game", A.pp_min, H.pp_min, v=>fmt(v,1))}
+        ${cmpRow("Over 5.5 – season (reg.)", A["over_5.5_reg"], H["over_5.5_reg"], v=>pct(v), null)}
+        ${cmpRow("Over 5.5 – road / home", A["over_5.5_away"], H["over_5.5_home"], v=>pct(v), null)}
+        ${cmpRow("Over 5.5 – last 3 seasons", A["over_5.5_3y"], H["over_5.5_3y"], v=>pct(v), null)}
+        ${cmpRow("Over 6.5 – season (reg.)", A["over_6.5_reg"], H["over_6.5_reg"], v=>pct(v), null)}
+      </tbody></table>
+      ${g.h2h?.games?.length?`<div class="meta" style="margin-top:8px">Recent meetings (${g.away} score first): ${g.h2h.games.map(x=>`${x.date.slice(2)} ${x.home?"@ "+g.home:"vs "+g.home} ${x.score}`).join(" · ")}</div>`:""}
+    </div>`;
+  }
+  html += `</div><p class="foot">PDO above 1000 means a team is getting lucky bounces (shooting % + save %) and tends to fall back toward 1000. "Better" values are highlighted only where higher or lower is clearly better.</p>`;
+  $("#main").innerHTML = html;
+  $("#main").onchange = e => {
+    const s = e.target.closest("select[data-team]");
+    if (s){ state.goalie[s.dataset.team] = s.value; store.set(`goalie:${DATA.date}:${s.dataset.team}`, s.value); render(); return; }
+    const o = e.target.closest("input.ouodds");
+    if (o){ const v=parseFloat(o.value.replace(",",".")); store.set(o.dataset.k, isNaN(v)?"":v); render(); }
+  };
+}
+
+// ------------------------------------------------------------ track record tab
+function calibChart(s){
+  if (!s || !s.bins?.length) return "";
+  const W=260, Hh=180, pad=28, X=v=>pad+v*(W-pad-8), Y=v=>Hh-pad-v*(Hh-pad-8);
+  const mx = Math.min(1, Math.max(0.5, ...s.bins.map(b=>Math.max(b.pred,b.actual)))+0.05), sc = v=>Math.min(v,mx)/mx;
+  const pts = s.bins.map(b=>`<circle cx="${X(sc(b.pred))}" cy="${Y(sc(b.actual))}" r="${Math.min(9,3+Math.sqrt(b.n)/3)}" fill="var(--accent)" fill-opacity=".75"><title>predicted ${pct(b.pred,1)} · actual ${pct(b.actual,1)} · n=${b.n}</title></circle>`).join("");
+  return `<svg viewBox="0 0 ${W} ${Hh}" width="100%" style="max-width:320px">
+    <line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(1)}" stroke="var(--mute)" stroke-dasharray="4 4"/>
+    <line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" stroke="var(--line)"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(1)}" stroke="var(--line)"/>
+    <text x="${X(1)}" y="${Hh-8}" fill="var(--mute)" font-size="10" text-anchor="end">predicted → ${pct(mx)}</text>
+    <text x="4" y="12" fill="var(--mute)" font-size="10">actual</text>${pts}</svg>`;
+}
+function trackTab(){
+  const G = DATA.graded;
+  if (!G || !G.days?.length){
+    $("#main").innerHTML = `<div class="card empty prose" style="margin:auto">
+      <h3>No graded predictions yet</h3>
+      <p>Every build saves the model's probabilities. After the games are played, run <code>python -m nhlprops grade</code>, then build again. This tab will show whether the model is calibrated, and which history weight works best for totals.</p></div>`;
+    return;
+  }
+  const rows = (obj) => Object.entries(obj).filter(([,s])=>s).map(([k,s])=>`<tr><td>${k}</td><td class="n">${s.n}</td><td class="n">${pct(s.mean_pred,1)}</td><td class="n">${pct(s.hit_rate,1)}</td><td class="n">${s.brier.toFixed(4)}</td><td class="n ${s.skill>0?"ev-pos":"ev-neg"}">${(s.skill*100).toFixed(1)}%</td><td class="n">${s.logloss.toFixed(4)}</td></tr>`).join("");
+  const head = `<thead><tr><th>Market</th><th class="n">Bets</th><th class="n">Predicted</th><th class="n">Happened</th><th class="n">Brier</th><th class="n">Skill vs base rate</th><th class="n">Log loss</th></tr></thead>`;
+  const blends = Object.entries(G.ou_blends||{}).map(([L,arr])=>{
+    const best = arr.reduce((a,b)=>b.brier<a.brier?b:a);
+    return `<div class="box"><h4>Over ${L}: history weight</h4><table class="mini"><thead><tr><th>Weight</th><th class="n">Brier</th><th class="n">Log loss</th></tr></thead><tbody>
+      ${arr.map(r=>`<tr><td>${(r.w*100).toFixed(0)}%</td><td class="n ${r===best?"ev-pos":""}">${r.brier.toFixed(4)}</td><td class="n">${r.logloss.toFixed(4)}</td></tr>`).join("")}</tbody></table>
+      <p class="meta">Lowest Brier = best weight so far (${(best.w*100).toFixed(0)}%).</p></div>`; }).join("");
+  $("#main").innerHTML = `
+    <p class="meta">${G.days.length} slates graded · ${G.days.reduce((a,d)=>a+d.games_final,0)} games · ${G.days.reduce((a,d)=>a+d.props,0)} player-games. Skill above 0% = better than guessing the base rate. Points on the dashed line = perfectly calibrated.</p>
+    <div class="card tablewrap"><table>${head}<tbody>${rows(G.props)}${rows(G.sog)}${rows(Object.fromEntries(Object.entries(G.ou_model).map(([k,v])=>["Game "+k+" (model)",v])))}${rows(Object.fromEntries(Object.entries(G.ou_hist).map(([k,v])=>["Game "+k+" (history only)",v])))}</tbody></table></div>
+    <div class="dgrid" style="margin-top:14px">
+      ${Object.entries(G.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>Calibration – ${k}</h4>${calibChart(s)}</div>`).join("")}
+      ${blends}
+    </div>`;
+}
+
+// ------------------------------------------------------------ how it works
+function howTab(){
+  $("#main").innerHTML = `<div class="prose">
+  <h3>Player props</h3>
+  <p>Each player gets an expected number of goals, assists and shots for tonight (λ). The chance of at least one is <code>1 − e<sup>−λ</sup></code> (Poisson).</p>
+  <p><b>λ = projected TOI × regressed rate per 60 × opponent defence × opposing goalie × home/away × back-to-back × league scoring level × 6-game rule.</b></p>
+  <ul>
+    <li><b>Rates</b> come from the last ${C.lookback_seasons} seasons, weighted ${C.season_weights.join("-")} (current season first). Each is pulled toward the league average for his position. The less ice time, the stronger the pull.</li>
+    <li><b>Shooting %</b> is regressed in two steps: career toward league average, then recent seasons toward his career level. Goals/60 blends <i>shots × true shooting %</i> with <i>individual xG × finishing skill</i> (${C.alpha_shots_vs_xg*100}/${100-C.alpha_shots_vs_xg*100}).</li>
+    <li><b>TOI</b> = ${C.toi_recent_weight*100}% last ${C.toi_recent_games} games + ${100-C.toi_recent_weight*100}% season average.</li>
+    <li><b>Goalie</b> factor = goals allowed ÷ expected goals allowed over ${C.goalie_seasons} seasons, regressed toward 1.00. Switch goalies on the Games tab and every prop updates.</li>
+  </ul>
+  <h3>Regression signals</h3>
+  <p><b>▲ Due</b>: this season's goals are unusually low for his true talent (probability below ${C.regression_tail*100}%). <b>▼ Hot</b>: unusually high. <b>Shots dry</b>: how many shots since his last goal, and how rare that drought is. The probability already uses his true talent. These badges point to where bookmakers may still be pricing off recent results.</p>
+  <h3>Game totals</h3>
+  <p>Each team's expected goals = 5v5 (xG for vs opponent xG against) + power play (expected PP minutes × PP xG rate vs opponent's PK) + other situations (empty net, 4v4, 3v3, shorthanded). A tie after 60 minutes adds one goal, which is how totals are settled. <b>History weight</b> blends in team over/under rates (this season, last 3 seasons) and head-to-head. The Track record tab shows which weight has worked.</p>
+  <h3>6-game rule</h3>
+  <p>Thresholds depend on team strength: strong teams ${C.streak_thresholds.strong.win} wins / ${C.streak_thresholds.strong.loss} losses, average ${C.streak_thresholds.average.win}/${C.streak_thresholds.average.loss}, weak ${C.streak_thresholds.weak.win}/${C.streak_thresholds.weak.loss}. When a team reaches its threshold, the slider moves goal expectations against the streak by that % per game beyond it (max 3). The default is 0, which shows the flag only. Turn it on and use the grade command to see whether it improves results.</p>
+  <h3>Using it</h3>
+  <ul><li>Fair odds = 1 / probability. Bet only when the book's odds are clearly above fair odds. Prop margins are high, so look for EV of +5% or more.</li>
+  <li>Confirm starting goalies and lineups before betting. "Projected" goalie = most starts in the last 10 games, with back-to-backs handled.</li>
+  <li>Track results. After 300–500 graded props you'll know whether the edge is real.</li></ul>
+  <p class="foot">Data: NHL.com (api-web.nhle.com) and <b>MoneyPuck.com</b> (season summaries, xG, GSAx). Personal, non-commercial use. Gamble responsibly – in Sweden, Stödlinjen: 020-81 91 00.</p>
+  </div>`;
+}
+
+function render(){
+  if (state.tab==="props") propsTab();
+  else if (state.tab==="games") gamesTab();
+  else if (state.tab==="track") trackTab();
+  else howTab();
+}
+header(); render();
+</script>
+</body>
+</html>
