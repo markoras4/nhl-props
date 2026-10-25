@@ -142,6 +142,7 @@ def main(argv=None):
     sub.add_parser("check", help="test that every data source answers and has the expected columns")
     bt = sub.add_parser("backtest", help="replay past seasons game by game (does not touch the website)")
     bt.add_argument("--seasons", default="", help="comma-separated start years, default: the two previous seasons")
+    bt.add_argument("--totals", action="store_true", help="test game totals instead of player props")
     args = ap.parse_args(argv)
 
     data_dir = ROOT / "data"
@@ -166,7 +167,11 @@ def main(argv=None):
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())
         seasons = [int(x) for x in args.seasons.split(",") if x.strip()] or [cur - 2, cur - 1]
-        run_backtest(src, seasons, CONFIG, ROOT / "backtest")
+        if args.totals:
+            from .backtest_totals import run as run_totals
+            run_totals(src, seasons, CONFIG, ROOT / "backtest")
+        else:
+            run_backtest(src, seasons, CONFIG, ROOT / "backtest")
         return 0
     if args.cmd == "grade":
         if not hist_dir.exists() or not any(hist_dir.glob("20*.json")):

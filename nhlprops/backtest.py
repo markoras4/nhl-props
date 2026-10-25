@@ -43,10 +43,11 @@ def season_boxscores(src: Source, season: int, workers: int, log=print) -> tuple
     log(f"  {season}: {len(games)} final games, downloading boxscores ...")
     with ThreadPoolExecutor(workers) as ex:
         boxes = list(ex.map(src.boxscore, games.id.tolist()))
-    sk, go = [], []
+    sk, go, sog = [], [], {}
     for gm, box in zip(games.itertuples(), boxes):
         if not box:
             continue
+        sog[gm.id] = ((box.get("homeTeam") or {}).get("sog"), (box.get("awayTeam") or {}).get("sog"))
         pbg = box.get("playerByGameStats") or {}
         for side, team, opp, home in (("homeTeam", gm.home, gm.away, True), ("awayTeam", gm.away, gm.home, False)):
             grp = pbg.get(side) or {}
@@ -64,6 +65,9 @@ def season_boxscores(src: Source, season: int, workers: int, log=print) -> tuple
     sk, go = pd.DataFrame(sk), pd.DataFrame(go)
     if len(go) and go["starter"].isna().any():  # fallback: most ice time
         go["starter"] = go.groupby(["gid", "team"])["toi"].transform("max") == go["toi"]
+    games = games.copy()
+    games["hsog"] = games.id.map(lambda i: (sog.get(i) or (None, None))[0])
+    games["asog"] = games.id.map(lambda i: (sog.get(i) or (None, None))[1])
     return games, sk, go
 
 
