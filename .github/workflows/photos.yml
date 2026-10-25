@@ -15,8 +15,9 @@ jobs:
       - name: Candidates for review
         if: inputs.mode == 'candidates'
         run: |
+          mkdir -p /tmp/cand
           python3 -m nhlprops.photos candidates previews-work/queries.json /tmp/cand > /tmp/cand/out.txt 2>&1 || true
-          mkdir -p /tmp/cand; cat /tmp/cand/out.txt | tail -50
+          tail -50 /tmp/cand/out.txt
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
           cd /tmp/cand && git init -q && git checkout -q -b photo-candidates && git add -A && git commit -qm "candidates" && git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" photo-candidates
       - name: Fetch chosen photos
