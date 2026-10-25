@@ -28,7 +28,8 @@ jobs:
                   names=sorted({m.get("marketName") for m in mk.values() if re.search("hit|block",str(m.get("marketName")),re.I)})
                   tabs=[t.get("title") for t in (js.get("layout",{}).get("tabs",{}) or {}).values()] if isinstance(js.get("layout",{}).get("tabs"),dict) else js.get("layout",{}).get("tabs")
                   print(eid, ev.get("name"), "tab", tab or "-", "markets", len(mk), "HB names", names[:12])
-                  if tab=="": print("  tabs:", str(js.get("layout",{}).get("tabs"))[:1200]); print("  types sample:", list(types)[:40])
+                  if tab=="": print("  TAB TITLES:", [v.get("title") for v in (js.get("layout",{}).get("tabs") or {}).values()])
+                  if tab=="shots": print("  shots types:", list(types)[:30]); print("  sample market:", json.dumps(next(iter(mk.values())))[:900])
           PY
       - name: Save output to the probe branch
         run: |
