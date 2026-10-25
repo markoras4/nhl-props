@@ -1,0 +1,82 @@
+=== https://moneypuck.com/
+200 19257
+src="jss/part2.js"
+src="https://code.jquery.com/jquery-3.7.1.js"
+src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"
+src="https://peter-tanner.com/moneypuck/jss/menu.js"
+)}-${day.padStart(2,
+Goalies
+Goalies,
+Starting
+`${year}-${month.padStart(2,
+goalies,
+starting
+starts
+touchstart
+touchstartX
+touchstartX;
+touchstartY
+touchstartY);
+=== https://moneypuck.com/index.html
+200 19257
+src="jss/part2.js"
+src="https://code.jquery.com/jquery-3.7.1.js"
+src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"
+src="https://peter-tanner.com/moneypuck/jss/menu.js"
+)}-${day.padStart(2,
+Goalies
+Goalies,
+Starting
+`${year}-${month.padStart(2,
+goalies,
+starting
+starts
+touchstart
+touchstartX
+touchstartX;
+touchstartY
+touchstartY);
+=== https://moneypuck.com/goalies.htm
+200 29480
+src="jss/part2.js"
+src="https://peter-tanner.com/moneypuck/jss/part.js"
+src="https://peter-tanner.com/moneypuck/jss/team_colours.js"
+src="https://peter-tanner.com/moneypuck/jss/moment.min.js"
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"
+src="https://peter-tanner.com/moneypuck/jquery.tablesorter_zip.js"
+src="https://peter-tanner.com/moneypuck/jss/jquery.doubleScroll.js"
+src="https://peter-tanner.com/moneypuck/jss/menu.js"
+		//goalieStatList.push([
+		goalieStatList.push([
+#goaliesTable
+Goalie
+goalie
+goalieStatList
+goalieStatList
+goalies
+goalies,
+goaliesTable
+moneypuck/playerData/seasonSummary/2026/regular/goalies.csv
+sortStart
+starts
+table#goaliesTable
+=== JS https://moneypuck.com/jss/part2.js
+=== JS https://peter-tanner.com/moneypuck/jss/part.js
+=== JS https://peter-tanner.com/moneypuck/jss/team_colours.js
+=== JS https://peter-tanner.com/moneypuck/jss/moment.min.js
+=== JS https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js
+=== JS https://peter-tanner.com/moneypuck/jquery.tablesorter_zip.js
+=== JS https://peter-tanner.com/moneypuck/jss/jquery.doubleScroll.js
+=== JS https://peter-tanner.com/moneypuck/jss/menu.js
+=== JS https://moneypuck.com/jss/part2.js
+=== JS https://code.jquery.com/jquery-3.7.1.js
+=== JS https://code.jquery.com/ui/1.14.1/jquery-ui.js
+=== JS https://peter-tanner.com/moneypuck/jss/menu.js
+
+{"timestamp":"2026-10-25T14:07:07Z","status":"success","season":{"year":2027,"type":2,"name":"Regular Season","displayName":"2026-27"},"injuries":[{"id":"25","displayName":"Anaheim Ducks","injuries":[{"id":"597043","longComment":"Mintyukov last played Tuesday against the Islanders, so this move might be retroactive to that date. Travis Mitchell was summoned from AHL San Diego in a corresponding move. Mintyukov had two assists, two PIM, five shots, one hit and 16 blocks in nine appearances before sustaining the injury. Nick Jensen might play regularly during Mintyukov's absence.","shortComment":"Mintyukov (lower body) was put on injured reserve Thursday.","status":"Injured Reserve","date":"2026-10-23T21:08Z","athlete":{"firstName":"Pavel","lastName":"Mintyukov","displayName":"Pavel Mintyuko
+__NEXT_DATA__
+HTTP/2 200 
+date: Sun, 25 Oct 2026 14:07:12 GMT
+content-type: image/svg+xml
+20261025 200 8028
+20261026 200 4557

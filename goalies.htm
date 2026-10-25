@@ -1,0 +1,921 @@
+
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>NHL Goalie Advanced Stats 2026-2027</title>
+		<meta name="description" content="NHL Goalie Analytics, Goals Saved Above Expected"/>
+		<meta name="keywords" content="money puck, moneypuck, 2026-2027 NHL goalies, NHL goalies, goalie stats, NHL player statistics, expected goals, xGoals, xRebounds, hockey analytics"/>
+		<meta property="og:image" content="final_circle.png" />
+
+		<link rel="stylesheet" href="https://peter-tanner.com/moneypuck/css/style.css" type="text/css" />
+		
+		<link rel="stylesheet" href="https://peter-tanner.com/moneypuck/css/menu_style.css" type="text/css" />
+	
+		<script src="jss/part2.js"></script>
+		
+		<script src="https://peter-tanner.com/moneypuck/jss/part.js"></script> 
+		<script src="https://peter-tanner.com/moneypuck/jss/team_colours.js"></script>
+		
+		
+		<link href="https://peter-tanner.com/moneypuck/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+		<link href="https://peter-tanner.com/moneypuck/icons/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76" />
+		<link href="https://peter-tanner.com/moneypuck/icons/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120" />
+		<link href="https://peter-tanner.com/moneypuck/icons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+		<link href="https://peter-tanner.com/moneypuck/icons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" />
+		<link href="https://peter-tanner.com/moneypuck/icons/icon-hires.png" rel="icon" sizes="192x192" />
+		<link href="https://peter-tanner.com/moneypuck/icons/icon-normal.png" rel="icon" sizes="128x128" />
+		
+		<script src="https://peter-tanner.com/moneypuck/jss/moment.min.js"></script>	
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://peter-tanner.com/moneypuck/jquery.tablesorter_zip.js"></script> 
+		<script src="https://peter-tanner.com/moneypuck/jss/jquery.doubleScroll.js"></script>
+
+		<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+		
+
+<style>
+
+.slidecontainer {
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 20px;
+    border-radius: 15px;
+    background: #dadada;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 128px;
+    height: 75px;
+    border: 0;
+    background: url('http://moneypuck.com/moneypuck/slider_medium.png'); 
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 128px;
+    height: 75px;
+    border: 0;
+    background: url('http://moneypuck.com/moneypuck/slider_medium.png');
+    cursor: pointer;
+}
+
+ select {
+  font-family: verdana, Arial, san-serif;
+  font-size:    28px;
+ }
+ 
+
+ 
+ body {
+  min-height: 2000px;
+  padding-top: 152px;
+}
+
+.rainbow-text {
+  background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);   -webkit-background-clip: text;
+  color: transparent;
+}
+
+table.tablesorter {
+  white-space: nowrap;
+  margin: 0;
+  border: none;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  border: 1px solid black;
+}
+table.tablesorter td,
+table.tablesorter th {
+  border: 1px solid black;
+
+  
+}
+table.tablesorter thead th {
+  padding: 3px;
+  position: sticky;
+  top: 0;
+  text-align:center;
+  z-index: 1;
+  
+  width: 15vw;
+  background-color: #f5fbfd;
+  font-size:    24px;
+}
+table.tablesorter td {
+  padding: 4px 5px;
+  text-align: center;
+  font-size:    22px;
+}
+
+table.tablesortertbody th {
+  border: 1px solid black;
+  text-align: left;
+  position: relative;
+  font-size:    24px;
+
+}
+table.tablesorter thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+table.tablesorter tbody th {
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 1;
+    font-size:    20px;
+}
+caption {
+  text-align: left;
+  padding: 0.25rem;
+  position: sticky;
+  left: 0;
+}
+
+[role="region"][aria-labelledby][tabindex] {
+  width: 100%;
+  max-height: 98vh;
+  overflow: auto;
+}
+
+
+table#goaliesTable td, table#goaliesTable th {
+	 border: 1px solid black;
+ }
+ 
+ table#noBorders td  {
+	 border: 0px;
+ }
+ 
+
+
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+background-color: #8dbdd8;
+}
+
+
+  </style>
+  
+
+  
+</head>
+
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" id="top_nav_bar" style="background:white; width:100vw; ">       
+  
+			<table align="center"  style="width:100vw;">
+				<tr>
+				
+				<td width="33%" style="padding-left:5px; ">
+			
+					<button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle-2"  style="background: #def3fc; float: left;"> 
+						<span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+					</button>
+				</td>
+				
+				<td width="33%" align="center"><a href="index.html"><img src="https://peter-tanner.com/moneypuck/logos/moneypucklogo.png" align="center"></a></td>
+				<td width="33%"></td>
+
+			</tr>
+			</table>
+    </nav>
+
+
+<div id="wrapper">
+
+<div id="sidebar-wrapper" style="font-size: 250%; font-weight: bold; width:0px; color:black; ">
+</div>
+
+
+
+
+
+
+<div id="page-content-wrapper" width="100%">
+
+<div width="100%">
+
+   <hr style="width:98vw; border: 0px;" >
+<!-- page content starts here -->
+	
+	
+	<h3>
+		<font size="+3"><div id="updateTime"></div></font> <BR>
+	</h3>
+	
+
+				
+
+
+<BR>
+
+	
+<BR>
+	<h3>
+
+	
+		<table align="center">
+	<tr><td align="center">	
+		<h1>NHL Goaltending Leaders</h1>
+		
+<select id="situation_type" onkeydown="updateChart('situation');" onkeyup="updateChart('situation');" onChange="updateChart('situation');">
+<option value='all' selected>All Situations</option>
+<option value='5on5'>5 on 5</option>
+<option value='5on4'>5 on 4</option>
+<option value='4on5'>4 on 5</option>
+<option value='other'>Other</option>
+</select>
+
+
+<select id="team_type" onkeydown="updateChart('team');" onkeyup="updateChart('team');" onChange="updateChart('team');">
+
+		<option value='all'>All Teams</option>
+		<option value='ANA'>Anaheim Ducks</option>
+		<option value='ARI'>Arizona Coyotes</option> 
+		<option value='BOS'>Boston Bruins</option>
+		<option value='BUF'>Buffalo Sabres</option>
+		<option value='CGY'>Calgary Flames</option>
+		<option value='CAR'>Carolina Hurricanes</option>
+		<option value='CHI'>Chicago Blackhawks</option>
+		<option value='COL'>Colorado Avalanche</option>
+		<option value='CBJ'>Columbus Blue Jackets</option>
+		<option value='DAL'>Dallas Stars</option> 
+		<option value='DET'>Detroit Red Wings</option>  
+		<option value='EDM'>Edmonton Oilers</option>
+		<option value='FLA'>Florida Panthers</option>
+		<option value='LAK'>Los Angeles Kings</option>
+		<option value="MTL">Montreal Canadiens</option>
+		<option value="MIN">Minnesota Wild</option>
+		<option value="NSH">Nashville Predators</option>
+		<option value='NYR'>New York Rangers</option>
+		<option value='NYI'>New York Islanders</option>
+		<option value='NJD'>New Jersey Devils</option>
+		<option value='OTT'>Ottawa Senators</option>
+		<option value="PHI">Philadelphia Flyers</option>
+		<option value='PIT'>Pittsburgh Penguins</option> 
+		<option value='SJS'>San Jose Sharks</option>
+		<option value='SEA'>Seattle Kraken</option>
+		<option value='STL'>St. Louis Blues</option>
+		<option value='TBL'>Tampa Bay Lightning</option>
+		<option value='TOR'>Toronto Maple Leafs</option>
+		<option value='UTA'>Utah Hockey Club</option>
+		<option value='VAN'>Vancouver Canucks</option>
+		<option value='VGK'>Vegas Golden Knights</option>
+		<option value='WSH'>Washington Capitals</option>
+		<option value='WPG'>Winnipeg Jets</option>
+		
+</select>
+
+
+<select id="season_type" onkeydown="updateSeason();" onkeyup="updateSeason();" onChange="updateSeason();">
+<option value='2026' selected>2026-2027</option>
+<option value='2025'>2025-2026</option>
+<option value='2024'>2024-2025</option>
+<option value='2023'>2023-2024</option>
+<option value='2022'>2022-2023</option>
+<option value='2021'>2021-2022</option>
+<option value='2020'>2020-2021</option>
+<option value='2019'>2019-2020</option>
+<option value='2018'>2018-2019</option>
+<option value='2017'>2017-2018</option>
+<option value='2016'>2016-2017</option>
+<option value='2015'>2015-2016</option>
+<option value='2014'>2014-2015</option>
+<option value='2013'>2013-2014</option>
+<option value='2012'>2012-2013</option>
+<option value='2011'>2011-2012</option>
+<option value='2010'>2010-2011</option>
+<option value='2009'>2009-2010</option>
+<option value='2008'>2008-2009</option>
+
+</select>
+
+<select id="table_playoff_type" onkeydown="updateSeason();" onkeyup="updateSeason();" onChange="updateSeason();" style="font-size:30px;">
+<option value='regular' selected > Regular Season</option>
+<option value='playoffs' > Playoffs</option>
+</select>
+
+<select id="num_games_type" onkeydown="updateSeason();" onkeyup="updateSeason();" onChange="updateSeason();" style="font-size:30px;">
+<option value='' selected>All Season</option>
+<option value='_10' >Last 10 Games</option>
+<option value='_20' >Last 20 Games</option>
+</select>
+
+
+<BR><BR>
+
+<div class="slidecontainer">
+
+  <p><h3>Minimum Games Played: <span id="demo"></span></p></h3> 
+  
+ 
+    <input type="range" min="1" max="82" value="1" class="slider" id="myRange">
+
+</div>
+
+<BR><BR>
+
+</td></tr></table>
+
+
+	</font>	
+		</h3>
+		
+		
+		<div>
+		
+			
+			<div  style="width:97vw; max-height:75vh; " role="region", aria-labelledby="caption", tabindex="0" id="includedContent"></div>		
+		
+		</div>
+		
+<script>
+
+  $("#sidebar-wrapper").load('sidebar_contents.htm'); 
+
+
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value + ' Games';
+  updateChart('')
+  
+}
+
+slider.onload = function() {
+  output.innerHTML = this.value + ' Games';
+}
+
+output.innerHTML = slider.value + ' Games';
+
+
+var isMobile = false; 
+
+if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) 
+	|| /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) { 
+	isMobile = true;
+}
+
+if(!isMobile)
+{
+	$( "#top_nav_bar" ).load( "navBarDesktop.htm" );
+}
+
+
+</script>
+
+
+
+
+	<script> 
+	
+	
+		var currentSort;
+		
+		
+		
+		
+		function updateSeason()
+		{
+			var season = document.getElementById("season_type").options[document.getElementById("season_type").selectedIndex].value
+			
+			var playoffType = document.getElementById("table_playoff_type").options[document.getElementById("table_playoff_type").selectedIndex].value
+			
+			var numGamesType = document.getElementById("num_games_type").options[document.getElementById("num_games_type").selectedIndex].value
+			
+			loadCSV("moneypuck/playerData/seasonSummary/" + season + "/" + playoffType + "/" + "goalies" + numGamesType + ".csv");
+			
+			updateChart('')
+			ga('send', 'event', 'Season Change', 'Change', season);
+			
+		}
+		
+		function updateChart(typeChange)
+		{
+
+				var situationChoice = document.getElementById("situation_type").options[document.getElementById("situation_type").selectedIndex].value
+				var teamChoice = document.getElementById("team_type").options[document.getElementById("team_type").selectedIndex].value
+				var sliderChoice = parseInt(slider.value)
+				
+				if(typeChange == 'situation')
+				{
+					ga('send', 'event', 'Goalie Stats Situation Change', 'Change', situationChoice);
+				}
+				else if(typeChange == 'team')
+				{
+					ga('send', 'event', 'Goalie Stats Team', 'Change', teamChoice);
+				}
+				parseCSV(situationChoice, teamChoice,  sliderChoice )
+
+		}
+		
+	
+	
+		function teamCodesReversed(teamCode)
+		{
+			return teamCode.replace('L.A', 'LAK').replace('N.J', 'NJD').replace('T.B','TBL').replace('S.J','SJS')
+		}	
+	
+
+		function roundToThree(num) {    
+				return +(Math.round(num + "e+3")  + "e-3");
+			}
+	
+		function roundToThreeWithZeros(num) {    
+				return Number.parseFloat(num).toFixed(3);
+			}
+			
+		function roundToFourWithZeros(num) {    
+				return Number.parseFloat(num).toFixed(4);
+			}
+	
+		function roundToTwo(num) {    
+				return +(Math.round(num + "e+2")  + "e-2");
+			}
+
+		function roundToOne(num) {    
+				return +(Math.round(num + "e+1")  + "e-1");
+			}
+
+			
+		function loadFile(file) {
+			var request;
+			if (window.XMLHttpRequest) {
+				// IE7+, Firefox, Chrome, Opera, Safari
+				request = new XMLHttpRequest();
+			} else {
+				// code for IE6, IE5
+				request = new ActiveXObject('Microsoft.XMLHTTP');
+			}
+			// load
+			request.open('GET', file, false);
+			request.send();
+			updateTime = request.responseText
+			
+			updateTimeAsTime = moment(updateTime.substring(0,16) , 'YYYY-MM-DD hh:mm');
+			updateTimeString = moment(updateTimeAsTime).format('dddd MMMM D[,] YYYY [at] h:mm A')
+			
+			
+			document.getElementById("updateTime").innerHTML = "Stats updated: " +  updateTimeString  + " Eastern Time"
+			}
+		
+		var downloadedData = ''
+		
+		function loadCSV(file) {
+		
+			try
+			{
+				var request;
+				if (window.XMLHttpRequest) {
+					request = new XMLHttpRequest();
+				} else {
+					request = new ActiveXObject('Microsoft.XMLHTTP');
+				}
+				request.open('GET', file, false);
+				request.send();
+				
+				downloadedData = request.responseText
+			}
+			catch
+			{
+				downloadedData = ""
+				console.log("Data not found")
+			}
+			updateChart('');
+		}
+		
+
+		
+		function fancyTimeFormat(duration)
+		{   
+			var hrs = ~~(duration / 3600);
+			var mins = ~~((duration % 3600) / 60);
+			var secs = ~~duration % 60;
+			var ret = "";
+			if (hrs > 0) 
+			{
+				ret += "" + parseInt(parseInt(hrs * 60) + parseInt(mins)) + ":" + (secs < 10 ? "0" : "");	
+			}
+			else
+			{
+				ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+			
+			}
+			ret += "" + secs;
+			return ret;
+		}
+		
+		function getBackgroundColorFor(value,lowEnd,highEnd, switcher)
+		{
+			if(switcher==-1)
+			{
+				femtile = (highEnd-lowEnd) / 5 
+						
+				if(value>highEnd - femtile)
+					return '#f5fbfd'
+				else if(value>highEnd - femtile*2)
+					return '#c9e9f6'
+				else if(value>highEnd - femtile*3)
+					return '#9dd7ef'
+				else if(value>highEnd - femtile*4)
+					return '#71c5e7'
+				else return '#45b3e0'
+			}
+			
+			else
+			{
+				femtile = (highEnd-lowEnd) / 5 
+						
+				if(value>highEnd - femtile)
+					return '#45b3e0'
+				else if(value>highEnd - femtile*2)
+					return '#71c5e7'
+				else if(value>highEnd - femtile*3)
+					return '#9dd7ef'
+				else if(value>highEnd - femtile*4)
+					return '#c9e9f6'
+				else return '#f5fbfd'
+			}
+
+			
+		}
+		
+		
+		var goalieStatList = []
+		goalieStatList.push(['Name', 'c[2]', [0,0,1]     ])
+		goalieStatList.push(['Games<BR>Played', 'c[6]', [5,20,1]   ])
+		goalieStatList.push(['Goals<BR>Against', 'parseInt(c[9])',   [20, 50,-1] ])
+		goalieStatList.push(['Expected<BR>Goals<BR>Against', 'c[8]' , [20,50,-1]   ])
+		goalieStatList.push(['Goals Saved<BR>Above<BR>Expected', 'parseFloat(c[8]-c[9]).toFixed(1)',   [-8,8,1] ])
+		goalieStatList.push(['Goals Saved<BR>Above Expected<BR>Per 60', 'roundToThreeWithZeros(parseFloat(c[8]-c[9]).toFixed(1)/(c[7]/60/60))',   [-.6,.6,1] ])
+		goalieStatList.push(['% of Expected<BR>Goals Saved<BR>Above Average', 'roundToTwo(parseFloat(c[8]-c[9])/c[8]*100)', [-15,15,1]])
+		
+		
+		
+		goalieStatList.push(['Save % on<BR>Unblocked<BR>Shots', 'roundToThreeWithZeros((c[10]-c[9])/c[10])' , [0.93,0.97,1]   ])
+		goalieStatList.push(['xSave % on<BR>Unblocked<BR>Shots', 'roundToThreeWithZeros((c[10]-c[8])/c[10])' , [0.93,0.97,1]   ])
+		goalieStatList.push(['Save %<BR>Above<BR>Expected', 'roundToFourWithZeros(((c[10]-c[9])/c[10]) - ((c[10]-c[8])/c[10]))' , [-0.015,0.015,1]   ])
+		goalieStatList.push(['Save % on<BR>Shots On<BR>Goal', 'roundToThree((c[16]-c[9])/c[16])' , [0.89,0.93,1]   ])
+		goalieStatList.push(['GAA', 'parseFloat(c[9]/(c[7]/60/60)).toFixed(2)', [1.9,2.5,-1]])
+		goalieStatList.push(['xGAA', 'parseFloat(c[8]/(c[7]/60/60)).toFixed(2)', [1.9,2.5,-1]])
+		goalieStatList.push(['GAA Better<BR>Than Expected', 'parseFloat((c[8]-c[9])/(c[7]/60/60)).toFixed(2)', [-0.5,0.5,1]])
+		
+		
+		
+		//goalieStatList.push(['% of Expected<BR>Goals Saved<BR>Above Expected', 'roundToTwo((1 - parseFloat(parseInt(c[9])/parseInt(c[8])))*100)', [-.2,.2,1]])
+		
+		goalieStatList.push(['Wins Above<BR>Replacement', 'parseFloat((c[8]-c[9])/6).toFixed(2)', [-1,1,1] ])
+		
+		goalieStatList.push(['Icetime<BR>(Minutes)', 'parseInt(c[7]/60)', [100, 900,1]])
+		//goalieStatList.push(['Icetime', 'fancyTimeFormat(c[7])', [100, 900,1]])
+		goalieStatList.push(['Rebounds<BR>Per Save', 'roundToThree(c[12]/(c[10]-c[9]))', [0.02,.05,-1]])
+		goalieStatList.push(['Puck Freezes<BR>Per Save',  'roundToThree(c[14]/(c[10]-c[9]))', [40,100,1]])
+		
+		
+		goalieStatList.push(['xRebounds<BR>Per Save', 'roundToThree(c[11]/(c[10]-c[8]))', [0.02,.05,-1]])
+		goalieStatList.push(['Rebounds<BR>Above<BR>Expected', 'roundToThree((c[12]/(c[10]-c[9])) - (c[11]/(c[10]-c[8]))) ', [-0.01,0.01,-1]])
+		
+		goalieStatList.push(['Expected<BR>Puck<BR>Freeze', 'c[13]', [40,100,1]])
+		goalieStatList.push(['Puck Freezes<BR>Above<BR>Expected', 'roundToTwo(c[14]- c[13])', [-20,20,-1]])
+		goalieStatList.push(['Puck Freezes<BR>Above Expected<BR>Per Shot On Goal', 'roundToTwo((c[14]- c[13])/c[16])', [-0.05,0.05,-1]])
+		goalieStatList.push(['Goals Against', 'parseInt(c[9])', [0,60,-1]])
+		goalieStatList.push(['Saves on Shots<BR>On Goal', 'c[16]-c[9]', [40,500,1]])
+		goalieStatList.push(['Saves on Unblocked<BR>Shot Attempts', 'c[10]-c[9]', [40,800,1]])
+		goalieStatList.push(['% of Shot Attempts<BR>Blocked By Teammates', 'roundToTwo(c[33]/ (parseInt(c[33])+parseInt(c[10]))*100) + "%"', [16,21,1]])
+		goalieStatList.push(['% of Unblocked Shot<BR>Attempts Against<BR>On Goal', 'roundToTwo(c[16]/ (parseInt(c[10]))*100) + "%"', [46,61,1]])
+		goalieStatList.push(['Expected % of Unblocked<BR>Shot Attempts<BR>Against On Goal', 'roundToTwo(c[15]/ (parseInt(c[10]))*100) + "%"', [46,61,1]])
+		goalieStatList.push(['On Goal %<BR>Above Expected', 'roundToTwo((c[16]-c[15])/ (parseInt(c[10]))*100) + "%"', [-3,3,-1]])
+		goalieStatList.push(['Low Danger Unblocked<BR>Shot Attempt<BR>Save %', 'roundToThreeWithZeros((c[24]-c[30])/c[24])', [.95,.98,1]])
+		goalieStatList.push(['xLow Danger Unblocked<BR>Shot Attempt<BR>Save %', 'roundToThreeWithZeros((c[24]-c[27])/c[24])', [.95,.98,1]])
+		goalieStatList.push(['Low Danger Unblocked Shot<BR>Attempt Save%<BR>Above Expected', 'roundToThreeWithZeros((c[27]-c[30])/c[24])', [-.02,.02,1]])
+		goalieStatList.push(['Medium Danger Unblocked<BR>Shot Attempt<BR>Save %', 'roundToThreeWithZeros((c[25]-c[31])/c[25])', [.8,.94,1]])
+		goalieStatList.push(['xMedium Danger Unblocked<BR>Shot Attempt<BR>Save %', 'roundToThreeWithZeros((c[25]-c[28])/c[25])', [.8,.94,1]])
+		goalieStatList.push(['Medium Danger Unblocked Shot<BR>AttemptSave %<BR>Above Expected', 'roundToThreeWithZeros((c[28]-c[31])/c[25])', [-.02,.02,1]])
+		goalieStatList.push(['High Danger Unblocked<BR>Shot Attempt<BR>Save %', 'roundToThreeWithZeros((c[26]-c[32])/c[26])', [.5,.75,1]])
+		goalieStatList.push(['xHigh Danger Unblocked<BR>Shot Attempt<BR>Save %', 'roundToThreeWithZeros((c[26]-c[29])/c[26])', [.5,.75,1]])
+		goalieStatList.push(['High Danger Unblocked Shot<BR>Attempt Save %<BR>Above Expected', 'roundToThreeWithZeros((c[29]-c[32])/c[26])', [-.04,.04,1]])
+
+		numRecordsPrinted = 0
+		
+		
+		playerStatHeader = '<table class="tablesorter" id="goaliesTable"><thead><tr>'
+		sortIcon = ""
+
+		statListToUse = goalieStatList
+
+		for (var i = 0; i < statListToUse.length; i++) 
+
+		{
+
+			statDescription = statListToUse[i][0]
+			if(i>0)
+			{
+			 sortIcon = '<i class="fas fa-sort"></i>'
+			}
+			
+			playerStatHeader = playerStatHeader + '<th>' + statDescription + '<span class="ui-icon-caret-2-n-s" style="display:inline-block"></span>' + sortIcon +  '</th>'   
+
+		}
+		
+		
+		function parseCSV(situationChoice, teamChoice, gamesPlayedChoice ){
+
+				if(downloadedData.substring(0,5) == "<!DOC") //missing data
+				{
+					downloadedData = ""
+				}
+		
+				
+				data = downloadedData
+				
+				
+				completeString =  playerStatHeader
+				
+				completeString += "</tr></thead><tbody>"
+		
+				data = data.replace (/\r\n/g, "\n");
+				data = data.replace (/\r/g, "\n");
+				var rows = data.split("\n");
+				
+				playerStatData = ""
+				
+				if(rows.length>=1)
+				{
+					playerStatData = rows.slice(1,rows.length); 
+				}
+				
+				numRecordsPrinted = 0
+				numRowsPrinted = 0
+				playerStatRows = ""
+				
+				for (var i = 0; i < playerStatData.length; i++) {
+					if (playerStatData[i]) {
+							
+							
+							var c = playerStatData[i].split(",");
+						
+							
+							
+							var playerName = c[2];
+							var teamCode= teamCodesReversed(c[3]);
+							var icetime = parseInt(c[7]);
+							var position = c[4];
+							var situation = c[5];
+							var unblockedShotAttempts = parseInt(c[10]);	
+							var gamesPlayed = parseInt(c[6]);	
+							
+							
+							
+							if(situation == situationChoice && gamesPlayed  >= gamesPlayedChoice  && (teamChoice == 'all' || teamChoice == teamCode) && position == 'G' && unblockedShotAttempts > 0 )
+							{
+										numRowsPrinted = numRowsPrinted + 1
+										altText = "alt='" + teamFullNames[teamCode] + "'"
+										teamCode = '<img src="https://peter-tanner.com/moneypuck/logos/' + teamCode + '.png" width="75" height="50" align="left" ' + altText + '>'
+								
+										playerStatRow = "<tr><th ><table border='0' style='width:290px;' id='noBorders' ><tr><td width='35' style='font-weight:bold; font-size:35px;'>" + "</td><td style='width:40px'>" + teamCode + "</td><td style='text-align:left;'>" + playerName + "</td></tr></table></th>"
+										
+										
+										
+		
+										for (var j = 1; j < statListToUse.length; j++) 
+										{
+											statDescription = statListToUse[j][1]
+											statValue = eval(statDescription)
+											
+											
+											colorRangeLowEnd = statListToUse[j][2][0]
+											colorRangeHighEnd = statListToUse[j][2][1]
+											colorRangeNegative = statListToUse[j][2][2]
+											
+									
+											
+											backgroundColour = getBackgroundColorFor(parseFloat(statValue),colorRangeLowEnd, colorRangeHighEnd, colorRangeNegative)
+											
+											
+											
+											playerStatColumn = "<td style='background-color:" + backgroundColour +"';>" + statValue  + '</td>'
+											playerStatRow = playerStatRow + playerStatColumn  
+											
+											numRecordsPrinted += 1
+										
+										}
+												
+										playerStatRow = playerStatRow + '</tr>'
+										
+										playerStatRows = playerStatRows  + playerStatRow
+										
+							
+							
+							}
+							
+						
+					}
+					
+				}
+				
+
+				completeString += playerStatRows + "</tbody></table>"
+				document.getElementById("includedContent").innerHTML = completeString 
+				
+					
+				
+				
+				
+				$("table").tablesorter({
+				}).on("sortEnd", function(sorter) {
+					if(numRecordsPrinted>0)
+					{					
+					currentSort = sorter.target.config.sortList;
+					}
+					document.getElementById('includedContent').scrollTop = 0;	
+	
+					
+					
+					
+					var table = $("#goaliesTable");
+					var i = 1;
+					table.find("tr:gt(0)").each(function(){
+						$(this).find("td:eq(0)").text(i/2);
+		
+						i++;
+					});
+	
+				});
+				
+				$("table").tablesorter({
+				}).on("sortStart", function(sorter) {
+					if(numRecordsPrinted>0)
+					{
+					currentSort = sorter.target.config.sortList;
+					}
+				});
+				
+				
+				
+				 
+						
+			
+				if(currentSort != null)
+				{
+					if(numRecordsPrinted>0)
+					{
+						$("table").tablesorter({ 
+							sortList: currentSort
+						}); 
+					}
+				
+					
+					
+				}
+					
+		}
+
+
+
+
+			function get_country_code() {
+		return new Promise((resolve, reject) => {
+			var trace = []; 
+			jQuery.ajax('/cdn-cgi/trace', {
+				success: function(response) {
+					var lines = response.split('\n');
+					var keyValue;
+					for (var index = 0; index < lines.length; index++) {
+						const line = lines[index];
+						keyValue = line.split('=');
+						trace[keyValue[0]] = decodeURIComponent(keyValue[1] || '');
+						if (keyValue[0] === 'loc' && trace['loc'] !== 'XX') {
+							return resolve(trace['loc']);
+						}
+					}
+				},
+				error: function() {
+					return reject(trace);
+				}
+			});
+
+		});
+	}
+	
+
+function showFanDuel()
+{
+	document.getElementById("fd_banner").style.display = "block";
+}	
+	
+
+
+
+printGoogleAds()
+
+
+
+		
+		loadFile("moneypuck/playerData/seasonSummary/update_date.txt");
+		loadCSV("moneypuck/playerData/seasonSummary/2026/regular/goalies.csv");
+
+
+
+
+
+	
+	
+		$(document).ready(function() { 
+		
+		
+		
+			$("table").tablesorter({ 
+				sortInitialOrder: 'desc',
+				sortList: [[4,1]]
+			}); 
+			
+			$('#includedContent').doubleScroll();
+		
+			
+		
+		}); 
+		
+
+		
+
+		</script> 
+	
+	
+		<BR><BR><BR><BR><BR><BR>
+		
+		<BR><BR><BR><BR>
+<HR>
+<div style="text-align:center; font-size:20px;">
+<a href="privacy.htm">Privacy Policy</a> &nbsp; &nbsp; &nbsp;    <a href="about.htm">About</a> &nbsp; &nbsp; &nbsp;  <a href="glossary.htm">Glossary</a>
+</div>
+
+
+		<BR><BR><BR><BR><BR><BR>
+		
+		   <BR><BR>
+		    <!-- actual page content stops here -->
+		   
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+
+ 
+
+
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a501c93cce1967bf',t:'MTc5MjkzNzIzMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+
+
+	
+
+<script>		
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-60159814-1', 'auto');
+  ga('send', 'pageview');
+  
+
+</script>
+
+<script src="https://peter-tanner.com/moneypuck/jss/menu.js"></script>
+
+
+</html>
