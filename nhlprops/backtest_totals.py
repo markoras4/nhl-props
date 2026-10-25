@@ -37,9 +37,12 @@ def pois(lam, n=16):
     return out
 
 
-def totals_dist(mh, ma):
+def totals_dist(mh, ma, tie_f=1.0):
     ph, pa = pois(mh * 0.985), pois(ma * 0.985)
     j = np.outer(ph, pa)
+    if tie_f != 1.0:
+        j[np.diag_indices(16)] *= tie_f
+        j /= j.sum()
     tot = np.zeros(34)
     hw = tie = 0.0
     for i in range(16):
@@ -309,6 +312,27 @@ def results_tests(d_all, d):
     x = d.exp - d.exp.mean()
     slope = float((x * (d.total - d.total.mean())).sum() / (x ** 2).sum())
     r["total_slope"] = slope
+    # 10. tie boost x total compression grid
+    lg = d.exp.mean()
+    y = {L: (d.total > L).astype(int).values for L in LINES}
+    res_i = d.res.map({"H": 0, "T": 1, "A": 2}).values
+    grid = []
+    for tf in (1.0, 1.2, 1.35, 1.5, 1.65):
+        for c in (1.0, 0.85, 0.7):
+            P = {L: [] for L in LINES}; R = []; E = []
+            for mh, ma, ex in zip(d.mh.values, d.ma.values, d.exp.values):
+                sc = (lg + c * (ex - lg)) / ex
+                po, e = totals_dist(mh * sc, ma * sc, tf)
+                for L in LINES:
+                    P[L].append(po[L])
+                R.append(po["res"]); E.append(e)
+            R = np.clip(np.array(R), 1e-4, 1)
+            row = {"tie_f": tf, "c": c, "tie": float(R[:, 1].mean()), "exp": float(np.mean(E)),
+                   "logloss_1x2": float(-np.log(R[np.arange(len(R)), res_i]).mean())}
+            for L in LINES:
+                row[f"brier_{L}"] = float(((np.array(P[L]) - y[L]) ** 2).mean())
+            grid.append(row)
+    r["tie_grid"] = grid
     return r
 
 
@@ -353,5 +377,8 @@ def to_md(r):
     L += tbl("7d. Games in a row with 5 or fewer → next game goals", r["under_run_goals"], False)
     L += tbl("8. Home team's home win rate so far (6+ home games) → home win", r["home_record_to_date"])
     L += tbl("8b. Away team's road win rate so far (6+ road games) → away win", r["away_record_to_date"])
+    L += ["", "## 10. Tie boost x total compression", "", "| Tie boost | Compression | Model tie | Model avg total | 1X2 log loss | Brier 5.5 | Brier 6.5 |", "|---|---|---|---|---|---|---|"]
+    for x in r["tie_grid"]:
+        L.append(f"| {x['tie_f']} | {x['c']} | {x['tie']:.1%} | {x['exp']:.2f} | {x['logloss_1x2']:.4f} | {x['brier_5.5']:.4f} | {x['brier_6.5']:.4f} |")
     L += ["", f"## 9. Calibration slope of projected total: {r['total_slope']:.2f} (1.00 = perfect spread)", ""]
     return "\n".join(L) + "\n"
