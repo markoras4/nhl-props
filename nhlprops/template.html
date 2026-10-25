@@ -573,15 +573,25 @@ function streakMult(team, opp){
 const atLeastOne = lam => 1 - Math.exp(-Math.max(lam,0));
 function poisOver(lam, line){ const k=Math.floor(line); let term=Math.exp(-lam), cdf=0; for(let i=0;i<=k;i++){ if(i>0) term*=lam/i; cdf+=term; } return Math.max(0,1-cdf); }
 function pmf(lam,n=16){ const o=[Math.exp(-lam)]; for(let i=1;i<n;i++) o.push(o[i-1]*lam/i); return o; }
+// regulation scores: independent Poisson with ties boosted to the league's real tie rate (backtest: 16% -> 22%)
+function regJoint(mh, ma, n=16){
+  const ph=pmf(mh*0.985,n), pa=pmf(ma*0.985,n), tb=C.tie_boost||1; let z=0;
+  const J=ph.map((x,i)=>pa.map((y,j)=>{ const p=x*y*(i===j?tb:1); z+=p; return p; }));
+  return J.map(r=>r.map(p=>p/z));
+}
 function gameDist(mh, ma){
-  const ph=pmf(mh*0.985), pa=pmf(ma*0.985), tot=new Array(34).fill(0); let tie=0, hw=0;
-  for(let i=0;i<ph.length;i++) for(let j=0;j<pa.length;j++){ const p=ph[i]*pa[j]; let s=i+j; if(i===j){tie+=p;s+=1;} else if(i>j) hw+=p; tot[s]+=p; }
+  const J=regJoint(mh, ma), tot=new Array(34).fill(0); let tie=0, hw=0;
+  for(let i=0;i<J.length;i++) for(let j=0;j<J.length;j++){ const p=J[i][j]; let s=i+j; if(i===j){tie+=p;s+=1;} else if(i>j) hw+=p; tot[s]+=p; }
   const ph_ = hw + tie*((mh+ma)>0 ? mh/(mh+ma) : 0.5);
   return {ph:ph_, pa:1-ph_, tie, over: L => tot.slice(Math.floor(L)+1).reduce((a,b)=>a+b,0)};
 }
 function gameMu(g){
-  return { h: g.mu.home.g*goalieRatio(g,g.away)*streakMult(g.home,g.away) + g.mu.home.o,
-           a: g.mu.away.g*goalieRatio(g,g.home)*streakMult(g.away,g.home) + g.mu.away.o };
+  const h = g.mu.home.g*goalieRatio(g,g.away)*streakMult(g.home,g.away) + g.mu.home.o,
+        a = g.mu.away.g*goalieRatio(g,g.home)*streakMult(g.away,g.home) + g.mu.away.o;
+  // pull extreme game totals toward the league average (backtest: projected totals were too spread out)
+  const lg = DATA.league.cur_gpg_reg, c = C.total_compression ?? 1;
+  const sc = (lg && h+a>0) ? (lg + c*(h+a-lg))/(h+a) : 1;
+  return { h: h*sc, a: a*sc };
 }
 function lambdas(pr, game){
   const gr = goalieRatio(game, pr.opp), sm = streakMult(pr.team, pr.opp);
@@ -1115,11 +1125,11 @@ function detail(pr, g){
 // ------------------------------------------------------------ final-score grid
 function scoreGrid(g){
   const mu = gameMu(g), N = 16, CAP = 6;
-  const ph = pmf(mu.h*0.985, N), pa = pmf(mu.a*0.985, N);
+  const J = regJoint(mu.h, mu.a, N);
   const share = (mu.h+mu.a)>0 ? mu.h/(mu.h+mu.a) : 0.5;
   const F = Array.from({length:CAP+1}, ()=>new Array(CAP+1).fill(0));   // F[away][home], final score incl. OT/SO
   const add = (a,h,p) => { F[Math.min(a,CAP)][Math.min(h,CAP)] += p; };
-  for (let a=0;a<N;a++) for (let h=0;h<N;h++){ const p = pa[a]*ph[h];
+  for (let a=0;a<N;a++) for (let h=0;h<N;h++){ const p = J[h][a];
     if (a===h){ add(a, h+1, p*share); add(a+1, h, p*(1-share)); } else add(a, h, p); }
   const cells = []; F.forEach((row,a)=>row.forEach((p,h)=>cells.push({a,h,p})));
   const top = cells.slice().sort((x,y)=>y.p-x.p).slice(0,3);

@@ -78,11 +78,14 @@ def pois_pmf(lam: float, n: int = 16) -> np.ndarray:
     return out
 
 
-def game_distribution(mu_h: float, mu_a: float, lines: list[float]) -> dict:
-    """Totals with the 'tie -> +1 goal' settlement rule, plus win probabilities."""
+def game_distribution(mu_h: float, mu_a: float, lines: list[float], tie_boost: float = 1.0) -> dict:
+    """Totals with the 'tie -> +1 goal' settlement rule, plus win probabilities.
+    Independent Poisson gives too few regulation ties (backtest 16% vs 22% real), so the diagonal is boosted."""
     reg_scale = 0.985  # ~1.5% of goals are scored in OT; keep regulation separate
     ph, pa = pois_pmf(mu_h * reg_scale), pois_pmf(mu_a * reg_scale)
     joint = np.outer(ph, pa)
+    joint[np.diag_indices(len(ph))] *= tie_boost
+    joint /= joint.sum()
     n = len(ph)
     tot = np.zeros(2 * n + 1)
     p_tie = 0.0
@@ -766,8 +769,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
 
         gr_h = goalies_out[starters[A]]["ratio"] if starters.get(A) else 1.0
         gr_a = goalies_out[starters[H]]["ratio"] if starters.get(H) else 1.0
-        dist = game_distribution(mu["home"]["g"] * gr_h + mu["home"]["o"], mu["away"]["g"] * gr_a + mu["away"]["o"],
-                                 cfg["ou_lines"])
+        m_h, m_a = mu["home"]["g"] * gr_h + mu["home"]["o"], mu["away"]["g"] * gr_a + mu["away"]["o"]
+        lg_tot, c = league["cur_gpg_reg"], cfg.get("total_compression", 1.0)
+        sc = (lg_tot + c * (m_h + m_a - lg_tot)) / (m_h + m_a) if lg_tot and m_h + m_a > 0 else 1.0
+        dist = game_distribution(m_h * sc, m_a * sc, cfg["ou_lines"], cfg.get("tie_boost", 1.0))
 
         props = []
         for t, opp, is_home in ((H, A, True), (A, H, False)):

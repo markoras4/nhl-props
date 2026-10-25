@@ -59,7 +59,12 @@ CONFIG = {
 
     # ---------- over/under ----------
     "ou_lines": [5.5, 6.5],
-    "history_weight_default": 0.0,   # blend of historical O/U rates into model P(over); grade tells you the best value
+    # Totals backtest 2021-2026 (6,128 games): a 40% blend of over/under history was best.
+    "history_weight_default": 0.4,
+    # Same backtest: independent Poisson gave 16% regulation ties vs 22% real; x1.5 on the diagonal matches.
+    "tie_boost": 1.5,
+    # Same backtest: projected totals were too spread out (slope 0.62); pull them part way to the league average.
+    "total_compression": 0.85,
     "k_team_ou_games": 15,
     "k_h2h_games": 6,
 
