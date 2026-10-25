@@ -744,8 +744,9 @@ function regPills(p){
 }
 function roleTags(p){
   const out = [], r = p.role, tags = p.role_tags || [];
-  if (r && r.toi_delta >= 2) out.push(`<span class="pill s-up" title="${esc(t("tip_toi_up",{a:fmt(r.toi5,1),b:fmt(r.toi_base,1)}))}">▲ ${t("pill_toi")} +${fmt(r.toi_delta,1)}</span>`);
-  if (r && r.toi_delta <= -2) out.push(`<span class="pill s-down" title="${esc(t("tip_toi_down",{a:fmt(r.toi5,1),b:fmt(r.toi_base,1)}))}">▼ ${t("pill_toi")} ${fmt(r.toi_delta,1)}</span>`);
+  const big = r && Math.abs(r.toi_delta) >= 3 && Math.abs(r.toi_delta) / (r.toi_base||99) >= 0.18;
+  if (big && r.toi_delta > 0) out.push(`<span class="pill s-up" title="${esc(t("tip_toi_up",{a:fmt(r.toi5,1),b:fmt(r.toi_base,1)}))}">▲ ${t("pill_toi")} +${fmt(r.toi_delta,1)}</span>`);
+  if (big && r.toi_delta < 0) out.push(`<span class="pill s-down" title="${esc(t("tip_toi_down",{a:fmt(r.toi5,1),b:fmt(r.toi_base,1)}))}">▼ ${t("pill_toi")} ${fmt(r.toi_delta,1)}</span>`);
   const T = {pp1_new:["s-up","pill_pp1_new","tip_pp1_new"], pp1_lost:["s-down","pill_pp1_lost","tip_pp1_lost"],
              line_up:["s-up","pill_line_up","tip_line_up"], line_down:["s-down","pill_line_down","tip_line_down"]};
   tags.forEach(k => { const x = T[k]; if (x) out.push(`<span class="pill ${x[0]}" title="${esc(t(x[2]))}">${t(x[1])}</span>`); });
@@ -1496,7 +1497,7 @@ en: `<h3>What the site does</h3>
     <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
     <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
     <li><b>Hit rates</b>: how often a player went over a line in his last 5, 10 and 20 games, this season and against tonight's opponent, next to the model's chance tonight and the market's. A short record is a weak guide on its own; read it together with the model.</li>
-    <li><b>Role tags</b>: <i>TOI ▲/▼</i> when his ice time over the last 5 games is 2+ minutes above or below his usual; <i>New on PP1</i>, <i>Promoted</i> and similar when his power-play unit or line changed in the last few days. Role changes often show up in the numbers before the scoring does.</li>
+    <li><b>Role tags</b>: <i>TOI ▲/▼</i> when his ice time over the last 5 games is 3+ minutes (and at least 18%) above or below his usual; <i>New on PP1</i>, <i>Promoted</i> and similar when his power-play unit or line changed in the last few days. Role changes often show up in the numbers before the scoring does.</li>
     <li><b>Game-day lineup</b>: about an hour before each puck drop the site refreshes with the final lineups. Questionable players who are in the lineup are marked Playing, scratched and injured players are removed, and the expected starting goalie is updated. It refreshes again about 30 minutes before puck drop, when starters are usually confirmed. If the sources disagree on the goalie and nobody has confirmed, he is marked Not decided and the alternative is shown, so you can switch and see the effect.</li>
   </ul>
   <h3>Charts</h3>
@@ -1531,7 +1532,7 @@ sv: `<h3>Vad sajten gör</h3>
     <li><b>Prognos / Trolig / Bekräftad</b> målvakt = från de senaste rapporterna om startmålvakter. "Prognos" betyder att ingen rapport finns än: målvakten med flest starter på sistone, och reservmålvakten vid back-to-back.</li>
     <li><b>Ute / Dag till dag</b>: skadade spelare markerade Ute tas bort från spelen; osäkra spelare finns kvar med en gul markering.</li>
     <li><b>Träffprocent</b>: hur ofta en spelare gått över en linje de senaste 5, 10 och 20 matcherna, den här säsongen och mot kvällens motståndare, bredvid modellens chans i kväll och marknadens. Ett kort facit är en svag vägledning i sig; läs det tillsammans med modellen.</li>
-    <li><b>Rolltaggar</b>: <i>Istid ▲/▼</i> när istiden de senaste 5 matcherna är 2+ minuter över eller under det vanliga; <i>Ny i PP1</i>, <i>Uppflyttad</i> och liknande när powerplayfemman eller kedjan ändrats de senaste dagarna. Rolländringar syns ofta i siffrorna innan målen kommer.</li>
+    <li><b>Rolltaggar</b>: <i>Istid ▲/▼</i> när istiden de senaste 5 matcherna är 3+ minuter (och minst 18 %) över eller under det vanliga; <i>Ny i PP1</i>, <i>Uppflyttad</i> och liknande när powerplayfemman eller kedjan ändrats de senaste dagarna. Rolländringar syns ofta i siffrorna innan målen kommer.</li>
     <li><b>Matchdagens uppställning</b>: ungefär en timme före varje nedsläpp uppdateras sidan med de slutliga uppställningarna. Osäkra spelare som finns med markeras Spelar, petade och skadade spelare tas bort, och den väntade startmålvakten uppdateras. Sidan uppdateras igen ungefär 30 minuter före nedsläpp, när startmålvakterna brukar bekräftas. Om källorna är oense om målvakten och ingen har bekräftat markeras han Inte avgjort och alternativet visas, så att du kan byta och se effekten.</li>
   </ul>
   <h3>Diagram</h3>
