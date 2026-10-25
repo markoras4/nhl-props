@@ -7,24 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: NHL lineup projections article
+      - name: Live scores function
         run: |
           exec >> probe-out.txt 2>&1
-          U="https://www.nhl.com/news/nhl-lineup-projections-2026-27-season"
-          curl -sL -A "Mozilla/5.0" "$U" -o lineups.html -w "%{http_code} %{size_download} %{url_effective}\n"
-          python3 - <<'PY'
-          import re
-          h=open("lineups.html",encoding="utf-8",errors="replace").read()
-          print("len",len(h))
-          for k in ["Projected lineup","Scratched","Injured","Status report","__NEXT_DATA__","application/ld+json","dateModified","datePublished","contentful","forge-dapi"]:
-              print(k, h.count(k), [m.start() for m in re.finditer(re.escape(k),h)][:3])
-          i=h.find("Projected lineup")
-          print("SNIP", re.sub(r"\s+"," ",h[max(0,i-3000):i+6000]))
-          for m in re.finditer(r'"date(Modified|Published)"\s*:\s*"[^"]+"',h): print(m.group(0))
-          for m in re.finditer(r'https://forge-dapi[^"\' ]+',h): print("API",m.group(0)); break
-          PY
+          curl -s -m 20 -i "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores" | head -c 1500; echo
+          echo ----
+          curl -s -m 20 "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores?date=2026-10-25" | head -c 1500; echo
       - name: Save output to the probe branch
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          mkdir -p /tmp/o; cp probe-out.txt lineups.html /tmp/o/ 2>/dev/null || true
+          mkdir -p /tmp/o; cp probe-out.txt /tmp/o/ 2>/dev/null || true
           git checkout --orphan probe2; git rm -rfq . ; cp /tmp/o/* . ; git add -A; git commit -qm "probe"; git push -f origin probe2
