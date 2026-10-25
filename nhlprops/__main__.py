@@ -66,7 +66,7 @@ def demo_odds(slate: dict) -> dict:
                 p = min(0.95, max(0.02, pr["p"][m] * rnd.uniform(0.82, 1.18)))
                 d[m] = {"o": round(1 / (p * 1.07), 2), "n": round(1 / ((1 - p) * 1.07), 2)}
             po[pr["id"]] = d
-        out[g["id"]] = {"book": "Unibet (demo)", "players": po, "fetched": "demo",
+        out[g["id"]] = {"book": "Bookmaker", "players": po, "fetched": "demo",
                         "totals": {"5.5": {"over": 1.85, "under": 1.95}, "6.5": {"over": 2.6, "under": 1.5}}}
     return out
 

@@ -322,7 +322,7 @@ const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
 const userOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
 const getOdds = (gid,pid,m) => userOdds(gid,pid,m) ?? book(gid,pid,m)?.o ?? null;
 const noVig = b => b && b.o && b.n ? (1/b.o)/((1/b.o)+(1/b.n)) : null;
-const bookName = gid => DATA.odds?.[gid]?.book || "Book";
+const bookName = gid => "Bookmaker";
 const VALUE = 0.05;
 
 // ------------------------------------------------------------ helpers
@@ -424,7 +424,7 @@ function gamePage(){
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
       <p class="note">${g.h2h?.n?`Last ${g.h2h.n} meetings: ${g.h2h.games.map(x=>`${x.date.slice(2)} ${x.score}`).join(" · ")} (${g.away} first), avg ${fmt(g.h2h.avg_total,1)} goals.`:"No meetings in the last 4 seasons."}</p></div>
     <div class="box"><h4>Total goals</h4>
-      <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Over odds${DATA.odds?.[g.id]?.totals?" ("+esc(bookName(g.id))+")":""}</div>${ou}</div></div>
+      <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Over odds</div>${ou}</div></div>
   </div>
   <div class="sides"><div class="seg" id="sides">
     <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${g.away} roster</button>
@@ -538,7 +538,7 @@ function sidePanel(g, team){
       ${GRID.map(([m,n])=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${n}</th>`).join("")}<th>Signals</th></tr></thead>
       <tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>38%</b> = model probability</span>
-      <span>${DATA.odds?.[g.id] ? `small number = ${esc(bookName(g.id))} odds (green when the model sees +5% value or more)` : "small number = fair odds (no bookmaker prices for this game yet)"}</span>
+      <span>${DATA.odds?.[g.id] ? `small number = bookmaker odds (green when the model sees +5% value or more)` : "small number = fair odds (no bookmaker prices for this game yet)"}</span>
       <span><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>value bet</span></div>
     <p class="foot">Click a column to sort, click it again for lineup order. Click a player for his breakdown, charts, and to enter your own odds.${DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? ` Odds updated ${new Date(DATA.odds[g.id].fetched).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})}.`:""}</p>`;
   $("#sidebody").onclick = e => {
@@ -692,8 +692,8 @@ function detail(pr, g){
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):"odds"}" value="${uo??""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box" style="grid-column:span 2"><h4>Prices & value</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Model · fair</span><span class="h">${esc(bookName(g.id))} · its %</span><span class="h">Your odds</span><span class="h">EV</span>${oddsRows}</div>
-      <p class="note">"Its %" is the bookmaker's own probability with its margin removed. EV uses your odds if you type them, otherwise the bookmaker's. EV = model probability × odds − 1.</p></div>
+    <div class="box" style="grid-column:span 2"><h4>Prices & value</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Model · fair</span><span class="h">Odds · book %</span><span class="h">Your odds</span><span class="h">EV</span>${oddsRows}</div>
+      <p class="note">"Book %" is the bookmaker's own probability with its margin removed. EV uses your odds if you type them, otherwise the bookmaker's. EV = model probability × odds − 1.</p></div>
     <div class="box"><h4>How the number is built</h4>
       <div class="chips">
         <span class="chip">Goals/60 <b>${fmt(r.g60,2)}</b></span><span class="chip">Assists/60 <b>${fmt(r.a60,2)}</b></span>

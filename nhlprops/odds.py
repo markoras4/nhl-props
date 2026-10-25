@@ -87,7 +87,7 @@ def fetch_odds(src, games: list[dict], players: list[dict], log=print) -> dict:
             if m and yes:
                 po.setdefault(m["id"], {})[mk] = {"o": yes, "n": no}
         n_p += len(po)
-        out[g["id"]] = {"book": "Unibet", "players": po, "totals": parsed["totals"],
+        out[g["id"]] = {"book": "Bookmaker", "players": po, "totals": parsed["totals"],
                         "fetched": dt.datetime.utcnow().isoformat(timespec="minutes") + "Z"}
-    log(f"Odds: Unibet prices for {len(out)} games, {n_p} players")
+    log(f"Odds: bookmaker prices for {len(out)} games, {n_p} players")
     return out
