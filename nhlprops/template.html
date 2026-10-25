@@ -282,8 +282,8 @@ const dates = [...new Set(DATA.games.map(g=>g.date))].sort();
 const state = {
   tab: "games", game: null, side: null, day: dates[0], open: null, sort: null,
   market: "g", pfilter: "all", pday: dates[0] || "all", q: "", onlyReg: false, psort: "p",
-  streakW: +(store.get("set:streakW") ?? (C.streak_weight_default||0)*100),
-  histW: +(store.get("set:histW") ?? (C.history_weight_default||0)*100),
+  streakW: (C.streak_weight_default||0)*100,
+  histW: (C.history_weight_default||0)*100,
   goalie: {},
   chart: (()=>{ try { return Object.assign({view:"table", stat:"g", mode:"windows", unit:"pg"}, JSON.parse(store.get("set:chart")||"{}")); } catch(e){ return {view:"table", stat:"g", mode:"windows", unit:"pg"}; } })(),
 };
@@ -910,29 +910,23 @@ function trackTab(){
 
 // ------------------------------------------------------------ how it works + experiments
 function howTab(){
-  const t = C.streak_thresholds;
   $("#main").innerHTML = `<div class="prose">
   <h3>What the site does</h3>
   <p>For every player in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point and reach a number of shots on goal. It shows those chances next to the market odds, so you can see where the two agree and where they don't. It's a tool to help you decide, not a tipster.</p>
 
   <h3>How a probability is built</h3>
-  <p><b>Expected goals tonight = ice time × his true scoring rate × opponent defence × opposing goalie × home/away × back-to-back × league scoring level.</b> That expectation becomes "chance of at least one" with a standard formula for rare events (Poisson).</p>
-  <ul>
-    <li><b>True scoring rate:</b> built from the last ${C.lookback_seasons} seasons, recent seasons counting most (${C.season_weights.join("-")}), then pulled toward the league average. The less a player has played, the stronger the pull. This is regression to the mean in practice: a hot or cold start is mostly treated as luck until there's enough evidence.</li>
-    <li><b>Shooting %:</b> regressed twice, career toward the league average and recent seasons toward his career level. Goals per 60 minutes blends <i>shots × true shooting %</i> with <i>expected goals from shot quality × finishing skill</i>.</li>
-    <li><b>Ice time:</b> last ${C.toi_recent_games} games blended with the season average.</li>
-    <li><b>Goalies:</b> goals allowed vs expected goals allowed over ${C.goalie_seasons} seasons, compared with an average goalie. Change the starter on a game page and every prop updates.</li>
-  </ul>
+  <p>Each player's chance is built from how much he plays, how well he really scores and creates chances, and who he faces tonight: the opponent's defence, the opposing goalie, home or away, and rest.</p>
+  <p>At its core is <b>regression to the mean</b>. A hot or cold streak is mostly treated as luck until there's enough evidence that something has really changed, so the model leans on a player's true level rather than his last few games. Change the starting goalie on a game page and every probability updates.</p>
 
   <h3>Has it been tested?</h3>
-  <p>Yes. The model was replayed over five full seasons (2021-22 to 2025-26), about 214,000 player-games, using only information available before each game.</p>
+  <p>Yes. The model was replayed over about 214,000 player-games, using only information available before each game.</p>
   <ul>
     <li><b>The percentages are honest.</b> Goals: predicted 15.5%, happened 15.4%. Points: 35.8% vs 35.2%. When it says about 34% for a goal, it happens about 36% of the time.</li>
     <li><b>It beats a simple season average</b> in every market (goals, assists, points, shots).</li>
     <li><b>Shots on goal ran about 6% high</b>, and this is now corrected.</li>
     <li>3 or 5 seasons of history made practically no difference.</li>
   </ul>
-  <p>A good probability isn't a sure thing. A 35% chance misses two times out of three, and a single game is mostly chance. Profit against the market hasn't been tested; that needs months of results.</p>
+  <p>A good probability isn't a sure thing. A 35% chance misses two times out of three, and a single game is mostly chance.</p>
 
   <h3>Reading a game page</h3>
   <ul>
@@ -955,22 +949,8 @@ function howTab(){
   <h3>Charts</h3>
   <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>
 
-  <h3>Experiments: the two sliders</h3>
-  <p>Two ideas that can be switched on to test them. Both are off (0%) by default.</p>
-  <div class="card exp">
-    <label for="sw">6-game rule <input type="range" id="sw" min="0" max="5" step="0.5" value="${state.streakW}"> <output id="swo">${(+state.streakW).toFixed(1)}%</output></label>
-    <p class="note">When a team reaches its streak threshold (strong teams ${t.strong.win} wins / ${t.strong.loss} losses, average ${t.average.win}/${t.average.loss}, weak ${t.weak.win}/${t.weak.loss}), the model expects the streak to end: at 2%, a team one game past its threshold scores 2% fewer goals and allows 2% more. In testing, long <i>winning</i> streaks showed no effect; long <i>losing</i> streaks ended more often than the team's record suggested (161 cases, suggestive but not proven).</p>
-  </div>
-  <div class="card exp">
-    <label for="hw">History weight for totals <input type="range" id="hw" min="0" max="60" step="5" value="${state.histW}"> <output id="hwo">${state.histW}%</output></label>
-    <p class="note">Game totals come from the model (expected goals, goalies, power play). "History" is how often these teams and their head-to-head games actually went over. At 30%, the over % you see is 70% model and 30% history.</p>
-  </div>
-
-  <p class="foot">Data: NHL.com and MoneyPuck.com. Updated four times a day. Personal, non-commercial use. Gamble responsibly. Stödlinjen: 020-81 91 00.</p>
+  <p class="foot">Updated four times a day. Personal, non-commercial use. Gamble responsibly. Stödlinjen: 020-81 91 00.</p>
   </div>`;
-  const sw=$("#sw"), hw=$("#hw");
-  sw.oninput = () => { state.streakW=+sw.value; $("#swo").textContent=(+sw.value).toFixed(1)+"%"; store.set("set:streakW", sw.value); };
-  hw.oninput = () => { state.histW=+hw.value; $("#hwo").textContent=hw.value+"%"; store.set("set:histW", hw.value); };
 }
 
 function render(){
