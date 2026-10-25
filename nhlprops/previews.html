@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Game Previews · NHL Props Lab</title>
+<meta name="description" content="Short previews of every NHL game: the news, the streaks and records, and where the model and the market disagree.">
+<meta name="theme-color" content="#0a0e13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: sticky header · game index chips · one article per game (photo masthead, deck, three fact columns, live model strip) */
+:root{
+  --bg:#0a0e13; --bg2:#0d131a; --panel:#111821; --panel2:#17202b; --line:#22303f; --text:#e7eef6; --mute:#8796a8;
+  --accent:#3ddc97; --accent-ink:#06210f; --blue:#5aa9ff; --warn:#ffb547; --glow:61,220,151; --radius:14px; color-scheme:dark;
+  --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-disp:"Oxanium","Exo 2",-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){--bg:#f3f5f8;--bg2:#eaeef3;--panel:#fff;--panel2:#eef2f6;--line:#dbe2ea;--text:#111821;--mute:#5a697b;--accent:#0d9a60;--accent-ink:#fff;--blue:#1d6bd0;--warn:#a96400;--glow:13,154,96;color-scheme:light}
+  :root:not([data-theme="dark"]) .lg-d{display:none} :root:not([data-theme="dark"]) .lg-l{display:inline-block}
+}
+:root[data-theme="light"]{--bg:#f3f5f8;--bg2:#eaeef3;--panel:#fff;--panel2:#eef2f6;--line:#dbe2ea;--text:#111821;--mute:#5a697b;--accent:#0d9a60;--accent-ink:#fff;--blue:#1d6bd0;--warn:#a96400;--glow:13,154,96;color-scheme:light}
+:root[data-theme="light"] .lg-d{display:none} :root[data-theme="light"] .lg-l{display:inline-block}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--f-ui)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:inherit}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+.lg-l{display:none}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:12px;height:60px}
+.brand{font-family:var(--f-disp);font-weight:800;font-size:18px;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;text-decoration:none}
+.brand b{color:var(--accent)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:8px}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:2px}
+.seg button{border:0;background:none;padding:5px 8px;font-size:12px;font-weight:700;border-radius:8px;color:var(--mute)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.iconbtn{border:1px solid var(--line);background:var(--panel);border-radius:10px;width:34px;height:32px;display:grid;place-items:center;font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;border-radius:10px;padding:9px 15px;border:1px solid transparent;white-space:nowrap;text-decoration:none}
+.btn.pri{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:var(--line);background:var(--panel)}
+.btn.ghost:hover{border-color:var(--accent)}
+
+.intro{padding:34px 0 18px}
+.eyebrow{font-family:var(--f-disp);font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(30px,4.4vw,46px);line-height:1.08;margin:8px 0 10px;text-wrap:balance}
+.intro p{color:var(--mute);margin:0;max-width:640px}
+.index{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.index a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:var(--f-disp);font-weight:700;font-size:14px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.index a:hover{border-color:var(--accent)}
+.index img{width:20px;height:20px}
+.index small{font-family:var(--f-ui);font-weight:600;color:var(--mute);font-size:12px}
+
+article{margin:26px 0 44px;scroll-margin-top:76px}
+.mast{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:21/9;background:#0b0f14;max-width:100%}
+.mast img.ph{width:100%;height:100%;object-fit:cover}
+.mast::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,12,.05) 30%,rgba(5,8,12,.88) 100%)}
+.mtext{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:22px 26px;color:#f3f7fb}
+.kick{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-family:var(--f-disp);font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.kick .lgs{display:inline-flex;gap:4px}
+.kick .lgs img{width:26px;height:26px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.kick .when{color:#c9d4df;font-family:var(--f-ui);font-weight:600;letter-spacing:.3px;text-transform:none}
+.mtext h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(22px,3.2vw,34px);line-height:1.12;margin:8px 0 0;text-wrap:balance;max-width:860px;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.credit{position:absolute;top:10px;right:12px;z-index:1;font-size:10.5px;color:#fff;opacity:.8;text-shadow:0 1px 2px #000}
+.credit a{color:#fff}
+
+.deck{font-size:18.5px;line-height:1.6;margin:20px 0 0;max-width:820px}
+.strip{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;margin:20px 0 0;padding:14px 18px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.strip .teams{display:flex;align-items:center;gap:10px;font-family:var(--f-disp);font-weight:800;font-size:18px}
+.strip .teams img{width:30px;height:30px}
+.strip .teams span{color:var(--mute);font-weight:700;font-size:15px}
+.strip .bar{min-width:0}
+.wpb{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--panel2)}
+.wpb i:first-child{background:var(--blue)}.wpb i:last-child{background:var(--accent)}
+.strip .lbl{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute);margin-top:6px;gap:8px;flex-wrap:wrap}
+.strip .lbl b{color:var(--text)}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}
+.col{border-top:2px solid var(--line);padding-top:12px;min-width:0}
+.col.bet{border-top-color:var(--accent)}
+.col h3{font-family:var(--f-disp);font-size:12.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mute);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.col.bet h3{color:var(--accent)}
+.col h3 svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.col ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.col li::marker{color:var(--accent)}
+.foot{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;margin-top:18px;font-size:12.5px;color:var(--mute)}
+.foot .src a{color:var(--mute)}
+.foot .src a:hover{color:var(--accent)}
+.note{color:var(--mute);font-size:12.5px;border-top:1px solid var(--line);padding-block:20px 40px}
+.empty{padding:60px 0;color:var(--mute)}
+footer{border-top:1px solid var(--line);padding-block:22px calc(22px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:13px}
+@media (max-width:860px){.cols{grid-template-columns:1fr}.mast{aspect-ratio:16/10}.strip{grid-template-columns:1fr}.deck{font-size:17px}}
+@media (max-width:560px){.hide-m{display:none}.kick .when{flex-basis:100%}.btn.pri{padding:8px 11px;font-size:13px}.mast{aspect-ratio:4/3.3;border-radius:14px}.mtext{padding:16px}.top{gap:8px}.brand{font-size:15px}}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap top">
+    <a class="brand" href="./">NHL Props <b>Lab</b></a>
+    <div class="hright">
+      <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
+      <button class="iconbtn hide-m" id="theme" type="button" aria-label="Theme"></button>
+      <a class="btn pri" href="APP_URL" data-t="open_app"></a>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+<footer><div class="wrap" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span data-t="rg"></span><button class="iconbtn" id="theme2" type="button" aria-label="Theme"></button></div></footer>
+<script>
+const PDATA = /*__DATA__*/null;
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+const I18N = {
+ en:{ eyebrow:"Game previews", h1:"Monday's slate, read in two minutes", h1_any:"{d}: every game, read in two minutes",
+      intro:"News from around the league, the streaks and records that matter, and where our model and the betting market disagree. Numbers update with every refresh.",
+      news:"News", records:"Streaks & records", betting:"Betting insights", open_app:"Open app", open_match:"Open matchup →",
+      proj:"Projected", total:"Expected total {x} goals", win:"win", photo:"Photo", sources:"Sources",
+      none:"Previews for the next slate are written on game day.",
+      note:"Model numbers are probabilities, not tips. Odds are the market's at the time of writing and change during the day.",
+      rg:"18+. Gambling can be addictive. Need help? Stödlinjen 020-81 91 00 (stodlinjen.se)." },
+ sv:{ eyebrow:"Förhandstittar", h1:"Måndagens matcher, lästa på två minuter", h1_any:"{d}: varje match, läst på två minuter",
+      intro:"Nyheter från ligan, sviterna och rekorden som spelar roll, och var vår modell och spelmarknaden är oense. Siffrorna uppdateras vid varje uppdatering.",
+      news:"Nyheter", records:"Sviter & rekord", betting:"Spelinsikter", open_app:"Öppna appen", open_match:"Öppna matchen →",
+      proj:"Beräknat", total:"Förväntat totalt {x} mål", win:"vinst", photo:"Foto", sources:"Källor",
+      none:"Förhandstittar för nästa omgång skrivs på matchdagen.",
+      note:"Modellens siffror är sannolikheter, inte tips. Oddsen är marknadens när texten skrevs och ändras under dagen.",
+      rg:"18+. Spel kan vara beroendeframkallande. Behöver du hjälp? Stödlinjen 020-81 91 00 (stodlinjen.se)." }
+};
+let LANG = (()=>{ const s=store.get("set:lang"); if(s==="en"||s==="sv") return s; return (navigator.language||"").toLowerCase().startsWith("sv")?"sv":"en"; })();
+const t = (k,v={}) => { let s = I18N[LANG][k] ?? I18N.en[k] ?? k; for (const [a,b] of Object.entries(v)) s = s.replaceAll("{"+a+"}", b); return s; };
+const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = s => document.querySelector(s);
+const LOCALE = () => LANG==="sv" ? "sv-SE" : "en-GB";
+const APP = "APP_URL";
+const pct = p => Math.round(p*100)+"%";
+const logo = (tm, size) => { const L = PDATA?.logos?.[tm]; if (!L) return "";
+  return `<img class="lg-d" src="${L.dark||L.light}" alt="${tm}" width="${size}" height="${size}"><img class="lg-l" src="${L.light||L.dark}" alt="${tm}" width="${size}" height="${size}">`; };
+const when = iso => { try { return new Date(iso).toLocaleString(LOCALE(),{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}); } catch(e){ return ""; } };
+const ICON = { news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 8h3v9a2 2 0 0 1-2 2"/><path d="M8 9h5M8 13h5"/>',
+  records:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3a3 3 0 0 1-3 4M7 6H4a3 3 0 0 0 3 4"/>',
+  betting:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>' };
+
+function currentTheme(){ return document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"); }
+function applyTheme(th){ if (th) document.documentElement.dataset.theme = th; else delete document.documentElement.dataset.theme; ["#theme","#theme2"].forEach(id => { const b=$(id); if(b) b.textContent = currentTheme()==="light" ? "☾" : "☀"; }); }
+
+function render(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll("#lang button").forEach(b => b.classList.toggle("on", b.dataset.l===LANG));
+  const P = PDATA?.previews || [], G = PDATA?.games || {};
+  if (!P.length){ $("#main").innerHTML = `<div class="intro"><div class="eyebrow">${t("eyebrow")}</div><h1>${t("eyebrow")}</h1></div><p class="empty">${t("none")}</p>`; return; }
+  const day = (()=>{ try { return new Date(PDATA.date+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"long",day:"numeric",month:"long"}); } catch(e){ return PDATA.date; } })();
+  const head = `<div class="intro"><div class="eyebrow">${t("eyebrow")}</div><h1>${esc(t("h1_any",{d:day.charAt(0).toUpperCase()+day.slice(1)}))}</h1><p>${t("intro")}</p>
+    <nav class="index">${P.map(p=>{ const g=G[p.id]||{}; return `<a href="#g${p.id}">${logo(g.away,20)}${esc(g.away||"")} <small>@</small> ${esc(g.home||"")}${logo(g.home,20)}</a>`; }).join("")}</nav></div>`;
+  const arts = P.map(p => {
+    const g = G[p.id] || {}; const L = p[LANG] || p.en; const ph = p.photo || {};
+    const list = (k) => `<div class="col ${k==="betting"?"bet":""}"><h3><svg viewBox="0 0 24 24">${ICON[k]}</svg>${t(k)}</h3><ul>${(L[k]||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
+    const strip = g.home ? `<div class="strip">
+        <div class="teams">${logo(g.away,30)}${g.away} <span>${g.ma.toFixed(1)} – ${g.mh.toFixed(1)}</span> ${g.home}${logo(g.home,30)}</div>
+        <div class="bar"><div class="wpb"><i style="width:${g.pa*100}%"></i><i style="width:${g.ph*100}%"></i></div>
+          <div class="lbl"><span><b>${pct(g.pa)}</b> ${g.away} ${t("win")}</span><span>${t("total",{x:g.exp.toFixed(1)})}</span><span>${g.home} ${t("win")} <b>${pct(g.ph)}</b></span></div></div>
+        <a class="btn ghost" href="${APP}#g${p.id}">${t("open_match")}</a></div>` : "";
+    return `<article id="g${p.id}">
+      <div class="mast">${ph.src?`<img class="ph" src="${esc(ph.src)}" alt="${esc(ph.alt||"")}" style="object-position:${esc(ph.pos||"center")}" loading="lazy">`:""}
+        ${ph.author?`<span class="credit">${t("photo")}: ${esc(ph.author)} · <a href="${esc(ph.license_url)}" target="_blank" rel="noopener license">${esc(ph.license)}</a> · <a href="${esc(ph.page)}" target="_blank" rel="noopener">Wikimedia Commons</a></span>`:""}
+        <div class="mtext"><div class="kick"><span class="lgs">${logo(g.away,26)}${logo(g.home,26)}</span>${esc(L.kicker||"")}<span class="when">${when(g.start)}${g.venue?" · "+esc(g.venue):""}</span></div><h2>${esc(L.title)}</h2></div></div>
+      <p class="deck">${esc(L.deck)}</p>
+      ${strip}
+      <div class="cols">${list("news")}${list("records")}${list("betting")}</div>
+      <div class="foot"><span class="src">${t("sources")}: ${(p.sources||[]).map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(" · ")}</span></div>
+    </article>`;
+  }).join("");
+  $("#main").innerHTML = head + arts + `<p class="note">${t("note")}</p>`;
+  if (location.hash){ const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
+}
+$("#lang").addEventListener("click", e => { const b=e.target.closest("button[data-l]"); if(!b) return; LANG=b.dataset.l; store.set("set:lang",LANG); render(); });
+["#theme","#theme2"].forEach(id => $(id).addEventListener("click", () => { const nx = currentTheme()==="light"?"dark":"light"; store.set("set:theme",nx); applyTheme(nx); }));
+applyTheme(store.get("set:theme"));
+render();
+</script>
+</body>
+</html>

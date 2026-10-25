@@ -173,14 +173,59 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
         games.append({"id": g["id"], "home": g["home"], "away": g["away"], "start": g.get("start"), "venue": g.get("venue"),
                       "mh": d.get("proj_h", 3.0), "ma": d.get("proj_a", 3.0), "ph": d["p_home"], "pa": d["p_away"],
                       "exp": d["exp_total"]})
-    prev_file = ROOT / "data" / "previews" / f"{day}.json"
-    previews = json.loads(prev_file.read_text(encoding="utf-8")).get("previews", []) if prev_file.exists() else []
+    pdate, previews = pick_previews(day, slate)
     teams = {x for g in games for x in (g["home"], g["away"])}
+    teams |= {x for p in previews for x in (p.get("home"), p.get("away")) if x}
+    by_id = {str(g["id"]): g for g in slate["games"]}
+    for p in previews:
+        if str(p["id"]) in by_id:
+            p["game"] = game_summary(by_id[str(p["id"])])
     payload = clean({"date": day, "games": games, "previews": previews, "built": now,
                      "logos": {k: v for k, v in (slate.get("logos") or {}).items() if k in teams}})
     js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = LANDING.read_text(encoding="utf-8").replace("/*__DATA__*/null", js).replace("APP_URL", app_url)
     out = out_dir / "landing.html"
+    out.write_text(html, encoding="utf-8")
+    return out
+
+
+PREVIEWS = Path(__file__).resolve().parent / "previews.html"
+
+
+def game_summary(g: dict) -> dict:
+    d = g["default"]
+    return {"id": g["id"], "home": g["home"], "away": g["away"], "start": g.get("start"), "venue": g.get("venue"),
+            "mh": d.get("proj_h", 3.0), "ma": d.get("proj_a", 3.0), "ph": d["p_home"], "pa": d["p_away"],
+            "exp": d["exp_total"]}
+
+
+def pick_previews(day: str, slate: dict | None = None) -> tuple[str | None, list]:
+    """Previews for the first date >= day that has a file (else the latest file)."""
+    files = sorted((ROOT / "data" / "previews").glob("20*.json"))
+    if not files:
+        return None, []
+    f = next((x for x in files if x.stem >= day), files[-1])
+    previews = json.loads(f.read_text(encoding="utf-8")).get("previews", [])
+    if slate:
+        by_id = {str(g["id"]): g for g in slate["games"]}
+        for p in previews:
+            g = by_id.get(str(p["id"]))
+            if g:
+                p["home"], p["away"] = g["home"], g["away"]
+    return f.stem, previews
+
+
+def render_previews(slate: dict, out_dir: Path, app_url: str = "app/") -> Path:
+    today = nhl_today()
+    pdate, previews = pick_previews(today, slate)
+    by_id = {str(g["id"]): g for g in slate["games"]}
+    games = {str(p["id"]): game_summary(by_id[str(p["id"])]) for p in previews if str(p["id"]) in by_id}
+    teams = {x for g in games.values() for x in (g["home"], g["away"])}
+    payload = clean({"date": pdate, "previews": previews, "games": games,
+                     "logos": {k: v for k, v in (slate.get("logos") or {}).items() if k in teams}})
+    js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
+    html = PREVIEWS.read_text(encoding="utf-8").replace("/*__DATA__*/null", js).replace("APP_URL", app_url)
+    out = out_dir / "previews.html"
     out.write_text(html, encoding="utf-8")
     return out
 
@@ -279,6 +324,7 @@ def main(argv=None):
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))
     out = render(slate, graded, ROOT / "output", args.demo)
     render_landing(slate, ROOT / "output", app_url="app/")
+    render_previews(slate, ROOT / "output", app_url="app/")
     print(f"Dashboard written: {out}")
     if raw["errors"]:
         print(f"Note: {len(raw['errors'])} downloads failed - see data/errors.log")

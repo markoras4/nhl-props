@@ -117,22 +117,32 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 .chip .pc b{color:var(--text)}
 
 /* previews */
-.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.pcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
-.pcard:hover{border-color:var(--accent);transform:translateY(-2px)}
-.pimg{position:relative;aspect-ratio:16/9;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
-.pimg .side{display:grid;place-items:center;position:relative}
-.pimg .side img{width:46%;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45))}
-.pimg .vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) skewX(-12deg);background:var(--bg);color:var(--text);font-family:var(--f-disp);font-weight:800;font-size:13px;padding:6px 10px;border-radius:6px;letter-spacing:1px}
-.pimg .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.pimg .credit{position:absolute;right:6px;bottom:4px;font-size:10px;color:#fff;opacity:.75;text-shadow:0 1px 2px #000}
-.pbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
-.pmeta{font-size:12px;color:var(--mute);display:flex;gap:8px;align-items:center}
-.ptag{font-family:var(--f-disp);font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);padding:2px 8px;border-radius:999px}
-.pcard h3{font-family:var(--f-disp);font-size:19px;line-height:1.2;margin:0}
-.pcard p{margin:0;color:var(--mute);font-size:14px}
-.pcard ul{margin:2px 0 0;padding-left:18px;color:var(--mute);font-size:13.5px;display:flex;flex-direction:column;gap:3px}
-.pcard ul li::marker{color:var(--accent)}
+.pgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);grid-auto-rows:minmax(200px,auto);gap:16px}
+.ed{position:relative;border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;border:1px solid var(--line);background:var(--panel);min-width:0;transition:border-color .15s,transform .15s}
+.ed:hover{border-color:var(--accent);transform:translateY(-2px)}
+.ed .bg{position:relative;overflow:hidden;background:#0b0f14}
+.ed .bg img.photo{width:100%;height:100%;object-fit:cover}
+.ed .grad{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr}
+.ed .grad div{display:grid;place-items:center}
+.ed .grad img{width:42%;height:auto;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45))}
+.ed .kick{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;font-family:var(--f-disp);font-size:11.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.ed .kick span{color:var(--mute);font-family:var(--f-ui);font-weight:600;letter-spacing:.2px;text-transform:none}
+.ed h3{font-family:var(--f-disp);font-weight:800;line-height:1.15;margin:6px 0 6px;text-wrap:balance}
+.ed p{margin:0;color:var(--mute);font-size:14px;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.ed .read{margin-top:10px;font-weight:700;font-size:13.5px;color:var(--accent)}
+.ed.feat{grid-row:span 2;display:flex;flex-direction:column;justify-content:flex-end;min-height:460px}
+.ed.feat .bg{position:absolute;inset:0}
+.ed.feat::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,12,0) 30%,rgba(5,8,12,.92) 100%);pointer-events:none}
+.ed.feat .txt{position:relative;z-index:1;padding:22px 24px;color:#f3f7fb}
+.ed.feat .kick span{color:#c9d4df}
+.ed.feat h3{font-size:clamp(22px,2.4vw,30px);color:#fff}
+.ed.feat p{color:#d5dee8;-webkit-line-clamp:3;font-size:15px}
+.ed.side{display:grid;grid-template-columns:40% 1fr}
+.ed.side .bg{min-height:100%}
+.ed.side .txt{padding:16px 18px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.ed.side h3{font-size:18px}
+.ed.side p{-webkit-line-clamp:3}
+.ed .cr{position:absolute;right:8px;top:6px;z-index:2;font-size:10px;color:#fff;opacity:.75;text-shadow:0 1px 2px #000}
 
 /* features */
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
@@ -186,7 +196,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   .links{display:none}
   .hgrid{grid-template-columns:1fr;gap:34px}
   .devices{max-width:680px;margin:0 auto;width:100%}
-  .pgrid,.fgrid,.strip{grid-template-columns:1fr 1fr}
+  .fgrid,.strip{grid-template-columns:1fr 1fr}
+  .pgrid{grid-template-columns:1fr}.ed.feat{grid-row:auto;min-height:400px}
   .screens{grid-template-columns:minmax(0,1fr) minmax(0,.5fr);}
   .screens .laptop{grid-column:1/-1;order:-1}
 }
@@ -202,8 +213,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   .lead{font-size:16.5px}
   section{padding:46px 0}
   .pgrid,.fgrid,.steps,.plans{grid-template-columns:1fr}
-  .pgrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:6px}
-  .pgrid .pcard{flex:0 0 84%;scroll-snap-align:start}
+  .ed.feat{min-height:360px}.ed.side{grid-template-columns:36% 1fr}.ed.side h3{font-size:16.5px}.ed.side p{-webkit-line-clamp:2;font-size:13.5px}
   .strip{grid-template-columns:1fr}
   .ctas .btn{flex:1}
   .screens{grid-template-columns:1fr 1fr;gap:14px}
@@ -264,7 +274,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
 
   <section id="previews" class="alt">
     <div class="wrap">
-      <div class="sh"><div><h2 data-t="prev_h"></h2><p class="sub" data-t="prev_sub"></p></div></div>
+      <div class="sh"><div><h2 data-t="prev_h"></h2><p class="sub" data-t="prev_sub"></p></div><a class="more" href="previews.html" data-t="all_prev"></a></div>
       <div class="pgrid" id="pgrid"></div>
     </div>
   </section>
@@ -355,8 +365,8 @@ const I18N = {
   p1:"player-games tested", p2:"games replayed", p3n:"2×", p3:"lineup checks per game",
   tonight_h:"Tonight", all_games:"All games →",
   tonight_sub:"{n} games · projected score and win chance from the model",
-  prev_h:"Game previews", prev_sub:"A short read on every game: the angle, the news, and the streaks and milestones worth knowing.",
-  prev_soon:"Preview publishes on game day", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
+  prev_h:"Game previews", prev_sub:"A two-minute read on every game: the news, the streaks and records, and where the model and the market disagree.",
+  prev_soon:"Preview publishes on game day", read_prev:"Read preview →", all_prev:"All previews →", open_match:"Open matchup →", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
   feat_h:"Everything you need, nothing you don't", feat_sub:"Three views do most of the work.",
   f1h:"Every skater, every market", f1p:"Goal, assist, point and shots on goal for the whole lineup, with the market's price next to the model's.",
   f2h:"Two picks per game, with reasons", f2p:"The two strongest options in each game and the facts behind them: ice time, opponent, goalie, recent form.",
@@ -385,8 +395,8 @@ const I18N = {
   p1:"testade spelarmatcher", p2:"matcher omspelade", p3n:"2×", p3:"uppställningskontroller per match",
   tonight_h:"I kväll", all_games:"Alla matcher →",
   tonight_sub:"{n} matcher · beräknat resultat och vinstchans från modellen",
-  prev_h:"Förhandstittar", prev_sub:"En kort genomgång av varje match: vinkeln, nyheterna och sviterna och milstolparna värda att känna till.",
-  prev_soon:"Förhandstitten publiceras på matchdagen", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
+  prev_h:"Förhandstittar", prev_sub:"Två minuters läsning om varje match: nyheterna, sviterna och rekorden, och var modellen och marknaden är oense.",
+  prev_soon:"Förhandstitten publiceras på matchdagen", read_prev:"Läs förhandstitten →", all_prev:"Alla förhandstittar →", open_match:"Öppna matchen →", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
   feat_h:"Allt du behöver, inget du inte behöver", feat_sub:"Tre vyer gör det mesta av jobbet.",
   f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng och skott på mål för hela uppställningen, med marknadens odds bredvid modellens.",
   f2h:"Två spel per match, med skäl", f2p:"De två starkaste alternativen i varje match och fakta bakom dem: istid, motstånd, målvakt, aktuell form.",
@@ -436,20 +446,19 @@ function previews(){
   const P = LDATA?.previews || [];
   const games = LDATA?.games || [];
   const cards = (P.length ? P.slice(0,3) : games.slice(0,3).map(g => ({game:g, auto:true})));
-  $("#pgrid").innerHTML = cards.map(c => {
+  $("#pgrid").innerHTML = cards.map((c,i) => {
     const g = c.game || games.find(x=>String(x.id)===String(c.id)) || {};
-    const head = c.photo
-      ? `<img class="photo" src="${esc(c.photo.src)}" alt="${esc(c.photo.alt||"")}" loading="lazy"><span class="credit">${esc(c.photo.credit||"")}</span>`
-      : `<div class="side" style="background:linear-gradient(135deg,${TC[g.away]||"#334"} 0%,color-mix(in srgb,${TC[g.away]||"#334"} 55%,#000) 100%)">${logo(g.away,96)}</div>
-         <div class="side" style="background:linear-gradient(225deg,${TC[g.home]||"#334"} 0%,color-mix(in srgb,${TC[g.home]||"#334"} 55%,#000) 100%)">${logo(g.home,96)}</div><span class="vs">VS</span>`;
-    const L = LANG==="sv" && c.sv ? c.sv : c;
-    const title = L.title || `${g.away} @ ${g.home}`;
-    const body = c.auto
-      ? `<p>${t("prev_soon")}</p><ul><li>${t("prev_proj",{a:g.away,sa:g.ma.toFixed(1),sh:g.mh.toFixed(1),h:g.home})}</li><li>${t("prev_win",{t:g.ph>=g.pa?g.home:g.away,p:pct(Math.max(g.ph,g.pa))})}</li><li>${t("prev_total",{x:g.exp.toFixed(1)})}</li></ul>`
-      : `<p>${esc(L.angle||"")}</p><ul>${(L.bullets||[]).slice(0,3).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
-    return `<a class="pcard" href="${c.url ? esc(c.url) : APP+"#g"+g.id}"><div class="pimg">${head}</div>
-      <div class="pbody"><div class="pmeta"><span class="ptag">${dayOf(g.start)}</span><span>${timeOf(g.start)}${g.venue?" · "+esc(g.venue):""}</span></div>
-      <h3>${esc(title)}</h3>${body}</div></a>`;
+    const L = c[LANG] || c.en || {};
+    const ph = c.photo;
+    const bg = ph
+      ? `<img class="photo" src="${esc(ph.src)}" alt="${esc(ph.alt||"")}" style="object-position:${esc(ph.pos||"center")}" loading="lazy">`
+      : `<div class="grad"><div style="background:linear-gradient(135deg,${TC[g.away]||"#334"},color-mix(in srgb,${TC[g.away]||"#334"} 50%,#000))">${logo(g.away,90)}</div><div style="background:linear-gradient(225deg,${TC[g.home]||"#334"},color-mix(in srgb,${TC[g.home]||"#334"} 50%,#000))">${logo(g.home,90)}</div></div>`;
+    const title = c.auto ? `${g.away} @ ${g.home}` : L.title;
+    const deck = c.auto ? `${t("prev_proj",{a:g.away,sa:g.ma.toFixed(1),sh:g.mh.toFixed(1),h:g.home})} · ${t("prev_win",{t:g.ph>=g.pa?g.home:g.away,p:pct(Math.max(g.ph,g.pa))})}. ${t("prev_soon")}.` : L.deck;
+    const href = c.auto ? `${APP}#g${g.id}` : `previews.html#g${c.id}`;
+    const kick = `${esc(L.kicker || (g.away+" @ "+g.home))}<span>${dayOf(g.start)} · ${timeOf(g.start)}</span>`;
+    return `<a class="ed ${i===0?"feat":"side"}" href="${href}"><div class="bg">${bg}</div>${ph&&i>0?"":""}
+      <div class="txt"><div class="kick">${kick}</div><h3>${esc(title)}</h3><p>${esc(deck)}</p><div class="read">${c.auto?t("open_match"):t("read_prev")}</div></div></a>`;
   }).join("");
 }
 function plans(){

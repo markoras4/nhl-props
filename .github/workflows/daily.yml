@@ -62,6 +62,8 @@ jobs:
           if [ -f output/index.html ]; then cp output/index.html site/app/index.html; fi
           if [ -f output/landing.html ]; then cp output/landing.html site/index.html; cp output/landing.html site/landing.html; fi
           cp site-assets/*.webp site/assets/
+          mkdir -p site/assets/previews && cp site-assets/previews/*.webp site/assets/previews/ 2>/dev/null || true
+          if [ -f output/previews.html ]; then cp output/previews.html site/previews.html; fi
           cp vercel.json site/vercel.json
           cp site-headers.txt site/_headers
           if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
