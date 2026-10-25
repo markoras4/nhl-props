@@ -1,0 +1,27 @@
+name: Preview photos
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "candidates or fetch"
+        default: candidates
+permissions:
+  contents: write
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Candidates for review
+        if: inputs.mode == 'candidates'
+        run: |
+          python3 -m nhlprops.photos candidates previews-work/queries.json /tmp/cand > /tmp/cand/out.txt 2>&1 || true
+          mkdir -p /tmp/cand; cat /tmp/cand/out.txt | tail -50
+          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          cd /tmp/cand && git init -q && git checkout -q -b photo-candidates && git add -A && git commit -qm "candidates" && git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" photo-candidates
+      - name: Fetch chosen photos
+        if: inputs.mode == 'fetch'
+        run: |
+          python3 -m nhlprops.photos fetch previews-work/picks.json site-assets/previews
+          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          git add site-assets/previews && (git commit -qm "Preview photos" && git push) || true
