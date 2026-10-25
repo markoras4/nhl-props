@@ -9,5 +9,5 @@ Fetching 726 skaters and 78 goalies (careers + game logs) ...
 Fetching 168 recent box scores (hits, blocks) ...
 News: 127 injuries, likely starters for 18 games (+16 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-10-25, updated 2026-10-25T20:57:23.674Z)
 Model built: 46 games, 726 skaters (569 expected to play)
-Odds: bookmaker prices for 7 games, 214 players
+Odds: bookmaker prices for 7 games, 178 players
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-25.html
