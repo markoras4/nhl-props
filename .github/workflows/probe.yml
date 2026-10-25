@@ -7,39 +7,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Superbet NHL markets
+      - name: US books - hits/blocks categories
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import json, urllib.request, collections
+          import json, urllib.request, re
+          H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36","Accept":"application/json"}
           def get(u):
-              return json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=25))
-          for cc, lang in [("ro","ro-RO"),("pl","pl-PL"),("rs","sr-Latn-RS"),("br","pt-BR")]:
-              base=f"https://production-superbet-offer-{cc}.freetls.fastly.net/v2/{lang}"
+              r=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=25); return r.read().decode("utf-8","replace")
+          for st in ["dkusnj","dkusny","dkuspa"]:
+              u=f"https://sportsbook-nash.draftkings.com/api/sportscontent/{st}/v1/leagues/42133"
               try:
-                  d=get(base+"/events/by-date?offerState=prematch&startDate=2026-10-26+00:00:00&endDate=2026-10-28+00:00:00")
-              except Exception as e:
-                  print(cc,"ERR",e); continue
-              ev=[x for x in d.get("data",[]) if x.get("sportId")==3]
-              print(cc, "hockey events", len(ev), [ (x["eventId"], x["matchName"], x["tournamentId"]) for x in ev[:4]])
-              nhl=[x for x in ev if any(k in x["matchName"] for k in ("Rangers","Oilers","Flames","Kings","Maple","Red Wings"))]
-              if not nhl: continue
-              e=nhl[0]
-              for path in [f"/events/{e['eventId']}", f"/events/{e['eventId']}?matchIds={e['eventId']}"]:
-                  try:
-                      det=get(base+path); break
-                  except Exception as ex:
-                      det=None; print("detail err", path, ex)
-              if not det: continue
-              dd=det.get("data") or det
-              if isinstance(dd,list): dd=dd[0]
-              odds=dd.get("odds") or []
-              names=collections.Counter((o.get("marketName"), o.get("marketId")) for o in odds)
-              print(cc, e["matchName"], "odds rows", len(odds), "markets", len(names))
-              for (n,mid),c in sorted(names.items(), key=lambda z:str(z[0][0])): print("  ", c, mid, n)
-              hb=[o for o in odds if any(w in str(o.get("marketName","")).lower() for w in ("lovit","bloc","hit","block","uderz","zablok","blok","rebat","bloque"))]
-              print("SAMPLE", json.dumps(hb[:3])[:1500])
-              break
+                  t=get(u); js=json.loads(t)
+                  cats=sorted({(c.get("name"),c.get("id")) for c in js.get("categories",[])}, key=str)
+                  subs=sorted({(s.get("name"),s.get("id")) for s in js.get("subcategories",[])}, key=str)
+                  print("DK",st,"events",len(js.get("events",[])),"cats",cats[:40]); print("  subcats",[s for s in subs if re.search("hit|block|shot|point|goal",str(s[0]),re.I)][:40]); break
+              except Exception as e: print("DK",st,"ERR",str(e)[:100])
+          for u in ["https://sbapi.nj.sportsbook.fanduel.com/api/content-managed-page?page=CUSTOM&customPageId=nhl&_ak=FhMFpcPWXMeyZxOx&timezone=America%2FNew_York",
+                    "https://sbapi.ny.sportsbook.fanduel.com/api/content-managed-page?page=CUSTOM&customPageId=nhl&_ak=FhMFpcPWXMeyZxOx&timezone=America%2FNew_York"]:
+              try:
+                  t=get(u); print("FD", len(t), sorted(set(re.findall(r'"marketType":"([A-Z_]*(?:HIT|BLOCK)[A-Z_]*)"', t)))[:20], t[:200].replace("\n"," "))
+              except Exception as e: print("FD ERR", str(e)[:100])
           PY
       - name: Save output to the probe branch
         run: |
