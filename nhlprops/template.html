@@ -326,7 +326,7 @@ td.h{text-align:center;padding:4px}
 .chip{background:var(--chip);border-radius:7px;padding:4px 8px;font-size:12px}
 .chip b{font-variant-numeric:tabular-nums}
 .up{color:var(--good)}.down{color:var(--bad)}
-.oddsgrid{display:grid;grid-template-columns:auto auto auto auto auto;gap:6px 12px;align-items:center;font-size:12.5px}
+.oddsgrid{display:grid;grid-template-columns:auto auto auto auto auto auto;gap:6px 12px;align-items:center;font-size:12.5px}
 .oddsgrid .h{font-size:10.5px;color:var(--mute);text-transform:uppercase}
 .cmp{width:100%;font-size:12.5px}
 .cmp td{padding:6px 4px}
@@ -353,6 +353,35 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
   .grow .lg,.grow .lgfb{--lg:30px}
   .hide-sm{display:none}
 }
+.acctbtn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;height:32px;padding:0 11px;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.acctbtn.in{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.modal{position:fixed;inset:0;z-index:60;background:rgba(3,6,10,.62);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.mbox{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.mbox h3{font-family:var(--f-disp);margin:0 0 4px;font-size:20px}
+.mbox .meta{margin:0 0 14px}
+.mbox label{display:block;font-size:12px;font-weight:600;color:var(--mute);margin:10px 0 4px}
+.mbox input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px 12px;font:inherit}
+.mbox input:focus{outline:2px solid color-mix(in srgb,var(--accent) 60%,transparent);border-color:transparent}
+.mrow{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.mbtn{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+.mbtn.pri{background:var(--accent);border-color:var(--accent);color:#06210f}
+.mlink{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:0;font-size:13px}
+.mmsg{font-size:13px;margin-top:12px;min-height:18px}.mmsg.err{color:var(--bad)}.mmsg.ok{color:var(--accent)}
+.savebtn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:8px;padding:3px 8px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.savebtn:hover{border-color:var(--accent);color:var(--accent)}
+.savebtn.saved{border-color:transparent;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);cursor:default}
+.pick .savebtn{margin-top:8px}
+.ptab .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.ptab .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ptab .kpi small{display:block;font-size:11px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.ptab .kpi b{font-family:var(--f-disp);font-size:22px}
+.res{font-weight:700;font-size:12px;padding:2px 8px;border-radius:999px}
+.res.win{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.res.loss{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.res.void,.res.open{background:var(--chip);color:var(--mute)}
+.delbtn{background:none;border:0;color:var(--mute);cursor:pointer;font-size:15px}
+.delbtn:hover{color:var(--bad)}
 .nico{display:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:640px){
   /* app-like phone layout: compact sticky header + bottom tab bar */
@@ -384,11 +413,13 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
     <div class="brand" id="home">NHL Props <b>Lab</b></div>
     <div class="meta" id="meta"></div>
     <nav id="nav"></nav>
-    <div class="tools"><div class="seg" id="lang"></div><button class="iconbtn" id="theme" type="button"></button></div>
+    <div class="tools"><div class="seg" id="lang"></div><button class="iconbtn" id="theme" type="button"></button><button class="acctbtn" id="acct" type="button"></button></div>
   </div>
 </header>
 <main class="wrap" id="main"></main>
 <button class="totop" id="totop" type="button">↑</button>
+<div class="modal" id="modal" hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 
 <script>
 const DATA=/*__DATA__*/null;
@@ -485,7 +516,18 @@ const I18N = {
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
-    st_live:"Live", st_final:"Final", st_int:"Intermission", proj_short:"proj.", frozen_note:"Started: probabilities, odds and picks are kept as they were at puck drop.",
+    st_live:"Live", st_final:"Final", st_int:"Intermission",
+    login:"Log in", logout:"Log out", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
+    au_in_h:"Log in", au_up_h:"Create a free account", au_sub:"Save picks and track how they do. Results are graded automatically after each game.",
+    au_email:"Email", au_pass:"Password (8+ characters)", au_in_btn:"Log in", au_up_btn:"Create account", au_have:"I already have an account", au_new:"New here? Create an account",
+    au_link:"Email me a login link", au_link_sent:"Check your email for the login link.", au_need_email:"Enter your email first.", au_need_pass:"Enter your password, or use a login link.",
+    au_confirm:"Almost done: check your email and click the link to confirm your account.", acct_h:"Your account",
+    sv_h:"Save pick", sv_odds:"Odds you got", sv_stake:"Stake (units)", sv_model:"Model chance right now: {p}", sv_dup:"You already saved this pick.",
+    pk_h:"My picks", pk_signin:"Log in or create a free account to save picks. They are graded automatically after each game, with hit rate, profit and how your odds compared with the closing odds.",
+    pk_unavail:"Accounts are not available right now.", pk_n:"Picks", pk_settled:"Settled", pk_hit:"Hit rate", pk_exp:"Model expected", pk_profit:"Profit (units)", pk_roi:"ROI", pk_clv:"Beat closing odds",
+    pk_market:"Market", pk_close:"Closing", pk_model:"Model", pk_stake:"Stake", pk_result:"Result", pk_del:"Remove pick", pk_none:"No picks yet. Use “＋ Save” on any prop or best pick.",
+    pk_note:"Graded hourly from official NHL box scores. A player who doesn't play is void. “Beat closing odds” compares your odds with the last price before puck drop; doing that consistently is the best sign of good picks.",
+    res_win:"Won", res_loss:"Lost", res_void:"Void", res_open:"Open", proj_short:"proj.", frozen_note:"Started: probabilities, odds and picks are kept as they were at puck drop.",
     st_uncertain:"Not decided", or_g:"or {n}", alt_note:"Sources disagree on the starter. {n} may start instead – switch below to see his effect.",
     st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
@@ -577,7 +619,18 @@ const I18N = {
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
-    st_live:"Live", st_final:"Slut", st_int:"Paus", proj_short:"ber.", frozen_note:"Startad: sannolikheter, odds och spel visas som de var vid nedsläpp.",
+    st_live:"Live", st_final:"Slut", st_int:"Paus",
+    login:"Logga in", logout:"Logga ut", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
+    au_in_h:"Logga in", au_up_h:"Skapa ett gratiskonto", au_sub:"Spara spel och följ hur de går. Resultaten rättas automatiskt efter varje match.",
+    au_email:"E-post", au_pass:"Lösenord (minst 8 tecken)", au_in_btn:"Logga in", au_up_btn:"Skapa konto", au_have:"Jag har redan ett konto", au_new:"Ny här? Skapa ett konto",
+    au_link:"Mejla mig en inloggningslänk", au_link_sent:"Kolla din e-post efter inloggningslänken.", au_need_email:"Skriv din e-post först.", au_need_pass:"Skriv ditt lösenord, eller använd en inloggningslänk.",
+    au_confirm:"Nästan klart: kolla din e-post och klicka på länken för att bekräfta kontot.", acct_h:"Ditt konto",
+    sv_h:"Spara spel", sv_odds:"Oddset du fick", sv_stake:"Insats (enheter)", sv_model:"Modellens chans just nu: {p}", sv_dup:"Du har redan sparat det här spelet.",
+    pk_h:"Mina spel", pk_signin:"Logga in eller skapa ett gratiskonto för att spara spel. De rättas automatiskt efter varje match, med träffprocent, vinst och hur dina odds stod sig mot stängningsoddsen.",
+    pk_unavail:"Konton är inte tillgängliga just nu.", pk_n:"Spel", pk_settled:"Avgjorda", pk_hit:"Träffprocent", pk_exp:"Modellen väntade", pk_profit:"Vinst (enheter)", pk_roi:"ROI", pk_clv:"Slog stängningsoddset",
+    pk_market:"Marknad", pk_close:"Stängning", pk_model:"Modell", pk_stake:"Insats", pk_result:"Resultat", pk_del:"Ta bort spel", pk_none:"Inga spel än. Använd ”＋ Spara” på valfritt spel eller bästa spel.",
+    pk_note:"Rättas varje timme från NHL:s officiella matchrapporter. En spelare som inte spelar blir ogiltig. ”Slog stängningsoddset” jämför ditt odds med sista priset före nedsläpp; att göra det gång på gång är det bästa tecknet på bra spel.",
+    res_win:"Vann", res_loss:"Förlorade", res_void:"Ogiltig", res_open:"Öppen", proj_short:"ber.", frozen_note:"Startad: sannolikheter, odds och spel visas som de var vid nedsläpp.",
     st_uncertain:"Inte avgjort", or_g:"eller {n}", alt_note:"Källorna är oense om startmålvakten. {n} kan starta i stället – byt nedan för att se effekten.",
     st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
@@ -760,8 +813,10 @@ function header(){
   $("#meta").innerHTML = t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "");
   const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
     props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
-    how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>'};
-  $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["track","nav_track"],["how","nav_how"]]
+    how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>', picks:'<path d="M6 4h12v16l-6-4-6 4z"/>'};
+  $("#acct").textContent = USER ? (USER.email||"").split("@")[0] : t("login");
+  $("#acct").classList.toggle("in", !!USER);
+  $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
     .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}"><svg class="nico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${t(l)}</span></button>`).join("");
   $("#lang").innerHTML = `<button data-l="en" class="${LANG==="en"?"on":""}" aria-label="English">EN</button><button data-l="sv" class="${LANG==="sv"?"on":""}" aria-label="Svenska">SV</button>`;
   const th = currentTheme();
@@ -773,6 +828,7 @@ function header(){
 function wireHeader(){
   $("#nav").onclick = e => { const b=e.target.closest("button"); if(!b) return; go({tab:b.dataset.tab, game:null}); };
   $("#home").onclick = () => go({tab:"games", game:null});
+  $("#acct").onclick = () => USER ? openAccount() : openAuth("in");
   $("#lang").onclick = e => { const b=e.target.closest("button"); if(!b || b.dataset.l===LANG) return; LANG=b.dataset.l; store.set("set:lang", LANG); header(); render(); };
   $("#theme").onclick = () => { const next = currentTheme()==="dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next); store.set("set:theme", next); header(); };
   const tt = $("#totop");
@@ -954,7 +1010,7 @@ function bestPicksBox(g){
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
         <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?t("point1"):t("goal")}</span>
           <div class="po">${c.od?c.od.toFixed(2):"–"}</div><div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
-      <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul></div>`; }).join("");
+      <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul>${saveBtn(g, c.pr, c.m)}</div>`; }).join("");
   const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
   const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
   return `<div class="box picks"><h4>${t("bp_title")} <span class="meta">${hasOdds?t("bp_sub_odds"):t("bp_sub_noodds")}</span></h4>
@@ -1216,9 +1272,9 @@ function detail(pr, g){
     return `<span>${mName(m)}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
       <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):t("odds_ph")}" value="${uo??""}">
-      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span>`; }).join("");
+      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span>${saveBtn(g, pr, m)}`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box" style="grid-column:span 2"><h4>${t("pv")}</h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span>${oddsRows}</div>
+    <div class="box" style="grid-column:span 2"><h4>${t("pv")}</h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
       <p class="note">${t("pv_note")}</p></div>
     <div class="box"><h4>${t("built")}</h4>
       <div class="chips">
@@ -1430,7 +1486,7 @@ function rowsTop(){
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}"></td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g} ${t("h_g")} ${x.a} ${t("h_a")} ${x.s} ${t("h_s")}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
-      <td>${regPills(p)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
+      <td>${regPills(p)} ${saveBtn(g, pr, m)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
@@ -1547,8 +1603,107 @@ function render(){
   if (state.tab==="games") (state.game ? gamePage : gamesList)();
   else if (state.tab==="props") propsTab();
   else if (state.tab==="track") trackTab();
+  else if (state.tab==="picks") picksTab();
   else howTab();
 }
+// ------------------------------------------------------------ accounts & my picks (Supabase)
+const SB_URL = "https://evxnevqxykbfocqfqxid.supabase.co", SB_KEY = "sb_publishable_ZQQw6R--FoIe0CzNqEkeLg_O5qv4TQO";
+const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, detectSessionInUrl:true}}) : null;
+let USER = null, MYPICKS = [];
+const pickKey = (gid, pid, m) => `${gid}:${pid}:${m}`;
+let SAVED = new Set();
+async function loadPicks(){
+  if (!sb || !USER){ MYPICKS = []; SAVED = new Set(); return; }
+  const {data} = await sb.from("picks").select("*").order("game_date",{ascending:false}).order("created_at",{ascending:false}).limit(2000);
+  MYPICKS = data || []; SAVED = new Set(MYPICKS.map(x => pickKey(x.game_id, x.player_id, x.market)));
+}
+function saveBtn(g, pr, m){
+  if (!sb) return "";
+  const k = pickKey(g.id, pr.id, m);
+  if (SAVED.has(k)) return `<span class="savebtn saved">✓ ${t("saved")}</span>`;
+  if (!g.start || (g.state && !["FUT","PRE"].includes(g.state)) || new Date(g.start).getTime() <= Date.now()) return "";
+  return `<button class="savebtn" data-save="${g.id}|${pr.id}|${m}" type="button">＋ ${t("save")}</button>`;
+}
+function modal(html){ const el = $("#modal"); el.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${html}</div>`; el.hidden = false; const f = el.querySelector("input"); if (f) f.focus(); }
+function closeModal(){ const el = $("#modal"); el.hidden = true; el.innerHTML = ""; }
+$("#modal").addEventListener("click", e => { if (e.target.id === "modal" || e.target.closest("[data-close]")) closeModal(); });
+addEventListener("keydown", e => { if (e.key === "Escape" && !$("#modal").hidden) closeModal(); });
+function openAuth(mode, after){
+  const up = mode === "up";
+  modal(`<h3>${up?t("au_up_h"):t("au_in_h")}</h3><p class="meta">${t("au_sub")}</p>
+    <form id="authf"><label for="au_e">${t("au_email")}</label><input id="au_e" type="email" autocomplete="email" required>
+    <label for="au_p">${t("au_pass")}</label><input id="au_p" type="password" autocomplete="${up?"new-password":"current-password"}" minlength="8" ${up?"required":""}>
+    <div class="mrow"><button class="mbtn pri" type="submit">${up?t("au_up_btn"):t("au_in_btn")}</button><button class="mbtn" type="button" data-close>${t("cancel")}</button></div></form>
+    <div class="mrow" style="justify-content:space-between"><button class="mlink" id="au_sw" type="button">${up?t("au_have"):t("au_new")}</button>${up?"":`<button class="mlink" id="au_link" type="button">${t("au_link")}</button>`}</div>
+    <div class="mmsg" id="au_msg"></div>`);
+  const msg = (txt, ok) => { const m = $("#au_msg"); m.textContent = txt; m.className = "mmsg " + (ok?"ok":"err"); };
+  const redirect = location.origin + location.pathname;
+  $("#au_sw").onclick = () => openAuth(up ? "in" : "up", after);
+  if (!up) $("#au_link").onclick = async () => { const email = $("#au_e").value.trim(); if (!email) return msg(t("au_need_email"));
+    const {error} = await sb.auth.signInWithOtp({email, options:{emailRedirectTo: redirect}}); msg(error ? error.message : t("au_link_sent"), !error); };
+  $("#authf").onsubmit = async e => { e.preventDefault(); const email = $("#au_e").value.trim(), password = $("#au_p").value;
+    if (up){ const {data, error} = await sb.auth.signUp({email, password, options:{emailRedirectTo: redirect}});
+      if (error) return msg(error.message); if (!data.session) return msg(t("au_confirm"), true); }
+    else { if (!password) return msg(t("au_need_pass")); const {error} = await sb.auth.signInWithPassword({email, password}); if (error) return msg(error.message); }
+    closeModal(); if (after) after(); };
+}
+function openAccount(){
+  modal(`<h3>${t("acct_h")}</h3><p class="meta">${esc(USER.email||"")}</p>
+    <div class="mrow"><button class="mbtn pri" id="ac_picks" type="button">${t("nav_picks")}</button><button class="mbtn" id="ac_out" type="button">${t("logout")}</button></div>`);
+  $("#ac_picks").onclick = () => { closeModal(); go({tab:"picks", game:null}); };
+  $("#ac_out").onclick = async () => { await sb.auth.signOut(); closeModal(); };
+}
+function openSave(gid, pid, m){
+  if (!USER) return openAuth("in", () => openSave(gid, pid, m));
+  const g = gameById[gid], pr = g && g.props.find(x => String(x.id) === String(pid)); if (!pr) return;
+  const p = P(pr.id), b = book(g.id, pr.id, m), uo = userOdds(g.id, pr.id, m), od = uo ?? b?.o ?? "";
+  const pv = prob(pr, g, m);
+  modal(`<h3>${t("sv_h")}</h3><p class="meta">${esc(p.name)} · ${mName(m)} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</p>
+    <form id="savef"><label for="sv_o">${t("sv_odds")}</label><input id="sv_o" type="number" step="0.01" min="1.01" inputmode="decimal" value="${od}" required>
+    <label for="sv_s">${t("sv_stake")}</label><input id="sv_s" type="number" step="0.5" min="0.5" inputmode="decimal" value="1" required>
+    <p class="meta" style="margin:10px 0 0">${t("sv_model",{p:pct(pv,1)})}</p>
+    <div class="mrow"><button class="mbtn pri" type="submit">${t("save")}</button><button class="mbtn" type="button" data-close>${t("cancel")}</button></div></form><div class="mmsg" id="sv_msg"></div>`);
+  $("#savef").onsubmit = async e => { e.preventDefault();
+    const odds = parseFloat($("#sv_o").value), stake = parseFloat($("#sv_s").value);
+    const row = {game_id: g.id, game_date: g.date, start_time: g.start || null, player_id: pr.id, player_name: p.name, team: pr.team, opp: pr.opp,
+                 market: m, odds, model_p: Math.round(pv*10000)/10000, stake};
+    const {error} = await sb.from("picks").insert(row);
+    if (error){ const mm = $("#sv_msg"); mm.className = "mmsg err"; mm.textContent = error.code==="23505" ? t("sv_dup") : error.message; return; }
+    await loadPicks(); closeModal(); render(); };
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-save]"); if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const [gid, pid, m] = b.dataset.save.split("|"); openSave(gid, pid, m);
+}, true);
+
+function picksTab(){
+  if (!sb){ $("#main").innerHTML = `<div class="card empty prose"><p>${t("pk_unavail")}</p></div>`; return; }
+  if (!USER){ $("#main").innerHTML = `<div class="card empty prose" style="max-width:560px;margin:auto"><h3>${t("pk_h")}</h3><p>${t("pk_signin")}</p>
+      <div class="mrow" style="max-width:360px"><button class="mbtn pri" id="pk_in" type="button">${t("au_in_btn")}</button><button class="mbtn" id="pk_up" type="button">${t("au_up_btn")}</button></div></div>`;
+    $("#pk_in").onclick = () => openAuth("in"); $("#pk_up").onclick = () => openAuth("up"); return; }
+  const done = MYPICKS.filter(x => x.result && x.result !== "void"), wins = done.filter(x => x.result === "win");
+  const staked = done.reduce((a,x)=>a+ +x.stake,0), ret = wins.reduce((a,x)=>a+ x.stake*x.odds,0), profit = ret - staked;
+  const withClose = done.filter(x => x.closing_odds), clv = withClose.length ? withClose.reduce((a,x)=>a + (x.odds/x.closing_odds - 1),0)/withClose.length : null;
+  const expHit = done.length ? done.reduce((a,x)=>a + (+x.model_p||0),0)/done.length : null;
+  const kpi = (lbl, v, cls="") => `<div class="kpi"><small>${lbl}</small><b class="${cls}">${v}</b></div>`;
+  const rows = MYPICKS.map(x => { const r = x.result || "open";
+    return `<tr><td>${x.game_date.slice(5)}</td><td><b>${esc(x.player_name)}</b><div class="meta">${x.team} ${t("vs_short")} ${x.opp}</div></td><td>${mName(x.market)}</td>
+      <td class="n num">${(+x.odds).toFixed(2)}</td><td class="n num hide-xs">${x.closing_odds?(+x.closing_odds).toFixed(2):"–"}</td><td class="n num hide-xs">${x.model_p!=null?pct(+x.model_p,0):"–"}</td>
+      <td class="n num hide-xs">${+x.stake}</td><td><span class="res ${r}">${t("res_"+r)}${x.stat_value!=null?` · ${x.stat_value}`:""}</span></td>
+      <td>${x.result?"":`<button class="delbtn" data-del="${x.id}" title="${t("pk_del")}" aria-label="${t("pk_del")}">✕</button>`}</td></tr>`; }).join("");
+  $("#main").innerHTML = `<div class="ptab"><h2 style="margin:4px 0 14px">${t("pk_h")}</h2>
+    <div class="sum">${kpi(t("pk_n"), MYPICKS.length)}${kpi(t("pk_settled"), done.length)}${kpi(t("pk_hit"), done.length?pct(wins.length/done.length,0):"–")}
+      ${kpi(t("pk_exp"), expHit!=null?pct(expHit,0):"–")}${kpi(t("pk_profit"), (profit>=0?"+":"")+profit.toFixed(2), profit>0?"ev-pos":profit<0?"ev-neg":"")}
+      ${kpi(t("pk_roi"), staked?((profit/staked*100>=0?"+":"")+(profit/staked*100).toFixed(1)+"%"):"–", profit>0?"ev-pos":profit<0?"ev-neg":"")}
+      ${kpi(t("pk_clv"), clv!=null?((clv>=0?"+":"")+(clv*100).toFixed(1)+"%"):"–", clv>0?"ev-pos":clv<0?"ev-neg":"")}</div>
+    ${MYPICKS.length ? `<div class="card tablewrap"><table><thead><tr><th>${t("h_date")}</th><th>${t("h_player")}</th><th>${t("pk_market")}</th><th class="n">${t("h_odds")}</th><th class="n hide-xs">${t("pk_close")}</th><th class="n hide-xs">${t("pk_model")}</th><th class="n hide-xs">${t("pk_stake")}</th><th>${t("pk_result")}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : `<div class="card empty prose"><p>${t("pk_none")}</p></div>`}
+    <p class="note">${t("pk_note")}</p></div>`;
+  $("#main").querySelectorAll("[data-del]").forEach(b => b.onclick = async () => { await sb.from("picks").delete().eq("id", b.dataset.del); await loadPicks(); render(); });
+}
+if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null; setTimeout(async () => { await loadPicks(); header(); render(); }, 0); });
+
 // ------------------------------------------------------------ live scores (official NHL feed via our scores function)
 const SCORES_URL = "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores";
 async function pollScores(){

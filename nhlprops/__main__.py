@@ -197,6 +197,17 @@ def lineup_roles(slate: dict, lu_dir: Path) -> None:
             f.unlink()
 
 
+def write_closing(frozen_dir: Path, out: Path) -> None:
+    """Closing player odds (last pre-game snapshot) for the last few days: {game: {player: {market: odds}}}."""
+    res = {}
+    for f in sorted(frozen_dir.glob("20*.json"))[-4:]:
+        for gid, snap in json.loads(f.read_text(encoding="utf-8")).items():
+            pl = ((snap.get("odds") or {}).get("players") or {})
+            res[gid] = {pid: {m: v.get("o") for m, v in mk.items() if v and v.get("o")} for pid, mk in pl.items()}
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(res, separators=(",", ":")), encoding="utf-8")
+
+
 def team_logos(src: Source, slate: dict, logo_dir: Path) -> dict:
     import base64
     teams = sorted({g["home"] for g in slate["games"]} | {g["away"] for g in slate["games"]})
@@ -373,6 +384,7 @@ def main(argv=None):
             slate["odds"] = {}
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
     lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
+    write_closing(data_dir / ("demo_frozen" if args.demo else "frozen"), ROOT / "output" / "closing.json")
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
