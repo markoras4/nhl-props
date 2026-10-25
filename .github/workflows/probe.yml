@@ -7,35 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Kambi (Unibet) NHL offering
+      - name: NHL lineup projections article
         run: |
           exec >> probe-out.txt 2>&1
-          B="https://eu-offering-api.kambicdn.com/offering/v2018"
-          for op in ubse ub; do
-            U="$B/$op/listView/ice_hockey/nhl/all/all/matches.json?lang=en_GB&market=SE&useCombined=true"
-            echo "=== $U"; curl -s -A "Mozilla/5.0" "$U" -o list_$op.json -w "%{http_code} %{size_download}\n"
-          done
+          U="https://www.nhl.com/news/nhl-lineup-projections-2026-27-season"
+          curl -sL -A "Mozilla/5.0" "$U" -o lineups.html -w "%{http_code} %{size_download} %{url_effective}\n"
           python3 - <<'PY'
-          import json,urllib.request
-          d=json.load(open("list_ubse.json")) if open("list_ubse.json").read(1) else {}
-          evs=[e["event"] for e in d.get("events",[])]
-          print("events", len(evs), [ (e["id"], e.get("name")) for e in evs[:3]])
-          if evs:
-              eid=evs[0]["id"]
-              u=f"https://eu-offering-api.kambicdn.com/offering/v2018/ubse/betoffer/event/{eid}.json?lang=en_GB&market=SE&includeParticipants=true"
-              req=urllib.request.Request(u,headers={"User-Agent":"Mozilla/5.0"})
-              b=json.load(urllib.request.urlopen(req))
-              open("event.json","w").write(json.dumps(b)[:400000])
-              from collections import Counter
-              c=Counter((o.get("criterion",{}).get("label"), o.get("criterion",{}).get("englishLabel")) for o in b.get("betOffers",[]))
-              for k,v in c.most_common(60): print(v,k)
-              for o in b.get("betOffers",[]):
-                  lab=(o.get("criterion",{}).get("englishLabel") or "").lower()
-                  if "score" in lab or "point" in lab or "assist" in lab:
-                      print("SAMPLE", json.dumps(o)[:1500]); break
+          import re
+          h=open("lineups.html",encoding="utf-8",errors="replace").read()
+          print("len",len(h))
+          for k in ["Projected lineup","Scratched","Injured","Status report","__NEXT_DATA__","application/ld+json","dateModified","datePublished","contentful","forge-dapi"]:
+              print(k, h.count(k), [m.start() for m in re.finditer(re.escape(k),h)][:3])
+          i=h.find("Projected lineup")
+          print("SNIP", re.sub(r"\s+"," ",h[max(0,i-3000):i+6000]))
+          for m in re.finditer(r'"date(Modified|Published)"\s*:\s*"[^"]+"',h): print(m.group(0))
+          for m in re.finditer(r'https://forge-dapi[^"\' ]+',h): print("API",m.group(0)); break
           PY
       - name: Save output to the probe branch
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          mkdir -p /tmp/o; cp probe-out.txt list_*.json event.json /tmp/o/ 2>/dev/null || true
+          mkdir -p /tmp/o; cp probe-out.txt lineups.html /tmp/o/ 2>/dev/null || true
           git checkout --orphan probe2; git rm -rfq . ; cp /tmp/o/* . ; git add -A; git commit -qm "probe"; git push -f origin probe2
