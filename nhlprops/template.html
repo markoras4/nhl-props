@@ -186,6 +186,18 @@ td.h{text-align:center;padding:4px}
 .chartwrap .crt{font-size:11px;fill:var(--mute);font-family:var(--f-ui);font-weight:600}
 .chartwrap .crt.t{fill:var(--good)}
 .chartwrap .crt.x{fill:var(--accent2)}
+.picks{margin-bottom:16px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.pick{border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;background:var(--panel2);transition:border-color .15s}
+.pick:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.ph{display:flex;align-items:center;gap:10px}
+.pn{font-family:var(--f-disp);font-weight:700;font-size:16px}
+.pm{margin-left:auto;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.po{font-family:var(--f-disp);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums}
+.pw{margin:10px 0 0;padding-left:18px;font-size:12.5px;display:grid;gap:3px}
+.pw li::marker{color:var(--good)}
+.pw li.wn{color:var(--warn)}
+.pw li.wn::marker{content:"! ";color:var(--warn)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:12px;color:var(--mute);margin:8px 2px 0}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:5px}
 .bar{position:relative;height:22px;min-width:110px;background:var(--chip);border-radius:6px;overflow:hidden}
@@ -426,6 +438,7 @@ function gamePage(){
     <div class="box"><h4>Total goals</h4>
       <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Over odds</div>${ou}</div></div>
   </div>
+  ${bestPicksBox(g)}
   <div class="sides"><div class="seg" id="sides">
     <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${g.away} roster</button>
     <button data-s="matchup" class="${state.side==="matchup"?"on":""}">Matchup</button>
@@ -433,6 +446,8 @@ function gamePage(){
   <div id="sidebody"></div>`;
   $("#main").innerHTML = html;
   $("#back").onclick = () => go({game:null});
+  $("#main").querySelectorAll(".pick").forEach(el => el.onclick = () => { state.side = el.dataset.team; state.sort = null; state.open = el.dataset.open; gamePage();
+    document.querySelector(`tr.row[data-id="${el.dataset.open}"]`)?.scrollIntoView({behavior:"smooth", block:"center"}); });
   $("#sides").onclick = e => { const b=e.target.closest("button"); if(b){ state.side=b.dataset.s; state.open=null; gamePage(); } };
   $("#main").onchange = e => {
     const o = e.target.closest("input.ouodds"); if(o){ const v=parseFloat(o.value.replace(",",".")); store.set(o.dataset.k, isNaN(v)?"":v); gamePage(); return; }
@@ -440,6 +455,66 @@ function gamePage(){
     const pi = e.target.closest("input.podds"); if(pi){ const v=parseFloat(pi.value.replace(",",".")); store.set(oddsKey(g.id,pi.dataset.pid,pi.dataset.m), isNaN(v)?"":v); gamePage(); }
   };
   if (state.side==="matchup") matchup(g); else sidePanel(g, state.side);
+}
+
+// ------------------------------------------------------------ best picks (helper, not a verdict)
+function bestPicks(g){
+  const hasOdds = !!DATA.odds?.[g.id];
+  const cands = [];
+  for (const pr of g.props){
+    const p = P(pr.id); if (!p?.active) continue;
+    const opts = ["g","pt"].map(m=>{ const v = prob(pr,g,m), od = getOdds(g.id,pr.id,m); return {m, v, od, ev: od ? v*od-1 : null}; });
+    if (hasOdds){
+      const ok = opts.filter(o=>o.ev!=null && o.ev>0); if (!ok.length) continue;
+      ok.sort((a,b)=>b.ev-a.ev);
+      let pick = ok[0];
+      const pt = ok.find(o=>o.m==="pt");
+      if (pick.m==="g" && pt && pt.ev >= pick.ev - 0.03) pick = pt;   // similar edge: take the safer point
+      cands.push({pr, p, ...pick});
+    } else {
+      const pt = opts.find(o=>o.m==="pt"); cands.push({pr, p, ...pt});
+    }
+  }
+  cands.sort((a,b)=> hasOdds ? b.ev-a.ev : b.v-a.v);
+  const teamCount = {[g.home]:0, [g.away]:0}; cands.forEach(c=>{ if (c.ev!=null && c.ev>=VALUE) teamCount[c.pr.team]++; });
+  return {picks: cands.slice(0,2), hasOdds, teamCount};
+}
+function pickReasons(c, g){
+  const p = c.p, pr = c.pr, opp = pr.opp, why = [], warn = [];
+  const b = book(g.id, pr.id, c.m), nv = noVig(b), imp = c.od ? 1/c.od : null;
+  if (c.od) why.push(`Model ${pct(c.v)} vs bookmaker ${pct(nv ?? imp)}`);
+  const lu = DATA.teams[pr.team]?.lineup?.groups || {};
+  const line = Object.entries(lu).find(([k,ids])=>/^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
+  const pp1 = (lu.pp1||[]).includes(pr.id);
+  why.push(`Plays ${fmt(p.toi_proj,1)} min${line?` on ${line.toUpperCase()}`:""}${pp1?", first power play":""}`);
+  if (p.regress.flag==="due") why.push("Scoring below his true talent this season (due)");
+  if (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8) why.push(`${p.drought.shots} shots since his last goal`);
+  const og = G(state.goalie[g.id][opp]);
+  if (og && og.ratio>1.02) why.push(`Opposing goalie below average (${fmt(og.ratio,2)})`);
+  if (og && og.ratio<0.98) warn.push(`Opposing goalie above average (${fmt(og.ratio,2)})`);
+  const f = p.form; if (f.gp>=3) why.push(`Last ${f.gp} games: ${f.g} G, ${f.a} A, ${f.s} shots`);
+  if (p.regress.flag==="hot") warn.push("Scoring above his true talent, may cool off");
+  if (p.injury?.kind==="questionable") warn.push(`Listed ${p.injury.status}`);
+  const st = (g.starter_status[opp]||"").toLowerCase();
+  if (!st.includes("confirmed") || st.includes("unconfirmed")) warn.push(`${opp} goalie not confirmed`);
+  if (DATA.teams[pr.team]?.lineup?.source!=="projected") warn.push("Lineup estimated");
+  if ((p.windows?.career?.gp||0) < 40) warn.push("Short NHL history");
+  return {why, warn};
+}
+function bestPicksBox(g){
+  const {picks, hasOdds, teamCount} = bestPicks(g);
+  if (!picks.length) return `<div class="box picks"><h4>Best picks in this game</h4><p class="meta">${hasOdds?"No goal or point bet has positive value at the current odds.":"No players available."}</p></div>`;
+  const cards = picks.map(c=>{ const {why, warn} = pickReasons(c, g);
+    return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
+      <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
+        <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?"1+ point":"Goal"}</span>
+          <div class="po">${c.od?c.od.toFixed(2):"–"}</div><div class="meta">${c.ev!=null?`edge ${(c.ev>0?"+":"")+(c.ev*100).toFixed(1)}%`:`${pct(c.v)} likely`}</div></div></div>
+      <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul></div>`; }).join("");
+  const [[t1,n1],[t2,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
+  const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${n1} of the ${n1+n2} value bets in this game are on ${t1} players. That usually means the model and the bookmaker disagree about ${t1}'s scoring as a whole, so these bets tend to win or lose together. Treat them as one opinion.</p>` : "";
+  return `<div class="box picks"><h4>Best picks in this game <span class="meta">${hasOdds?"highest edge · one per player · point preferred when the edge is similar":"no odds yet · most likely points"}</span></h4>
+    <div class="pgrid">${cards}</div>${lopsided}
+    <p class="note">A helper, not a tip: it lists the facts behind each option. The model hasn't been tested for profit yet, so check the warnings and decide for yourself.</p></div>`;
 }
 
 function goalieCard(g, team){
