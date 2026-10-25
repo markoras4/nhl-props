@@ -279,6 +279,15 @@ def generate(cache: Path, date: str, seed: int = 7) -> None:
         (cache / f"news/lines_{t}.html").write_text(
             f'<html><script id="__NEXT_DATA__" type="application/json">{json.dumps(nd)}</script></html>')
 
+    # placeholder logos (real ones are downloaded from the NHL by the live build)
+    for i, t in enumerate(NHL_TEAMS):
+        hue = (i * 47) % 360
+        for variant, fg in (("dark", "#fff"), ("light", "#111")):
+            p = cache.parent / "demo_logos" / f"{t}_{variant}.svg"
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 4 92 22v30c0 24-18 38-42 44C26 90 8 76 8 52V22z" fill="hsl({hue},65%,45%)"/>'
+                         f'<text x="50" y="62" font-family="Arial" font-weight="700" font-size="28" text-anchor="middle" fill="{fg}">{t}</text></svg>')
+
     # metadata used by `simulate_results`
     _write(cache / "demo_meta.json", {"slate": slate, "date": date})
 

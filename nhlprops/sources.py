@@ -163,6 +163,17 @@ class Source:
             data = self.json(f"{NHL}/gamecenter/{game_id}/boxscore", key, None)
         return data
 
+    # ---------------------------------------------------------------- logos
+    def logo(self, team: str, variant: str, logo_dir: Path) -> str | None:
+        """Team logo SVG (variant 'light' for light backgrounds, 'dark' for dark), kept in data/logos."""
+        p = Path(logo_dir) / f"{team}_{variant}.svg"
+        if not p.exists() and not self.offline:
+            raw = self._download(f"https://assets.nhle.com/logos/nhl/svg/{team}_{variant}.svg")
+            if raw and raw.lstrip()[:5] in (b"<svg ", b"<?xml") or (raw and b"<svg" in raw[:400]):
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_bytes(raw)
+        return p.read_text(encoding="utf-8", errors="ignore") if p.exists() else None
+
     # ------------------------------------------------------------- MoneyPuck
     def moneypuck(self, kind: str, start_year: int, current: bool) -> pd.DataFrame | None:
         df = self.csv(MP.format(year=start_year, kind=kind), f"mp/{kind}_{start_year}.csv",

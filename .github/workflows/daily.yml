@@ -52,7 +52,7 @@ jobs:
         run: |
           git config user.name "nhl-props-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/history || true
+          git add data/history data/logos || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
 
       - uses: actions/configure-pages@v5

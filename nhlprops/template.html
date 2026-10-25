@@ -5,22 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NHL Props Lab</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&display=swap">
 <style>
 /* Layout: sticky top bar · games list (home) · game page with side picker · props grid */
 :root{
   --bg:#0a0e13; --panel:#111821; --panel2:#17202b; --line:#22303f; --text:#e7eef6; --mute:#8796a8;
   --accent:#3ddc97; --accent2:#5aa9ff; --warn:#ffb547; --bad:#ff6b6b; --good:#3ddc97; --chip:#1b2533;
   --heat:61,220,151; --radius:12px; color-scheme:dark;
-  --f-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-disp:"Oxanium","Exo 2",-apple-system,"Segoe UI",sans-serif;
   --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .lg-d{display:none}
+  :root:not([data-theme="dark"]) .lg-l{display:inline-block}
   :root:not([data-theme="dark"]){
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
     --heat:13,154,96; color-scheme:light;
   }
 }
+:root[data-theme="light"] .lg-d{display:none}
+:root[data-theme="light"] .lg-l{display:inline-block}
 :root[data-theme="light"]{
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
@@ -34,7 +42,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:center;gap:14px;padding-block:12px;flex-wrap:wrap}
-.brand{font-weight:800;font-size:18px;letter-spacing:.2px;cursor:pointer}
+.brand{font-family:var(--f-disp);font-weight:800;font-size:19px;letter-spacing:.6px;cursor:pointer;text-transform:uppercase}
 .brand b{color:var(--accent)}
 .meta{color:var(--mute);font-size:12px}
 .demo{background:var(--warn);color:#111;font-weight:700;border-radius:6px;padding:2px 8px;font-size:11px}
@@ -66,20 +74,25 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 /* ---------- games list */
 .days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
 .day{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px;cursor:pointer;text-align:left}
-.day b{display:block;font-size:14px}
+.day b{display:block;font-size:14px;font-family:var(--f-disp);letter-spacing:.5px;text-transform:uppercase}
 .day span{font-size:11px;color:var(--mute)}
 .day.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 .glist{display:grid;gap:10px}
 .grow{display:grid;grid-template-columns:72px 1fr 150px 1fr 170px;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
 .grow:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
-.gtime{font-weight:700;font-variant-numeric:tabular-nums}
+.gtime{font-family:var(--f-disp);font-weight:700;font-variant-numeric:tabular-nums;font-size:15px}
 .gtime small{display:block;color:var(--mute);font-weight:500;font-size:11px}
 .gteam{display:flex;flex-direction:column;gap:3px;min-width:0}
 .gteam.r{align-items:flex-end;text-align:right}
-.abbr{font-size:22px;font-weight:800;letter-spacing:.5px}
+.abbr{font-family:var(--f-disp);font-size:22px;font-weight:800;letter-spacing:1px}
+.tm{display:flex;align-items:center;gap:10px}
+.gteam.r .tm{flex-direction:row-reverse}
+.lg{width:var(--lg,40px);height:var(--lg,40px);object-fit:contain;flex:0 0 auto;display:inline-block}
+.lg-l{display:none}
+.lgfb{width:var(--lg,40px);height:var(--lg,40px);border-radius:50%;background:var(--chip);display:inline-grid;place-items:center;font-family:var(--f-disp);font-size:11px;font-weight:700;color:var(--mute);flex:0 0 auto}
 .gteam .sub{font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .gmid{text-align:center}
-.gmid .sc{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.gmid .sc{font-family:var(--f-disp);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .gmid .wpb{display:flex;height:5px;border-radius:3px;overflow:hidden;margin-top:6px;background:var(--chip)}
 .wpb i:first-child{background:var(--accent2)}.wpb i:last-child{background:var(--accent)}
 .gou{display:grid;grid-template-columns:auto auto;gap:2px 12px;font-size:12px;justify-content:end}
@@ -92,11 +105,16 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .back:hover{color:var(--text)}
 .ghero{padding:18px 20px;display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
 .ghero .abbr{font-size:34px}
-.ghero .big{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;text-align:center}
+.ghero .tm{--lg:64px;gap:14px}
+.ghero .tm.r{flex-direction:row-reverse;text-align:right}
+.sides .lg{--lg:22px}
+.sides button{display:inline-flex;align-items:center;gap:8px}
+.pl .lg{--lg:18px;vertical-align:-4px;margin-right:2px}
+.ghero .big{font-family:var(--f-disp);font-size:36px;font-weight:700;font-variant-numeric:tabular-nums;text-align:center;letter-spacing:.5px}
 .ghero .big small{display:block;font-size:11px;color:var(--mute);font-weight:600;letter-spacing:.4px;text-transform:uppercase}
 .gsum{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 18px}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;min-width:0}
-.box h4{margin:0 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.box h4{font-family:var(--f-disp);margin:0 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .ou{display:grid;grid-template-columns:auto repeat(4,1fr);gap:6px 10px;align-items:center;font-size:13px}
 .ou .h{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
 .sides{display:flex;justify-content:center;margin-bottom:16px}
@@ -105,7 +123,7 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:12.5px}
 .kv span:nth-child(odd){color:var(--mute)}
 .kv span:nth-child(even){font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
-.gname{font-size:17px;font-weight:750;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.gname{font-family:var(--f-disp);font-size:18px;font-weight:750;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .injl{display:flex;flex-direction:column;gap:8px;font-size:13px}
 .inj{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:start}
 .inj .d{grid-column:2;color:var(--mute);font-size:12px}
@@ -120,7 +138,7 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 /* ---------- props grid */
 .tablewrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);font-weight:650;text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:var(--f-disp);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);font-weight:650;text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 th.s{cursor:pointer;user-select:none}
 th.s:hover{color:var(--text)}
 th.on{color:var(--accent)}
@@ -137,7 +155,7 @@ tr.out td{opacity:.55}
 .pl .sub{font-size:11.5px;color:var(--mute)}
 td.h{text-align:center;padding:4px}
 .cell{border-radius:7px;padding:5px 6px;min-width:62px;font-variant-numeric:tabular-nums;line-height:1.2}
-.cell b{display:block;font-size:13.5px}
+.cell b{display:block;font-size:14px;font-family:var(--f-disp);font-weight:700}
 .cell small{font-size:10.5px;color:var(--mute)}
 .bar{position:relative;height:22px;min-width:110px;background:var(--chip);border-radius:6px;overflow:hidden}
 .bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,rgba(var(--heat),.35),rgba(var(--heat),.9));border-radius:6px}
@@ -178,7 +196,8 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
   header{position:static} nav{margin-left:0}
   .sidegrid,.gsum{grid-template-columns:1fr}
   .grow{grid-template-columns:1fr auto 1fr;gap:8px}.gtime{grid-column:1/-1}
-  .ghero{padding:14px}.ghero .abbr,.ghero .big{font-size:26px}
+  .ghero{padding:14px;grid-template-columns:1fr 1fr}.ghero .big{grid-column:1/-1;grid-row:1}.ghero .abbr,.ghero .big{font-size:26px}.ghero .tm{--lg:40px}
+  .grow .lg,.grow .lgfb{--lg:30px}
   .hide-sm{display:none}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
@@ -271,6 +290,11 @@ const getOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,
 // ------------------------------------------------------------ helpers
 const timeOf = g => g.start ? new Date(g.start).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}) : "TBD";
 const dayLabel = d => { const x = new Date(d+"T12:00:00"); return x.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"}); };
+function logo(t, size){
+  const L = DATA.logos && DATA.logos[t], st = size ? ` style="--lg:${size}px"` : "";
+  if (!L) return `<span class="lgfb"${st}>${t}</span>`;
+  return `<img class="lg lg-d" src="${L.dark||L.light}" alt="${t} logo"${st}><img class="lg lg-l" src="${L.light||L.dark}" alt="${t} logo"${st}>`;
+}
 const rec = t => t ? `${t.w??0}-${t.l??0}-${t.otl??0}` : "";
 function statusPill(s){
   const k = (s||"").toLowerCase();
@@ -317,11 +341,11 @@ function gamesList(){
     const outA = (A.injuries||[]).filter(i=>i.kind==="out").length, outH = (H.injuries||[]).filter(i=>i.kind==="out").length;
     html += `<div class="card grow" data-g="${g.id}" tabindex="0" role="button" aria-label="${g.away} at ${g.home}">
       <div class="gtime">${timeOf(g)}<small>${esc(g.venue||"")}</small></div>
-      <div class="gteam"><span class="abbr">${g.away}</span><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"} ${statusPill(g.starter_status[g.away])}</span>
+      <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${outA} out</span>`:""}</span></div>
       <div class="gmid"><div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>
         <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div></div>
-      <div class="gteam r"><span class="abbr">${g.home}</span><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"} · ${rec(H)}</span>
+      <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${outH} out</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
       <div class="gou">${C.ou_lines.map(Lx=>`<span>Over ${Lx}</span><b>${pct(blendOver(g,d,Lx))}</b>`).join("")}</div>
     </div>`;
@@ -351,9 +375,9 @@ function gamePage(){
   }).join("");
   let html = `<button class="back" id="back">← All games</button>
   <div class="card ghero">
-    <div><div class="abbr">${g.away}</div><div class="meta">${rec(A)} · ${A.last5||""}</div></div>
+    <div class="tm">${logo(g.away)}<div><div class="abbr">${g.away}</div><div class="meta">${rec(A)} · ${A.last5||""}</div></div></div>
     <div class="big">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>projected goals · ${dayLabel(g.date)} ${timeOf(g)}</small></div>
-    <div style="text-align:right"><div class="abbr">${g.home}</div><div class="meta">${H.last5||""} · ${rec(H)}</div></div>
+    <div class="tm r">${logo(g.home)}<div><div class="abbr">${g.home}</div><div class="meta">${H.last5||""} · ${rec(H)}</div></div></div>
   </div>
   <div class="gsum">
     <div class="box"><h4>Win probability</h4>
@@ -364,9 +388,9 @@ function gamePage(){
       <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Your odds</div>${ou}</div></div>
   </div>
   <div class="sides"><div class="seg" id="sides">
-    <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${g.away} roster</button>
+    <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${g.away} roster</button>
     <button data-s="matchup" class="${state.side==="matchup"?"on":""}">Matchup</button>
-    <button data-s="${g.home}" class="${state.side===g.home?"on":""}">${g.home} roster</button></div></div>
+    <button data-s="${g.home}" class="${state.side===g.home?"on":""}">${logo(g.home)}${g.home} roster</button></div></div>
   <div id="sidebody"></div>`;
   $("#main").innerHTML = html;
   $("#back").onclick = () => go({game:null});
@@ -596,7 +620,7 @@ function rowsTop(){
   $("#ptb").innerHTML = rows.slice(0,300).map(({g,pr,p,v,od,ev})=>{
     const last = p.form.games.slice(0,10);
     return `<tr class="row" data-g="${g.id}" data-id="${pr.id}">
-      <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</div></div></div></td>
+      <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</div></div></div></td>
       <td class="n num">${fmt(p.toi_proj,1)}</td>
       <td><div class="bar"><i style="width:${Math.min(100,v*100)}%"></i><span>${pct(v,1)}</span></div></td>
       <td class="n num">${(1/v).toFixed(2)}</td>

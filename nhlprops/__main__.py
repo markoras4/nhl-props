@@ -77,6 +77,21 @@ def save_history(slate: dict, hist_dir: Path):
         f.write_text(json.dumps(clean(rec)), encoding="utf-8")
 
 
+def team_logos(src: Source, slate: dict, logo_dir: Path) -> dict:
+    import base64
+    teams = sorted({g["home"] for g in slate["games"]} | {g["away"] for g in slate["games"]})
+    out = {}
+    for t in teams:
+        v = {}
+        for variant in ("dark", "light"):
+            svg = src.logo(t, variant, logo_dir)
+            if svg:
+                v[variant] = "data:image/svg+xml;base64," + base64.b64encode(svg.encode()).decode()
+        if v:
+            out[t] = v
+    return out
+
+
 def render(slate: dict, graded: dict | None, out_dir: Path, demo: bool) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     payload = clean({**slate, "graded": graded, "config": CONFIG, "demo": demo,
@@ -141,6 +156,7 @@ def main(argv=None):
     save_history(slate, hist_dir)
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
+    slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))
     out = render(slate, graded, ROOT / "output", args.demo)
     print(f"Dashboard written: {out}")
     if raw["errors"]:

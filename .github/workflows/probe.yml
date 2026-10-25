@@ -36,9 +36,15 @@ jobs:
           curl -s https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/injuries | head -c 800; echo
           curl -sL -A "Mozilla/5.0" "https://www.dailyfaceoff.com/starting-goalies/$(date -u +%F)" | grep -o '__NEXT_DATA__' | head -1
           curl -sI https://assets.nhle.com/logos/nhl/svg/TOR_dark.svg | head -3
+      - name: MoneyPuck day pages
+        run: |
+          UA="Mozilla/5.0 (personal NHL props model; non-commercial)"
+          for d in $(date -u +%Y%m%d) $(date -u -d tomorrow +%Y%m%d); do
+            curl -sL -A "$UA" -e https://moneypuck.com/index.html "https://moneypuck.com/moneypuck/dates/$d.htm" -o mp_$d.htm -w "$d %{http_code} %{size_download}\n" >> probe-out.txt
+          done
       - name: Save output to the probe branch
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          cp probe-out.txt /tmp/out.txt; cp page.html /tmp/goalies.htm 2>/dev/null || true; cp idx.html /tmp/idx.html 2>/dev/null || true
-          git checkout --orphan probe; git rm -rfq . ; cp /tmp/out.txt /tmp/goalies.htm /tmp/idx.html . 2>/dev/null || true
+          cp probe-out.txt /tmp/out.txt; cp page.html /tmp/goalies.htm 2>/dev/null || true; cp idx.html /tmp/idx.html 2>/dev/null || true; cp mp_*.htm /tmp/ 2>/dev/null || true
+          git checkout --orphan probe; git rm -rfq . ; cp /tmp/out.txt /tmp/goalies.htm /tmp/idx.html /tmp/mp_*.htm . 2>/dev/null || true
           git add -A; git commit -qm "probe output"; git push -f origin probe

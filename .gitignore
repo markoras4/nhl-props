@@ -6,3 +6,4 @@ output/
 site/
 __pycache__/
 *.pyc
+data/demo_logos/
