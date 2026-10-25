@@ -1,0 +1,32 @@
+name: Probe data sources
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: MoneyPuck pages
+        run: |
+          UA="Mozilla/5.0 (personal NHL props model; non-commercial)"
+          for u in https://moneypuck.com/ https://moneypuck.com/index.html https://moneypuck.com/goalies.htm; do
+            echo "=== $u"; curl -sL -A "$UA" "$u" -o page.html -w "%{http_code} %{size_download}\n"
+            grep -oiE '(src|href)="[^"]+\.(js|json|csv)[^"]*"' page.html | head -40
+            grep -oiE '[^"'"'"' ]*(start|goalie|predict)[^"'"'"' ]*' page.html | sort -u | head -40
+          done
+          for js in $(grep -oiE 'src="[^"]+\.js[^"]*"' page.html | sed -E 's/src="//;s/"$//' | head -10); do
+            case "$js" in http*) url="$js";; /*) url="https://moneypuck.com$js";; *) url="https://moneypuck.com/$js";; esac
+            echo "=== JS $url"; curl -sL -A "$UA" "$url" | grep -oiE '[^"'"'"' ]*(start|goalie|predict|games)[^"'"'"' ]*\.(csv|json|htm|txt)[^"'"'"' ]*' | sort -u | head -30
+          done
+      - name: MoneyPuck home page scripts
+        run: |
+          UA="Mozilla/5.0 (personal NHL props model; non-commercial)"
+          curl -sL -A "$UA" https://moneypuck.com/index.html -o idx.html
+          for js in $(grep -oiE 'src="[^"]+\.js[^"]*"' idx.html | sed -E 's/src="//;s/"$//' | head -15); do
+            case "$js" in http*) url="$js";; /*) url="https://moneypuck.com$js";; *) url="https://moneypuck.com/$js";; esac
+            echo "=== JS $url"; curl -sL -A "$UA" "$url" | grep -oiE '.{0,80}(startingGoalie|starter|goalie).{0,80}' | head -15
+          done
+      - name: Other feeds
+        run: |
+          curl -s https://api-web.nhle.com/v1/schedule/now | head -c 600; echo
+          curl -s https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/injuries | head -c 800; echo
+          curl -sL -A "Mozilla/5.0" "https://www.dailyfaceoff.com/starting-goalies/$(date -u +%F)" | grep -o '__NEXT_DATA__' | head -1
+          curl -sI https://assets.nhle.com/logos/nhl/svg/TOR_dark.svg | head -3
