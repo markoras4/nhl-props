@@ -1,0 +1,38 @@
+name: Backtest (separate from the website)
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Season start years, comma separated (empty = two previous seasons)"
+        required: false
+        default: ""
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Restore downloaded history
+        uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: backtest-cache-${{ github.run_id }}
+          restore-keys: backtest-cache-
+      - name: Run backtest
+        run: |
+          mkdir -p backtest
+          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
+          tail -60 backtest/log.txt
+      - name: Save results to the "backtest" branch
+        run: |
+          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          mkdir -p /tmp/bt && cp -r backtest/. /tmp/bt/
+          git checkout --orphan backtest-out && git rm -rfq . && cp -r /tmp/bt/. . && git add -A
+          git commit -qm "Backtest $(date -u +%F-%H%M)" && git push -f origin HEAD:backtest
