@@ -111,6 +111,15 @@ class Source:
         p.write_bytes(raw)
         return json.loads(raw)
 
+    def text(self, url: str, key: str, max_age_h: float | None) -> str | None:
+        p = self.cache / key
+        if not self._fresh(p, max_age_h) and not self.offline:
+            raw = self._download(url)
+            if raw:
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_bytes(raw)
+        return p.read_text(encoding="utf-8", errors="ignore") if p.exists() else None
+
     def csv(self, url: str, key: str, max_age_h: float | None) -> pd.DataFrame | None:
         p = self.cache / key
         if not self._fresh(p, max_age_h) and not self.offline:
@@ -128,7 +137,7 @@ class Source:
 
     # ------------------------------------------------------------------ NHL
     def schedule(self, date: str):
-        return self.json(f"{NHL}/schedule/{date}", f"nhl/schedule/{date}.json", 2)
+        return self.json(f"{NHL}/schedule/{date}", f"nhl/schedule/{date}.json", 1)
 
     def roster(self, team: str):
         return self.json(f"{NHL}/roster/{team}/current", f"nhl/roster/{team}.json", 12)

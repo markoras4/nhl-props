@@ -20,23 +20,24 @@ def _name(obj) -> str:
     return obj or ""
 
 
-def slate_games(sched: dict | None, date: str) -> list[dict]:
+def slate_games(sched: dict | None, date: str, days_ahead: int = 0) -> list[dict]:
     if not sched:
         return []
     days = sched.get("gameWeek") or []
+    last = (dt.date.fromisoformat(date) + dt.timedelta(days=days_ahead)).isoformat()
     games = []
     for day in days:
-        if day.get("date") != date:
+        if not (date <= (day.get("date") or "") <= last):
             continue
         for g in day.get("games", []):
             if g.get("gameType") not in (2, 3):
                 continue
             games.append({
-                "id": g["id"],
+                "id": g["id"], "date": day["date"],
                 "start": g.get("startTimeUTC"),
                 "state": g.get("gameState"),
-                "home": g["homeTeam"]["abbrev"],
-                "away": g["awayTeam"]["abbrev"],
+                "home": _team(g["homeTeam"]["abbrev"]),
+                "away": _team(g["awayTeam"]["abbrev"]),
                 "home_name": _name(g["homeTeam"].get("placeName")) + " " + _name(g["homeTeam"].get("commonName", "")),
                 "away_name": _name(g["awayTeam"].get("placeName")) + " " + _name(g["awayTeam"].get("commonName", "")),
                 "venue": _name(g.get("venue")),
@@ -96,9 +97,10 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
     mp_years = [cur - i for i in range(n_mp)]
     club_years = [cur - i for i in range(4)]
 
-    log(f"Season {cur}-{cur + 1}. Fetching schedule for {date} ...")
-    games = slate_games(src.schedule(date), date)
-    log(f"  {len(games)} games on the slate")
+    log(f"Season {cur}-{cur + 1}. Fetching schedule from {date} ...")
+    games = slate_games(src.schedule(date), date, cfg["days_ahead"])
+    games = [g for g in games if g["state"] not in ("OFF", "FINAL")]
+    log(f"  {len(games)} upcoming games over {len({g['date'] for g in games})} days")
     if not games:
         return {"date": date, "season": cur, "games": [], "errors": list(src.errors)}
 
@@ -162,6 +164,9 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
         landing[pid] = land
         glogs[pid] = gl
 
+    from .news import fetch_news
+    news = fetch_news(src, teams, sorted({g["date"] for g in games}), log)
+
     if src.errors:
         log(f"  {len(src.errors)} requests failed (first: {src.errors[0]})")
 
@@ -169,6 +174,6 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
         "date": date, "season": cur, "games": games, "mp": mp,
         "league_games": league_games, "rosters": rosters,
         "skaters": skaters, "goalies": goalies,
-        "landing": landing, "logs": logs, "glogs": glogs,
+        "landing": landing, "logs": logs, "glogs": glogs, "news": news,
         "errors": list(src.errors),
     }

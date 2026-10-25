@@ -79,19 +79,21 @@ def generate(cache: Path, date: str, seed: int = 7) -> None:
     b2b_teams = [played_y[0]["home"]] if played_y else []
     rest = [t for t in NHL_TEAMS if t not in b2b_teams]
     random.shuffle(rest)
-    slate_teams = (b2b_teams + rest)[:16]
     slate = []
-    for i in range(0, 16, 2):
-        gid += 1
-        slate.append({"id": int(f"{cur}02{(gid % 10000):04d}"), "home": slate_teams[i + 1], "away": slate_teams[i],
-                      "start": f"{date}T{23 + (i // 6) % 2:02d}:00:00Z"})
+    for day in range(3):
+        d = (d0 + dt.timedelta(days=day)).isoformat()
+        teams_d = (b2b_teams + rest)[:16] if day == 0 else random.sample(NHL_TEAMS, 12)
+        for i in range(0, len(teams_d), 2):
+            gid += 1
+            slate.append({"id": int(f"{cur}02{(gid % 10000):04d}"), "home": teams_d[i + 1], "away": teams_d[i],
+                          "date": d, "start": f"{d}T{23 + (i // 6) % 2:02d}:00:00Z"})
 
-    _write(cache / f"nhl/schedule/{date}.json", {"gameWeek": [{"date": date, "games": [{
+    _write(cache / f"nhl/schedule/{date}.json", {"gameWeek": [{"date": d, "games": [{
         "id": g["id"], "gameType": 2, "startTimeUTC": g["start"], "gameState": "FUT",
         "venue": {"default": f"{g['home']} Arena"},
         "homeTeam": {"abbrev": g["home"], "placeName": {"default": g["home"]}, "commonName": {"default": "Demo"}},
         "awayTeam": {"abbrev": g["away"], "placeName": {"default": g["away"]}, "commonName": {"default": "Demo"}},
-    } for g in slate]}]})
+    } for g in slate if g["date"] == d]} for d in sorted({g["date"] for g in slate})]})
 
     for y in years[:4]:
         for t in teams_for_season(y):
@@ -234,6 +236,49 @@ def generate(cache: Path, date: str, seed: int = 7) -> None:
                              "highDangerxGoalsFor": round(xgf * 0.45, 2), "highDangerxGoalsAgainst": round(xga * 0.45, 2)})
         _write(cache / f"mp/teams_{y}.csv", pd.DataFrame(rows))
 
+    # ---------------- game-day news in the formats the parsers expect
+    from .news import TEAM_NAMES
+    inj = []
+    for t in NHL_TEAMS:
+        r = json.loads((cache / f"nhl/roster/{t}.json").read_text())
+        sk = r["forwards"] + r["defensemen"]
+        picks = random.sample(sk, 2)
+        inj.append({"displayName": TEAM_NAMES[t], "injuries": [
+            {"status": st, "athlete": {"displayName": f"{p['firstName']['default']} {p['lastName']['default']}"},
+             "details": {"type": random.choice(["Upper Body", "Lower Body", "Illness"]), "returnDate": "2026-11-02"},
+             "shortComment": "Demo injury note."}
+            for p, st in zip(picks, ["Out", "Day-To-Day"])]})
+    _write(cache / "news/injuries.json", {"injuries": inj})
+    for d in sorted({g["date"] for g in slate})[:1]:
+        items = []
+        for g in [x for x in slate if x["date"] == d]:
+            gl = {}
+            for side in ("home", "away"):
+                r = json.loads((cache / f"nhl/roster/{g[side]}.json").read_text())
+                gk = r["goalies"][0]
+                gl[f"{side}GoalieName"] = f"{gk['firstName']['default']} {gk['lastName']['default']}"
+                gl[f"{side}NewsStrengthName"] = random.choice(["Confirmed", "Likely", "Unconfirmed"])
+                gl[f"{side}TeamName"] = TEAM_NAMES[g[side]]
+            items.append(gl)
+        nd = {"props": {"pageProps": {"data": items}}}
+        (cache / f"news/goalies_{d}.html").write_text(
+            f'<html><script id="__NEXT_DATA__" type="application/json">{json.dumps(nd)}</script></html>')
+    for t in NHL_TEAMS[:10]:  # projected lines for some teams, the rest fall back to ice-time estimates
+        r = json.loads((cache / f"nhl/roster/{t}.json").read_text())
+        players = []
+        for i, p in enumerate(r["forwards"][:12]):
+            players.append({"name": f"{p['firstName']['default']} {p['lastName']['default']}",
+                            "groupIdentifier": f"f{i // 3 + 1}", "positionIdentifier": ["lw", "c", "rw"][i % 3]})
+        for i, p in enumerate(r["defensemen"][:6]):
+            players.append({"name": f"{p['firstName']['default']} {p['lastName']['default']}",
+                            "groupIdentifier": f"d{i // 2 + 1}", "positionIdentifier": ["ld", "rd"][i % 2]})
+        for i, p in enumerate(r["forwards"][:3] + r["defensemen"][:2]):
+            players.append({"name": f"{p['firstName']['default']} {p['lastName']['default']}",
+                            "groupIdentifier": "pp1", "positionIdentifier": "f"})
+        nd = {"props": {"pageProps": {"combinations": {"players": players}}}}
+        (cache / f"news/lines_{t}.html").write_text(
+            f'<html><script id="__NEXT_DATA__" type="application/json">{json.dumps(nd)}</script></html>')
+
     # metadata used by `simulate_results`
     _write(cache / "demo_meta.json", {"slate": slate, "date": date})
 
@@ -243,7 +288,7 @@ def simulate_results(cache: Path, seed: int = 11) -> int:
     rng = np.random.default_rng(seed)
     meta = json.loads((cache / "demo_meta.json").read_text())
     n = 0
-    for g in meta["slate"]:
+    for g in [x for x in meta["slate"] if x.get("date", meta["date"]) == meta["date"]]:
         box = {"id": g["id"], "gameState": "OFF", "homeTeam": {"abbrev": g["home"]}, "awayTeam": {"abbrev": g["away"]},
                "playerByGameStats": {}}
         totals = {}

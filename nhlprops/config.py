@@ -63,6 +63,9 @@ CONFIG = {
     "k_team_ou_games": 15,
     "k_h2h_games": 6,
 
+    # ---------- slate ----------
+    "days_ahead": 6,                 # upcoming games: today + this many days
+
     # ---------- props ----------
     "sog_lines": [1.5, 2.5, 3.5, 4.5],
     "active_last_n_team_games": 2,   # skater must have played in one of team's last N games

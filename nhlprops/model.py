@@ -603,13 +603,25 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     }
 
     team_dates = {t: list(r[r.season == cur].date.values) for t, r in results.items()}
-    teams_out, games_out, players_out, goalies_out = {}, [], [], {}
+    # every scheduled date per team (played or not) -> back-to-back detection for any future game
+    lgall = raw["league_games"]
+    sched_dates: dict[str, set] = {}
+    for h_, a_, d_ in zip(lgall.home, lgall.away, lgall.date):
+        sched_dates.setdefault(h_, set()).add(d_)
+        sched_dates.setdefault(a_, set()).add(d_)
+    for g_ in raw["games"]:
+        sched_dates.setdefault(g_["home"], set()).add(g_["date"])
+        sched_dates.setdefault(g_["away"], set()).add(g_["date"])
+
+    def b2b_on(team, gdate):
+        prev = (dt.date.fromisoformat(gdate) - dt.timedelta(days=1)).isoformat()
+        return prev in sched_dates.get(team, set())
+
+    teams_out, games_out, players_out, goalies_out = {}, [], {}, {}
 
     def team_ctx(t):
-        if t in teams_out:
-            return teams_out[t]
-        th = hist["teams"].get(t, {})
-        teams_out[t] = {"abbr": t, **tm.profile(t), **th, "b2b": th.get("last_date") == yesterday}
+        if t not in teams_out:
+            teams_out[t] = {"abbr": t, **tm.profile(t), **hist["teams"].get(t, {})}
         return teams_out[t]
 
     # goalies: league GA/xGA over the same window is the "average goalie" level
@@ -624,21 +636,100 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     for p in raw["skaters"]:
         sk_by_team.setdefault(p["team"], []).append(p)
 
+    # ---------------- news: injuries, lineups
+    from .news import NameIndex
+    news = raw.get("news") or {"injuries": {}, "goalies": {}, "lines": {}, "status": {}}
+    idx = NameIndex(raw["skaters"] + raw["goalies"])
+    injury_of: dict[int, dict] = {}
+    team_injuries: dict[str, list] = {}
+    for t, lst in news["injuries"].items():
+        for inj in lst:
+            m = idx.find(inj["name"], t)
+            if m:
+                injury_of[m["id"]] = inj
+            team_injuries.setdefault(t, []).append({**inj, "id": m["id"] if m else None})
+
+    profiles = {}
+    for t, plist in sk_by_team.items():
+        for p in plist:
+            profiles[p["id"]] = skater_profile(p, sf, lgpos, raw["landing"].get(p["id"]), raw["logs"].get(p["id"], {}),
+                                               team_dates.get(t, []), cur, cfg)
+
+    def lineup_for(t):
+        groups, source = {}, "estimated"
+        lines = news["lines"].get(t) or []
+        for ln in lines:
+            m = idx.find(ln["name"], t)
+            if m:
+                groups.setdefault(ln["group"], []).append(m["id"])
+        n_main = sum(len(v) for k, v in groups.items() if k[:1] in ("f", "d") and not k.startswith("pp"))
+        if n_main >= 15:
+            source = "projected"
+        else:
+            groups = {}
+            avail = [profiles[p["id"]] for p in sk_by_team.get(t, [])
+                     if profiles[p["id"]]["active"] and injury_of.get(p["id"], {}).get("kind") != "out"]
+            fw = sorted([q for q in avail if q["posg"] == "F"], key=lambda q: -q["toi_proj"])[:12]
+            de = sorted([q for q in avail if q["posg"] == "D"], key=lambda q: -q["toi_proj"])[:6]
+            for i in range(0, len(fw), 3):
+                groups[f"f{i // 3 + 1}"] = [q["id"] for q in fw[i:i + 3]]
+            for i in range(0, len(de), 2):
+                groups[f"d{i // 2 + 1}"] = [q["id"] for q in de[i:i + 2]]
+        dressed = {pid for k, v in groups.items() if k[:1] in ("f", "d") and not k.startswith("pp") for pid in v}
+        return {"source": source, "groups": groups, "dressed": sorted(dressed)}
+
+    for t in sk_by_team:
+        lu = lineup_for(t)
+        ctx = team_ctx(t)
+        ctx["lineup"] = lu
+        ctx["injuries"] = team_injuries.get(t, [])
+        dressed = set(lu["dressed"])
+        for p in sk_by_team[t]:
+            prof = profiles[p["id"]]
+            inj = injury_of.get(p["id"])
+            prof["injury"] = inj
+            if inj and inj["kind"] == "out":
+                prof["active"], prof["why"] = False, f"Out ({inj['status']})"
+            elif lu["source"] == "projected":
+                prof["active"] = p["id"] in dressed
+                prof["why"] = None if prof["active"] else "Not in projected lineup"
+            else:
+                prof["why"] = None if prof["active"] else "Not in recent lineups"
+            players_out[p["id"]] = prof
+
+    lg_xga = tm.lg_rate("all", "xGA") or 2.9
+    lg_sa = tm.lg_rate("all", "SA") or 30
     for gm in raw["games"]:
         H, A = gm["home"], gm["away"]
+        gdate = gm["date"]
+        yday = (dt.date.fromisoformat(gdate) - dt.timedelta(days=1)).isoformat()
         th, ta = team_ctx(H), team_ctx(A)
-        starters = {}
-        for t, ctx in ((H, th), (A, ta)):
+        b2b = {H: b2b_on(H, gdate), A: b2b_on(A, gdate)}
+        starters, starter_status = {}, {}
+        reports = news["goalies"].get(gdate) or []
+        for t in (H, A):
             ids = [g["id"] for g in raw["goalies"] if g["team"] == t]
-            starters[t] = probable_starter(ids, raw["glogs"], team_dates.get(t, []), ctx["b2b"], yesterday)
+            starters[t] = probable_starter(ids, raw["glogs"], team_dates.get(t, []), b2b[t], yday)
+            starter_status[t] = "Projected"
+            for rep_ in reports:
+                if rep_.get("team") not in (None, t):
+                    continue
+                m = idx.find(rep_["name"], t)
+                if m and m["id"] in ids:
+                    starters[t], starter_status[t] = m["id"], rep_["status"].title()
+                    break
+            if starters[t] and injury_of.get(starters[t], {}).get("kind") == "out":
+                alt = [i for i in ids if injury_of.get(i, {}).get("kind") != "out" and i != starters[t]]
+                if alt:
+                    starters[t] = alt[0]
             for gid in ids:
-                goalies_out[gid].setdefault("vs", {})[H if t == A else A] = goalie_vs(
-                    raw["glogs"].get(gid, [[], [], []]), H if t == A else A)
+                o = A if t == H else H
+                goalies_out[gid].setdefault("vs", {})[o] = goalie_vs(raw["glogs"].get(gid, [[], [], []]), o)
 
         mh, ma = tm.mu_parts(th, ta), tm.mu_parts(ta, th)
-        ha = cfg["home_adv"]
-        fh = ha * (cfg["b2b_factor"] if th["b2b"] else 1) / (cfg["b2b_factor"] if ta["b2b"] else 1)
-        fa = (1 / ha) * (cfg["b2b_factor"] if ta["b2b"] else 1) / (cfg["b2b_factor"] if th["b2b"] else 1)
+        ha, bf = cfg["home_adv"], cfg["b2b_factor"]
+        fh = ha * (bf if b2b[H] else 1) / (bf if b2b[A] else 1)
+        fa = (1 / ha) * (bf if b2b[A] else 1) / (bf if b2b[H] else 1)
         mu = {
             "home": {"g": (mh["ev"] + mh["pp"]) * fh, "o": mh["other"], "ev": mh["ev"] * fh, "pp": mh["pp"] * fh},
             "away": {"g": (ma["ev"] + ma["pp"]) * fa, "o": ma["other"], "ev": ma["ev"] * fa, "pp": ma["pp"] * fa},
@@ -650,45 +741,40 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                                  th.get(f"over_{L}_3y"), ta.get(f"over_{L}_3y"), hh.get(f"over_{L}_reg")) if x is not None]
             hist_p[str(L)] = float(np.mean(terms)) if terms else hist["league_hist_over"][f"over_{L}"]
 
-        # default-setting prediction (saved to history for grading)
         gr_h = goalies_out[starters[A]]["ratio"] if starters.get(A) else 1.0
         gr_a = goalies_out[starters[H]]["ratio"] if starters.get(H) else 1.0
         dist = game_distribution(mu["home"]["g"] * gr_h + mu["home"]["o"], mu["away"]["g"] * gr_a + mu["away"]["o"],
                                  cfg["ou_lines"])
-        games_out.append({**gm, "mu": mu, "starters": starters, "h2h": hh, "hist_over": hist_p, "default": dist,
-                          "goalies": {t: [g["id"] for g in raw["goalies"] if g["team"] == t] for t in (H, A)}})
 
-        # skaters
-        lg_xga = tm.lg_rate("all", "xGA") or 2.9
-        lg_sa = tm.lg_rate("all", "SA") or 30
+        props = []
         for t, opp, is_home in ((H, A, True), (A, H, False)):
             octx = team_ctx(opp)
-            own = team_ctx(t)
-            venue = cfg["home_adv"] if is_home else 1 / cfg["home_adv"]
-            b2b = (cfg["b2b_factor"] if own["b2b"] else 1) / (cfg["b2b_factor"] if octx["b2b"] else 1)
+            venue = ha if is_home else 1 / ha
+            bb = (bf if b2b[t] else 1) / (bf if b2b[opp] else 1)
             d_xg = octx["xga_all"] / lg_xga
             d_s = octx["sa_all"] / lg_sa
+            gr = goalies_out[starters[opp]]["ratio"] if starters.get(opp) else 1.0
             for p in sk_by_team.get(t, []):
-                prof = skater_profile(p, sf, lgpos, raw["landing"].get(p["id"]), raw["logs"].get(p["id"], {}),
-                                      team_dates.get(t, []), cur, cfg)
+                prof = profiles[p["id"]]
                 r = prof["rates"]
                 hrs = prof["toi_proj"] / 60
-                base = {
-                    "g": r["g60"] * hrs * d_xg * venue * b2b * env,
-                    "a": r["a60"] * hrs * d_xg * venue * b2b * env,
-                    "s": r["s60"] * hrs * d_s * venue * b2b,
-                }
-                gr = goalies_out[starters[opp]]["ratio"] if starters.get(opp) else 1.0
+                base = {"g": r["g60"] * hrs * d_xg * venue * bb * env,
+                        "a": r["a60"] * hrs * d_xg * venue * bb * env,
+                        "s": r["s60"] * hrs * d_s * venue * bb}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
-                players_out.append({
-                    **prof, "game": gm["id"], "opp": opp, "home": is_home, "base": base,
-                    "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": b2b, "env": env,
-                                "goalie": gr},
+                props.append({
+                    "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base,
+                    "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr},
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
                           **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}},
                 })
+        games_out.append({**gm, "mu": mu, "starters": starters, "starter_status": starter_status, "b2b": b2b,
+                          "h2h": hh, "hist_over": hist_p, "default": dist, "props": props,
+                          "goalies": {t: [g["id"] for g in raw["goalies"] if g["team"] == t] for t in (H, A)}})
 
     log(f"Model built: {len(games_out)} games, {len(players_out)} skaters "
-        f"({sum(p['active'] for p in players_out)} active)")
+        f"({sum(p['active'] for p in players_out.values())} expected to play)")
     return {"date": date, "season": cur, "league": league, "teams": teams_out, "games": games_out,
-            "players": players_out, "goalies": {str(k): v for k, v in goalies_out.items()}}
+            "players": {str(k): v for k, v in players_out.items()},
+            "goalies": {str(k): v for k, v in goalies_out.items()},
+            "news_status": news.get("status", {})}

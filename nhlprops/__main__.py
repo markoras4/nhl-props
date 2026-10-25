@@ -52,18 +52,29 @@ def clean(o):
 
 
 def save_history(slate: dict, hist_dir: Path):
+    """One file per game date. Games that have already started keep their earlier prediction."""
     hist_dir.mkdir(parents=True, exist_ok=True)
-    rec = {
-        "date": slate["date"],
-        "built": dt.datetime.now().isoformat(timespec="seconds"),
-        "games": [{"id": g["id"], "home": g["home"], "away": g["away"],
-                   "model": {str(L): g["default"][f"over_{L}"] for L in CONFIG["ou_lines"]},
-                   "hist": g["hist_over"]} for g in slate["games"] if g.get("state") in (None, "FUT", "PRE")],
-        "props": [{"id": p["id"], "name": p["name"], "game": p["game"], "p": p["p"]}
-                  for p in slate["players"] if p["active"]],
-    }
-    if rec["games"]:
-        (hist_dir / f"{slate['date']}.json").write_text(json.dumps(clean(rec)), encoding="utf-8")
+    players = slate["players"]
+    by_date: dict[str, list] = {}
+    for g in slate["games"]:
+        if g.get("state") not in (None, "FUT", "PRE"):
+            continue
+        by_date.setdefault(g["date"], []).append(g)
+    for d, games in by_date.items():
+        f = hist_dir / f"{d}.json"
+        old = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {"games": [], "props": []}
+        ids = {g["id"] for g in games}
+        rec = {
+            "date": d, "built": dt.datetime.now().isoformat(timespec="seconds"),
+            "games": [g for g in old["games"] if g["id"] not in ids] + [
+                {"id": g["id"], "home": g["home"], "away": g["away"],
+                 "model": {str(L): g["default"][f"over_{L}"] for L in CONFIG["ou_lines"]},
+                 "hist": g["hist_over"]} for g in games],
+            "props": [p for p in old["props"] if p["game"] not in ids] + [
+                {"id": pr["id"], "name": players[str(pr["id"])]["name"], "game": g["id"], "p": pr["p"]}
+                for g in games for pr in g["props"] if players[str(pr["id"])]["active"]],
+        }
+        f.write_text(json.dumps(clean(rec)), encoding="utf-8")
 
 
 def render(slate: dict, graded: dict | None, out_dir: Path, demo: bool) -> Path:
