@@ -141,7 +141,7 @@ def main(argv=None):
     gp.add_argument("--demo", action="store_true")
     sub.add_parser("check", help="test that every data source answers and has the expected columns")
     pg = sub.add_parser("pregame", help="exit 0 and print run=true if a game starts within the window (for the hourly job)")
-    pg.add_argument("--window", type=int, default=75, help="minutes before puck drop")
+    pg.add_argument("--window", type=int, default=75, help="minutes before puck drop (a second refresh runs at 35)")
     bt = sub.add_parser("backtest", help="replay past seasons game by game (does not touch the website)")
     bt.add_argument("--seasons", default="", help="comma-separated start years, default: the two previous seasons")
     bt.add_argument("--totals", action="store_true", help="test game totals instead of player props")
@@ -228,11 +228,15 @@ def pregame(src: Source, state_file: Path, window: int) -> int:
             if g.get("gameState") in ("FUT", "PRE") and g.get("startTimeUTC"):
                 starts.add(g["startTimeUTC"])
     done = json.loads(state_file.read_text()) if state_file.exists() else []
-    due = sorted(s for s in starts if s not in done and
-                 0 < (dt.datetime.fromisoformat(s.replace("Z", "+00:00")) - now).total_seconds() / 60 <= window)
+    due = []
+    for s in sorted(starts):   # two refreshes per puck drop: ~1 hour before, and ~30 min before (goalies confirmed)
+        mins = (dt.datetime.fromisoformat(s.replace("Z", "+00:00")) - now).total_seconds() / 60
+        for w in (window, 35):
+            if 0 < mins <= w and f"{s}|{w}" not in done:
+                due.append(f"{s}|{w}")
     run = bool(due)
     if run:
-        state_file.write_text(json.dumps(sorted(set(done) | set(due))[-60:]))
+        state_file.write_text(json.dumps(sorted(set(done) | set(due))[-120:]))
     print(f"Pre-game check {now:%H:%M} UTC: starts today {sorted(starts)} -> {'refresh for ' + ', '.join(due) if run else 'nothing due'}")
     import os
     if os.environ.get("GITHUB_OUTPUT"):

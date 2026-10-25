@@ -753,13 +753,14 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         yday = (dt.date.fromisoformat(gdate) - dt.timedelta(days=1)).isoformat()
         th, ta = team_ctx(H), team_ctx(A)
         b2b = {H: b2b_on(H, gdate), A: b2b_on(A, gdate)}
-        starters, starter_status = {}, {}
+        starters, starter_status, starter_alt = {}, {}, {}
         reports = news["goalies"].get(gdate) or []
         for t in (H, A):
             ids = [g["id"] for g in raw["goalies"] if g["team"] == t]
             starters[t] = probable_starter(ids, raw["glogs"], team_dates.get(t, []), b2b[t], yday)
             starter_status[t] = "Projected"
-            mp_hit = False
+            # every source's pick; the best-supported one wins (confirmed > very likely > NHL.com > likely > DF)
+            picks = []
             for rep_ in (news.get("mp_starters") or {}).get(gm["id"], []) + \
                     (news.get("mp_starters") or {}).get(str(gm["id"]), []):
                 last = norm(rep_["name"]).split()[-1] if rep_["name"] else ""
@@ -769,22 +770,31 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                     cand = [i for i in ids if difflib.SequenceMatcher(
                         None, (norm(goalies_out[i]["name"]).split() or [""])[-1], last).ratio() >= 0.8]
                 if len(cand) == 1:
-                    starters[t], starter_status[t] = cand[0], f"{rep_['status']} {rep_['pct']:.0f}%"
-                    mp_hit = True
+                    st = rep_["status"].lower()
+                    rank = 5 if "confirm" in st else 4 if "very" in st else 2
+                    picks.append((rank, cand[0], f"{rep_['status']} {rep_['pct']:.0f}%"))
                     break
             nhl_g = (nhl_day.get(t) or {}).get("goalies") or []
-            if nhl_g and gdate == nhl.get("date") and not (mp_hit and "confirm" in starter_status[t].lower()):
+            if nhl_g and gdate == nhl.get("date"):
                 m = idx.find(nhl_g[0], t)
                 if m and m["id"] in ids:
-                    starters[t], starter_status[t] = m["id"], "Expected"
-                    mp_hit = True
-            for rep_ in ([] if mp_hit else reports):
+                    picks.append((3, m["id"], "Expected"))
+            for rep_ in reports:
                 if rep_.get("team") not in (None, t):
                     continue
                 m = idx.find(rep_["name"], t)
                 if m and m["id"] in ids:
-                    starters[t], starter_status[t] = m["id"], rep_["status"].title()
+                    st = rep_["status"].lower()
+                    picks.append((5 if "confirm" in st and "unconfirm" not in st else 1, m["id"], rep_["status"].title()))
                     break
+            if picks:
+                picks.sort(key=lambda x: -x[0])
+                best = picks[0]
+                starters[t], starter_status[t] = best[1], best[2]
+                rivals = [p_ for p_ in picks if p_[1] != best[1] and p_[0] >= 2]
+                if best[0] < 5 and rivals:   # sources disagree and nobody has confirmed
+                    starter_status[t] = "Uncertain"
+                    starter_alt[t] = rivals[0][1]
             if starters[t] and injury_of.get(starters[t], {}).get("kind") == "out":
                 alt = [i for i in ids if injury_of.get(i, {}).get("kind") != "out" and i != starters[t]]
                 if alt:
@@ -837,7 +847,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
                           **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}},
                 })
-        games_out.append({**gm, "mu": mu, "starters": starters, "starter_status": starter_status, "b2b": b2b,
+        games_out.append({**gm, "mu": mu, "starters": starters, "starter_status": starter_status, "starter_alt": starter_alt, "b2b": b2b,
                           "h2h": hh, "hist_over": hist_p, "default": dist, "props": props,
                           "goalies": {t: [g["id"] for g in raw["goalies"] if g["team"] == t] for t in (H, A)}})
 

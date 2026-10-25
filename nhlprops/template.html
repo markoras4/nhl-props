@@ -399,6 +399,7 @@ const I18N = {
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
+    st_uncertain:"Not decided", or_g:"or {n}", alt_note:"Sources disagree on the starter. {n} may start instead – switch below to see his effect.",
     st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
     inj_out:"Out", inj_q:"Questionable",
@@ -483,6 +484,7 @@ const I18N = {
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
+    st_uncertain:"Inte avgjort", or_g:"eller {n}", alt_note:"Källorna är oense om startmålvakten. {n} kan starta i stället – byt nedan för att se effekten.",
     st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
     inj_out:"Ute", inj_q:"Osäker",
@@ -532,10 +534,10 @@ function trData(s){
 }
 function trStatus(s){
   if (!s) return t("st_projected");
-  const m = s.match(/^(very likely|likely|confirmed|unconfirmed|projected|expected|your pick)\s*(.*)$/i);
+  const m = s.match(/^(very likely|likely|confirmed|unconfirmed|projected|expected|uncertain|your pick)\s*(.*)$/i);
   if (!m) return trData(s);
   const k = m[1].toLowerCase();
-  const word = k==="very likely" ? t("st_very") : k==="likely" ? t("st_likely") : k==="confirmed" ? t("st_confirmed") : k==="unconfirmed" ? t("st_unconfirmed") : k==="expected" ? t("st_expected") : k==="your pick" ? t("your_pick") : t("st_projected");
+  const word = k==="very likely" ? t("st_very") : k==="likely" ? t("st_likely") : k==="confirmed" ? t("st_confirmed") : k==="unconfirmed" ? t("st_unconfirmed") : k==="expected" ? t("st_expected") : k==="uncertain" ? t("st_uncertain") : k==="your pick" ? t("your_pick") : t("st_projected");
   return (word + " " + m[2]).trim();
 }
 const trTier = x => x ? t("tier_"+x) : "–";
@@ -635,7 +637,7 @@ function logo(tm, size){
 const rec = x => x ? `${x.w??0}-${x.l??0}-${x.otl??0}` : "";
 function statusPill(s){
   const k = (s||"").toLowerCase();
-  const cls = (k.includes("confirmed") && !k.includes("unconfirmed")) || k.startsWith("expected") ? "s-confirmed" : (k.includes("likely") ? "s-likely" : "");
+  const cls = (k.includes("confirmed") && !k.includes("unconfirmed")) || k.startsWith("expected") ? "s-confirmed" : (k.includes("likely") || k==="uncertain" ? "s-likely" : "");
   return `<span class="pill ${cls}"><i></i>${esc(trStatus(s))}</span>`;
 }
 function injPill(inj){ if(!inj) return ""; if(inj.kind==="playing") return `<span class="pill s-confirmed">${t("inj_play")}</span>`; return inj.kind==="out" ? `<span class="pill s-out">${esc(trData(inj.status)||t("inj_out"))}</span>` : `<span class="pill s-q">${esc(trData(inj.status)||t("inj_q"))}</span>`; }
@@ -694,11 +696,11 @@ function gamesList(){
     const outA = (A.injuries||[]).filter(i=>i.kind==="out").length, outH = (H.injuries||[]).filter(i=>i.kind==="out").length;
     html += `<div class="card grow" data-g="${g.id}" tabindex="0" role="button" aria-label="${g.away} @ ${g.home}">
       <div class="gtime">${timeOf(g)}<small>${esc(g.venue||"")}</small></div>
-      <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"} ${statusPill(g.starter_status[g.away])}</span>
+      <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"}${altTxt(g,g.away)} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
       <div class="gmid"><div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>
         <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
-      <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"} · ${rec(H)}</span>
+      <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"}${altTxt(g,g.home)} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
       <div class="gou">${C.ou_lines.map(Lx=>{ const p = blendOver(g,d,Lx), o = DATA.odds?.[g.id]?.totals?.[String(Lx)]?.over;
         return `<span>${t("over",{l:Lx})}</span><b>${pct(p)}</b><span class="go ${o && p*o-1>=VALUE ? "val":""}">${o?o.toFixed(2):""}</span>`; }).join("")}</div>
@@ -845,6 +847,8 @@ function bestPicksBox(g){
     <p class="note">${t("bp_note")}</p></div>`;
 }
 
+function altTxt(g, team){ const a = g.starter_alt?.[team]; const x = a && G(a);
+  return x && String(state.goalie[g.id][team])===String(g.starters[team]) ? ` <span class="meta">${t("or_g",{n:esc(x.name.split(" ").slice(1).join(" ")||x.name)})}</span>` : ""; }
 function goalieCard(g, team, title){
   const opp = team===g.home ? g.away : g.home;
   const id = state.goalie[g.id][team], q = G(id);
@@ -855,8 +859,9 @@ function goalieCard(g, team, title){
   if (!q) return `<div class="box"><h4>${title}</h4><p class="meta">${t("no_goalie")}</p></div>`;
   const c=q.cur, l=q.last3, vs=q.vs&&q.vs[opp];
   const r = q.ratio, qc = r<0.98?"up":r>1.02?"down":"";
+  const alt = isProj && g.starter_alt?.[team] ? G(g.starter_alt[team]) : null;
   return `<div class="box"><h4>${title} ${statusPill(status)}</h4>
-    <div class="gname">${esc(q.name)}</div>
+    <div class="gname">${esc(q.name)}</div>${alt?`<p class="note" style="margin:4px 0 8px">${t("alt_note",{n:esc(alt.name)})}</p>`:""}
     <div class="kv">
       <span>${t("sv_gaa_cur")}</span><span>${c?`${sv3(c.sv)} · ${fmt(c.gaa,2)}`:"–"}</span>
       <span>${t("sv_gaa_3")}</span><span>${l?`${sv3(l.sv)} · ${fmt(l.gaa,2)}`:"–"}</span>
@@ -874,7 +879,7 @@ function facingBar(g, team, opp){
   const opts = (g.goalies[opp]||[]).map(i=>`<option value="${i}" ${String(i)===String(id)?"selected":""}>${esc(G(i)?.name)}${String(i)===String(g.starters[opp])?t("expected_tag"):""}</option>`).join("");
   const r = q?.ratio ?? 1, c = r<0.98?"up":r>1.02?"down":"";
   return `<div class="card" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 14px;margin-bottom:12px">
-    <span class="meta">${t("facing")}</span><b>${esc(q?.name||t("unknown"))}</b>${statusPill(isProj?g.starter_status[opp]:"Your pick")}
+    <span class="meta">${t("facing")}</span><b>${esc(q?.name||t("unknown"))}</b>${altTxt(g,opp)}${statusPill(isProj?g.starter_status[opp]:"Your pick")}
     <span class="meta">${t("opp_goalie_q",{t:opp})} <b class="${c}">${fmt(r,3)}</b>${q?.cur?` · ${t("this_season_sv",{v:sv3(q.cur.sv)})}`:""}</span>
     <select data-gteam="${opp}" id="fb-${g.id}-${opp}" style="margin-left:auto" aria-label="${t("change_goalie")}">${opts}</select></div>`;
 }
@@ -1303,7 +1308,7 @@ en: `<h3>What the site does</h3>
     <li><b>Shots dry</b> = shots since his last goal, and how rare a drought that long is for his talent.</li>
     <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
     <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
-    <li><b>Game-day lineup</b>: about an hour before each puck drop the site refreshes with the final lineups. Questionable players who are in the lineup are marked Playing, scratched and injured players are removed, and the expected starting goalie is updated.</li>
+    <li><b>Game-day lineup</b>: about an hour before each puck drop the site refreshes with the final lineups. Questionable players who are in the lineup are marked Playing, scratched and injured players are removed, and the expected starting goalie is updated. It refreshes again about 30 minutes before puck drop, when starters are usually confirmed. If the sources disagree on the goalie and nobody has confirmed, he is marked Not decided and the alternative is shown, so you can switch and see the effect.</li>
   </ul>
   <h3>Charts</h3>
   <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>`,
@@ -1336,7 +1341,7 @@ sv: `<h3>Vad sajten gör</h3>
     <li><b>Skott utan mål</b> = skott sedan senaste målet, och hur ovanlig en så lång torka är för hans nivå.</li>
     <li><b>Prognos / Trolig / Bekräftad</b> målvakt = från de senaste rapporterna om startmålvakter. "Prognos" betyder att ingen rapport finns än: målvakten med flest starter på sistone, och reservmålvakten vid back-to-back.</li>
     <li><b>Ute / Dag till dag</b>: skadade spelare markerade Ute tas bort från spelen; osäkra spelare finns kvar med en gul markering.</li>
-    <li><b>Matchdagens uppställning</b>: ungefär en timme före varje nedsläpp uppdateras sidan med de slutliga uppställningarna. Osäkra spelare som finns med markeras Spelar, petade och skadade spelare tas bort, och den väntade startmålvakten uppdateras.</li>
+    <li><b>Matchdagens uppställning</b>: ungefär en timme före varje nedsläpp uppdateras sidan med de slutliga uppställningarna. Osäkra spelare som finns med markeras Spelar, petade och skadade spelare tas bort, och den väntade startmålvakten uppdateras. Sidan uppdateras igen ungefär 30 minuter före nedsläpp, när startmålvakterna brukar bekräftas. Om källorna är oense om målvakten och ingen har bekräftat markeras han Inte avgjort och alternativet visas, så att du kan byta och se effekten.</li>
   </ul>
   <h3>Diagram</h3>
   <p>I spelardetaljerna, byt från Tabell till Diagram. Välj mål, assist, poäng, skott, <b>skottprocent</b> (med hans verkliga nivå och ligasnittet) eller <b>mål mot förväntat</b> (staplar = faktiska mål, linje = målen hans chanser var värda). Jämför säsong, förra 3, förra 5 och karriär, eller säsong för säsong. Använd <b>per match</b> eller <b>takt över 82 matcher</b> för att jämföra en ofärdig säsong rättvist; takten är nuvarande nivå utsträckt till 82 matcher, inte en prognos. Bleka staplar bygger på litet underlag.</p>`

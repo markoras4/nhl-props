@@ -294,10 +294,10 @@ def fetch_news(src, teams: list[str], dates: list[str], log=print) -> dict:
     mp_starters: dict[int, list] = {}
     for d in dates:
         ymd = d.replace("-", "")
-        mp_starters.update(parse_moneypuck_day(src.text(MP_DAY_URL.format(ymd=ymd), f"news/mp_day_{ymd}.htm", 1)))
+        mp_starters.update(parse_moneypuck_day(src.text(MP_DAY_URL.format(ymd=ymd), f"news/mp_day_{ymd}.htm", 0.2)))
     goalies = {}
     for d in dates[:2]:  # backup source, today/tomorrow only
-        goalies[d] = parse_starting_goalies(src.text(GOALIES_URL.format(date=d), f"news/goalies_{d}.html", 1))
+        goalies[d] = parse_starting_goalies(src.text(GOALIES_URL.format(date=d), f"news/goalies_{d}.html", 0.2))
     lines = {t: parse_lines(src.text(LINES_URL.format(slug=slug(t)), f"news/lines_{t}.html", 4)) for t in teams}
     nhl = parse_nhl_lineups(src.text(NHL_LINEUPS_URL, "news/nhl_lineups.html", 0.15))
     n_inj = sum(len(v) for v in injuries.values())
