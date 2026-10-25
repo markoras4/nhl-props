@@ -171,7 +171,6 @@ function render(){
       <p class="deck">${esc(L.deck)}</p>
       ${strip}
       <div class="cols">${list("news")}${list("records")}${list("betting")}</div>
-      <div class="foot"><span class="src">${t("sources")}: ${(p.sources||[]).map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(" · ")}</span></div>
     </article>`;
   }).join("");
   $("#main").innerHTML = head + arts + `<p class="note">${t("note")}</p>`;

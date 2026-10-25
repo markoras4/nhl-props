@@ -271,6 +271,27 @@ td.h{text-align:center;padding:4px}
 .hits i.y{background:var(--accent)}
 .detail{padding:12px 4px 16px}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+.l10box{grid-column:span 2}
+@media (max-width:700px){.l10box{grid-column:auto}
+  .detail{position:sticky;left:0;width:calc(100vw - 34px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px))}
+  .detail .dgrid{grid-template-columns:minmax(0,1fr)}
+  .detail .box[style*="span 2"]{grid-column:auto!important}
+  .l10t,.l10d{font-size:9.5px}.l10o,.l10v{font-size:10.5px}}
+.l10svg{width:100%;height:auto;display:block}
+.l10g{stroke:var(--line);stroke-width:1}
+.l10t,.l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui)}
+.l10o{fill:var(--text);font-size:10.5px;font-weight:600;font-family:var(--f-disp)}
+.l10v{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
+.l10hi{fill:var(--accent)}
+.l10lo{fill:var(--bad);opacity:.85}
+.l10avg{stroke:var(--text);stroke-width:1.6;stroke-dasharray:6 5;opacity:.85}
+.l10exp{stroke:var(--accent2);stroke-width:1.6;stroke-dasharray:2 4}
+.l10leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--mute);margin-top:6px}
+.l10leg span{display:inline-flex;align-items:center;gap:6px}
+.l10leg b{color:var(--text)}
+.l10leg i.la,.l10leg i.le{width:18px;height:0;border-top:2px dashed var(--text)}
+.l10leg i.le{border-top:2px dotted var(--accent2)}
+.l10leg i.sw{width:10px;height:10px;border-radius:2px}.l10leg i.hi{background:var(--accent)}.l10leg i.lo{background:var(--bad)}
 @media (max-width:700px){.dgrid>.box{grid-column:auto!important}}
 .mini{font-size:12px}
 .mini th,.mini td{padding:5px 6px}
@@ -414,7 +435,7 @@ const I18N = {
     reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
     k_spg:"Typical shots per goal", k_drought:"Chance of a drought this long",
-    last10:"Last 10 games", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
+    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", h_date:"Date", h_opp:"Opp", h_g:"G", h_a:"A", h_s:"S", no_games_yet:"No games yet this season.",
     cmp:"Team comparison", c_ptspct:"Points %", c_tier:"Strength tier", c_streak2:"Streak", c_l5:"Last 5", c_l5gfga:"Last 5 GF / GA", c_gfga:"GF / GA per game",
     c_rh:"Road / Home GF – GA", c_xgf:"5v5 expected goals share", c_pdo:"PDO (luck, 1000 = normal)", c_hdf:"High-danger shots for /60", c_hda:"High-danger shots against /60",
     c_ppg:"Power play goals /60", c_pkga:"Penalty kill goals against /60", c_ppm:"Power play minutes / game", c_o55:"Over 5.5 this season", c_o55rh:"Over 5.5 road / home",
@@ -500,7 +521,7 @@ const I18N = {
     reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
     k_spg:"Typiskt antal skott per mål", k_drought:"Chans för en så lång torka",
-    last10:"Senaste 10 matcherna", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
+    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", h_date:"Datum", h_opp:"Motst.", h_g:"M", h_a:"A", h_s:"S", no_games_yet:"Inga matcher än i år.",
     cmp:"Lagjämförelse", c_ptspct:"Poäng-%", c_tier:"Styrkenivå", c_streak2:"Svit", c_l5:"Senaste 5", c_l5gfga:"Senaste 5 GM / IM", c_gfga:"GM / IM per match",
     c_rh:"Borta / Hemma GM – IM", c_xgf:"Andel förväntade mål 5 mot 5", c_pdo:"PDO (tur, 1000 = normalt)", c_hdf:"Farliga skott för /60", c_hda:"Farliga skott mot /60",
     c_ppg:"Powerplaymål /60", c_pkga:"Insläppta mål i boxplay /60", c_ppm:"Powerplayminuter / match", c_o55:"Över 5.5 i år", c_o55rh:"Över 5.5 borta / hemma",
@@ -1181,9 +1202,46 @@ function detail(pr, g){
     <div class="box"><h4>${t("last10")}</h4>
       <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
       <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
+    ${p.form.games.length ? `<div class="box l10box" data-pid="${pr.id}" data-gid="${g.id}">${l10Chart(pr, g)}</div>` : ""}
     ${statsBox(p)}
   </div></div>`;
 }
+
+// ------------------------------------------------------------ last-10 bar chart
+function l10Chart(pr, g){
+  const p = P(pr.id), m = state.l10m || "s", l = lambdas(pr, g);
+  const games = p.form.games.slice(0,10).reverse();
+  const val = x => m==="g" ? x.g : m==="a" ? x.a : m==="p" ? x.g + x.a : x.s;
+  const w = p.windows || {}, base = (w.cur && w.cur.gp >= 5) ? w.cur : (w.prev3 || w.cur || {});
+  const avg = m==="g" ? base.g_pg : m==="a" ? base.a_pg : m==="p" ? base.p_pg : base.s_pg;
+  const exp = m==="g" ? l.g : m==="a" ? l.a : m==="p" ? l.g + l.a : l.s;
+  const avgLbl = (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
+  const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0);
+  const ymax = m==="s" ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
+  const narrow = innerWidth < 600, W = narrow ? 360 : 560, H = narrow ? 210 : 200, L = 22, R = 6, T = 14, B = 40, cw = (W - L - R) / games.length, bw = Math.min(30, cw * 0.58);
+  const y = v => T + (H - T - B) * (1 - v / ymax);
+  const ticks = []; const step = ymax <= 3 ? 1 : ymax <= 8 ? 2 : 3; for (let v = 0; v <= ymax; v += step) ticks.push(v);
+  const grid = ticks.map(v => `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="l10g"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end" class="l10t">${v}</text>`).join("");
+  const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = avg != null && v < avg - 1e-9;
+    const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax);
+    return `<g><title>${x.d} ${x.h?"vs":"@"} ${x.o}: ${x.g} ${t("h_g")} · ${x.a} ${t("h_a")} · ${x.s} ${t("h_s")} · ${fmt(x.t,1)} ${t("toi")}</title>
+      <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="${below?"l10lo":"l10hi"}"/>
+      ${v>0?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
+      <text x="${cx}" y="${H-B+15}" text-anchor="middle" class="l10o">${x.h?"":"@"}${x.o}</text>
+      <text x="${cx}" y="${H-B+28}" text-anchor="middle" class="l10d">${x.d.slice(5).replace("-","/")}</text></g>`; }).join("");
+  const line = (v, cls) => v==null ? "" : `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="${cls}"/>`;
+  const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}">${lbl}</button>`;
+  return `<h4>${t("l10_chart")} <span class="seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}</span></h4>
+    <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}">${grid}${bars}${line(avg,"l10avg")}${line(exp,"l10exp")}</svg>
+    <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
+      <span><i class="sw hi"></i>${t("l10_hi")}</span><span><i class="sw lo"></i>${t("l10_lo")}</span></div>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-l10]"); if (!b) return;
+  const box = b.closest(".l10box"); state.l10m = b.dataset.l10;
+  const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid);
+  if (pr) box.innerHTML = l10Chart(pr, g);
+});
 
 // ------------------------------------------------------------ final-score grid
 function scoreGrid(g){

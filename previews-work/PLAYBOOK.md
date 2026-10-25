@@ -19,7 +19,7 @@ For each game, search the web for the latest previews, news and reports (AP game
 The Hockey News, Daily Faceoff, TSN/Sportsnet, ESPN, theScore, beat writers). Collect only verifiable facts:
 injuries and returns, goalie news, coach situation (hot seat, firing rumours, losing streaks), milestones
 (a player close to a round number of goals/points/games), team and player records, streaks, notable quotes.
-Never invent facts, numbers or quotes. If something cannot be verified, leave it out. Keep 2-3 source links per game.
+Never invent facts, numbers or quotes. If something cannot be verified, leave it out. Keep 2-3 source links per game in `sources` (stored for checking; the page does not show them). Write everything in your own words; never copy sentences from the sources.
 
 ## 3. Write each preview (schema = data/previews/2026-10-26.json)
 - `en` and `sv` objects with: `kicker` ("Kings at Rangers"), `title` (one line, specific), `deck` (2-3 sentences: the
