@@ -181,6 +181,12 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     return df
 
 
+def r_now(d, m, y):
+    p = {"Goal": 1 - np.exp(-d.lam_g), "Assist": 1 - np.exp(-d.lam_a), "Point": 1 - np.exp(-(d.lam_g + d.lam_a)),
+         "SOG 2+": p_over(d.lam_s, 1.5), "SOG 3+": p_over(d.lam_s, 2.5)}[m]
+    return float(((p - y.astype(float)) ** 2).mean())
+
+
 def p_over(lam, line):
     lam = np.asarray(lam, float)
     k = int(math.floor(line))
@@ -266,6 +272,31 @@ def run(src: Source, seasons: list[int], cfg: dict, out_dir: Path, log=print) ->
         report["due"][flag] = {"n": int(len(sub)), "pred_goal": float((1 - np.exp(-sub.lam_g)).mean()),
                                "actual_goal": float((sub.g >= 1).mean())}
     report["n_player_games"] = int(len(d))
+    # calibration check: which multiplier on each expected count fits best?
+    ys = {"Goal": (d.g >= 1), "Assist": (d.a >= 1), "Point": (d.g + d.a >= 1), "SOG 2+": (d.s >= 2), "SOG 3+": (d.s >= 3)}
+    fits = {}
+    for m in ys:
+        best = None
+        for c in np.arange(0.80, 1.21, 0.02):
+            if m == "Goal": p = 1 - np.exp(-d.lam_g * c)
+            elif m == "Assist": p = 1 - np.exp(-d.lam_a * c)
+            elif m == "Point": p = 1 - np.exp(-(d.lam_g + d.lam_a) * c)
+            else: p = p_over(d.lam_s * c, 1.5 if m == "SOG 2+" else 2.5)
+            b = float(((p - ys[m].astype(float)) ** 2).mean())
+            if best is None or b < best[1]:
+                best = (round(float(c), 2), b)
+        fits[m] = {"best_multiplier": best[0], "brier_at_best": best[1], "brier_now": r_now(d, m, ys[m])}
+    report["calibration_fit"] = fits
+    # streak rule pooled over all seasons
+    pooled = {}
+    for rows in report["streak"].values():
+        for x in rows:
+            k = (x["streak"], x["rule_reached"])
+            p = pooled.setdefault(k, {"games": 0, "won": 0.0, "exp": 0.0})
+            p["games"] += x["games"]; p["won"] += x["won_next"] * x["games"]; p["exp"] += x["expected_from_win_pct"] * x["games"]
+    report["streak_pooled"] = [{"streak": k[0], "rule_reached": k[1], "games": v["games"],
+                                "won_next": v["won"] / v["games"], "expected": v["exp"] / v["games"],
+                                "std_error": math.sqrt(0.25 / v["games"])} for k, v in pooled.items()]
     (out_dir / "results.json").write_text(json.dumps(report, indent=1, default=float), encoding="utf-8")
     (out_dir / "report.md").write_text(to_markdown(report), encoding="utf-8")
     log((out_dir / "report.md").read_text())
@@ -297,4 +328,10 @@ def to_markdown(r: dict) -> str:
     for season, rows in r["streak"].items():
         for x in rows:
             L.append(f"| {season} | {x['streak']} | {'yes' if x['rule_reached'] else 'no'} | {x['games']} | {x['won_next'] * 100:.1f}% | {x['expected_from_win_pct'] * 100:.1f}% |")
+    L += ["", "## 6-game rule, all seasons pooled", "", "| Streak | Rule reached | Games | Won next | Expected | ± (1 std error) |", "|---|---|---|---|---|---|"]
+    for x in r.get("streak_pooled", []):
+        L.append(f"| {x['streak']} | {'yes' if x['rule_reached'] else 'no'} | {x['games']} | {x['won_next'] * 100:.1f}% | {x['expected'] * 100:.1f}% | {x['std_error'] * 100:.1f}% |")
+    L += ["", "## Best-fitting multiplier per market (1.00 = already calibrated)", ""]
+    for m, f in r.get("calibration_fit", {}).items():
+        L.append(f"- {m}: x{f['best_multiplier']:.2f} (Brier {f['brier_now']:.4f} -> {f['brier_at_best']:.4f})")
     return "\n".join(L) + "\n"
