@@ -140,6 +140,8 @@ def main(argv=None):
     gp = sub.add_parser("grade", help="grade saved predictions against final results")
     gp.add_argument("--demo", action="store_true")
     sub.add_parser("check", help="test that every data source answers and has the expected columns")
+    pg = sub.add_parser("pregame", help="exit 0 and print run=true if a game starts within the window (for the hourly job)")
+    pg.add_argument("--window", type=int, default=75, help="minutes before puck drop")
     bt = sub.add_parser("backtest", help="replay past seasons game by game (does not touch the website)")
     bt.add_argument("--seasons", default="", help="comma-separated start years, default: the two previous seasons")
     bt.add_argument("--totals", action="store_true", help="test game totals instead of player props")
@@ -163,6 +165,8 @@ def main(argv=None):
 
     if args.cmd == "check":
         return check(src)
+    if args.cmd == "pregame":
+        return pregame(src, data_dir / "pregame.json", args.window)
     if args.cmd == "backtest":
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())
@@ -210,6 +214,30 @@ def main(argv=None):
         (data_dir / "errors.log").write_text("\n".join(raw["errors"]), encoding="utf-8")
     if not args.no_open:
         webbrowser.open(out.resolve().as_uri())
+    return 0
+
+
+def pregame(src: Source, state_file: Path, window: int) -> int:
+    """Pre-game refresh gate: one rebuild per puck-drop time, within `window` minutes before it."""
+    now = dt.datetime.now(dt.timezone.utc)
+    today = nhl_today()
+    js = src.json(f"https://api-web.nhle.com/v1/schedule/{today}", f"pregame/schedule_{today}.json", 0.0)
+    starts = set()
+    for day in (js or {}).get("gameWeek", [])[:1]:
+        for g in day.get("games", []):
+            if g.get("gameState") in ("FUT", "PRE") and g.get("startTimeUTC"):
+                starts.add(g["startTimeUTC"])
+    done = json.loads(state_file.read_text()) if state_file.exists() else []
+    due = sorted(s for s in starts if s not in done and
+                 0 < (dt.datetime.fromisoformat(s.replace("Z", "+00:00")) - now).total_seconds() / 60 <= window)
+    run = bool(due)
+    if run:
+        state_file.write_text(json.dumps(sorted(set(done) | set(due))[-60:]))
+    print(f"Pre-game check {now:%H:%M} UTC: starts today {sorted(starts)} -> {'refresh for ' + ', '.join(due) if run else 'nothing due'}")
+    import os
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"run={'true' if run else 'false'}\n")
     return 0
 
 

@@ -658,6 +658,35 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 injury_of[m["id"]] = inj
             team_injuries.setdefault(t, []).append({**inj, "id": m["id"] if m else None})
 
+    # NHL.com game-day lineups: the final word for teams playing on the article's date
+    nhl = news.get("nhl") or {}
+    game_teams = {(gm["home"], gm["date"]) for gm in raw["games"]} | {(gm["away"], gm["date"]) for gm in raw["games"]}
+    nhl_day = {t: r for t, r in (nhl.get("teams") or {}).items() if (t, nhl.get("date")) in game_teams}
+    scratched: dict[int, bool] = {}
+    for t, r in nhl_day.items():
+        dressed_ids = {m["id"] for ln in r["lines"] if ln["pos"] in ("f", "d") for m in [idx.find(ln["name"], t)] if m}
+        for inj in team_injuries.get(t, []):       # listed questionable but in tonight's lineup -> playing
+            if inj["id"] in dressed_ids and inj["kind"] != "out":
+                inj.update(kind="playing", status="Playing")
+                injury_of[inj["id"]] = inj
+        for x in r["injured"]:                     # NHL.com injured list -> out
+            m = idx.find(x["name"], t)
+            pid = m["id"] if m else None
+            cur_inj = next((i for i in team_injuries.get(t, []) if (pid and i["id"] == pid) or norm(i["name"]) == norm(x["name"])), None)
+            if cur_inj:
+                if cur_inj["kind"] != "out":
+                    cur_inj.update(kind="out", status="Out")
+            else:
+                cur_inj = {"name": m["name"] if m else x["name"], "status": "Out", "kind": "out",
+                           "detail": x["detail"].capitalize(), "return": None, "id": pid}
+                team_injuries.setdefault(t, []).append(cur_inj)
+            if pid:
+                injury_of[pid] = cur_inj
+        for nm_ in r["scratched"]:
+            m = idx.find(nm_, t)
+            if m:
+                scratched[m["id"]] = True
+
     profiles = {}
     for t, plist in sk_by_team.items():
         for p in plist:
@@ -667,6 +696,8 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     def lineup_for(t):
         groups, source = {}, "estimated"
         lines = news["lines"].get(t) or []
+        if t in nhl_day:
+            lines = nhl_day[t]["lines"]
         for ln in lines:
             m = idx.find(ln["name"], t)
             if m:
@@ -676,7 +707,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         groups = {k: v for k, v in groups.items() if main(k) or _re.fullmatch(r"pp\d", k)}
         n_main = sum(len(v) for k, v in groups.items() if main(k))
         if n_main >= 15:
-            source = "projected"
+            source = "gameday" if t in nhl_day else "projected"
         else:
             groups = {}
             avail = [profiles[p["id"]] for p in sk_by_team.get(t, [])
@@ -696,6 +727,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         ctx = team_ctx(t)
         ctx["lineup"] = lu
         ctx["injuries"] = team_injuries.get(t, [])
+        ctx["news"] = ({"notes": nhl_day[t]["notes"], "updated": nhl.get("updated")} if t in nhl_day else None)
         dressed = set(lu["dressed"])
         for p in sk_by_team[t]:
             prof = profiles[p["id"]]
@@ -703,6 +735,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             prof["injury"] = inj
             if inj and inj["kind"] == "out":
                 prof["active"], prof["why"] = False, f"Out ({inj['status']})"
+            elif lu["source"] == "gameday":
+                prof["active"] = p["id"] in dressed
+                prof["why"] = None if prof["active"] else ("Scratched" if scratched.get(p["id"]) else "Not in tonight's lineup")
             elif lu["source"] == "projected":
                 prof["active"] = p["id"] in dressed
                 prof["why"] = None if prof["active"] else "Not in projected lineup"
@@ -737,6 +772,12 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                     starters[t], starter_status[t] = cand[0], f"{rep_['status']} {rep_['pct']:.0f}%"
                     mp_hit = True
                     break
+            nhl_g = (nhl_day.get(t) or {}).get("goalies") or []
+            if nhl_g and gdate == nhl.get("date") and not (mp_hit and "confirm" in starter_status[t].lower()):
+                m = idx.find(nhl_g[0], t)
+                if m and m["id"] in ids:
+                    starters[t], starter_status[t] = m["id"], "Expected"
+                    mp_hit = True
             for rep_ in ([] if mp_hit else reports):
                 if rep_.get("team") not in (None, t):
                     continue

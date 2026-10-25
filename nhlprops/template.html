@@ -168,6 +168,7 @@ table.sg .sgm{background:none!important;color:var(--mute);font-size:11px;font-we
 .sides{display:flex;justify-content:center;margin-bottom:16px}
 .sides .seg button{padding:8px 18px;font-size:14px}
 .sidegrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr);gap:12px;margin-bottom:14px}
+.sidegrid .newsbox{grid-column:1/-1}
 .kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:12.5px}
 .kv span:nth-child(odd){color:var(--mute)}
 .kv span:nth-child(even){font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
@@ -175,6 +176,8 @@ table.sg .sgm{background:none!important;color:var(--mute);font-size:11px;font-we
 .injl{display:flex;flex-direction:column;gap:8px;font-size:13px}
 .inj{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:start}
 .inj .d{grid-column:2;color:var(--mute);font-size:12px}
+.newsl{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mute)}
+.newsl li::marker{color:var(--accent)}
 .lines{display:grid;gap:6px;font-size:12.5px}
 .line{display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center}
 .line .lab{font-size:10.5px;font-weight:700;color:var(--mute);text-transform:uppercase}
@@ -396,6 +399,7 @@ const I18N = {
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
+    st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
     inj_out:"Out", inj_q:"Questionable",
     h2h_title:"Last meetings", h2h_sum:"{a} {aw} – {hw} {h} in wins · avg {avg} goals · over {l} in {o} of {n}", h2h_total:"Goals", h2h_away:"Away", h2h_home:"Home",
@@ -479,6 +483,7 @@ const I18N = {
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
+    st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
     inj_out:"Ute", inj_q:"Osäker",
     h2h_title:"Senaste mötena", h2h_sum:"{a} {aw} – {hw} {h} i vinster · snitt {avg} mål · över {l} i {o} av {n}", h2h_total:"Mål", h2h_away:"Borta", h2h_home:"Hemma",
@@ -527,15 +532,15 @@ function trData(s){
 }
 function trStatus(s){
   if (!s) return t("st_projected");
-  const m = s.match(/^(very likely|likely|confirmed|unconfirmed|projected|your pick)\s*(.*)$/i);
+  const m = s.match(/^(very likely|likely|confirmed|unconfirmed|projected|expected|your pick)\s*(.*)$/i);
   if (!m) return trData(s);
   const k = m[1].toLowerCase();
-  const word = k==="very likely" ? t("st_very") : k==="likely" ? t("st_likely") : k==="confirmed" ? t("st_confirmed") : k==="unconfirmed" ? t("st_unconfirmed") : k==="your pick" ? t("your_pick") : t("st_projected");
+  const word = k==="very likely" ? t("st_very") : k==="likely" ? t("st_likely") : k==="confirmed" ? t("st_confirmed") : k==="unconfirmed" ? t("st_unconfirmed") : k==="expected" ? t("st_expected") : k==="your pick" ? t("your_pick") : t("st_projected");
   return (word + " " + m[2]).trim();
 }
 const trTier = x => x ? t("tier_"+x) : "–";
 const trResults = s => { if (!s) return "–"; const L = t("res_letters"); return s.replace(/[WLO]/g, c=>L["WLO".indexOf(c)]); };
-const trWhy = w => !w ? "" : w==="Not in projected lineup" ? t("why_proj") : w==="Not in recent lineups" ? t("why_recent") : trData(w);
+const trWhy = w => !w ? "" : w==="Scratched" ? t("why_scr") : w==="Not in tonight's lineup" ? t("why_tonight") : w==="Not in projected lineup" ? t("why_proj") : w==="Not in recent lineups" ? t("why_recent") : trData(w);
 
 // ------------------------------------------------------------ theme
 function currentTheme(){
@@ -630,10 +635,10 @@ function logo(tm, size){
 const rec = x => x ? `${x.w??0}-${x.l??0}-${x.otl??0}` : "";
 function statusPill(s){
   const k = (s||"").toLowerCase();
-  const cls = k.includes("confirmed") && !k.includes("unconfirmed") ? "s-confirmed" : (k.includes("likely") ? "s-likely" : "");
+  const cls = (k.includes("confirmed") && !k.includes("unconfirmed")) || k.startsWith("expected") ? "s-confirmed" : (k.includes("likely") ? "s-likely" : "");
   return `<span class="pill ${cls}"><i></i>${esc(trStatus(s))}</span>`;
 }
-function injPill(inj){ if(!inj) return ""; return inj.kind==="out" ? `<span class="pill s-out">${esc(trData(inj.status)||t("inj_out"))}</span>` : `<span class="pill s-q">${esc(trData(inj.status)||t("inj_q"))}</span>`; }
+function injPill(inj){ if(!inj) return ""; if(inj.kind==="playing") return `<span class="pill s-confirmed">${t("inj_play")}</span>`; return inj.kind==="out" ? `<span class="pill s-out">${esc(trData(inj.status)||t("inj_out"))}</span>` : `<span class="pill s-q">${esc(trData(inj.status)||t("inj_q"))}</span>`; }
 function regPills(p){
   const r = p.regress, d = p.drought, out = [];
   if (r.flag==="due") out.push(`<span class="pill s-due" title="${esc(t("tip_due"))}">${t("pill_due")}</span>`);
@@ -820,7 +825,7 @@ function pickReasons(c, g){
   if (p.injury?.kind==="questionable") warn.push(t("r_listed",{s:trData(p.injury.status)}));
   const st = (g.starter_status[opp]||"").toLowerCase();
   if (!st.includes("confirmed") || st.includes("unconfirmed")) warn.push(t("r_gk_unconf",{t:opp}));
-  if (DATA.teams[pr.team]?.lineup?.source!=="projected") warn.push(t("r_lineup_est"));
+  if (!["projected","gameday"].includes(DATA.teams[pr.team]?.lineup?.source)) warn.push(t("r_lineup_est"));
   if ((p.windows?.career?.gp||0) < 40) warn.push(t("r_short"));
   return {why, warn};
 }
@@ -876,10 +881,10 @@ function facingBar(g, team, opp){
 function injuryOfName(team, name){ return (DATA.teams[team]?.injuries||[]).find(i=>i.name===name); }
 function injuriesCard(team){
   const inj = DATA.teams[team]?.injuries || [];
-  const out = inj.filter(i=>i.kind==="out"), q = inj.filter(i=>i.kind!=="out");
-  const row = i => `<div class="inj">${injPill(i)}<b>${esc(i.name)}</b><span class="d">${esc(trData(i.detail||""))}${i.return?` · ${t("back_on",{d:esc(i.return.slice(0,10))})}`:""}</span></div>`;
+  const out = inj.filter(i=>i.kind==="out"), q = inj.filter(i=>i.kind!=="out" && i.kind!=="playing"), play = inj.filter(i=>i.kind==="playing");
+  const row = i => `<div class="inj">${injPill(i)}<b>${esc(i.name)}</b><span class="d">${esc(trData(i.detail||""))}${i.return && i.kind!=="playing"?` · ${t("back_on",{d:esc(i.return.slice(0,10))})}`:""}</span></div>`;
   return `<div class="box"><h4>${t("injuries")} <span class="meta">${t("n_out_q",{o:out.length, q:q.length})}</span></h4>
-    ${inj.length ? `<div class="injl">${q.map(row).join("")}${out.map(row).join("")}</div>` : `<p class="meta">${t("no_injuries")}</p>`}</div>`;
+    ${inj.length ? `<div class="injl">${q.map(row).join("")}${play.map(row).join("")}${out.map(row).join("")}</div>` : `<p class="meta">${t("no_injuries")}</p>`}</div>`;
 }
 function lineupCard(g, team){
   const lu = DATA.teams[team]?.lineup; if(!lu) return "";
@@ -891,9 +896,16 @@ function lineupCard(g, team){
     return `<span class="${p.injury?.kind==="questionable"?"q":""}" title="${esc(p.name)}${p.injury?" – "+esc(trData(p.injury.status)):""}">${esc(last)}${pg!=null?`<b>${pct(pg)}</b>`:""}</span>`; };
   const order = Object.keys(lu.groups).sort((a,b)=>{ const r=k=>k.startsWith("pp")?2:k[0]==="f"?0:k[0]==="d"?1:3; return r(a)-r(b) || a.localeCompare(b); });
   const rows = order.filter(k=>/^(f|d|pp)\d$/.test(k)).map(k=>`<div class="line"><span class="lab">${k.toUpperCase()}</span><div class="lp">${lu.groups[k].map(name).join("")}</div></div>`).join("");
-  return `<div class="box lineupbox"><h4>${lu.source==="projected"?t("lu_proj"):t("lu_est")} <span class="meta">${t("goal_pct")}</span></h4>
+  return `<div class="box lineupbox"><h4>${lu.source==="gameday"?t("lu_day"):lu.source==="projected"?t("lu_proj"):t("lu_est")} <span class="meta">${t("goal_pct")}</span></h4>
     <div class="lines">${rows||`<p class="meta">${t("no_lineup")}</p>`}</div>
-    ${lu.source!=="projected"?`<p class="note">${t("lu_note")}</p>`:""}</div>`;
+    ${!["projected","gameday"].includes(lu.source)?`<p class="note">${t("lu_note")}</p>`:""}</div>`;
+}
+function newsCard(team){
+  const n = DATA.teams[team]?.news; if(!n || !n.notes) return "";
+  let when = ""; try { when = new Date(n.updated).toLocaleString(LOCALE(),{weekday:"short",hour:"2-digit",minute:"2-digit"}); } catch(e){}
+  const items = n.notes.split(/\s*(?:\.\.\.|…)\s*/).map(x=>x.trim()).filter(Boolean);
+  return `<div class="box newsbox"><h4>${t("team_news")} <span class="meta">${when?t("upd_at",{t:esc(when)}):""}</span></h4>
+    <ul class="newsl">${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
 }
 
 const GRID = ["g","a","pt",...C.sog_lines.slice(0,3).map(L=>"s"+L)];
@@ -930,7 +942,7 @@ function sidePanel(g, team){
   }
   const upd = DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? t("odds_upd",{t:new Date(DATA.odds[g.id].fetched).toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : "";
   $("#sidebody").innerHTML = `
-    <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}</div>
+    <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}${newsCard(team)}</div>
     ${facingBar(g, team, opp)}
     <div class="card tablewrap"><table><thead><tr>
       <th>${t("player_team",{t:team})}</th><th class="n hide-sm">${t("toi")}</th>
@@ -1291,6 +1303,7 @@ en: `<h3>What the site does</h3>
     <li><b>Shots dry</b> = shots since his last goal, and how rare a drought that long is for his talent.</li>
     <li><b>Projected / Likely / Confirmed</b> goalie = from the latest starting-goalie reports. "Projected" means no report yet: the goalie with the most recent starts, the backup on back-to-backs.</li>
     <li><b>Out / Day-to-Day</b>: injured players marked Out are removed from the props; questionable players stay in with a yellow mark.</li>
+    <li><b>Game-day lineup</b>: about an hour before each puck drop the site refreshes with the final lineups. Questionable players who are in the lineup are marked Playing, scratched and injured players are removed, and the expected starting goalie is updated.</li>
   </ul>
   <h3>Charts</h3>
   <p>In a player breakdown, switch Table to Chart. Choose goals, assists, points, shots, <b>shooting %</b> (with his true-talent line and the league average) or <b>goals vs expected</b> (bars = actual goals, line = goals his chances deserved). Compare season, previous 3, previous 5 and career, or season by season. Use <b>per game</b> or <b>82-game pace</b> to compare an unfinished season fairly; pace is the current rate stretched to 82 games, not a forecast. Faded bars are small samples.</p>`,
@@ -1323,6 +1336,7 @@ sv: `<h3>Vad sajten gör</h3>
     <li><b>Skott utan mål</b> = skott sedan senaste målet, och hur ovanlig en så lång torka är för hans nivå.</li>
     <li><b>Prognos / Trolig / Bekräftad</b> målvakt = från de senaste rapporterna om startmålvakter. "Prognos" betyder att ingen rapport finns än: målvakten med flest starter på sistone, och reservmålvakten vid back-to-back.</li>
     <li><b>Ute / Dag till dag</b>: skadade spelare markerade Ute tas bort från spelen; osäkra spelare finns kvar med en gul markering.</li>
+    <li><b>Matchdagens uppställning</b>: ungefär en timme före varje nedsläpp uppdateras sidan med de slutliga uppställningarna. Osäkra spelare som finns med markeras Spelar, petade och skadade spelare tas bort, och den väntade startmålvakten uppdateras.</li>
   </ul>
   <h3>Diagram</h3>
   <p>I spelardetaljerna, byt från Tabell till Diagram. Välj mål, assist, poäng, skott, <b>skottprocent</b> (med hans verkliga nivå och ligasnittet) eller <b>mål mot förväntat</b> (staplar = faktiska mål, linje = målen hans chanser var värda). Jämför säsong, förra 3, förra 5 och karriär, eller säsong för säsong. Använd <b>per match</b> eller <b>takt över 82 matcher</b> för att jämföra en ofärdig säsong rättvist; takten är nuvarande nivå utsträckt till 82 matcher, inte en prognos. Bleka staplar bygger på litet underlag.</p>`

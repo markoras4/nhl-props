@@ -24,6 +24,7 @@ TEAM_NAMES = {
 INJURIES_URL = "https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/injuries"
 GOALIES_URL = "https://www.dailyfaceoff.com/starting-goalies/{date}"
 LINES_URL = "https://www.dailyfaceoff.com/teams/{slug}/line-combinations"
+NHL_LINEUPS_URL = "https://www.nhl.com/news/nhl-lineup-projections-2026-27-season"
 
 
 def norm(s: str) -> str:
@@ -183,6 +184,111 @@ def parse_lines(html: str | None) -> list[dict]:
     return out
 
 
+# ------------------------------------------------- NHL.com game-day lineups
+_SEP = re.compile(r"\s+(?:--|–|—)\s+")
+
+
+def _names(txt: str) -> list[str]:
+    txt = txt.strip().strip("*").strip()
+    if not txt or txt.lower().startswith("none"):
+        return []
+    return [n.strip(" .*") for n in re.split(r",\s*|\s+and\s+", txt) if n.strip(" .*")]
+
+
+def _injured(txt: str) -> list[dict]:
+    txt = txt.strip().strip("*").strip()
+    if not txt or txt.lower().startswith("none"):
+        return []
+    out = []
+    for m in re.finditer(r"\s*([^,(]+?)\s*(?:\(([^)]*)\))?\s*(?:,|$)", txt):
+        name = m.group(1).strip(" .*")
+        if name:
+            out.append({"name": name, "detail": (m.group(2) or "").strip()})
+    return out
+
+
+def _et_date(iso: str) -> str | None:
+    import datetime as dt
+    try:
+        t = dt.datetime.fromisoformat(iso.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    try:
+        from zoneinfo import ZoneInfo
+        return t.astimezone(ZoneInfo("America/New_York")).date().isoformat()
+    except Exception:
+        return (t - dt.timedelta(hours=5)).date().isoformat()
+
+
+def parse_nhl_lineups(html: str | None) -> dict:
+    """NHL.com 'Projected lineups, starting goalies for today'.
+    -> {'date': ET date, 'updated': iso, 'teams': {TEAM: {opp, home, lines:[{name,group,pos}], goalies:[...],
+        scratched:[...], injured:[{name, detail}], notes}}}"""
+    out = {"date": None, "updated": None, "teams": {}}
+    if not html:
+        return out
+    body = None
+    for m in re.finditer(r'<script type="application/ld[^"]*json">(.*?)</script>', html, re.S):
+        try:
+            js = json.loads(m.group(1))
+        except ValueError:
+            continue
+        if isinstance(js, dict) and js.get("articleBody"):
+            body = js["articleBody"]
+            out["updated"] = js.get("dateModified") or js.get("datePublished")
+            out["date"] = _et_date(js.get("datePublished") or "") or None
+            break
+    if not body:
+        return out
+    for block in re.split(r"(?<!#)## \*\*", body)[1:]:
+        hm = re.match(r"([A-Z][A-Z .'\-]+?)\s*\([\d\-]+\)\s+at\s+([A-Z][A-Z .'\-]+?)\s*\(", block)
+        if not hm:
+            continue
+        away, home = team_from_name(hm.group(1).title()), team_from_name(hm.group(2).title())
+        if not away or not home:
+            continue
+        notes = ""
+        nm = re.search(r"\*\*Status report\*\*\s*(.*)", block, re.S)
+        if nm:
+            notes = re.sub(r"\s+", " ", re.sub(r"[*#]", "", nm.group(1))).strip()
+            block = block[:nm.start()]
+        for sec in re.finditer(r"\*\*([A-Za-z .'\-]+?) projected lineup\*\*(.*?)(?=\*\*[A-Za-z .'\-]+? projected lineup\*\*|$)",
+                               block, re.S):
+            team = team_from_name(sec.group(1).strip())
+            if team not in (home, away):
+                continue
+            rec = {"opp": away if team == home else home, "home": team == home, "lines": [], "goalies": [],
+                   "scratched": [], "injured": [], "notes": notes}
+            nf = nd = 0
+            for raw in sec.group(2).split("\n"):
+                ln = raw.strip()
+                if not ln:
+                    continue
+                sm = re.match(r"\**\s*Scratched:\**\s*(.*)", ln.lstrip("*"), re.I)
+                im = re.match(r"\**\s*Injured:\**\s*(.*)", ln.lstrip("*"), re.I)
+                if sm:
+                    rec["scratched"] = _names(sm.group(1))
+                    continue
+                if im:
+                    rec["injured"] = _injured(im.group(1))
+                    continue
+                if ln.startswith(("*", "#")):
+                    continue
+                parts = [x.strip(" *") for x in _SEP.split(ln) if x.strip(" *")]
+                if len(parts) == 3:
+                    nf += 1
+                    rec["lines"] += [{"name": n, "group": f"f{nf}", "pos": "f"} for n in parts]
+                elif len(parts) == 2:
+                    nd += 1
+                    rec["lines"] += [{"name": n, "group": f"d{nd}", "pos": "d"} for n in parts]
+                elif len(parts) == 1 and len(parts[0].split()) <= 4 and nd:
+                    rec["goalies"].append(parts[0])
+            for i, gname in enumerate(rec["goalies"][:2]):
+                rec["lines"].append({"name": gname, "group": f"g{i + 1}", "pos": "g"})
+            out["teams"][team] = rec
+    return out
+
+
 def fetch_news(src, teams: list[str], dates: list[str], log=print) -> dict:
     injuries = parse_injuries(src.json(INJURIES_URL, "news/injuries.json", 2))
     mp_starters: dict[int, list] = {}
@@ -193,10 +299,12 @@ def fetch_news(src, teams: list[str], dates: list[str], log=print) -> dict:
     for d in dates[:2]:  # backup source, today/tomorrow only
         goalies[d] = parse_starting_goalies(src.text(GOALIES_URL.format(date=d), f"news/goalies_{d}.html", 1))
     lines = {t: parse_lines(src.text(LINES_URL.format(slug=slug(t)), f"news/lines_{t}.html", 4)) for t in teams}
+    nhl = parse_nhl_lineups(src.text(NHL_LINEUPS_URL, "news/nhl_lineups.html", 0.15))
     n_inj = sum(len(v) for v in injuries.values())
     n_g = sum(len(v) for v in goalies.values())
     n_l = sum(1 for v in lines.values() if v)
     log(f"News: {n_inj} injuries, likely starters for {len(mp_starters)} games (+{n_g} backup reports), "
-        f"line combinations for {n_l}/{len(teams)} teams")
-    return {"injuries": injuries, "goalies": goalies, "mp_starters": mp_starters, "lines": lines,
+        f"line combinations for {n_l}/{len(teams)} teams, "
+        f"game-day lineups for {len(nhl['teams'])} teams ({nhl['date']}, updated {nhl['updated']})")
+    return {"injuries": injuries, "goalies": goalies, "mp_starters": mp_starters, "lines": lines, "nhl": nhl,
             "status": {"injuries": n_inj > 0, "goalies": bool(mp_starters) or n_g > 0, "lines": n_l > 0}}

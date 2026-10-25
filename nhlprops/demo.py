@@ -279,6 +279,31 @@ def generate(cache: Path, date: str, seed: int = 7) -> None:
         (cache / f"news/lines_{t}.html").write_text(
             f'<html><script id="__NEXT_DATA__" type="application/json">{json.dumps(nd)}</script></html>')
 
+    # NHL.com game-day lineup article for the first two games of the first day
+    d0 = sorted({g["date"] for g in slate})[0]
+    nm = lambda p: f"{p['firstName']['default']} {p['lastName']['default']}"
+    dtd = {x["displayName"]: [i["athlete"]["displayName"] for i in x["injuries"] if i["status"] == "Day-To-Day"]
+           for x in inj}
+    body = "## **[FANTASY COVERAGE](https://example)**"
+    for g in [x for x in slate if x["date"] == d0][:2]:
+        body += f"## **{TEAM_NAMES[g['away']].split()[-1].upper()} (5-4-1) at {TEAM_NAMES[g['home']].split()[-1].upper()} (4-5-1)**\n\n### **7 p.m. ET**\n\n"
+        for t in (g["away"], g["home"]):
+            r = json.loads((cache / f"nhl/roster/{t}.json").read_text())
+            q = dtd.get(TEAM_NAMES[t], [])
+            fw = [p for p in r["forwards"] if nm(p) in q] + [p for p in r["forwards"] if nm(p) not in q]
+            body += f"**{TEAM_NAMES[t].split()[-1]} projected lineup**\n\n"
+            body += "".join(" -- ".join(nm(p) for p in fw[i:i + 3]) + "\n\n" for i in range(0, 12, 3))
+            body += "".join(" -- ".join(nm(p) for p in r["defensemen"][i:i + 2]) + "\n\n" for i in range(0, 6, 2))
+            body += "".join(nm(p) + "\n\n" for p in r["goalies"][::-1][:2])
+            extra = fw[12:] + r["defensemen"][6:]
+            body += f"***Scratched:** {nm(extra[0]) if extra else 'None'}*\n\n"
+            hurt = extra[1] if len(extra) > 1 else r["defensemen"][-1]
+            body += f"***Injured:** {nm(hurt)} (lower body)*\n\n"
+        body += "**Status report**\n\nBoth teams held an optional morning skate ... The goalie listed first will start ... Demo note about a player returning."
+    ld = json.dumps({"@type": "NewsArticle", "articleBody": body, "datePublished": f"{d0}T15:00:00Z",
+                     "dateModified": f"{d0}T21:30:00Z"})
+    (cache / "news/nhl_lineups.html").write_text(f'<html><script type="application/ld&#x2B;json">{ld}</script></html>')
+
     # placeholder logos (real ones are downloaded from the NHL by the live build)
     for i, t in enumerate(NHL_TEAMS):
         hue = (i * 47) % 360
