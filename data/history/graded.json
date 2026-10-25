@@ -51,5 +51,10 @@
  "sog": {},
  "ou_model": {},
  "ou_hist": {},
- "ou_blends": {}
+ "ou_blends": {},
+ "bets": {
+  "Goal": null,
+  "Assist": null,
+  "Point": null
+ }
 }
