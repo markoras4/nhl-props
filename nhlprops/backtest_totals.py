@@ -74,6 +74,12 @@ def season_rows(src, season, cfg, prev_games: pd.DataFrame, log=print) -> pd.Dat
     xg_prior_lg = np.mean([v["xgf"] for v in tp.values()]) if tp else lg_prior_gpg
 
     rows, hist = [], {}          # hist[team] = list of (gf, ga, sf, sa, total)
+    if len(prev_games) and "hsog" in prev_games:
+        pg_ = prev_games.dropna(subset=["hsog", "asog"])
+        sh_prior = float((pg_.hs.sum() + pg_.as_.sum()) / max(pg_.hsog.sum() + pg_.asog.sum(), 1))
+    else:
+        sh_prior = 0.10
+    lg_goals, lg_shots = 0.0, 0.0
     h2h = {}
     lg_sum, lg_n, lg_over = 0.0, 0, {L: 0 for L in LINES}
     prev_team_over = {}
@@ -95,7 +101,7 @@ def season_rows(src, season, cfg, prev_games: pd.DataFrame, log=print) -> pd.Dat
     for g in games.sort_values(["date", "id"]).itertuples():
         H, A = g.home, g.away
         lg_now = shrink(lg_sum / 2, lg_n, lg_prior_gpg, 200) if lg_n else lg_prior_gpg   # league goals per team-game so far
-        lg_sh = 0.09
+        lg_sh = shrink(lg_goals, lg_shots, sh_prior, 3000)   # league goals per shot so far (empty-net goals included)
         def rating(t):
             h = hist.get(t, [])
             n = len(h)
@@ -138,6 +144,8 @@ def season_rows(src, season, cfg, prev_games: pd.DataFrame, log=print) -> pd.Dat
         hist.setdefault(A, []).append((g.as_, g.hs, g.asog, g.hsog, g.hs + g.as_))
         h2h.setdefault(key, []).append(g.hs + g.as_)
         lg_sum += g.hs + g.as_; lg_n += 1
+        if g.hsog is not None and g.asog is not None and not (pd.isna(g.hsog) or pd.isna(g.asog)):
+            lg_goals += g.hs + g.as_; lg_shots += g.hsog + g.asog
         for L in LINES:
             lg_over[L] += int(g.hs + g.as_ > L)
     return pd.DataFrame(rows), games
