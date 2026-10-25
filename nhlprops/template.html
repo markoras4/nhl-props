@@ -157,6 +157,25 @@ td.h{text-align:center;padding:4px}
 .cell{border-radius:7px;padding:5px 6px;min-width:62px;font-variant-numeric:tabular-nums;line-height:1.2}
 .cell b{display:block;font-size:14px;font-family:var(--f-disp);font-weight:700}
 .cell small{font-size:10.5px;color:var(--mute)}
+.cell .bk{font-weight:700;color:var(--text)}
+.cell .bk.pos{color:var(--good)}
+.cell .bk.neg{color:var(--mute);font-weight:500}
+.cell.val{box-shadow:inset 0 0 0 1.5px var(--good)}
+.seg.sm{padding:2px}
+.seg.sm button{padding:4px 10px;font-size:12px}
+.box h4 .seg{text-transform:none;letter-spacing:0}
+.chartwrap{overflow-x:auto}
+.chartwrap svg{min-width:460px;display:block}
+.chartwrap .cg{stroke:var(--line);stroke-width:1}
+.chartwrap .ct{fill:var(--mute);font-size:11px;font-family:var(--f-ui)}
+.chartwrap .cx{fill:var(--text);font-size:12.5px;font-weight:600;font-family:var(--f-disp)}
+.chartwrap .cv{fill:var(--text);font-size:13px;font-weight:700;font-family:var(--f-disp)}
+.chartwrap .cb{fill:rgba(var(--heat),.55)}
+.chartwrap .cb.partial{fill:rgba(var(--heat),.25);stroke:rgba(var(--heat),.8);stroke-dasharray:4 3}
+.chartwrap .cl{fill:none;stroke:var(--accent2);stroke-width:2.5;stroke-linejoin:round}
+.chartwrap .cd{fill:var(--accent2);stroke:var(--panel);stroke-width:2}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:12px;color:var(--mute);margin:8px 2px 0}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:5px}
 .bar{position:relative;height:22px;min-width:110px;background:var(--chip);border-radius:6px;overflow:hidden}
 .bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,rgba(var(--heat),.35),rgba(var(--heat),.9));border-radius:6px}
 .bar span{position:relative;display:block;text-align:right;padding:0 7px;line-height:22px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -166,6 +185,7 @@ td.h{text-align:center;padding:4px}
 .hits i.y{background:var(--accent)}
 .detail{padding:12px 4px 16px}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+@media (max-width:700px){.dgrid>.box{grid-column:auto!important}}
 .mini{font-size:12px}
 .mini th,.mini td{padding:5px 6px}
 .hit{color:var(--accent);font-weight:700}
@@ -173,7 +193,7 @@ td.h{text-align:center;padding:4px}
 .chip{background:var(--chip);border-radius:7px;padding:4px 8px;font-size:12px}
 .chip b{font-variant-numeric:tabular-nums}
 .up{color:var(--good)}.down{color:var(--bad)}
-.oddsgrid{display:grid;grid-template-columns:auto auto auto auto;gap:6px 12px;align-items:center;font-size:12.5px}
+.oddsgrid{display:grid;grid-template-columns:auto auto auto auto auto;gap:6px 12px;align-items:center;font-size:12.5px}
 .oddsgrid .h{font-size:10.5px;color:var(--mute);text-transform:uppercase}
 .cmp{width:100%;font-size:12.5px}
 .cmp td{padding:6px 4px}
@@ -241,6 +261,7 @@ const state = {
   streakW: +(store.get("set:streakW") ?? (C.streak_weight_default||0)*100),
   histW: +(store.get("set:histW") ?? (C.history_weight_default||0)*100),
   goalie: {},
+  chart: (()=>{ try { return Object.assign({view:"table", stat:"g", mode:"windows", unit:"pg"}, JSON.parse(store.get("set:chart")||"{}")); } catch(e){ return {view:"table", stat:"g", mode:"windows", unit:"pg"}; } })(),
 };
 DATA.games.forEach(g => { state.goalie[g.id] = {};
   for (const t of [g.home, g.away]) state.goalie[g.id][t] = store.get(`goalie:${g.id}:${t}`) || g.starters[t]; });
@@ -285,7 +306,12 @@ function hitGame(gm, m){
   return gm.s > parseFloat(m.slice(1));
 }
 const oddsKey = (gid, pid, m) => `odds:${gid}:${pid}:${m}`;
-const getOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
+const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
+const userOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
+const getOdds = (gid,pid,m) => userOdds(gid,pid,m) ?? book(gid,pid,m)?.o ?? null;
+const noVig = b => b && b.o && b.n ? (1/b.o)/((1/b.o)+(1/b.n)) : null;
+const bookName = gid => DATA.odds?.[gid]?.book || "Book";
+const VALUE = 0.05;
 
 // ------------------------------------------------------------ helpers
 const timeOf = g => g.start ? new Date(g.start).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}) : "TBD";
@@ -368,10 +394,11 @@ function gamePage(){
   const mu = gameMu(g), d = gameDist(mu.h, mu.a);
   const ou = C.ou_lines.map(Lx => {
     const m = d.over(Lx), hst = g.hist_over[String(Lx)], b = blendOver(g,d,Lx);
-    const k = `ou:${g.id}:${Lx}`, od = parseFloat(store.get(k)), ev = isNaN(od)?null:b*od-1;
+    const k = `ou:${g.id}:${Lx}`, bt = DATA.odds?.[g.id]?.totals?.[String(Lx)], uo = parseFloat(store.get(k));
+    const od = !isNaN(uo) ? uo : (bt?.over ?? NaN), ev = isNaN(od)?null:b*od-1;
     return `<div><b>${Lx}</b></div><div>${pct(m,1)}</div><div>${pct(hst,1)}</div>
       <div><b>${pct(b,1)}</b> <span class="meta">${(1/b).toFixed(2)} / ${(1/(1-b)).toFixed(2)}</span></div>
-      <div><input class="odds ouodds" id="ou-${g.id}-${Lx}" data-k="${k}" placeholder="over" value="${isNaN(od)?"":od}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span></div>`;
+      <div><input class="odds ouodds" id="ou-${g.id}-${Lx}" data-k="${k}" placeholder="${bt?.over?bt.over.toFixed(2):"over"}" value="${isNaN(uo)?"":uo}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span></div>`;
   }).join("");
   let html = `<button class="back" id="back">← All games</button>
   <div class="card ghero">
@@ -385,7 +412,7 @@ function gamePage(){
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
       <p class="note">${g.h2h?.n?`Last ${g.h2h.n} meetings: ${g.h2h.games.map(x=>`${x.date.slice(2)} ${x.score}`).join(" · ")} (${g.away} first), avg ${fmt(g.h2h.avg_total,1)} goals.`:"No meetings in the last 4 seasons."}</p></div>
     <div class="box"><h4>Total goals</h4>
-      <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Your odds</div>${ou}</div></div>
+      <div class="ou"><div class="h">Line</div><div class="h">Model</div><div class="h">History</div><div class="h">Over · fair odds o/u</div><div class="h">Over odds${DATA.odds?.[g.id]?.totals?" ("+esc(bookName(g.id))+")":""}</div>${ou}</div></div>
   </div>
   <div class="sides"><div class="seg" id="sides">
     <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${g.away} roster</button>
@@ -484,7 +511,10 @@ function sidePanel(g, team){
       <td><div class="pl"><div class="jersey">${r.p.num??""}</div><div><div class="nm">${esc(r.p.name)} ${injPill(r.p.injury)}</div>
         <div class="sub">${r.p.pos}${pos[r.pr.id]?" · "+pos[r.pr.id].toUpperCase():""}${r.p.why && !r.p.injury?" · "+esc(r.p.why):""}</div></div></div></td>
       <td class="n hide-sm num">${fmt(r.p.toi_proj,1)}</td>
-      ${GRID.map(([m])=>{ const v=r.probs[m]; return `<td class="h"><div class="cell" style="${r.p.active?heat(v,colMax[m]):""}"><b>${pct(v,0)}</b><small>${(1/v).toFixed(2)}</small></div></td>`; }).join("")}
+      ${GRID.map(([m])=>{ const v=r.probs[m]; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
+        const val = r.p.active && ev!=null && ev>=VALUE;
+        const tip = `Model ${pct(v,1)} · fair ${(1/v).toFixed(2)}${od?` · odds ${od.toFixed(2)} · EV ${(ev>0?"+":"")+(ev*100).toFixed(1)}%`:""}`;
+        return `<td class="h"><div class="cell ${val?"val":""}" title="${tip}" style="${r.p.active?heat(v,colMax[m]):""}"><b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${od.toFixed(2)}</span>`:(1/v).toFixed(2)}</small></div></td>`; }).join("")}
       <td>${regPills(r.p)}</td></tr>
       ${open?`<tr><td colspan="${GRID.length+3}">${detail(r.pr, g)}</td></tr>`:""}`;
   }
@@ -495,9 +525,16 @@ function sidePanel(g, team){
       <th>${team} player</th><th class="n hide-sm">TOI</th>
       ${GRID.map(([m,n])=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${n}</th>`).join("")}<th>Signals</th></tr></thead>
       <tbody>${body}</tbody></table></div>
-    <p class="foot">Each cell: probability and fair decimal odds. Click a column to sort, click it again for lineup order. Click a player for the breakdown and to enter your bookmaker's odds.</p>`;
+    <div class="legend"><span><b>38%</b> = model probability</span>
+      <span>${DATA.odds?.[g.id] ? `small number = ${esc(bookName(g.id))} odds (green when the model sees +5% value or more)` : "small number = fair odds (no bookmaker prices for this game yet)"}</span>
+      <span><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>value bet</span></div>
+    <p class="foot">Click a column to sort, click it again for lineup order. Click a player for his breakdown, charts, and to enter your own odds.${DATA.odds?.[g.id]?.fetched && DATA.odds[g.id].fetched!=="demo" ? ` Odds updated ${new Date(DATA.odds[g.id].fetched).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})}.`:""}</p>`;
   $("#sidebody").onclick = e => {
     if (e.target.closest("input,select")) return;
+    const cb = e.target.closest("[data-cv],[data-cs],[data-cm],[data-cu]");
+    if (cb){ const d = cb.dataset;
+      if (d.cv) state.chart.view = d.cv; if (d.cs) state.chart.stat = d.cs; if (d.cm) state.chart.mode = d.cm; if (d.cu) state.chart.unit = d.cu;
+      store.set("set:chart", JSON.stringify(state.chart)); sidePanel(g, team); return; }
     const th = e.target.closest("th.s"); if (th){ state.sort = state.sort===th.dataset.m ? null : th.dataset.m; sidePanel(g, team); return; }
     const tr = e.target.closest("tr.row"); if (tr){ state.open = String(state.open)===tr.dataset.id ? null : tr.dataset.id; sidePanel(g, team); }
   };
@@ -513,17 +550,71 @@ function windowsTable(p){
     ${r("Points per season", w=>fmt(w.p_ps,1))}${r("Shooting %", w=>pct(w.sh,1))}</tbody></table>`;
 }
 
+// ------------------------------------------------------------ history chart
+const STATS = [["g","Goals"],["a","Assists"],["p","Points"],["s","Shots"]];
+function chartData(p){
+  const c = state.chart, k = c.stat;
+  if (c.mode==="windows"){
+    const W = p.windows;
+    return [["cur","This season"],["prev3","Prev 3 seasons"],["prev5","Prev 5 seasons"],["career","Career"]].map(([key,lab])=>{
+      const w = W[key]; if(!w) return {lab, v:null};
+      const v = c.unit==="pg" ? w[k+"_pg"] : (key==="cur" ? w[k] : w[k+"_ps"]);
+      return {lab, v, sub: key==="cur" ? `${w.gp} GP` : `${w.seasons} seas · ${w.gp} GP`, partial: key==="cur" && c.unit!=="pg"};
+    });
+  }
+  const cur = DATA.season;
+  return (p.by_season||[]).slice().sort((a,b)=>a.y-b.y).map(r=>({
+    lab: `${String(r.y).slice(2)}–${String(r.y+1).slice(2)}`, v: r.gp ? (c.unit==="pg" ? r[k]/r.gp : r[k]) : null,
+    sub: `${r.gp} GP`, partial: r.y===cur && c.unit!=="pg"}));
+}
+function barChart(rows, unit, mode){
+  const W = 960, H = 300, padL = 48, padR = 12, padT = 30, padB = 50;
+  const vals = rows.map(r=>r.v).filter(v=>v!=null);
+  if (!vals.length) return `<p class="meta">No history to chart.</p>`;
+  const top = Math.max(...vals) || 1;
+  const step = (()=>{ const raw = top/4, m = Math.pow(10, Math.floor(Math.log10(raw))); return [1,2,2.5,5,10].map(x=>x*m).find(x=>x>=raw); })();
+  const ymax = Math.ceil(top/step)*step;
+  const x0 = padL, w = W-padL-padR, slot = w/rows.length, bw = Math.min(70, slot*0.56);
+  const Y = v => padT + (H-padT-padB)*(1 - v/ymax);
+  const dec = unit==="pg" ? 2 : (mode==="seasons" ? 0 : 1);
+  let grid = "";
+  for (let v=0; v<=ymax+1e-9; v+=step) grid += `<line x1="${x0}" x2="${W-padR}" y1="${Y(v)}" y2="${Y(v)}" class="cg"/><text x="${x0-8}" y="${Y(v)+4}" text-anchor="end" class="ct">${unit==="pg"?v.toFixed(step<0.1?2:1):Math.round(v)}</text>`;
+  const pts = [];
+  const bars = rows.map((r,i)=>{ const cx = x0 + slot*i + slot/2;
+    const lab = `<text x="${cx}" y="${H-padB+18}" text-anchor="middle" class="cx">${esc(r.lab)}</text><text x="${cx}" y="${H-padB+33}" text-anchor="middle" class="ct">${esc(r.sub||"")}</text>`;
+    if (r.v==null) return lab;
+    const y = Y(r.v); pts.push([cx,y]);
+    return `<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${Y(0)-y}" rx="5" class="cb ${r.partial?"partial":""}"><title>${esc(r.lab)}: ${r.v.toFixed(dec)}</title></rect>
+      <text x="${cx}" y="${y-8}" text-anchor="middle" class="cv">${r.v.toFixed(dec)}</text>${lab}`; }).join("");
+  const line = pts.length>1 ? `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" class="cl"/>` : "";
+  const dots = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" class="cd"/>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Bar chart">${grid}${bars}${line}${dots}</svg>`;
+}
+function statsBox(p){
+  const c = state.chart;
+  const seg = (attr, opts, cur) => `<div class="seg sm">${opts.map(([v,l])=>`<button data-${attr}="${v}" class="${cur===v?"on":""}">${l}</button>`).join("")}</div>`;
+  const head = `<h4>Averages: season, previous 3 & 5 seasons, career ${seg("cv",[["table","Table"],["chart","Chart"]],c.view)}</h4>`;
+  if (c.view!=="chart") return `<div class="box" style="grid-column:1/-1">${head}<div class="tablewrap">${windowsTable(p)}</div></div>`;
+  const rows = chartData(p);
+  const statName = STATS.find(x=>x[0]===c.stat)[1];
+  return `<div class="box" style="grid-column:1/-1">${head}
+    <div class="controls" style="margin-bottom:6px">${seg("cs",STATS,c.stat)}${seg("cm",[["windows","Season, prev 3, prev 5, career"],["seasons","Season by season"]],c.mode)}${seg("cu",[["pg","Per game"],["ps","Per season"]],c.unit)}</div>
+    <div class="chartwrap">${barChart(rows, c.unit, c.mode)}</div>
+    <p class="note">${statName} ${c.unit==="pg"?"per game":(c.mode==="windows"?"per season (this season so far; others averaged per season)":"per season")}. ${c.unit!=="pg"?"The lighter bar is the current season, which isn't finished. ":""}The line connects the top of each bar.</p></div>`;
+}
+
 function detail(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
-  const oddsRows = MARKETS.map(([m,n])=>{ const pv = prob(pr,g,m), od = getOdds(g.id,pr.id,m), ev = od==null?null:pv*od-1;
+  const oddsRows = MARKETS.map(([m,n])=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
     return `<span>${n}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
-      <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="odds" value="${od??""}">
+      <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""}`:`<span class="meta">–</span>`}</span>
+      <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):"odds"}" value="${uo??""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box"><h4>Prices & your odds</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Prob · fair</span><span class="h">Book odds</span><span class="h">EV</span>${oddsRows}</div>
-      <p class="note">EV = probability × odds − 1. Bet only where it's clearly positive.</p></div>
+    <div class="box" style="grid-column:span 2"><h4>Prices & value</h4><div class="oddsgrid"><span class="h">Market</span><span class="h">Model · fair</span><span class="h">${esc(bookName(g.id))} · its %</span><span class="h">Your odds</span><span class="h">EV</span>${oddsRows}</div>
+      <p class="note">"Its %" is the bookmaker's own probability with its margin removed. EV uses your odds if you type them, otherwise the bookmaker's. EV = model probability × odds − 1.</p></div>
     <div class="box"><h4>How the number is built</h4>
       <div class="chips">
         <span class="chip">Goals/60 <b>${fmt(r.g60,2)}</b></span><span class="chip">Assists/60 <b>${fmt(r.a60,2)}</b></span>
@@ -554,7 +645,7 @@ function detail(pr, g){
     <div class="box"><h4>Last 10 games</h4>
       <table class="mini"><thead><tr><th>Date</th><th>Opp</th><th class="n">G</th><th class="n">A</th><th class="n">S</th><th class="n">TOI</th></tr></thead>
       <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">No games yet this season.</td></tr>`}</tbody></table></div>
-    <div class="box" style="grid-column:1/-1"><h4>Averages: season, previous 3 & 5 seasons, career</h4><div class="tablewrap">${windowsTable(p)}</div></div>
+    ${statsBox(p)}
   </div></div>`;
 }
 
@@ -598,14 +689,16 @@ function propsTab(){
     <select id="fday" aria-label="Day"><option value="all">All days</option>${dates.map(d=>`<option value="${d}" ${state.pday===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
     <select id="fgame" aria-label="Game"><option value="all">All games</option>${gameOpts}</select>
     <input type="search" id="fq" placeholder="Search player" value="${esc(state.q)}">
-    <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> regression signals only</label></div>
-  <div class="card tablewrap"><table><thead><tr><th>Player</th><th class="n">TOI</th><th>Probability</th><th class="n">Fair</th><th class="n">Your odds</th><th class="n">EV</th><th class="hide-sm">Last 10</th><th>Signals</th></tr></thead><tbody id="ptb"></tbody></table></div>
-  <p class="foot">Only players expected to play. Click a player to open his game.</p>`;
+    <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> regression signals only</label>
+    <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">Most likely</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">Best value</button></div></div>
+  <div class="card tablewrap"><table><thead><tr><th>Player</th><th class="n">TOI</th><th>Probability</th><th class="n">Fair</th><th class="n">Odds</th><th class="n">EV</th><th class="hide-sm">Last 10</th><th>Signals</th></tr></thead><tbody id="ptb"></tbody></table></div>
+  <p class="foot">Only players expected to play. The odds box shows the bookmaker's price in grey. Type your own to override it. Click a player to open his game.</p>`;
   $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
   $("#fgame").onchange = e => { state.pfilter=e.target.value; rowsTop(); };
   $("#fq").oninput = e => { state.q=e.target.value.toLowerCase(); rowsTop(); };
   $("#freg").onchange = e => { state.onlyReg=e.target.checked; rowsTop(); };
+  $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); } };
   rowsTop();
 }
 function rowsTop(){
@@ -618,7 +711,7 @@ function rowsTop(){
       if (state.onlyReg && !isReg(p)) continue;
       const v = prob(pr,g,m), od = getOdds(g.id,pr.id,m); rows.push({g,pr,p,v,od,ev:od==null?null:v*od-1}); }
   }
-  rows.sort((a,b)=>b.v-a.v);
+  if (state.psort==="ev") rows.sort((a,b)=>(b.ev??-9)-(a.ev??-9)); else rows.sort((a,b)=>b.v-a.v);
   $("#ptb").innerHTML = rows.slice(0,300).map(({g,pr,p,v,od,ev})=>{
     const last = p.form.games.slice(0,10);
     return `<tr class="row" data-g="${g.id}" data-id="${pr.id}">
@@ -626,7 +719,7 @@ function rowsTop(){
       <td class="n num">${fmt(p.toi_proj,1)}</td>
       <td><div class="bar"><i style="width:${Math.min(100,v*100)}%"></i><span>${pct(v,1)}</span></div></td>
       <td class="n num">${(1/v).toFixed(2)}</td>
-      <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${od??""}" placeholder="—"></td>
+      <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}"></td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":(ev>0?"+":"")+(ev*100).toFixed(1)+"%"}</td>
       <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${x.d} ${x.o}: ${x.g}G ${x.a}A ${x.s}S"></i>`).reverse().join("")}</div></td>
       <td>${regPills(p)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">No players match.</td></tr>`;
@@ -656,6 +749,8 @@ function trackTab(){
   $("#main").innerHTML = `<p class="meta">${T.days.length} days graded · ${T.days.reduce((a,d)=>a+d.games_final,0)} games · ${T.days.reduce((a,d)=>a+d.props,0)} player-games. Skill above 0% means better than guessing the base rate.</p>
     <div class="card tablewrap"><table><thead><tr><th>Market</th><th class="n">Bets</th><th class="n">Predicted</th><th class="n">Happened</th><th class="n">Brier</th><th class="n">Skill</th></tr></thead>
     <tbody>${rows(T.props)}${rows(T.sog)}${rows(Object.fromEntries(Object.entries(T.ou_model).map(([k,v])=>["Game "+k+" (model)",v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist).map(([k,v])=>["Game "+k+" (history only)",v])))}</tbody></table></div>
+    ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>Value bets (model EV ≥ 5% at the bookmaker's price)</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit (1 unit each)</th><th class="n">ROI</th></tr></thead><tbody>
+      ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${k}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
     <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>Calibration: ${k}</h4>${calibChart(s)}</div>`).join("")}${blends}</div>`;
 }
 

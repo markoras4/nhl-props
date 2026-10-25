@@ -562,6 +562,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
             "career": _window(seasons, None),
         },
         "xg_windows": {"cur": xg_window([cur]), "prev3": xg_window([cur - 1, cur - 2, cur - 3])},
+        "by_season": [{"y": y, **seasons[y]} for y in sorted(seasons, reverse=True)[:8] if y >= cur - 5],
     }
 
 

@@ -57,6 +57,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
     ou_model: dict[str, list] = {}
     ou_hist: dict[str, list] = {}
     days = []
+    bets = {k: [] for k, _ in MARKETS}  # (stake 1 at book odds when model EV >= 5%)
     for f in files:
         h = json.loads(f.read_text(encoding="utf-8"))
         finals, boxes = 0, {}
@@ -81,6 +82,10 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
             props["g"].append((pr["p"]["g"], int(st["g"] >= 1)))
             props["a"].append((pr["p"]["a"], int(st["a"] >= 1)))
             props["pt"].append((pr["p"]["pt"], int(st["g"] + st["a"] >= 1)))
+            res = {"g": st["g"] >= 1, "a": st["a"] >= 1, "pt": st["g"] + st["a"] >= 1}
+            for m, od in (pr.get("o") or {}).items():
+                if m in res and od and pr["p"][m] * od - 1 >= 0.05:
+                    bets[m].append(od - 1 if res[m] else -1.0)
             for k, v in pr["p"].items():
                 if k.startswith("s"):
                     sog.setdefault(k[1:], []).append((v, int(st["s"] > float(k[1:]))))
@@ -102,6 +107,8 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
         "ou_model": {f"Over {L}": summarize(v) for L, v in ou_model.items()},
         "ou_hist": {f"Over {L}": summarize(v) for L, v in ou_hist.items()},
         "ou_blends": blends,
+        "bets": {name: ({"n": len(bets[k]), "profit": sum(bets[k]), "roi": sum(bets[k]) / len(bets[k]),
+                         "won": sum(1 for x in bets[k] if x > 0)} if bets[k] else None) for k, name in MARKETS},
     }
     (history_dir / "graded.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     n = sum(d["props"] for d in days)

@@ -51,6 +51,26 @@ def clean(o):
     return o
 
 
+def demo_odds(slate: dict) -> dict:
+    """Bookmaker-like prices for demo mode: model probability +/- noise, ~7% margin."""
+    import random
+    rnd = random.Random(3)
+    out = {}
+    for g in slate["games"][:8]:
+        po = {}
+        for pr in g["props"]:
+            if not slate["players"][str(pr["id"])]["active"]:
+                continue
+            d = {}
+            for m in ("g", "a", "pt", "s1.5", "s2.5", "s3.5"):
+                p = min(0.95, max(0.02, pr["p"][m] * rnd.uniform(0.82, 1.18)))
+                d[m] = {"o": round(1 / (p * 1.07), 2), "n": round(1 / ((1 - p) * 1.07), 2)}
+            po[pr["id"]] = d
+        out[g["id"]] = {"book": "Unibet (demo)", "players": po, "fetched": "demo",
+                        "totals": {"5.5": {"over": 1.85, "under": 1.95}, "6.5": {"over": 2.6, "under": 1.5}}}
+    return out
+
+
 def save_history(slate: dict, hist_dir: Path):
     """One file per game date. Games that have already started keep their earlier prediction."""
     hist_dir.mkdir(parents=True, exist_ok=True)
@@ -71,7 +91,9 @@ def save_history(slate: dict, hist_dir: Path):
                  "model": {str(L): g["default"][f"over_{L}"] for L in CONFIG["ou_lines"]},
                  "hist": g["hist_over"]} for g in games],
             "props": [p for p in old["props"] if p["game"] not in ids] + [
-                {"id": pr["id"], "name": players[str(pr["id"])]["name"], "game": g["id"], "p": pr["p"]}
+                {"id": pr["id"], "name": players[str(pr["id"])]["name"], "game": g["id"], "p": pr["p"],
+                 "o": {m: v["o"] for m, v in (slate.get("odds", {}).get(g["id"], {}).get("players", {})
+                                              .get(pr["id"], {})).items()}}
                 for g in games for pr in g["props"] if players[str(pr["id"])]["active"]],
         }
         f.write_text(json.dumps(clean(rec)), encoding="utf-8")
@@ -153,7 +175,16 @@ def main(argv=None):
             print(f"No NHL games found for {args.date}. Try another --date.")
         return 1
     slate = build_slate(raw, CONFIG)
-    save_history(slate, hist_dir)
+    if args.demo:
+        slate["odds"] = demo_odds(slate)
+    else:
+        from .odds import fetch_odds
+        try:
+            slate["odds"] = fetch_odds(src, slate["games"], raw["skaters"])
+        except Exception as e:  # odds are optional
+            print("Odds unavailable:", e)
+            slate["odds"] = {}
+    save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))

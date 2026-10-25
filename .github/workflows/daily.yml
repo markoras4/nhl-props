@@ -3,7 +3,9 @@ name: Daily build
 on:
   schedule:
     - cron: "15 13 * * *"   # 14:15 Stockholm (winter) - morning in North America
-    - cron: "45 21 * * *"   # 22:45 Stockholm - refresh before puck drop
+    - cron: "15 16 * * *"   # 17:15 - odds and lineups refresh
+    - cron: "15 19 * * *"   # 20:15
+    - cron: "15 22 * * *"   # 23:15 - just before most puck drops
   workflow_dispatch:         # "Run workflow" button in the Actions tab
 
 permissions:
