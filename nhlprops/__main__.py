@@ -236,6 +236,45 @@ def track_open(slate: dict, open_dir: Path) -> None:
             f.unlink()
 
 
+def write_alerts(slate: dict, out: Path) -> None:
+    """Small feed for push alerts: props with an edge against the market, and confirmed starting goalies."""
+    now = dt.datetime.now(dt.timezone.utc)
+    odds, players, goalies = slate.get("odds") or {}, slate["players"], slate.get("goalies") or {}
+    edges, starters = [], []
+    for g in slate["games"]:
+        if g.get("state") not in PRE_STATES or not g.get("start"):
+            continue
+        try:
+            start = dt.datetime.fromisoformat(g["start"].replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if not (now < start < now + dt.timedelta(hours=20)):
+            continue
+        po = ((odds.get(g["id"]) or odds.get(str(g["id"])) or {}).get("players") or {})
+        for pr in g["props"]:
+            pl = players.get(str(pr["id"])) or players.get(pr["id"])
+            if not pl or not pl.get("active"):
+                continue
+            for m, b in (po.get(pr["id"]) or po.get(str(pr["id"])) or {}).items():
+                if not b or not b.get("o") or m not in pr["p"]:
+                    continue
+                ev = pr["p"][m] * b["o"] - 1
+                if ev >= 0.05:
+                    edges.append({"gid": g["id"], "pid": pr["id"], "name": pl["name"], "team": pr["team"], "opp": pr["opp"],
+                                  "home": pr["home"], "m": m, "odds": b["o"], "p": round(pr["p"][m], 4), "ev": round(ev, 4),
+                                  "start": g["start"]})
+        for t in (g["home"], g["away"]):
+            st = (g.get("starter_status") or {}).get(t) or ""
+            gid_ = (g.get("starters") or {}).get(t)
+            if "confirm" in st.lower() and "unconfirm" not in st.lower() and gid_:
+                gk = goalies.get(str(gid_)) or goalies.get(gid_) or {}
+                starters.append({"gid": g["id"], "team": t, "opp": g["away"] if t == g["home"] else g["home"],
+                                 "name": gk.get("name", ""), "start": g["start"]})
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps({"built": now.isoformat(timespec="minutes"), "edges": edges, "goalies": starters},
+                              separators=(",", ":")), encoding="utf-8")
+
+
 def write_closing(frozen_dir: Path, out: Path) -> None:
     """Closing player odds (last pre-game snapshot) for the last few days: {game: {player: {market: odds}}}."""
     res = {}
@@ -426,6 +465,10 @@ def main(argv=None):
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
     lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
     write_closing(data_dir / ("demo_frozen" if args.demo else "frozen"), ROOT / "output" / "closing.json")
+    try:
+        write_alerts(slate, ROOT / "output" / "alerts.json")
+    except Exception as e:  # alerts are optional; never break the build
+        print("Alerts feed skipped:", e)
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None

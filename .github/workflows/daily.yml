@@ -65,6 +65,10 @@ jobs:
           mkdir -p site/assets/previews && cp site-assets/previews/*.webp site/assets/previews/ 2>/dev/null || true
           if [ -f output/previews.html ]; then cp output/previews.html site/previews.html; fi
           mkdir -p site/data && if [ -f output/closing.json ]; then cp output/closing.json site/data/closing.json; fi
+          if [ -f output/alerts.json ]; then cp output/alerts.json site/data/alerts.json; fi
+          cp site-assets/sw.js site/sw.js 2>/dev/null || true
+          cp site-assets/manifest.webmanifest site/manifest.webmanifest 2>/dev/null || true
+          mkdir -p site/icons && cp site-assets/icons/*.png site/icons/ 2>/dev/null || true
           cp vercel.json site/vercel.json
           cp site-headers.txt site/_headers
           if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
