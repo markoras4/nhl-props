@@ -403,6 +403,7 @@ def main(argv=None):
     bt = sub.add_parser("backtest", help="replay past seasons game by game (does not touch the website)")
     bt.add_argument("--seasons", default="", help="comma-separated start years, default: the two previous seasons")
     bt.add_argument("--totals", action="store_true", help="test game totals instead of player props")
+    bt.add_argument("--hb", action="store_true", help="test hits and blocked-shots props")
     args = ap.parse_args(argv)
 
     data_dir = ROOT / "data"
@@ -429,6 +430,10 @@ def main(argv=None):
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())
         seasons = [int(x) for x in args.seasons.split(",") if x.strip()] or [cur - 2, cur - 1]
+        if args.hb:
+            from .backtest_hb import run as run_hb
+            run_hb(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
         if args.totals:
             from .backtest_totals import run as run_totals
             run_totals(src, seasons, CONFIG, ROOT / "backtest")

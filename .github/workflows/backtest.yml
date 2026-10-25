@@ -10,6 +10,10 @@ on:
         description: "Test game totals instead of player props"
         type: boolean
         default: false
+      hb:
+        description: "Test hits and blocked-shots props"
+        type: boolean
+        default: false
 permissions:
   contents: write
 jobs:
@@ -32,7 +36,7 @@ jobs:
       - name: Run backtest
         run: |
           mkdir -p backtest
-          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
+          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
           tail -60 backtest/log.txt
       - name: Save results to the "backtest" branch
         run: |
