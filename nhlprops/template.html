@@ -624,7 +624,7 @@ function barChart(rows, o){
   if (o.line2){
     line = pts2.length>1 ? `<polyline points="${pts2.map(p=>p[0]+","+p[1]).join(" ")}" class="cl x"/>` : "";
     dots = pts2.map(([x,y,v])=>`<circle cx="${x}" cy="${y}" r="5" class="cd x"><title>expected ${f(v)}</title></circle>`).join("")
-      + (pts2.length ? `<text x="${pts2[pts2.length-1][0]+12}" y="${pts2[pts2.length-1][1]+4}" class="crt x">expected</text>` : "");
+      + (pts2.length ? `<text x="${pts2[pts2.length-1][0]+12}" y="${pts2[pts2.length-1][1]-10}" class="crt x">expected</text>` : "");
   } else {
     line = pts.length>1 ? `<polyline points="${pts.map(p=>p.join(",")).join(" ")}" class="cl"/>` : "";
     dots = pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" class="cd"/>`).join("");
