@@ -597,6 +597,41 @@ def hit_markets(cfg: dict) -> dict:
     return fns
 
 
+def opponent_by_position(raw: dict) -> dict:
+    """What each team has allowed this season to centres, wingers and defencemen, per game, with ranks
+    (rank 1 = allows the most, i.e. the easiest matchup). Built from the skater game logs we already load."""
+    pos_of = {p["id"]: ("D" if p["pos"] == "D" else "C" if p["pos"] == "C" else "W") for p in raw["skaters"]}
+    tot: dict[str, dict] = {}
+    games: dict[str, set] = {}
+    for pid, lg in (raw.get("logs") or {}).items():
+        grp = pos_of.get(int(pid) if not isinstance(pid, int) else pid)
+        if not grp:
+            continue
+        for g in (lg or {}).get("cur", []):
+            o = g.get("opp")
+            if not o:
+                continue
+            games.setdefault(o, set()).add(g.get("game_id") or g.get("date"))
+            t = tot.setdefault(o, {k: {"s": 0, "g": 0, "pt": 0} for k in ("C", "W", "D")})[grp]
+            t["s"] += g["s"]; t["g"] += g["g"]; t["pt"] += g["g"] + g["a"]
+    out = {}
+    for o, by in tot.items():
+        n = len(games.get(o, ()))
+        if n < 3:
+            continue
+        out[o] = {"gp": n, **{k: {m: round(v / n, 2) for m, v in st.items()} for k, st in by.items()}}
+    for k in ("C", "W", "D"):
+        for m in ("s", "g", "pt"):
+            order = sorted(out, key=lambda o: -out[o][k][m])
+            for i, o in enumerate(order):
+                out[o][k][m + "_rk"] = i + 1
+            if order:
+                lg = sum(out[o][k][m] for o in order) / len(order)
+                for o in order:
+                    out[o][k][m + "_lg"] = round(lg, 2)
+    return out
+
+
 # ---------------------------------------------------------------- slate
 def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     cur, date = raw["season"], raw["date"]
@@ -769,6 +804,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             players_out[p["id"]] = prof
 
     hit_fns = hit_markets(cfg)
+    opp_pos = opponent_by_position(raw)
     lg_xga = tm.lg_rate("all", "xGA") or 2.9
     lg_sa = tm.lg_rate("all", "SA") or 30
     for gm in raw["games"]:
@@ -881,7 +917,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
 
     log(f"Model built: {len(games_out)} games, {len(players_out)} skaters "
         f"({sum(p['active'] for p in players_out.values())} expected to play)")
-    return {"date": date, "season": cur, "league": league, "teams": teams_out, "games": games_out,
+    return {"date": date, "season": cur, "league": league, "teams": teams_out, "games": games_out, "opp_pos": opp_pos,
             "players": {str(k): v for k, v in players_out.items()},
             "goalies": {str(k): v for k, v in goalies_out.items()},
             "news_status": news.get("status", {})}

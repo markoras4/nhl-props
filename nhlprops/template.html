@@ -303,6 +303,14 @@ td.h{text-align:center;padding:4px}
 .mv{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;white-space:nowrap;font-family:var(--f-ui)}
 .mv.to{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
 .mv.away{background:var(--chip);color:var(--mute)}
+.rk{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;background:var(--chip);color:var(--mute);margin-left:4px}
+.rk.rk-good{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.rk.rk-bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.opbox{margin-top:12px}
+.optab{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.optab th{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;font-weight:600;padding:4px 6px;text-align:center}
+.optab td{padding:7px 6px;text-align:center;border-top:1px solid var(--line)}
+.optab td.opg{font-family:var(--f-disp);font-weight:700;color:var(--text)}
 .hrmini{font-size:11px;color:var(--mute);margin-top:3px;white-space:nowrap}
 .hrstrip{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 .hrt{font-family:var(--f-disp);font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
@@ -520,6 +528,11 @@ const I18N = {
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
     tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
     st_live:"Live", st_final:"Final", st_int:"Intermission",
+    op_title:"What each defence allows, by position", op_sub:"per game this season · #1 = allows the most", op_allows:"{t} allows",
+    op_shots:"Shots", op_pts:"Points", op_C:"Centres", op_W:"Wingers", op_D:"Defencemen", op_rank_tip:"Rank {r} of 32 (1 = allows the most, the easiest matchup).",
+    op_note:"From this season's game logs ({a} and {h} games). Early in the season a few games can swing these numbers.",
+    op_player:"{t} against {p}", op_shots_pg:"Shots allowed per game", op_goals_pg:"Goals allowed per game", op_pts_pg:"Points allowed per game", op_vs_lg:"(avg {v})",
+    op_pnote:"What this opponent has given up this season to players in his position. Green rank = one of the 8 most generous defences.",
     mv_from:"from", mv_opened:"opened {a} · {h}", mv_tip_to:"Opened at {a} today, now {b}: the market has moved toward the model's fair odds ({f}).", mv_tip_away:"Opened at {a} today, now {b}: the market has moved away from the model's fair odds ({f}).",
     login:"Log in", logout:"Log out", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
     au_in_h:"Log in", au_up_h:"Create a free account", au_sub:"Save picks and track how they do. Results are graded automatically after each game.",
@@ -624,6 +637,11 @@ const I18N = {
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
     tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
     st_live:"Live", st_final:"Slut", st_int:"Paus",
+    op_title:"Vad varje försvar släpper till, per position", op_sub:"per match i år · #1 = släpper till mest", op_allows:"{t} släpper till",
+    op_shots:"Skott", op_pts:"Poäng", op_C:"Centrar", op_W:"Yttrar", op_D:"Backar", op_rank_tip:"Plats {r} av 32 (1 = släpper till mest, lättast motstånd).",
+    op_note:"Från årets matchloggar ({a} och {h} matcher). Tidigt på säsongen kan några få matcher svänga siffrorna.",
+    op_player:"{t} mot {p}", op_shots_pg:"Insläppta skott per match", op_goals_pg:"Insläppta mål per match", op_pts_pg:"Insläppta poäng per match", op_vs_lg:"(snitt {v})",
+    op_pnote:"Vad motståndaren har släppt till i år mot spelare på hans position. Grön placering = ett av de 8 generösaste försvaren.",
     mv_from:"från", mv_opened:"öppnade {a} · {h}", mv_tip_to:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig mot modellens rättvisa odds ({f}).", mv_tip_away:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig bort från modellens rättvisa odds ({f}).",
     login:"Logga in", logout:"Logga ut", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
     au_in_h:"Logga in", au_up_h:"Skapa ett gratiskonto", au_sub:"Spara spel och följ hur de går. Resultaten rättas automatiskt efter varje match.",
@@ -1318,6 +1336,7 @@ function detail(pr, g){
         <span>${t("k_spg")}</span><span>${fmt(d.shots_per_goal,1)}</span>
         <span>${t("k_drought")}</span><span>${pct(d.p,0)}</span>
       </div></div>
+    ${oppPosPlayer(pr, p)}
     <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
       <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
       <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
@@ -1457,7 +1476,27 @@ function matchup(g){
     ${row(t("c_o553"), A["over_5.5_3y"], H["over_5.5_3y"], v=>pct(v), null)}
     ${row(t("c_o65"), A["over_6.5_reg"], H["over_6.5_reg"], v=>pct(v), null)}
     ${raw(t("c_b2b"), g.b2b[g.away]?t("yes"):t("no"), g.b2b[g.home]?t("yes"):t("no"))}
-  </tbody></table></div>`;
+  </tbody></table></div>${oppPosBox(g)}`;
+}
+// ------------------------------------------------------------ what each defence allows, by position
+const posGroup = pos => pos==="D" ? "D" : pos==="C" ? "C" : "W";
+const rkCls = r => r<=8 ? "rk-good" : r>=25 ? "rk-bad" : "";
+const rkTxt = r => `<span class="rk ${rkCls(r)}" title="${esc(t("op_rank_tip",{r}))}">#${r}</span>`;
+function oppPosBox(g){
+  const O = DATA.opp_pos || {}, A = O[g.away], H = O[g.home]; if (!A || !H) return "";
+  const cell = (x, m) => x ? `${fmt(x[m], m==="s"?1:2)} ${rkTxt(x[m+"_rk"])}` : "–";
+  const rows = ["C","W","D"].map(k => `<tr><td>${cell(A[k],"s")}</td><td>${cell(A[k],"pt")}</td><td class="opg">${t("op_"+k)}</td><td>${cell(H[k],"s")}</td><td>${cell(H[k],"pt")}</td></tr>`).join("");
+  return `<div class="box opbox"><h4>${t("op_title")} <span class="meta">${t("op_sub")}</span></h4>
+    <table class="optab"><thead><tr><th colspan="2">${t("op_allows",{t:g.away})}</th><th></th><th colspan="2">${t("op_allows",{t:g.home})}</th></tr>
+    <tr><th>${t("op_shots")}</th><th>${t("op_pts")}</th><th></th><th>${t("op_shots")}</th><th>${t("op_pts")}</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="note">${t("op_note",{a:A.gp,h:H.gp})}</p></div>`;
+}
+function oppPosPlayer(pr, p){
+  const x = DATA.opp_pos?.[pr.opp]?.[posGroup(p.pos)]; if (!x) return "";
+  const r = (lbl, m, d) => `<span>${lbl}</span><span>${fmt(x[m],d)} <span class="meta">${t("op_vs_lg",{v:fmt(x[m+"_lg"],d)})}</span> ${rkTxt(x[m+"_rk"])}</span>`;
+  return `<div class="box"><h4>${t("op_player",{t:pr.opp, p:t("op_"+posGroup(p.pos)).toLowerCase()})}</h4>
+    <div class="kv">${r(t("op_shots_pg"),"s",1)}${r(t("op_goals_pg"),"g",2)}${r(t("op_pts_pg"),"pt",2)}</div>
+    <p class="note">${t("op_pnote")}</p></div>`;
 }
 
 // ------------------------------------------------------------ top props
