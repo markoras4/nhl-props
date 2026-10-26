@@ -53,7 +53,23 @@ def extract(pbp: dict) -> dict | None:
         if flip:
             x, y = -x, -y
         out.append([int(pid), int(x), int(y), k, abbr.get(shooter_team) or ""])
-    return {"d": str(pbp.get("gameDate") or "")[:10], "s": out}
+    # goals with assists and strength (power play = more skaters, both goalies in), faceoffs, penalties per team
+    goals, fo, pens = [], [], {}
+    for pl in pbp.get("plays") or []:
+        k, d = pl.get("typeDescKey"), pl.get("details") or {}
+        if k == "goal" and (pl.get("periodDescriptor") or {}).get("periodType") != "SO" and d.get("scoringPlayerId"):
+            sc = str(pl.get("situationCode") or "")
+            team = d.get("eventOwnerTeamId")
+            pp = len(sc) == 4 and sc[0] == "1" and sc[3] == "1" and ((team == hid and sc[2] > sc[1]) or (team == aid and sc[1] > sc[2]))
+            goals.append([int(d["scoringPlayerId"]), int(d.get("assist1PlayerId") or 0), int(d.get("assist2PlayerId") or 0),
+                          abbr.get(team) or "", 1 if pp else 0])
+        elif k == "faceoff" and d.get("winningPlayerId") and d.get("losingPlayerId"):
+            fo.append([int(d["winningPlayerId"]), int(d["losingPlayerId"])])
+        elif k == "penalty" and (d.get("duration") or 0) in (2, 4, 5):
+            t = abbr.get(d.get("eventOwnerTeamId")) or ""
+            pens[t] = pens.get(t, 0) + 1
+    return {"d": str(pbp.get("gameDate") or "")[:10], "s": out, "gl": goals, "fo": fo, "pen": pens,
+            "h": abbr.get(hid) or "", "a": abbr.get(aid) or ""}
 
 
 def collect(src, league_games, season: int, store_dir: Path, workers: int, log=print) -> dict:
@@ -61,7 +77,8 @@ def collect(src, league_games, season: int, store_dir: Path, workers: int, log=p
     f = store_dir / f"{season}.json"
     games = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
     lg = league_games[(league_games.season == season) & (league_games.final)]
-    todo = [int(i) for i in lg.id if str(int(i)) not in games]
+    # games stored before goals / faceoffs were added are fetched once more
+    todo = [int(i) for i in lg.id if str(int(i)) not in games or "gl" not in games[str(int(i))]]
     if todo:
         log(f"Shot maps: downloading play-by-play for {len(todo)} new games ...")
 

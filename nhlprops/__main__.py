@@ -513,6 +513,13 @@ def main(argv=None):
         else:
             print(f"No NHL games found for {args.date}. Try another --date.")
         return 1
+    raw["pbp"] = {}
+    if not args.demo:
+        try:   # this season's play-by-play: shot maps, power-play points, faceoffs, linemates, penalties
+            from .shots import collect as collect_pbp
+            raw["pbp"] = collect_pbp(src, raw["league_games"], raw["season"], data_dir / "shots", CONFIG["workers"])
+        except Exception as e:
+            print("Play-by-play skipped:", e)
     slate = build_slate(raw, CONFIG)
     if args.demo:
         slate["odds"] = demo_odds(slate)
@@ -532,11 +539,10 @@ def main(argv=None):
     except Exception as e:  # alerts are optional; never break the build
         print("Alerts feed skipped:", e)
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
-    if not args.demo:
+    if raw.get("pbp"):
         try:
-            from .shots import build as build_shots
-            build_shots(src, raw["league_games"], slate["season"], data_dir / "shots", ROOT / "output" / "shots.json",
-                        CONFIG["workers"])
+            from .shots import player_file
+            player_file(raw["pbp"], ROOT / "output" / "shots.json")
         except Exception as e:  # shot maps are optional; never break the build
             print("Shot maps skipped:", e)
     graded_path = hist_dir / "graded.json"

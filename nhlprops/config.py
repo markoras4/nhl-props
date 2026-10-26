@@ -87,6 +87,11 @@ CONFIG = {
     "en_q": 0.35,                  # backtest_markets: a one-goal lead becomes two via the empty net 35% of the time (puck line)
     "form_k": {"g": 40.0, "a": 40.0, "s": 80.0},   # backtest_form: recent-form cushion per market (bigger = less weight on the last 10 games)
     "btts2_cal": 0.963,            # backtest_markets: both teams 2+ goals ran 64.7% vs 62.3%
+    # backtest_extra (85,709 player-games): PP points K=20 games + opponent penalties^0.5; penalties NB r=4, rate x0.9,
+    # PIM over 2.5 x1.3 (majors / double minors); faceoffs NB r=10 with opponent faceoff %
+    "ppp_k": 20.0, "ppp_opp_beta": 0.5,
+    "pen_r": 4.0, "pen_mult": 0.9, "pim25_cal": 1.3,
+    "fo_r": 10.0, "fo_lines": [4.5, 6.5, 8.5, 10.5],
     "ot_no_goal": 0.40,            # share of tied games that reach a shootout (no overtime goal)
     "shots_k_games": 15,
     "shots_home_adv": 1.018,

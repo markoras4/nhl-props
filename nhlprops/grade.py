@@ -46,7 +46,8 @@ def _box_players(box: dict) -> dict[int, dict]:
             for p in grp.get(key, []) or []:
                 out[int(p["playerId"])] = {"g": p.get("goals", 0) or 0, "a": p.get("assists", 0) or 0,
                                            "s": p.get("sog", p.get("shots", 0)) or 0,
-                                           "h": p.get("hits", 0) or 0, "b": p.get("blockedShots", 0) or 0}
+                                           "h": p.get("hits", 0) or 0, "b": p.get("blockedShots", 0) or 0,
+                                           "pim": p.get("pim", 0) or 0}
     return out
 
 
@@ -94,6 +95,13 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
     hb: dict[str, list] = {}
     shots: dict[str, list] = {}
     gm: dict[str, list] = {}
+    more: dict[str, list] = {}
+    pbp = {}
+    for fp in sorted(Path("data/shots").glob("*.json")) if Path("data/shots").exists() else []:
+        try:
+            pbp.update(json.loads(fp.read_text(encoding="utf-8")))
+        except Exception:
+            pass
     bets = {k: [] for k, _ in MARKETS}  # (stake 1 at book odds when model EV >= 5%)
     for f in files:
         h = json.loads(f.read_text(encoding="utf-8"))
@@ -114,6 +122,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
                     if lp != "REG":                       # the OT/shootout winner's extra goal isn't a regulation goal
                         rh, ra = (hs_ - 1, as__) if hs_ > as__ else (hs_, as__ - 1)
                     res_ = {"1": rh > ra, "X": rh == ra, "2": rh < ra, "hpl": hs_ - as__ >= 2, "apl": as__ - hs_ >= 2,
+                            "sh_h": (as__ - (1 if lp == "SO" and as__ > hs_ else 0)) == 0, "sh_a": (hs_ - (1 if lp == "SO" and hs_ > as__ else 0)) == 0,
                             "btts": hs_ >= 1 and as__ >= 1, "b60": rh >= 1 and ra >= 1, "b2": rh >= 2 and ra >= 2, "htt2.5": hs_ > 2.5, "htt3.5": hs_ > 3.5, "att2.5": as__ > 2.5, "att3.5": as__ > 3.5}
                     p1 = _p1_goals(src, h["date"]).get(g["id"])
                     if p1:
@@ -155,6 +164,22 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
                 continue  # game not final, or player scratched
             n_props += 1
             props["g"].append((pr["p"]["g"], int(st["g"] >= 1)))
+            # multi-point, penalties, power-play points and faceoffs won (play-by-play for the last two)
+            P = pr["p"]
+            for k, lab, yv in (("pt2", "2+ points", st["g"] + st["a"] >= 2), ("pt3", "3+ points", st["g"] + st["a"] >= 3),
+                               ("g2", "2+ goals", st["g"] >= 2), ("g3", "Hat trick", st["g"] >= 3), ("a2", "2+ assists", st["a"] >= 2),
+                               ("pim0.5", "PIM over 0.5", st.get("pim", 0) > 0.5), ("pim2.5", "PIM over 2.5", st.get("pim", 0) > 2.5)):
+                if k in P:
+                    more.setdefault(lab, []).append((P[k], int(yv)))
+            gp_ = pbp.get(str(pr["game"]))
+            if gp_ and "gl" in gp_:
+                if "ppp" in P:
+                    n = sum(1 for g_ in gp_["gl"] if g_[4] and pr["id"] in (g_[0], g_[1], g_[2]))
+                    more.setdefault("Power-play point", []).append((P["ppp"], int(n >= 1)))
+                wins = sum(1 for w, l in gp_.get("fo", []) if w == pr["id"])
+                for k, v in P.items():
+                    if k.startswith("fo"):
+                        more.setdefault("Faceoffs won (all lines)", []).append((v, int(wins > float(k[2:]))))
             fgs = first_scorer.get(pr["game"], "?")
             if "fg" in pr["p"] and fgs != "?":
                 props["fg"].append((pr["p"]["fg"], int(fgs == pr["id"])))
@@ -185,7 +210,8 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
         "props": {name: summarize(props[k]) for k, name in MARKETS},
         "sog": {f"Over {L} SOG": summarize(v) for L, v in sorted(sog.items())},
         "shots": {k: summarize(v) for k, v in shots.items()},
-        "gm": {k: summarize(v) for k, v in gm.items()},   # all five lines around each projection pooled
+        "gm": {k: summarize(v) for k, v in gm.items()},
+        "more": {k: summarize(v) for k, v in more.items()},   # all five lines around each projection pooled
         "hb": {f"Over {k[1:]} {'hits' if k[0] == 'h' else 'blocks'}": summarize(v) for k, v in sorted(hb.items())},
         "ou_model": {f"Over {L}": summarize(v) for L, v in ou_model.items()},
         "ou_hist": {f"Over {L}": summarize(v) for L, v in ou_hist.items()},

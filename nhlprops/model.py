@@ -145,6 +145,9 @@ def game_markets(joint: np.ndarray, mu_h: float, mu_a: float, share_h: float) ->
     out = {"1": float(joint[i_ > k_].sum()), "X": float(joint[i_ == k_].sum()), "2": float(joint[i_ < k_].sum()),
            "hpl": float(joint[i_ - k_ >= 2].sum() + q * joint[i_ - k_ == 1].sum()),
            "apl": float(joint[k_ - i_ >= 2].sum() + q * joint[k_ - i_ == 1].sum()),
+           # shutouts (backtest_markets): no regulation goal against, and no overtime goal against
+           "sh_h": float(joint[(k_ == 0) & (i_ >= 1)].sum() + joint[0, 0] * (1 - (1 - share_h) * 0.6)),
+           "sh_a": float(joint[(i_ == 0) & (k_ >= 1)].sum() + joint[0, 0] * (1 - share_h * 0.6)),
            "btts": float(btts), "b60": float(joint[(i_ >= 1) & (k_ >= 1)].sum()),
            "b2": float(joint[(i_ >= 2) & (k_ >= 2)].sum()) * 0.963}   # backtest_markets: 64.7% predicted vs 62.3%
     for L in (2.5, 3.5):
@@ -494,11 +497,56 @@ def skater_frame(mp_sk: dict[int, pd.DataFrame]) -> pd.DataFrame:
             "hit": _num(d, "I_F_hits"), "blk": _num(d, "shotsBlockedByPlayer"),
             "att": _num(d, "I_F_shotAttempts"), "miss": _num(d, "I_F_missedShots"),
             "blkd": _num(d, "I_F_blockedShotAttempts"),
+            "fow": _num(d, "faceoffsWon"), "fol": _num(d, "faceoffsLost"),
+            "pim": _num(d, "penalityMinutes") if "penalityMinutes" in d.columns else _num(d, "penaltyMinutes"),
         }))
     if not frames:
-        return pd.DataFrame(columns=["pid", "season", "posg", "gp", "h", "s", "g", "xg", "a", "hit", "blk", "att", "miss", "blkd"])
+        return pd.DataFrame(columns=["pid", "season", "posg", "gp", "h", "s", "g", "xg", "a", "hit", "blk", "att", "miss", "blkd", "fow", "fol", "pim"])
     f = pd.concat(frames)
     return f.groupby(["pid", "season", "posg"], as_index=False).sum()
+
+
+def pp_frame(mp_sk: dict) -> dict:
+    """(pid, season) -> (5-on-4 points, 5-on-4 hours)"""
+    out = {}
+    for y, df in (mp_sk or {}).items():
+        d = df[_sit(df) == "5on4"]
+        if not len(d):
+            continue
+        pts = _num(d, "I_F_points") if "I_F_points" in d.columns else _num(d, "I_F_goals") + _num(d, "I_F_primaryAssists") + _num(d, "I_F_secondaryAssists")
+        for pid, pt, h in zip(pd.to_numeric(d["playerId"], errors="coerce"), pts, _hours(d, "icetime")):
+            if pid == pid:
+                k = (int(pid), int(y))
+                a, b = out.get(k, (0.0, 0.0))
+                out[k] = (a + float(pt), b + float(h))
+    return out
+
+
+def pbp_season_stats(pbp: dict, team_of_player: dict) -> dict:
+    """From this season's play-by-play: faceoffs per player, team faceoff %, penalties taken per team-game,
+    power-play goals/assists per player, and goals two players combined on."""
+    fo_t, fo_w, team_fo, pens, tgp, combo = {}, {}, {}, {}, {}, {}
+    for g in (pbp or {}).values():
+        if "fo" not in g:
+            continue
+        for w, l in g["fo"]:
+            fo_t[w] = fo_t.get(w, 0) + 1; fo_w[w] = fo_w.get(w, 0) + 1; fo_t[l] = fo_t.get(l, 0) + 1
+            tw = team_of_player.get(w)
+            if tw:
+                x = team_fo.setdefault(tw, [0, 0]); x[0] += 1; x[1] += 1
+            tl = team_of_player.get(l)
+            if tl:
+                x = team_fo.setdefault(tl, [0, 0]); x[1] += 1
+        for t in (g.get("h"), g.get("a")):
+            if t:
+                pens[t] = pens.get(t, 0) + (g.get("pen") or {}).get(t, 0); tgp[t] = tgp.get(t, 0) + 1
+        for sc, a1, a2, team, pp in g.get("gl") or []:
+            ids = [x for x in (sc, a1, a2) if x]
+            for i in ids:
+                for j in ids:
+                    if i < j:
+                        combo[(i, j)] = combo.get((i, j), 0) + 1
+    return {"fo_t": fo_t, "fo_w": fo_w, "team_fo": team_fo, "pens": pens, "tgp": tgp, "combo": combo}
 
 
 def onice_impact(mp_sk: dict, cur: int) -> dict:
@@ -628,7 +676,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
             "p": sum(g["p"] for g in l5), "s": sum(g["s"] for g in l5),
             "toi": float(np.mean([g["toi"] for g in l5])) if l5 else None,
             "games": [{"d": g["date"], "o": g["opp"], "h": g["home"], "g": g["g"], "a": g["a"],
-                       "s": g["s"], "t": round(g["toi"], 1)} for g in lc[:10]]}
+                       "s": g["s"], "t": round(g["toi"], 1), "pp": g.get("ppp", 0), "pm": g.get("pim", 0)} for g in lc[:10]]}
     # ---- hits and blocked shots per 60 (validated in backtest_hb): this season shrunk to last season, shrunk to position
     hb = {}
     for stat in ("hit", "blk"):
@@ -1032,6 +1080,51 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         for p in plist:
             profiles[p["id"]] = skater_profile(p, sf, lgpos, raw["landing"].get(p["id"]), raw["logs"].get(p["id"], {}),
                                                team_dates.get(t, []), cur, cfg)
+    # ---- power play, faceoffs, penalties (backtest_extra) and season play-by-play stats
+    team_of_player = {p["id"]: p["team"] for p in raw["skaters"]}
+    pst = pbp_season_stats(raw.get("pbp") or {}, team_of_player)
+    ppf = pp_frame(raw["mp"]["skaters"])
+    pp_tot = [v for (pid_, y_), v in ppf.items() if y_ == cur - 1]
+    pp_lg = (sum(a for a, b in pp_tot) / sum(b for a, b in pp_tot)) if pp_tot and sum(b for a, b in pp_tot) else 4.0
+    lg_pen_pg = (sum(pst["pens"].values()) / sum(pst["tgp"].values())) if sum(pst["tgp"].values()) else 3.3
+    for pid_, prof_ in profiles.items():
+        me_ = sf[sf.pid == pid_]
+        lg_ = raw["logs"].get(pid_, {}) or {}
+        lc_, lp_ = lg_.get("cur", []), lg_.get("prev", [])
+        prev_ = me_[me_.season == cur - 1].sum(numeric_only=True)
+        x = {}
+        # power play: last season's 5-on-4 scoring rate x PP time per game, updated with this season's PP points (K = 20 games)
+        a_, h_ = ppf.get((pid_, cur - 1), (0.0, 0.0))
+        gp_prev = float(prev_.get("gp", 0) or 0)
+        if h_ > 0 and gp_prev > 0:
+            lam_prior = shrink(a_, h_, pp_lg * 0.6, 6) * h_ / gp_prev
+        else:
+            lam_prior = 0.03
+        ppp_cur = sum(g_.get("ppp", 0) for g_ in lc_)
+        x["ppp_lam"] = (ppp_cur + cfg["ppp_k"] * lam_prior) / (len(lc_) + cfg["ppp_k"])
+        a_c, h_c = ppf.get((pid_, cur), (0.0, 0.0))
+        gp_c = float(me_[me_.season == cur].gp.sum()) if len(me_) else 0.0
+        x["pp"] = {"min_pg": round(h_c * 60 / gp_c, 2) if gp_c else None, "min_pg_prev": round(h_ * 60 / gp_prev, 2) if gp_prev else None,
+                   "ppp": ppp_cur, "gp": len(lc_), "ppp_prev": int(sum(g_.get("ppp", 0) for g_ in lp_)), "gp_prev": len(lp_)}
+        # faceoffs: draws per game and win % (this season from play-by-play, last season from MoneyPuck)
+        fw_p, fl_p = float(prev_.get("fow", 0) or 0), float(prev_.get("fol", 0) or 0)
+        ct, cw = pst["fo_t"].get(pid_, 0), pst["fo_w"].get(pid_, 0)
+        prior_pg = (fw_p + fl_p) / gp_prev if gp_prev else 0.0
+        fo_pg = (ct + 10 * prior_pg) / (len(lc_) + 10) if (len(lc_) + gp_prev) else 0.0
+        x["fo"] = {"pg": round(fo_pg, 2), "win": shrink(cw + fw_p, ct + fw_p + fl_p, 0.5, 200), "taken": ct, "won": cw,
+                   "pct_cur": cw / ct if ct else None, "pct_prev": fw_p / (fw_p + fl_p) if (fw_p + fl_p) else None}
+        # penalties: minor-penalty rate per 60 (PIM / 2), this season shrunk to last season shrunk to position
+        pos_pen = 0.55 if prof_["posg"] == "D" else 0.6
+        h_prev = float(prev_.get("h", 0) or 0)
+        pim_prev = float(prev_.get("pim", 0) or 0) or float(sum(g_.get("pim", 0) for g_ in lp_))
+        prior_pen = shrink(pim_prev / 2, h_prev, pos_pen, 8) if h_prev > 0 else pos_pen
+        h_cur = sum(g_["toi"] for g_ in lc_) / 60
+        x["pen60"] = shrink(sum(g_.get("pim", 0) for g_ in lc_) / 2, h_cur, prior_pen, 6)
+        x["pim"] = {"cur": int(sum(g_.get("pim", 0) for g_ in lc_)), "gp": len(lc_), "games_with": sum(1 for g_ in lc_ if g_.get("pim", 0) > 0)}
+        prof_["x"] = x
+    team_fo_pct = {t_: (v[0] + 200) / (v[1] + 400) for t_, v in pst["team_fo"].items()}
+    league["pen_pg"] = round(lg_pen_pg, 3)
+    team_pen_pg = {t_: shrink(pst["pens"].get(t_, 0), pst["tgp"].get(t_, 0), lg_pen_pg, 15) for t_ in pst["tgp"]}
     # hits / blocks: recent box scores (the NHL game logs don't carry them)
     for pid_, prof_ in profiles.items():
         rows_ = (raw.get("hb_logs") or {}).get(pid_) or []
@@ -1084,9 +1177,44 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         dressed = {pid for k, v in groups.items() if _re.fullmatch(r"[fd]\d", k) for pid in v}
         return {"source": source, "groups": groups, "dressed": sorted(dressed)}
 
+    def linemates(t, lu):
+        """for each player on a line or pair tonight: his linemates, how he has scored with and without each of
+        them in the lineup this season, and goals they have combined on"""
+        import re as _re
+        for k, ids in lu["groups"].items():
+            if not _re.fullmatch(r"[fd]\d", k):
+                continue
+            for pid in ids:
+                me_logs = (raw["logs"].get(pid, {}) or {}).get("cur", [])
+                if pid not in profiles:
+                    continue
+                out = []
+                for m in ids:
+                    if m == pid:
+                        continue
+                    mg = {g_["game_id"] for g_ in (raw["logs"].get(m, {}) or {}).get("cur", [])}
+                    w = [g_ for g_ in me_logs if g_["game_id"] in mg]
+                    wo = [g_ for g_ in me_logs if g_["game_id"] not in mg]
+                    out.append({"id": m, "gp_w": len(w), "pts_w": sum(g_["g"] + g_["a"] for g_ in w),
+                                "gp_wo": len(wo), "pts_wo": sum(g_["g"] + g_["a"] for g_ in wo),
+                                "combo": pst["combo"].get((min(pid, m), max(pid, m)), 0)})
+                profiles[pid]["mates"] = {"line": k, "with": out}
+            # power-play unit mates for the same player
+        for k, ids in lu["groups"].items():
+            if _re.fullmatch(r"pp\d", k):
+                for pid in ids:
+                    if pid in profiles:
+                        profiles[pid].setdefault("mates", {"line": None, "with": []})["pp"] = k
+
     for t in sk_by_team:
         lu = lineup_for(t)
+        try:
+            linemates(t, lu)
+        except Exception:
+            pass
         ctx = team_ctx(t)
+        ctx["pen_pg"] = round(team_pen_pg.get(t, lg_pen_pg), 3)
+        ctx["fo_pct"] = round(team_fo_pct.get(t, 0.5), 4)
         ctx["lineup"] = lu
         ctx["injuries"] = team_injuries.get(t, [])
         ctx["news"] = ({"notes": nhl_day[t]["notes"], "updated": nhl.get("updated")} if t in nhl_day else None)
@@ -1268,6 +1396,24 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                            **{f"b{L}": p_over_nb(base["blk"], L, cfg["hb_dispersion"]) for L in cfg["blk_lines"]}}
                 else:
                     hbp = {}
+                # multi-point / multi-goal (Poisson, backtest_extra), power-play point, faceoffs won, penalties
+                xr = prof.get("x") or {}
+                lam_pt = lam_g + lam_a
+                hbp.update({"pt2": p_over_poisson(lam_pt, 1.5), "pt3": p_over_poisson(lam_pt, 2.5), "g2": p_over_poisson(lam_g, 1.5),
+                            "g3": p_over_poisson(lam_g, 2.5), "a2": p_over_poisson(lam_a, 1.5)})
+                if xr:
+                    opp_pen = team_pen_pg.get(opp, lg_pen_pg) / lg_pen_pg if lg_pen_pg else 1.0
+                    base["ppp"] = xr["ppp_lam"] * opp_pen ** cfg["ppp_opp_beta"]
+                    hbp["ppp"] = 1 - math.exp(-base["ppp"])
+                    base["pen"] = xr["pen60"] * hrs * cfg["pen_mult"]
+                    hbp["pim0.5"] = p_over_nb(base["pen"], 0.5, cfg["pen_r"])
+                    hbp["pim2.5"] = min(0.99, p_over_nb(base["pen"], 1.5, cfg["pen_r"]) * cfg["pim25_cal"])
+                    fo = xr["fo"]
+                    if fo["pg"] >= 5:
+                        q = team_fo_pct.get(opp, 0.5); pw = fo["win"]
+                        padj = pw * (1 - q) / (pw * (1 - q) + (1 - pw) * q)
+                        base["fow"] = fo["pg"] * padj
+                        hbp.update({f"fo{L}": p_over_nb(base["fow"], L, cfg["fo_r"]) for L in cfg["fo_lines"]})
                 props.append({
                     "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base, "hv": hv,
                     "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr},

@@ -85,7 +85,7 @@ def parse_log(js: dict | None) -> list[dict]:
             "home": g.get("homeRoadFlag") == "H",
             "g": g.get("goals", 0) or 0, "a": g.get("assists", 0) or 0,
             "p": g.get("points", 0) or 0, "s": g.get("shots", 0) or 0,
-            "ppp": g.get("powerPlayPoints", 0) or 0, "toi": toi_min,
+            "ppp": g.get("powerPlayPoints", 0) or 0, "toi": toi_min, "pim": g.get("pim", 0) or 0,
             # goalie fields
             "gs": g.get("gamesStarted", 0) or 0, "sa": g.get("shotsAgainst", 0) or 0,
             "ga": g.get("goalsAgainst", 0) or 0, "dec": g.get("decision"),
