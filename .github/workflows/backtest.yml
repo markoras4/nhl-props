@@ -30,6 +30,10 @@ on:
         description: "Test referees and rest/travel"
         type: boolean
         default: false
+      hot:
+        description: "Test player hot streaks vs the model"
+        type: boolean
+        default: false
 permissions:
   contents: write
 jobs:
@@ -52,7 +56,7 @@ jobs:
       - name: Run backtest
         run: |
           mkdir -p backtest
-          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} ${{ inputs.shots && '--shots' || '' }} ${{ inputs.attempts && '--attempts' || '' }} ${{ inputs.markets && '--markets' || '' }} ${{ inputs.context && '--context' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
+          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} ${{ inputs.shots && '--shots' || '' }} ${{ inputs.attempts && '--attempts' || '' }} ${{ inputs.markets && '--markets' || '' }} ${{ inputs.context && '--context' || '' }} ${{ inputs.hot && '--hot' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
           tail -60 backtest/log.txt
       - name: Save results to the "backtest" branch
         run: |
