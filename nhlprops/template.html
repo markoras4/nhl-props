@@ -333,6 +333,22 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.spbox{margin-top:14px;grid-column:1/-1}.spbox h4 .seg{text-transform:none;letter-spacing:0}
+.spgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:18px;align-items:start}
+@media (max-width:760px){.spgrid{grid-template-columns:1fr}}
+.spkpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.spk{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line)}
+.spk small{font-size:11px;color:var(--mute);font-weight:600}.spk b{font-family:var(--f-disp);font-size:19px;font-variant-numeric:tabular-nums}.spk .meta{font-size:11.5px}
+.rink{width:100%;height:auto;display:block}
+.rk-board{fill:color-mix(in srgb,var(--panel2) 70%,transparent);stroke:var(--line);stroke-width:2}
+.rk-blue{stroke:#3b6fd8;stroke-width:3;opacity:.55}.rk-red{stroke:#d84b4b;stroke-width:1.5;opacity:.6}
+.rk-crease{fill:color-mix(in srgb,#3b9cd8 22%,transparent);stroke:#d84b4b;stroke-width:1;opacity:.8}
+.rk-net{fill:none;stroke:var(--mute);stroke-width:1.5}.rk-circle{fill:none;stroke:#d84b4b;stroke-width:1;opacity:.35}.rk-dot{fill:#d84b4b;opacity:.5}
+.rk-slot{fill:none;stroke:var(--mute);stroke-width:1;stroke-dasharray:3 4;opacity:.6}
+.spg{fill:var(--accent);stroke:var(--panel);stroke-width:1.5}.sps{fill:var(--accent2);opacity:.55}.spm{fill:none;stroke:var(--mute);stroke-width:1.2;opacity:.75}.spb{stroke:var(--mute);stroke-width:1.3;opacity:.5}
+.spleg{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:12px;color:var(--mute);margin-top:6px}
+.spleg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;font-style:normal}
+.spleg .lg-g{background:var(--accent)}.spleg .lg-s{background:var(--accent2);opacity:.6}.spleg .lg-m{border:1.5px solid var(--mute)}.spleg .lg-b{width:auto;height:auto;border-radius:0;line-height:1}
 .r6h{display:inline-flex;align-items:center;gap:6px}.r6box h4 .meta{text-transform:none;letter-spacing:0;font-size:12px}
 .r6row{display:grid;grid-template-columns:92px 1fr auto 46px 38px;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px}
 .r6row:first-of-type{border-top:0}.r6d{color:var(--mute);font-size:12.5px}.r6o{display:inline-flex;align-items:center;gap:6px;min-width:0}.r6o .lg,.r6o .lgfb{flex:none}
@@ -591,6 +607,16 @@ const I18N = {
     r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
     sv_title:"Goalie saves", sv_sub:"follows the goalie you pick", sv_exp:"Expected saves tonight", sv_vs:"on {n} shots", sh_card:"Shots o{l}", sh_card_tip:"Model shots on goal tonight: {a} {x} · {h} {y}. The line shown is the one closest to 50/50.",
     sh_note:"Expected shots come from both teams' shot rates for and against this season (pulled toward last season early on) and home ice. Saves = shots the goalie is expected to face × his expected save rate, allowing for early pulls. Tested on more than 2,400 games: team shots and saves beat simple averages at every line (a goalie's last-10 saves average was worse than guessing); for total shots the model is about as good as a simple average.",
+    sp_title:"Shot profile", sp_season:"Season", sp_l10:"Last 10", sp_loading:"Loading shot map…", sp_none:"No shot attempts recorded yet this season.", sp_map:"Shot map",
+    sp_att:"Shot attempts per game", sp_att_tip:"Every attempt: on goal, missed the net or blocked. Attempts are a steadier sign of volume than shots on goal.",
+    sp_sog:"Shots on goal per game", sp_of:"{n} in total", sp_sog_tip:"Saved shots plus goals.",
+    sp_on:"Attempts that hit the net", sp_on_tip:"Share of his attempts that reach the goalie. Matters for shots-on-goal props: two players with the same attempts can differ a lot here.",
+    sp_missblk:"Missed · blocked", sp_missblk_tip:"Share of his attempts that missed the net, and that were blocked by a skater.",
+    sp_close:"From close range", sp_close_tip:"Share of his unblocked attempts from within about 20 feet of the net (inside the dashed arc). Close shots go in far more often.",
+    sp_goals:"Goals", sp_shpct:"{p} of shots on goal", sp_goals_tip:"Goals and his shooting percentage over this span.",
+    sp_xg:"Expected goals per shot", sp_xg_tip:"Average quality of his shots on goal (MoneyPuck expected goals). Higher = better chances.",
+    sp_prev:"last season {v}", sp_k_g:"Goal", sp_k_s:"Saved", sp_k_m:"Missed", sp_k_b:"Blocked",
+    sp_note:"Every shot attempt over {n} games from the NHL's play-by-play, all drawn toward the same net. Blocked shots are shown where they were blocked.",
     rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older and understand that NHL Props Lab is an analysis tool, not a sportsbook.", au_need18:"Please confirm that you are 18 or older.",
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
@@ -737,6 +763,16 @@ const I18N = {
     r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
     sv_title:"Målvaktsräddningar", sv_sub:"följer målvakten du väljer", sv_exp:"Väntade räddningar i kväll", sv_vs:"på {n} skott", sh_card:"Skott ö{l}", sh_card_tip:"Modellens skott på mål i kväll: {a} {x} · {h} {y}. Linjen som visas är den som ligger närmast 50/50.",
     sh_note:"Väntade skott bygger på båda lagens skott för och emot i år (dragna mot förra säsongen tidigt på säsongen) och hemmaplan. Räddningar = skotten målvakten väntas möta × hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Testat på mer än 2 400 matcher: lagskott och räddningar slår enkla snitt på alla linjer (en målvakts snitt de senaste 10 matcherna var sämre än att gissa); för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt.",
+    sp_title:"Skottprofil", sp_season:"Säsong", sp_l10:"Senaste 10", sp_loading:"Laddar skottkarta…", sp_none:"Inga skottförsök registrerade än i år.", sp_map:"Skottkarta",
+    sp_att:"Skottförsök per match", sp_att_tip:"Alla försök: på mål, utanför eller blockerade. Försök är ett stabilare mått på volym än skott på mål.",
+    sp_sog:"Skott på mål per match", sp_of:"{n} totalt", sp_sog_tip:"Räddade skott plus mål.",
+    sp_on:"Försök som träffar mål", sp_on_tip:"Andelen av hans försök som når målvakten. Viktigt för spel på skott på mål: två spelare med lika många försök kan skilja mycket här.",
+    sp_missblk:"Utanför · blockerade", sp_missblk_tip:"Andelen av hans försök som gick utanför och som blockerades av en utespelare.",
+    sp_close:"Från nära håll", sp_close_tip:"Andelen av hans oblockerade försök inom ungefär 6 meter från målet (innanför den streckade bågen). Nära skott går in betydligt oftare.",
+    sp_goals:"Mål", sp_shpct:"{p} av skotten på mål", sp_goals_tip:"Mål och hans skottprocent under perioden.",
+    sp_xg:"Förväntade mål per skott", sp_xg_tip:"Genomsnittlig kvalitet på hans skott på mål (MoneyPucks förväntade mål). Högre = bättre chanser.",
+    sp_prev:"förra säsongen {v}", sp_k_g:"Mål", sp_k_s:"Räddat", sp_k_m:"Utanför", sp_k_b:"Blockerat",
+    sp_note:"Alla skottförsök under {n} matcher från NHL:s händelsedata, ritade mot samma mål. Blockerade skott visas där de blockerades.",
     rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre och förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag.", au_need18:"Bekräfta att du är 18 år eller äldre.",
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
@@ -1526,6 +1562,7 @@ function detail(pr, g){
       <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
       <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
     ${p.form.games.length ? `<div class="box l10box" data-pid="${pr.id}" data-gid="${g.id}">${l10Chart(pr, g)}</div>` : ""}</div>
+    <div class="box spbox" data-pid="${pr.id}">${shotProfile(p)}</div>
     ${statsBox(p)}
   </div></div>`;
 }
@@ -1610,6 +1647,70 @@ document.addEventListener("click", e => {
   const box = b.closest(".l10box"); state.l10m = b.dataset.l10;
   const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid);
   if (pr) box.innerHTML = l10Chart(pr, g);
+});
+
+// ------------------------------------------------------------ shot profile + shot map (every game this season)
+let SHOTS = null, SHOTS_LOADING = null;
+function loadShots(){
+  if (SHOTS || SHOTS_LOADING) return SHOTS_LOADING;
+  SHOTS_LOADING = fetch(new URL("../data/shots.json", location.href)).then(r=>r.ok?r.json():{}).catch(()=>({})).then(js=>{ SHOTS = js;
+    document.querySelectorAll(".spbox").forEach(b=>{ const p = P(b.dataset.pid); if (p) b.innerHTML = shotProfile(p); }); return js; });
+  return SHOTS_LOADING;
+}
+function rinkSVG(shots){
+  // offensive zone, net at the top. NHL coordinates: x 25 (blue line) .. 100 (end boards), y -42.5 .. 42.5
+  const W = 340, H = 300, X = y => W/2 + y*(W/85), Y = x => 12 + (100-x)*((H-12)/75);
+  const dot = ([x,y,k]) => { const cx = X(-y).toFixed(1), cy = Y(Math.min(99,Math.max(25,x))).toFixed(1);
+    if (k==="G") return `<circle cx="${cx}" cy="${cy}" r="5.2" class="spg"/>`;
+    if (k==="S") return `<circle cx="${cx}" cy="${cy}" r="3.6" class="sps"/>`;
+    if (k==="M") return `<circle cx="${cx}" cy="${cy}" r="3.4" class="spm"/>`;
+    return `<path d="M${cx-2.8} ${cy-2.8}l5.6 5.6M${cx-2.8} ${+cy+2.8}l5.6 -5.6" class="spb"/>`; };
+  const order = {B:0,M:1,S:2,G:3};
+  return `<svg viewBox="0 0 ${W} ${H}" class="rink" role="img" aria-label="${t("sp_map")}">
+    <path d="M2 ${H} V${Y(100)+28} Q2 ${Y(100)} 30 ${Y(100)} H${W-30} Q${W-2} ${Y(100)} ${W-2} ${Y(100)+28} V${H}" class="rk-board"/>
+    <line x1="2" x2="${W-2}" y1="${Y(25)}" y2="${Y(25)}" class="rk-blue"/>
+    <line x1="${X(-36)}" x2="${X(36)}" y1="${Y(89)}" y2="${Y(89)}" class="rk-red"/>
+    <path d="M${X(-4)} ${Y(89)} A${6*W/85} ${6*W/85} 0 0 0 ${X(4)} ${Y(89)} Z" class="rk-crease"/>
+    <rect x="${X(-3)}" y="${Y(91.5)}" width="${6*W/85}" height="${Y(89)-Y(91.5)}" class="rk-net"/>
+    ${[-22,22].map(c=>`<circle cx="${X(c)}" cy="${Y(69)}" r="${15*W/85}" class="rk-circle"/><circle cx="${X(c)}" cy="${Y(69)}" r="2" class="rk-dot"/>`).join("")}
+    <path d="M${X(-20)} ${Y(89)} A${20*W/85} ${20*W/85} 0 0 0 ${X(20)} ${Y(89)}" class="rk-slot"/>
+    ${shots.slice().sort((a,b)=>order[a[2]]-order[b[2]]).map(dot).join("")}</svg>`;
+}
+function shotProfile(p){
+  const head = `<h4>${t("sp_title")} <span class="seg spseg"><button data-sp="season" class="${(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}</button></span></h4>`;
+  if (!SHOTS){ loadShots(); return head + `<p class="meta">${t("sp_loading")}</p>`; }
+  const S = SHOTS[p.id] || SHOTS[String(p.id)];
+  const l10 = state.spw === "l10";
+  const gpSeason = p.windows?.cur?.gp || (S ? S.d.length : 0);
+  const dates = new Set(p.form.games.slice(0,10).map(x=>x.d));
+  const shots = !S ? [] : l10 ? S.s.filter(x=>dates.has(S.d[x[3]])) : S.s;
+  const gp = l10 ? Math.min(10, p.form.games.length) : gpSeason;
+  if (!shots.length || !gp) return head + `<p class="meta">${t("sp_none")}</p>`;
+  const n = k => shots.filter(x=>x[2]===k).length;
+  const G_ = n("G"), S_ = n("S"), M_ = n("M"), B_ = n("B"), att = shots.length, onNet = G_ + S_;
+  const close = shots.filter(x=>x[2]!=="B" && x[0]<=89 && Math.hypot(89-x[0], x[1])<=20).length, unb = att - B_;
+  const prev = p.shp?.[String(DATA.season-1)], cur = p.shp?.[String(DATA.season)];
+  const pv = prev && prev.gp ? {apg: prev.att/prev.gp, on: prev.att ? prev.s/prev.att : null, xg: prev.s ? prev.xg/prev.s : null} : null;
+  const xgps = cur && cur.s ? cur.xg/cur.s : null;
+  const kpi = (lbl, v, sub, tip) => `<div class="spk tip" tabindex="0" data-tip="${esc(tip)}"><small>${lbl}</small><b>${v}</b>${sub?`<span class="meta">${sub}</span>`:""}</div>`;
+  const lastY = pv ? (v, f) => t("sp_prev",{v:f(v)}) : () => "";
+  return head + `<div class="spgrid">
+    <div class="spkpis">
+      ${kpi(t("sp_att"), fmt(att/gp,1), pv ? lastY(pv.apg, x=>fmt(x,1)) : "", t("sp_att_tip"))}
+      ${kpi(t("sp_sog"), fmt(onNet/gp,1), t("sp_of",{n:onNet}), t("sp_sog_tip"))}
+      ${kpi(t("sp_on"), pct(onNet/att), pv && pv.on!=null ? lastY(pv.on, pct) : "", t("sp_on_tip"))}
+      ${kpi(t("sp_missblk"), `${pct(M_/att)} · ${pct(B_/att)}`, "", t("sp_missblk_tip"))}
+      ${kpi(t("sp_close"), pct(unb ? close/unb : 0), "", t("sp_close_tip"))}
+      ${kpi(t("sp_goals"), String(G_), onNet ? t("sp_shpct",{p:pct(G_/onNet)}) : "", t("sp_goals_tip"))}
+      ${!l10 && xgps!=null ? kpi(t("sp_xg"), fmt(xgps,3), pv && pv.xg!=null ? lastY(pv.xg, x=>fmt(x,3)) : "", t("sp_xg_tip")) : ""}
+    </div>
+    <div class="spmap">${rinkSVG(shots)}
+      <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
+  </div><p class="note">${t("sp_note",{n:gp})}</p>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-sp]"); if (!b) return;
+  state.spw = b.dataset.sp; const box = b.closest(".spbox"); const p = box && P(box.dataset.pid); if (p) box.innerHTML = shotProfile(p);
 });
 
 // ------------------------------------------------------------ final-score grid

@@ -40,8 +40,8 @@ def extract(pbp: dict) -> dict | None:
             continue
         if pl.get("periodDescriptor", {}).get("periodType") == "SO":
             continue                                   # shootout attempts are not game shots
-        # a blocked shot is "owned" by the blocking team in the feed; the shooter's team is the other one
-        shooter_team = (aid if team == hid else hid) if k == "B" else team
+        # checked against the season's data: for blocked shots the event owner is the shooting team as well
+        shooter_team = team
         # direction: which net the shooting team attacks this period
         side = pl.get("homeTeamDefendingSide")
         if side in ("left", "right"):
