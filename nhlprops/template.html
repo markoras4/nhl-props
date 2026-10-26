@@ -337,7 +337,7 @@ td.h{text-align:center;padding:4px}
 .gms h5{margin:0 0 6px;font-size:13px}.gmh,.gmr{display:grid;grid-template-columns:minmax(0,1fr) 54px 50px 70px 54px;gap:6px;align-items:center}
 .gmh{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;padding-bottom:4px;border-bottom:1px solid var(--line)}
 .gmh span:not(:first-child),.gmr>:not(:first-child){text-align:right}.gmr{padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
-.gmr b{font-variant-numeric:tabular-nums}.gmr .odds{width:100%}
+.gmr b{font-variant-numeric:tabular-nums}.gmr .odds{width:100%}.gmr>.meta{order:0!important;flex-basis:auto!important;font-size:12px}
 .fgbox{margin:14px 0}.fggrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:760px){.fggrid{grid-template-columns:1fr}}
 .fgh{display:flex;align-items:center;gap:6px;margin-bottom:6px}.fgtab td,.fgtab th{white-space:nowrap}.fgtab .odds{width:64px}
 .ofmt{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:7px 6px;font:600 12.5px var(--f-ui);max-width:128px}
@@ -1185,7 +1185,7 @@ function header(){
   $("#acct").classList.toggle("in", !!USER);
   $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
     .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}"><svg class="nico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${t(l)}</span></button>`).join("");
-  $("#ofmt").innerHTML = [["dec","1.85"],["us","−118"],["frac","17/20"]].map(([k,l])=>`<option value="${k}" ${OFMT===k?"selected":""}>${l} · ${t("of_"+k)}</option>`).join("");
+  $("#ofmt").innerHTML = [["dec","1.85"],["us","−118"],["frac","17/20"]].map(([k,l])=>`<option value="${k}" ${OFMT===k?"selected":""}>${innerWidth < 760 ? l : l+" · "+t("of_"+k)}</option>`).join("");
   $("#ofmt").title = t("of_title"); $("#ofmt").setAttribute("aria-label", t("of_title"));
   $("#lang").innerHTML = `<button data-l="en" class="${LANG==="en"?"on":""}" aria-label="English">EN</button><button data-l="sv" class="${LANG==="sv"?"on":""}" aria-label="Svenska">SV</button>`;
   const th = currentTheme();
