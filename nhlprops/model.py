@@ -651,6 +651,17 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         tb = float(np.mean([g["toi"] for g in base_g]))
         role = {"toi5": round(t5, 1), "toi_base": round(tb, 1), "toi_delta": round(t5 - tb, 1),
                 "ppp5": sum(g.get("ppp", 0) for g in l5)}
+    # ---- recent form (backtest_form: K=40 improved every market out of sample): his last 10 games vs what his
+    #      level would have produced in the ice time he got
+    K = cfg.get("form_k", 40.0)
+    last10 = (lc + lp)[:10]
+    fm = {"g": 1.0, "a": 1.0, "s": 1.0}
+    if K and last10:
+        hrs10 = sum(x["toi"] for x in last10) / 60
+        for key, rate in (("g", g60), ("a", a60), ("s", s60)):
+            exp10 = rate * hrs10
+            got10 = sum(x[key] for x in last10)
+            fm[key] = (got10 + K) / (exp10 + K)
     # ---- streaks: point drought (how rare for his level), point streak and goal streak (this season)
     lam_pt = (g60 + a60) * toi_proj / 60
     p_pt_game = 1 - math.exp(-lam_pt) if lam_pt > 0 else 0.0
@@ -742,6 +753,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         "id": pid, "name": p["name"], "team": p["team"], "pos": p["pos"], "posg": posg, "num": p.get("num"),
         "age": age, "active": played_recent, "toi_proj": toi_proj, "toi_recent": toi_recent, "toi_season": toi_season,
         "rates": {"s60": s60, "xg60": xg60, "a60": a60, "g60": g60, "career_sh": career_sh, **hb,
+                  "fm_g": round(fm["g"], 4), "fm_a": round(fm["a"], 4), "fm_s": round(fm["s"], 4),
                   "recent_sh": recent_sh, "finish": finish, "lg_sh": L["sh"]},
         "form": form, "hr": hr, "role": role, "streaks": streaks, "career": career,
         "shp": {str(y): {k: round(float(v), 2) for k, v in me[me.season == y][["gp", "att", "s", "miss", "blkd", "xg", "h"]].sum().items()}
@@ -1234,9 +1246,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 vs = [g for g in (lg_.get("cur", []) + lg_.get("prev", [])) if g.get("opp") == opp]
                 hv = {"n": len(vs), **{mk: sum(1 for g in vs if fn(g)) for mk, fn in hit_fns.items()}}
                 hrs = prof["toi_proj"] / 60
-                base = {"g": r["g60"] * hrs * d_xg * venue * bb * env,
-                        "a": r["a60"] * hrs * d_xg * venue * bb * env,
-                        "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0)}
+                base = {"g": r["g60"] * hrs * d_xg * venue * bb * env * r.get("fm_g", 1.0),
+                        "a": r["a60"] * hrs * d_xg * venue * bb * env * r.get("fm_a", 1.0),
+                        "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0) * r.get("fm_s", 1.0)}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
                 if r.get("hit60") is not None:
                     arena = hb_f["arena"].get(H, 1.0)
