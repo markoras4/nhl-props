@@ -19,8 +19,8 @@ import pandas as pd
 
 from .backtest import season_boxscores, prior_frames
 
-KS = [30, 60, 120, 240, 480]
-WCS = [0, 1, 2, 3, 5]
+KS = [120, 480, 800, 1200, 2000, 4000]
+WCS = [1, 3, 5, 8]
 
 
 def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
