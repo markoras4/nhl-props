@@ -78,6 +78,17 @@ CONFIG = {
     "blk_lines": [0.5, 1.5, 2.5],
     "hb_dispersion": 10.0,
     "k_hb_hours": {"hit": 3.0, "blk": 6.0},
+    # team shots on goal and goalie saves (backtest_shots)
+    "shots_k_games": 15,
+    "shots_home_adv": 1.018,
+    "shots_calibration": 0.99,     # backtest ran ~1% high for team shots and saves
+    "shots_dispersion": 60.0,      # backtest: NB r=60 for one team
+    "total_shots_dispersion": None,
+    "saves_dispersion": 25.0,      # wider: early pulls
+    "saves_play_share": 0.965,
+    "team_shot_lines": [25.5, 27.5, 29.5, 31.5, 33.5],
+    "total_shot_lines": [55.5, 57.5, 59.5, 61.5, 63.5],
+    "save_lines": [22.5, 24.5, 26.5, 28.5, 30.5],
     # Backtest 2021-2026 (213,885 player-games): expected shots ran ~6% high. Goals/assists/points were on target.
     "sog_calibration": 0.94,
     "active_last_n_team_games": 2,   # skater must have played in one of team's last N games

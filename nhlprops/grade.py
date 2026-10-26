@@ -59,6 +59,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
     ou_hist: dict[str, list] = {}
     days = []
     hb: dict[str, list] = {}
+    shots: dict[str, list] = {}
     bets = {k: [] for k, _ in MARKETS}  # (stake 1 at book odds when model EV >= 5%)
     for f in files:
         h = json.loads(f.read_text(encoding="utf-8"))
@@ -70,6 +71,27 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
             boxes[g["id"]] = box
             finals += 1
             total = (box.get("homeTeam", {}).get("score") or 0) + (box.get("awayTeam", {}).get("score") or 0)
+            sh = g.get("shots")
+            hs, as_ = (box.get("homeTeam") or {}).get("sog"), (box.get("awayTeam") or {}).get("sog")
+            if sh and hs is not None and as_ is not None:
+                gl = {}
+                for side in ("homeTeam", "awayTeam"):
+                    for p_ in ((box.get("playerByGameStats") or {}).get(side) or {}).get("goalies") or []:
+                        if p_.get("starter"):
+                            gl[side] = (int(p_["playerId"]), p_.get("saves"))
+                st = g.get("starters") or {}
+                for k, v in sh["p"].items():
+                    if k.startswith("svh") or k.startswith("sva"):
+                        side, team = ("homeTeam", g["home"]) if k[2] == "h" else ("awayTeam", g["away"])
+                        got = gl.get(side)
+                        if not got or got[1] is None or st.get(team) != got[0]:
+                            continue      # graded only when the goalie we projected actually started
+                        shots.setdefault("Over " + k[3:] + " saves", []).append((v, int(got[1] > float(k[3:]))))
+                    elif k[0] == "t":
+                        shots.setdefault("Over " + k[1:] + " total shots", []).append((v, int(hs + as_ > float(k[1:]))))
+                    else:
+                        val = hs if k[0] == "h" else as_
+                        shots.setdefault("Over " + k[1:] + " team shots", []).append((v, int(val > float(k[1:]))))
             for L, p in g["model"].items():
                 y = int(total > float(L))
                 ou_model.setdefault(L, []).append((p, y))
@@ -108,6 +130,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
         "days": days,
         "props": {name: summarize(props[k]) for k, name in MARKETS},
         "sog": {f"Over {L} SOG": summarize(v) for L, v in sorted(sog.items())},
+        "shots": {k: summarize(v) for k, v in sorted(shots.items(), key=lambda kv: (kv[0].split(" ", 2)[2], float(kv[0].split()[1])))},
         "hb": {f"Over {k[1:]} {'hits' if k[0] == 'h' else 'blocks'}": summarize(v) for k, v in sorted(hb.items())},
         "ou_model": {f"Over {L}": summarize(v) for L, v in ou_model.items()},
         "ou_hist": {f"Over {L}": summarize(v) for L, v in ou_hist.items()},

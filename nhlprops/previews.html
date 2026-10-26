@@ -92,7 +92,7 @@ article{margin:26px 0 44px;scroll-margin-top:76px}
 .foot .src a:hover{color:var(--accent)}
 .note{color:var(--mute);font-size:12.5px;border-top:1px solid var(--line);padding-block:20px 40px}
 .empty{padding:60px 0;color:var(--mute)}
-footer{border-top:1px solid var(--line);padding-block:22px calc(22px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:13px}
+footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}footer{line-height:1.5;border-top:1px solid var(--line);padding-block:22px calc(22px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:13px}
 @media (max-width:860px){.cols{grid-template-columns:1fr}.mast{aspect-ratio:16/10}.strip{grid-template-columns:1fr}.deck{font-size:17px}}
 @media (max-width:560px){.hide-m{display:none}.kick .when{flex-basis:100%}.btn.pri{padding:8px 11px;font-size:13px}.mast{aspect-ratio:4/3.3;border-radius:14px}.mtext{padding:16px}.top{gap:8px}.brand{font-size:15px}}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
@@ -121,14 +121,14 @@ const I18N = {
       proj:"Projected", total:"Expected total {x} goals", win:"win", photo:"Photo", sources:"Sources",
       none:"Previews for the next slate are written on game day.",
       note:"Model numbers are probabilities, not tips. Odds are the market's at the time of writing and change during the day.",
-      rg:"18+. Gambling can be addictive. Need help? Stödlinjen 020-81 91 00 (stodlinjen.se)." },
+      rg:`18+. Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.` },
  sv:{ eyebrow:"Förhandstittar", h1:"Måndagens matcher, lästa på två minuter", h1_any:"{d}: varje match, läst på två minuter",
       intro:"Nyheter från ligan, sviterna och rekorden som spelar roll, och var vår modell och spelmarknaden är oense. Siffrorna uppdateras vid varje uppdatering.",
       news:"Nyheter", records:"Sviter & rekord", betting:"Spelinsikter", open_app:"Öppna appen", open_match:"Öppna matchen →",
       proj:"Beräknat", total:"Förväntat totalt {x} mål", win:"vinst", photo:"Foto", sources:"Källor",
       none:"Förhandstittar för nästa omgång skrivs på matchdagen.",
       note:"Modellens siffror är sannolikheter, inte tips. Oddsen är marknadens när texten skrevs och ändras under dagen.",
-      rg:"18+. Spel kan vara beroendeframkallande. Behöver du hjälp? Stödlinjen 020-81 91 00 (stodlinjen.se)." }
+      rg:`18+. Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.` }
 };
 let LANG = (()=>{ const s=store.get("set:lang"); if(s==="en"||s==="sv") return s; return (navigator.language||"").toLowerCase().startsWith("sv")?"sv":"en"; })();
 const t = (k,v={}) => { let s = I18N[LANG][k] ?? I18N.en[k] ?? k; for (const [a,b] of Object.entries(v)) s = s.replaceAll("{"+a+"}", b); return s; };
@@ -149,7 +149,7 @@ function applyTheme(th){ if (th) document.documentElement.dataset.theme = th; el
 
 function render(){
   document.documentElement.lang = LANG;
-  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll("[data-t]").forEach(el => { if (el.dataset.t==="rg") el.innerHTML = t("rg"); else el.textContent = t(el.dataset.t); });
   document.querySelectorAll("#lang button").forEach(b => b.classList.toggle("on", b.dataset.l===LANG));
   const P = PDATA?.previews || [], G = PDATA?.games || {};
   if (!P.length){ $("#main").innerHTML = `<div class="intro"><div class="eyebrow">${t("eyebrow")}</div><h1>${t("eyebrow")}</h1></div><p class="empty">${t("none")}</p>`; return; }
@@ -180,6 +180,39 @@ $("#lang").addEventListener("click", e => { const b=e.target.closest("button[dat
 ["#theme","#theme2"].forEach(id => $(id).addEventListener("click", () => { const nx = currentTheme()==="light"?"dark":"light"; store.set("set:theme",nx); applyTheme(nx); }));
 applyTheme(store.get("set:theme"));
 render();
+</script>
+
+<div id="agegate" hidden><div class="agbox" role="dialog" aria-modal="true" aria-labelledby="ag_h">
+  <div class="agbadge">18+</div><h3 id="ag_h"></h3><p id="ag_p"></p>
+  <div class="agrow"><button type="button" id="ag_yes" class="agbtn pri"></button><button type="button" id="ag_no" class="agbtn"></button></div>
+  <p id="ag_msg" class="agmsg" hidden></p></div></div>
+<style>
+#agegate{position:fixed;inset:0;z-index:100;background:rgba(5,8,12,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+#agegate[hidden]{display:none}
+.agbox{width:min(420px,100%);background:var(--panel,#121820);color:var(--text,#e8edf3);border:1px solid var(--line,#26303b);border-radius:16px;padding:24px;text-align:center;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.agbadge{display:inline-grid;place-items:center;width:52px;height:52px;border:2.5px solid currentColor;border-radius:50%;font-weight:800;font-size:16px;margin-bottom:10px}
+.agbox h3{margin:4px 0 8px;font-size:20px}.agbox p{margin:0 0 16px;color:var(--mute,#8b97a6);font-size:14px;line-height:1.5}
+.agrow{display:flex;gap:10px}.agbtn{flex:1;border:1px solid var(--line,#26303b);background:transparent;color:inherit;border-radius:10px;padding:12px 14px;font:700 15px/1 inherit;cursor:pointer}
+.agbtn.pri{background:var(--accent,#1fb36b);border-color:var(--accent,#1fb36b);color:#06210f}
+.agmsg{margin:14px 0 0!important;color:var(--text,#e8edf3)!important}.agmsg a{color:var(--accent,#1fb36b)}
+</style>
+<script>
+(function(){
+  const S = {
+    en:{h:"Are you 18 or older?", p:"NHL Props Lab is an analysis tool for sports betting and is only for adults. We don't take bets.", yes:"Yes, I'm 18+", no:"No",
+        msg:'Sorry, this site is only for people aged 18 and over. Worried about gambling? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'},
+    sv:{h:"Är du 18 år eller äldre?", p:"NHL Props Lab är ett analysverktyg för sportspel och är bara för vuxna. Vi tar inte emot spel.", yes:"Ja, jag är 18+", no:"Nej",
+        msg:'Tyvärr, sajten är bara för personer som fyllt 18. Orolig för spel? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'}};
+  let ok = null; try { ok = localStorage.getItem("age18"); } catch(e) {}
+  if (ok === "1") return;
+  let L = "en"; try { const s = localStorage.getItem("set:lang"); L = s==="sv"||s==="en" ? s : ((navigator.language||"").toLowerCase().startsWith("sv") ? "sv" : "en"); } catch(e) {}
+  const T = S[L], el = document.getElementById("agegate");
+  document.getElementById("ag_h").textContent = T.h; document.getElementById("ag_p").textContent = T.p;
+  document.getElementById("ag_yes").textContent = T.yes; document.getElementById("ag_no").textContent = T.no;
+  el.hidden = false; document.documentElement.style.overflow = "hidden";
+  document.getElementById("ag_yes").onclick = () => { try { localStorage.setItem("age18","1"); } catch(e) {} el.hidden = true; document.documentElement.style.overflow = ""; };
+  document.getElementById("ag_no").onclick = () => { const m = document.getElementById("ag_msg"); m.innerHTML = T.msg; m.hidden = false; };
+})();
 </script>
 </body>
 </html>

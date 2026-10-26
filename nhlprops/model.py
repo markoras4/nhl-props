@@ -684,6 +684,65 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     }
 
 
+def shot_ratings(tf: pd.DataFrame, cur: int, cfg: dict) -> dict:
+    """Shots on goal for / against per game for every team (as in backtest_shots): this season, shrunk toward
+    last season (pulled 30% toward the league), scaled to this season's league level. Also league goals per shot."""
+    out = {"teams": {}, "lg": 29.0, "gps": 0.095}
+    try:
+        a = tf[tf.sit == "all"]
+        c, p = a[a.season == cur].set_index("team"), a[a.season == cur - 1].set_index("team")
+        lg_prev = float(p.SF.sum() / p.gp.sum()) if len(p) and p.gp.sum() else 29.0
+        n_cur = float(c.gp.sum()) if len(c) else 0.0
+        lg = shrink(float(c.SF.sum()) if len(c) else 0.0, n_cur, lg_prev, 200.0)
+        gps_prev = float(p.GF.sum() / p.SF.sum()) if len(p) and p.SF.sum() else 0.095
+        gps = shrink(float(c.GF.sum()) if len(c) else 0.0, float(c.SF.sum()) if len(c) else 0.0, gps_prev, 3000.0)
+        k = cfg["shots_k_games"]
+        sc = lg / lg_prev if lg_prev else 1.0
+        for t in set(c.index) | set(p.index):
+            pf = (0.7 * float(p.SF[t] / p.gp[t]) + 0.3 * lg_prev) if t in p.index and p.gp[t] else lg_prev
+            pa = (0.7 * float(p.SA[t] / p.gp[t]) + 0.3 * lg_prev) if t in p.index and p.gp[t] else lg_prev
+            gp = float(c.gp[t]) if t in c.index else 0.0
+            sf = float(c.SF[t]) if t in c.index else 0.0
+            sa = float(c.SA[t]) if t in c.index else 0.0
+            out["teams"][t] = {"sf": shrink(sf, gp, pf * sc, k), "sa": shrink(sa, gp, pa * sc, k),
+                               "sf_pg": sf / gp if gp else None, "sa_pg": sa / gp if gp else None}
+        out["lg"], out["gps"] = lg, gps
+    except Exception:
+        pass
+    return out
+
+
+def shots_block(sh: dict | None, gps: float, cfg: dict, ratio_h: float, ratio_a: float) -> dict | None:
+    """Add expected saves for the default starters and line probabilities (used for grading; the site recomputes
+    saves when you switch goalies)."""
+    if not sh:
+        return None
+    play = cfg["saves_play_share"]
+    sh["sv_h"] = sh["a"] * play * (1 - gps * ratio_h)     # home goalie faces the away team's shots
+    sh["sv_a"] = sh["h"] * play * (1 - gps * ratio_a)
+    r1, rt, rs = cfg["shots_dispersion"], cfg["total_shots_dispersion"], cfg["saves_dispersion"]
+
+    def po(lam, L, r):
+        return p_over_nb(lam, L, r) if r else p_over_poisson(lam, L)
+    sh["p"] = {**{f"h{L}": po(sh["h"], L, r1) for L in cfg["team_shot_lines"]},
+               **{f"a{L}": po(sh["a"], L, r1) for L in cfg["team_shot_lines"]},
+               **{f"t{L}": po(sh["h"] + sh["a"], L, rt) for L in cfg["total_shot_lines"]},
+               **{f"svh{L}": po(sh["sv_h"], L, rs) for L in cfg["save_lines"]},
+               **{f"sva{L}": po(sh["sv_a"], L, rs) for L in cfg["save_lines"]}}
+    return sh
+
+
+def game_shots(shr: dict, H: str, A: str, cfg: dict) -> dict | None:
+    """Expected shots on goal for each team in one game (the site turns these into line probabilities and saves)."""
+    th, ta, lg = shr["teams"].get(H), shr["teams"].get(A), shr["lg"]
+    if not th or not ta or not lg:
+        return None
+    ha = cfg["shots_home_adv"]
+    c = cfg.get("shots_calibration", 1.0)
+    return {"h": th["sf"] * ta["sa"] / lg * ha * c, "a": ta["sf"] * th["sa"] / lg / ha * c,
+            "h_sf": th["sf_pg"], "h_sa": th["sa_pg"], "a_sf": ta["sf_pg"], "a_sa": ta["sa_pg"]}
+
+
 def hb_factors(tf: pd.DataFrame, cur: int, venue_hits: dict) -> dict:
     """Matchup factors for hits and blocked shots (as in backtest_hb):
     arena = hits recorded per game in that building (scorer bias), opp_hit = hits made against the opponent,
@@ -992,6 +1051,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     lg_xga = tm.lg_rate("all", "xGA") or 2.9
     lg_sa = tm.lg_rate("all", "SA") or 30
     hb_f = hb_factors(tf, cur, raw.get("venue_hits") or {})
+    shr = shot_ratings(tf, cur, cfg)
+    league["shots_pg"], league["goals_per_shot"] = shr["lg"], shr["gps"]
+    league["saves_play_share"] = cfg["saves_play_share"]
     for gm in raw["games"]:
         H, A = gm["home"], gm["away"]
         gdate = gm["date"]
@@ -1106,6 +1168,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 })
         games_out.append({**gm, "mu": mu, "starters": starters, "starter_status": starter_status, "starter_alt": starter_alt, "b2b": b2b,
                           "h2h": hh, "hist_over": hist_p, "default": dist, "props": props,
+                          "shots": shots_block(game_shots(shr, H, A, cfg), shr["gps"], cfg,
+                                               goalies_out[starters[H]]["ratio"] if starters.get(H) else 1.0,
+                                               goalies_out[starters[A]]["ratio"] if starters.get(A) else 1.0),
                           "goalies": {t: [g["id"] for g in raw["goalies"] if g["team"] == t] for t in (H, A)}})
 
     log(f"Model built: {len(games_out)} games, {len(players_out)} skaters "
