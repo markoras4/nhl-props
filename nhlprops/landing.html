@@ -481,37 +481,5 @@ applyTheme(store.get("set:theme"));
 render();
 </script>
 
-<div id="agegate" hidden><div class="agbox" role="dialog" aria-modal="true" aria-labelledby="ag_h">
-  <div class="agbadge">18+</div><h3 id="ag_h"></h3><p id="ag_p"></p>
-  <div class="agrow"><button type="button" id="ag_yes" class="agbtn pri"></button><button type="button" id="ag_no" class="agbtn"></button></div>
-  <p id="ag_msg" class="agmsg" hidden></p></div></div>
-<style>
-#agegate{position:fixed;inset:0;z-index:100;background:rgba(5,8,12,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
-#agegate[hidden]{display:none}
-.agbox{width:min(420px,100%);background:var(--panel,#121820);color:var(--text,#e8edf3);border:1px solid var(--line,#26303b);border-radius:16px;padding:24px;text-align:center;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
-.agbadge{display:inline-grid;place-items:center;width:52px;height:52px;border:2.5px solid currentColor;border-radius:50%;font-weight:800;font-size:16px;margin-bottom:10px}
-.agbox h3{margin:4px 0 8px;font-size:20px}.agbox p{margin:0 0 16px;color:var(--mute,#8b97a6);font-size:14px;line-height:1.5}
-.agrow{display:flex;gap:10px}.agbtn{flex:1;border:1px solid var(--line,#26303b);background:transparent;color:inherit;border-radius:10px;padding:12px 14px;font:700 15px/1 inherit;cursor:pointer}
-.agbtn.pri{background:var(--accent,#1fb36b);border-color:var(--accent,#1fb36b);color:#06210f}
-.agmsg{margin:14px 0 0!important;color:var(--text,#e8edf3)!important}.agmsg a{color:var(--accent,#1fb36b)}
-</style>
-<script>
-(function(){
-  const S = {
-    en:{h:"Are you 18 or older?", p:"NHL Props Lab is an analysis tool for sports betting and is only for adults. We don't take bets.", yes:"Yes, I'm 18+", no:"No",
-        msg:'Sorry, this site is only for people aged 18 and over. Worried about gambling? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'},
-    sv:{h:"Är du 18 år eller äldre?", p:"NHL Props Lab är ett analysverktyg för sportspel och är bara för vuxna. Vi tar inte emot spel.", yes:"Ja, jag är 18+", no:"Nej",
-        msg:'Tyvärr, sajten är bara för personer som fyllt 18. Orolig för spel? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'}};
-  let ok = null; try { ok = localStorage.getItem("age18"); } catch(e) {}
-  if (ok === "1") return;
-  let L = "en"; try { const s = localStorage.getItem("set:lang"); L = s==="sv"||s==="en" ? s : ((navigator.language||"").toLowerCase().startsWith("sv") ? "sv" : "en"); } catch(e) {}
-  const T = S[L], el = document.getElementById("agegate");
-  document.getElementById("ag_h").textContent = T.h; document.getElementById("ag_p").textContent = T.p;
-  document.getElementById("ag_yes").textContent = T.yes; document.getElementById("ag_no").textContent = T.no;
-  el.hidden = false; document.documentElement.style.overflow = "hidden";
-  document.getElementById("ag_yes").onclick = () => { try { localStorage.setItem("age18","1"); } catch(e) {} el.hidden = true; document.documentElement.style.overflow = ""; };
-  document.getElementById("ag_no").onclick = () => { const m = document.getElementById("ag_msg"); m.innerHTML = T.msg; m.hidden = false; };
-})();
-</script>
 </body>
 </html>

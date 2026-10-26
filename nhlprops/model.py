@@ -295,7 +295,7 @@ def team_history(lg: pd.DataFrame, cur: int, date: str, cfg: dict) -> dict:
         res = pd.DataFrame({"season": m.season.values, "date": m.date.values, "home": home.values,
                             "opp": np.where(home, m.away, m.home), "gf": gf, "ga": ga,
                             "win": gf > ga, "otl": (gf < ga) & m["last"].isin(["OT", "SO"]).values,
-                            "total": m.total.values})
+                            "total": m.total.values, "last": m["last"].values})
         teams[t] = res
 
     out = {"league": league, "league_hist_over": lg_hist, "teams": {}}
@@ -340,6 +340,8 @@ def team_history(lg: pd.DataFrame, cur: int, date: str, cfg: dict) -> dict:
             "gf_away": float(c[~c.home].gf.mean()) if (~c.home).any() else None,
             "ga_away": float(c[~c.home].ga.mean()) if (~c.home).any() else None,
             "last_date": c.date.values[-1] if len(c) else None,
+            "recent6": [{"d": str(r.date)[:10], "o": r.opp, "h": bool(r.home), "gf": int(r.gf), "ga": int(r.ga),
+                         "x": r.last if r.last in ("OT", "SO") else ""} for r in res.tail(6).iloc[::-1].itertuples()],
         }
         for L in lines:
             lg_cur = league.get(cur, {}).get(f"over_{L}", lg_hist[f"over_{L}"])
