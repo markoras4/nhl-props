@@ -407,6 +407,7 @@ def main(argv=None):
     bt.add_argument("--totals", action="store_true", help="test game totals instead of player props")
     bt.add_argument("--hb", action="store_true", help="test hits and blocked-shots props")
     bt.add_argument("--shots", action="store_true", help="test team shots and goalie saves")
+    bt.add_argument("--attempts", action="store_true", help="test shot attempts vs shots for shots-on-goal props")
     args = ap.parse_args(argv)
 
     data_dir = ROOT / "data"
@@ -433,6 +434,10 @@ def main(argv=None):
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())
         seasons = [int(x) for x in args.seasons.split(",") if x.strip()] or [cur - 2, cur - 1]
+        if args.attempts:
+            from .backtest_attempts import run as run_at
+            run_at(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
         if args.shots:
             from .backtest_shots import run as run_sh
             run_sh(src, seasons, CONFIG, ROOT / "backtest")
