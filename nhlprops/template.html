@@ -333,7 +333,11 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
-.spbox{margin-top:14px;grid-column:1/-1}.spbox h4 .seg{text-transform:none;letter-spacing:0}
+.spbox{margin-top:14px;grid-column:1/-1}
+.spctl{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;text-transform:none;letter-spacing:0}
+.spgame{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:6px 8px;font:600 12.5px var(--f-ui);max-width:170px}
+.spgame.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+tr[data-spd]{cursor:pointer}tr[data-spd]:hover td{background:var(--panel2)}tr.spsel td{background:color-mix(in srgb,var(--accent) 14%,transparent)}.spbox h4 .seg{text-transform:none;letter-spacing:0}
 .spgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:18px;align-items:start}
 @media (max-width:760px){.spgrid{grid-template-columns:1fr}}
 .spkpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -607,6 +611,8 @@ const I18N = {
     r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
     sv_title:"Goalie saves", sv_sub:"follows the goalie you pick", sv_exp:"Expected saves tonight", sv_vs:"on {n} shots", sh_card:"Shots o{l}", sh_card_tip:"Model shots on goal tonight: {a} {x} · {h} {y}. The line shown is the one closest to 50/50.",
     sh_note:"Expected shots come from both teams' shot rates for and against this season (pulled toward last season early on) and home ice. Saves = shots the goalie is expected to face × his expected save rate, allowing for early pulls. Tested on more than 2,400 games: team shots and saves beat simple averages at every line (a goalie's last-10 saves average was worse than guessing); for total shots the model is about as good as a simple average.",
+    sp_game:"Game", sp_g_att:"Shot attempts", sp_g_sog:"Shots on goal", sp_g_close:"From close range", sp_g_pts:"Goals + assists", sp_g_none:"No shot attempts in this game.",
+    sp_g_note:"{d} {o}: every attempt from the NHL's play-by-play. One game is a tiny sample, so only counts are shown.", sp_row_tip:"Show this game's shots on the map",
     sp_title:"Shot profile", sp_season:"Season", sp_l10:"Last 10", sp_loading:"Loading shot map…", sp_none:"No shot attempts recorded yet this season.", sp_map:"Shot map",
     sp_att:"Shot attempts per game", sp_att_tip:"Every attempt: on goal, missed the net or blocked. Attempts are a steadier sign of volume than shots on goal.",
     sp_sog:"Shots on goal per game", sp_of:"{n} in total", sp_sog_tip:"Saved shots plus goals.",
@@ -763,6 +769,8 @@ const I18N = {
     r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
     sv_title:"Målvaktsräddningar", sv_sub:"följer målvakten du väljer", sv_exp:"Väntade räddningar i kväll", sv_vs:"på {n} skott", sh_card:"Skott ö{l}", sh_card_tip:"Modellens skott på mål i kväll: {a} {x} · {h} {y}. Linjen som visas är den som ligger närmast 50/50.",
     sh_note:"Väntade skott bygger på båda lagens skott för och emot i år (dragna mot förra säsongen tidigt på säsongen) och hemmaplan. Räddningar = skotten målvakten väntas möta × hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Testat på mer än 2 400 matcher: lagskott och räddningar slår enkla snitt på alla linjer (en målvakts snitt de senaste 10 matcherna var sämre än att gissa); för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt.",
+    sp_game:"Match", sp_g_att:"Skottförsök", sp_g_sog:"Skott på mål", sp_g_close:"Från nära håll", sp_g_pts:"Mål + assist", sp_g_none:"Inga skottförsök i den här matchen.",
+    sp_g_note:"{d} {o}: alla försök från NHL:s händelsedata. En match är ett mycket litet underlag, så bara antal visas.", sp_row_tip:"Visa matchens skott på kartan",
     sp_title:"Skottprofil", sp_season:"Säsong", sp_l10:"Senaste 10", sp_loading:"Laddar skottkarta…", sp_none:"Inga skottförsök registrerade än i år.", sp_map:"Skottkarta",
     sp_att:"Skottförsök per match", sp_att_tip:"Alla försök: på mål, utanför eller blockerade. Försök är ett stabilare mått på volym än skott på mål.",
     sp_sog:"Skott på mål per match", sp_of:"{n} totalt", sp_sog_tip:"Räddade skott plus mål.",
@@ -1560,7 +1568,7 @@ function detail(pr, g){
     ${oppPosPlayer(pr, p)}
     <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
       <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
-      <tbody>${p.form.games.map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
+      <tbody>${p.form.games.map(x=>`<tr data-spd="${x.d}" class="${state.spw==="g:"+x.d?"spsel":""}" title="${esc(t("sp_row_tip"))}"><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
     ${p.form.games.length ? `<div class="box l10box" data-pid="${pr.id}" data-gid="${g.id}">${l10Chart(pr, g)}</div>` : ""}</div>
     <div class="box spbox" data-pid="${pr.id}">${shotProfile(p)}</div>
     ${statsBox(p)}
@@ -1677,14 +1685,19 @@ function rinkSVG(shots){
     ${shots.slice().sort((a,b)=>order[a[2]]-order[b[2]]).map(dot).join("")}</svg>`;
 }
 function shotProfile(p){
-  const head = `<h4>${t("sp_title")} <span class="seg spseg"><button data-sp="season" class="${(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}</button></span></h4>`;
+  const games10 = p.form.games.slice(0,10);
+  if (state.spw && state.spw.startsWith("g:") && !games10.some(x=>x.d===state.spw.slice(2))) state.spw = "season";
+  const gsel = state.spw && state.spw.startsWith("g:") ? state.spw.slice(2) : null;
+  const opts = games10.map(x=>`<option value="${x.d}" ${gsel===x.d?"selected":""}>${dayLabel(x.d)} ${x.h?t("r6_vs"):"@"} ${x.o}</option>`).join("");
+  const head = `<h4>${t("sp_title")} <span class="spctl"><span class="seg spseg"><button data-sp="season" class="${!gsel&&(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}</button></span>${games10.length?`<select class="spgame ${gsel?"on":""}" aria-label="${t("sp_game")}"><option value="">${t("sp_game")} ▾</option>${opts}</select>`:""}</span></h4>`;
   if (!SHOTS){ loadShots(); return head + `<p class="meta">${t("sp_loading")}</p>`; }
   const S = SHOTS[p.id] || SHOTS[String(p.id)];
   const l10 = state.spw === "l10";
   const gpSeason = p.windows?.cur?.gp || (S ? S.d.length : 0);
-  const dates = new Set(p.form.games.slice(0,10).map(x=>x.d));
-  const shots = !S ? [] : l10 ? S.s.filter(x=>dates.has(S.d[x[3]])) : S.s;
-  const gp = l10 ? Math.min(10, p.form.games.length) : gpSeason;
+  const dates = new Set(games10.map(x=>x.d));
+  const shots = !S ? [] : gsel ? S.s.filter(x=>S.d[x[3]]===gsel) : l10 ? S.s.filter(x=>dates.has(S.d[x[3]])) : S.s;
+  const gp = gsel ? 1 : l10 ? Math.min(10, p.form.games.length) : gpSeason;
+  if (gsel) return head + oneGame(p, games10.find(x=>x.d===gsel), shots);
   if (!shots.length || !gp) return head + `<p class="meta">${t("sp_none")}</p>`;
   const n = k => shots.filter(x=>x[2]===k).length;
   const G_ = n("G"), S_ = n("S"), M_ = n("M"), B_ = n("B"), att = shots.length, onNet = G_ + S_;
@@ -1708,9 +1721,30 @@ function shotProfile(p){
       <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
   </div><p class="note">${t("sp_note",{n:gp})}</p>`;
 }
+// one game: the map and plain counts (no percentages: one game is far too small a sample)
+function oneGame(p, gm, shots){
+  const n = k => shots.filter(x=>x[2]===k).length;
+  const G_ = n("G"), S_ = n("S"), M_ = n("M"), B_ = n("B");
+  const close = shots.filter(x=>x[2]!=="B" && x[0]<=89 && Math.hypot(89-x[0], x[1])<=20).length;
+  const kpi = (lbl, v) => `<div class="spk"><small>${lbl}</small><b>${v}</b></div>`;
+  return `<div class="spgrid"><div class="spkpis">
+      ${kpi(t("sp_g_att"), shots.length)}${kpi(t("sp_g_sog"), G_ + S_)}${kpi(t("sp_k_m"), M_)}${kpi(t("sp_k_b"), B_)}${kpi(t("sp_g_close"), close)}${kpi(t("sp_goals"), G_)}
+      ${gm ? kpi(t("toi"), fmt(gm.t,1)) : ""}${gm ? kpi(t("sp_g_pts"), `${gm.g} + ${gm.a}`) : ""}
+    </div><div class="spmap">${shots.length ? rinkSVG(shots) : `<p class="meta">${t("sp_g_none")}</p>`}
+      <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
+  </div><p class="note">${t("sp_g_note",{d:gm?dayLabel(gm.d):"", o:gm?(gm.h?t("r6_vs")+" ":"@ ")+gm.o:""})}</p>`;
+}
+function spRender(box){ const p = box && P(box.dataset.pid); if (p) box.innerHTML = shotProfile(p);
+  const det = box && box.closest(".detail"); if (det) det.querySelectorAll("tr[data-spd]").forEach(r=>r.classList.toggle("spsel", state.spw==="g:"+r.dataset.spd)); }
 document.addEventListener("click", e => {
+  const r = e.target.closest("tr[data-spd]");
+  if (r){ const box = r.closest(".detail")?.querySelector(".spbox"); if (box){ state.spw = "g:"+r.dataset.spd; spRender(box); box.scrollIntoView({behavior:"smooth", block:"nearest"}); } return; }
   const b = e.target.closest("[data-sp]"); if (!b) return;
-  state.spw = b.dataset.sp; const box = b.closest(".spbox"); const p = box && P(box.dataset.pid); if (p) box.innerHTML = shotProfile(p);
+  state.spw = b.dataset.sp; spRender(b.closest(".spbox"));
+});
+document.addEventListener("change", e => {
+  const sel = e.target.closest(".spgame"); if (!sel) return;
+  state.spw = sel.value ? "g:"+sel.value : "season"; spRender(sel.closest(".spbox"));
 });
 
 // ------------------------------------------------------------ final-score grid
