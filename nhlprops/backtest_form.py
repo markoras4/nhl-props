@@ -18,7 +18,7 @@ from .backtest import season_boxscores, prior_frames, predict, p_over
 from .backtest_hot import streak_cols, table, G_TIERS, P_TIERS
 from .grade import summarize
 
-KS = [None, 40, 20, 12, 8, 5, 3]
+KS = [None, 160, 120, 80, 60, 40, 20]
 
 
 def add_form(df):
