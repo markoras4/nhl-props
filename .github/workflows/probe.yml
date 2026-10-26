@@ -26,7 +26,8 @@ jobs:
               evs=js.get("data") or []
               TEAMS=re.compile(r"Edmonton|Oilers|Detroit|Red Wings|Toronto|Maple|Calgary|Flames|Rangers|Los Angeles|Kings", re.I)
               if host=="ro" and evs: print("  sample event keys:", sorted(evs[0].keys())); print("  sample:", json.dumps(evs[0])[:600])
-              nhl=[e for e in evs if TEAMS.search(str(e.get("matchName","")))]
+              nhl=[e for e in evs if TEAMS.search(str(e.get("matchName",""))) and "(" not in str(e.get("matchName",""))]
+              print("  sports of matches:", collections.Counter((e.get("sportId"), e.get("tournamentId")) for e in nhl).most_common(5))
               print(host, "events", len(evs), "NHL-ish", len(nhl), [e.get("matchName") for e in nhl[:6]])
               if not nhl:
                   sp=collections.Counter((e.get("sportId"), str(e.get("tournamentName"))[:30]) for e in evs if "hok" in str(e).lower() or "hock" in str(e).lower())
