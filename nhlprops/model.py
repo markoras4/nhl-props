@@ -1058,6 +1058,15 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         import re as _re
         main = lambda k: bool(_re.fullmatch(r"[fd]\d", k))
         groups = {k: v for k, v in groups.items() if main(k) or _re.fullmatch(r"pp\d", k)}
+        # the NHL.com game-day article has lines and pairs but no power-play units: take those from the
+        # projected lineups, keeping only players who are dressed tonight
+        if t in nhl_day and not any(_re.fullmatch(r"pp\d", k) for k in groups):
+            dressed_now = {pid for k, v in groups.items() if main(k) for pid in v}
+            for ln in news["lines"].get(t) or []:
+                if _re.fullmatch(r"pp\d", ln.get("group", "")):
+                    m = idx.find(ln["name"], t)
+                    if m and m["id"] in dressed_now:
+                        groups.setdefault(ln["group"], []).append(m["id"])
         n_main = sum(len(v) for k, v in groups.items() if main(k))
         if n_main >= 15:
             source = "gameday" if t in nhl_day else "projected"
