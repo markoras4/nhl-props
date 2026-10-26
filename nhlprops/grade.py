@@ -50,6 +50,27 @@ def _box_players(box: dict) -> dict[int, dict]:
     return out
 
 
+def _p1_goals(src: Source, date: str) -> dict:
+    """game id -> (home, away) 1st-period goals, from the NHL daily score feed"""
+    js = src.json(f"https://api-web.nhle.com/v1/score/{date}", f"nhl/score_final/{date}.json", 6) or {}
+    out = {}
+    ab = lambda x: x.get("default") if isinstance(x, dict) else x
+    for g in js.get("games") or []:
+        if g.get("gameState") not in ("OFF", "FINAL"):
+            continue
+        home = ab((g.get("homeTeam") or {}).get("abbrev"))
+        h = a = 0
+        for x in g.get("goals") or []:
+            pdsc = x.get("periodDescriptor") or {}
+            if pdsc.get("number") == 1 and pdsc.get("periodType", "REG") == "REG":
+                if ab(x.get("teamAbbrev")) == home:
+                    h += 1
+                else:
+                    a += 1
+        out[int(g["id"])] = (h, a)
+    return out
+
+
 def _first_scorers(src: Source, date: str) -> dict:
     """game id -> player id of the first goal (None if no goal before a shootout), from the NHL daily score feed"""
     js = src.json(f"https://api-web.nhle.com/v1/score/{date}", f"nhl/score_final/{date}.json", 6) or {}
@@ -72,6 +93,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
     days = []
     hb: dict[str, list] = {}
     shots: dict[str, list] = {}
+    gm: dict[str, list] = {}
     bets = {k: [] for k, _ in MARKETS}  # (stake 1 at book odds when model EV >= 5%)
     for f in files:
         h = json.loads(f.read_text(encoding="utf-8"))
@@ -83,6 +105,22 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
             boxes[g["id"]] = box
             finals += 1
             total = (box.get("homeTeam", {}).get("score") or 0) + (box.get("awayTeam", {}).get("score") or 0)
+            mk = g.get("mk")
+            if mk:
+                hs_, as__ = (box.get("homeTeam") or {}).get("score"), (box.get("awayTeam") or {}).get("score")
+                lp = ((box.get("gameOutcome") or {}).get("lastPeriodType")) or "REG"
+                if hs_ is not None and as__ is not None:
+                    rh, ra = hs_, as__
+                    if lp != "REG":                       # the OT/shootout winner's extra goal isn't a regulation goal
+                        rh, ra = (hs_ - 1, as__) if hs_ > as__ else (hs_, as__ - 1)
+                    res_ = {"1": rh > ra, "X": rh == ra, "2": rh < ra, "hpl": hs_ - as__ >= 2, "apl": as__ - hs_ >= 2,
+                            "btts": hs_ >= 1 and as__ >= 1, "htt2.5": hs_ > 2.5, "htt3.5": hs_ > 3.5, "att2.5": as__ > 2.5, "att3.5": as__ > 3.5}
+                    p1 = _p1_goals(src, h["date"]).get(g["id"])
+                    if p1:
+                        res_.update({"p1o0.5": sum(p1) > 0.5, "p1o1.5": sum(p1) > 1.5, "p1o2.5": sum(p1) > 2.5, "p1x": p1[0] == p1[1]})
+                    for k, yv in res_.items():
+                        if k in mk:
+                            gm.setdefault(k, []).append((mk[k], int(yv)))
             sh = g.get("shots")
             hs, as_ = (box.get("homeTeam") or {}).get("sog"), (box.get("awayTeam") or {}).get("sog")
             if sh and hs is not None and as_ is not None:
@@ -146,7 +184,8 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
         "days": days,
         "props": {name: summarize(props[k]) for k, name in MARKETS},
         "sog": {f"Over {L} SOG": summarize(v) for L, v in sorted(sog.items())},
-        "shots": {k: summarize(v) for k, v in shots.items()},   # all five lines around each projection pooled
+        "shots": {k: summarize(v) for k, v in shots.items()},
+        "gm": {k: summarize(v) for k, v in gm.items()},   # all five lines around each projection pooled
         "hb": {f"Over {k[1:]} {'hits' if k[0] == 'h' else 'blocks'}": summarize(v) for k, v in sorted(hb.items())},
         "ou_model": {f"Over {L}": summarize(v) for L, v in ou_model.items()},
         "ou_hist": {f"Over {L}": summarize(v) for L, v in ou_hist.items()},

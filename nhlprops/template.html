@@ -333,6 +333,11 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.gmbox{margin:14px 0}.gmgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px 22px}
+.gms h5{margin:0 0 6px;font-size:13px}.gmh,.gmr{display:grid;grid-template-columns:minmax(0,1fr) 54px 50px 70px 54px;gap:6px;align-items:center}
+.gmh{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.gmh span:not(:first-child),.gmr>:not(:first-child){text-align:right}.gmr{padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.gmr b{font-variant-numeric:tabular-nums}.gmr .odds{width:100%}
 .fgbox{margin:14px 0}.fggrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:760px){.fggrid{grid-template-columns:1fr}}
 .fgh{display:flex;align-items:center;gap:6px;margin-bottom:6px}.fgtab td,.fgtab th{white-space:nowrap}.fgtab .odds{width:64px}
 .ofmt{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:7px 6px;font:600 12.5px var(--f-ui);max-width:128px}
@@ -621,7 +626,10 @@ const I18N = {
       <dt>History weight</dt><dd>The game total (over 5.5 / 6.5) can blend the model with teams' scoring history. The table shows which mix would have scored best so far.</dd>
       <dt>Value bets</dt><dd>Not our picks. Every prop where the model's EV was 5% or more at the sportsbook price we had, staked at 1 unit each, to test whether those edges pay off. It is a check on the model, not advice.</dd></dl>
       <p>With few games graded all of this is noise: one game can swing a row from +30% to −30%. Judge it after several hundred player-games.</p>`,
-    r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", of_dec:"Decimal", of_us:"American", of_frac:"Fractional", of_title:"Odds format", odds_bad:"Type odds as 1.85, -118, +185 or 17/20.", m_fg:"First goal", fg_title:"First goalscorer", fg_none:"no goal before a shootout {p}", fg_team:"scores first {p}",
+    r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", of_dec:"Decimal", of_us:"American", of_frac:"Fractional", of_title:"Odds format", odds_bad:"Type odds as 1.85, -118, +185 or 17/20.", gm_title:"More markets", gm_sub:"from the same score model", gm_1x2:"1X2", gm_60:"after 60 minutes", gm_draw:"Draw", gm_pl:"Puck line", gm_tt:"Team totals",
+    gm_p1:"1st period goals", gm_p1x:"1st period draw", gm_btts:"Both teams to score",
+    gm_note:"All from the same projected score as the win chance and total goals, and they move when you switch goalies. Puck line includes empty-net goals. Tested on 2,451 games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers match how often they happen, but the model separates games only slightly there, so treat them as context.",
+    m_fg:"First goal", fg_title:"First goalscorer", fg_none:"no goal before a shootout {p}", fg_team:"scores first {p}",
     fg_note:"His chance of scoring the game's first goal: the chance there is a goal before a shootout × his team scoring first × his share of the team's expected goals tonight. Changes with the goalies you pick.",
     sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
     sv_title:"Goalie saves", sv_sub:"follows the goalie you pick", sv_exp:"Expected saves tonight", sv_vs:"on {n} shots", sh_card:"Shots o{l}", sh_card_tip:"Model shots on goal tonight: {a} {x} · {h} {y}. The line shown is the one closest to 50/50.",
@@ -790,7 +798,10 @@ const I18N = {
       <dt>Historikvikt</dt><dd>Matchtotalen (över 5,5 / 6,5) kan blanda modellen med lagens målhistorik. Tabellen visar vilken blandning som hittills hade träffat bäst.</dd>
       <dt>Värdespel</dt><dd>Inte våra tips. Alla spel där modellens EV var 5 % eller mer till spelbolagets pris, med 1 enhet per spel, för att testa om de övervärdena lönar sig. En kontroll av modellen, inte råd.</dd></dl>
       <p>Med få rättade matcher är allt detta brus: en match kan svänga en rad från +30 % till −30 %. Döm efter flera hundra spelarmatcher.</p>`,
-    r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", of_dec:"Decimal", of_us:"Amerikanska", of_frac:"Bråk", of_title:"Oddsformat", odds_bad:"Skriv odds som 1,85, -118, +185 eller 17/20.", m_fg:"Första mål", fg_title:"Första målskytt", fg_none:"inget mål före straffar {p}", fg_team:"gör första målet {p}",
+    r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", of_dec:"Decimal", of_us:"Amerikanska", of_frac:"Bråk", of_title:"Oddsformat", odds_bad:"Skriv odds som 1,85, -118, +185 eller 17/20.", gm_title:"Fler spel", gm_sub:"från samma resultatmodell", gm_1x2:"1X2", gm_60:"efter 60 minuter", gm_draw:"Oavgjort", gm_pl:"Puck line (handikapp)", gm_tt:"Lagets antal mål",
+    gm_p1:"Mål i första perioden", gm_p1x:"Oavgjort i första perioden", gm_btts:"Båda lagen gör mål",
+    gm_note:"Allt bygger på samma beräknade resultat som vinstchansen och totalmålen, och ändras när du byter målvakt. Puck line räknar med mål i tom bur. Testat på 2 451 matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål stämmer nivån, men modellen skiljer matcherna åt bara lite där, så se dem som bakgrund.",
+    m_fg:"Första mål", fg_title:"Första målskytt", fg_none:"inget mål före straffar {p}", fg_team:"gör första målet {p}",
     fg_note:"Hans chans att göra matchens första mål: chansen att det blir mål före straffar × att hans lag gör första målet × hans andel av lagets förväntade mål i kväll. Ändras med målvakterna du väljer.",
     sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
     sv_title:"Målvaktsräddningar", sv_sub:"följer målvakten du väljer", sv_exp:"Väntade räddningar i kväll", sv_vs:"på {n} skott", sh_card:"Skott ö{l}", sh_card_tip:"Modellens skott på mål i kväll: {a} {x} · {h} {y}. Linjen som visas är den som ligger närmast 50/50.",
@@ -1292,6 +1303,7 @@ function gamePage(){
     <div class="box"><h4>${t("total_goals")}</h4>
       <div class="ou"><div class="h">${t("line")}</div><div class="h">${t("model")}</div><div class="h">${t("history")}</div><div class="h">${t("over_fair")}</div><div class="h">${t("over_odds")}</div>${ou}</div></div>
   </div>
+  ${marketsBox(g)}
   ${recentBox(g)}
   ${bestPicksBox(g)}
   ${streakStrip(g)}
@@ -1968,6 +1980,42 @@ function shotsBox(g){
       ${lineRow(gA?esc(gA.name.split(" ").slice(-1)[0]):g.away, SL, svA, rs)}${lineRow(gH?esc(gH.name.split(" ").slice(-1)[0]):g.home, SL, svH, rs)}</tbody></table></div>
     <p class="note">${t("sh_note")}</p></div>`;
 }
+// ------------------------------------------------------------ game markets (same score model as everything else)
+function gameMarkets(g){
+  const mu = gameMu(g), J = regJoint(mu.h, mu.a), n = J.length, q = C.en_q ?? 0.25, share = (mu.h+mu.a) ? mu.h/(mu.h+mu.a) : 0.5;
+  let h1=0, x=0, a2=0, hpl=0, apl=0, btts=0; const fh = new Array(n+1).fill(0), fa = new Array(n+1).fill(0);
+  for (let i=0;i<n;i++) for (let k=0;k<n;k++){ const p = J[i][k];
+    if (i>k) h1+=p; else if (i<k) a2+=p; else x+=p;
+    if (i-k>=2) hpl+=p; if (i-k===1) hpl+=q*p; if (k-i>=2) apl+=p; if (k-i===1) apl+=q*p;
+    if (i===k){ fh[i+1]+=p*share; fa[k]+=p*share; fh[i]+=p*(1-share); fa[k+1]+=p*(1-share); if (i>=1) btts+=p; }
+    else { fh[i]+=p; fa[k]+=p; if (i>=1 && k>=1) btts+=p; } }
+  const over = (arr, L) => arr.slice(Math.floor(L)+1).reduce((s_,v)=>s_+v,0);
+  const s1 = C.p1_share ?? 0.29, P1h = pmf(mu.h*s1, n), P1a = pmf(mu.a*s1, n), t1 = new Array(2*n).fill(0); let p1x = 0;
+  for (let i=0;i<n;i++) for (let k=0;k<n;k++){ t1[i+k] += P1h[i]*P1a[k]; if (i===k) p1x += P1h[i]*P1a[k]; }
+  return {"1":h1, "X":x, "2":a2, hpl, apl, hpl_n:1-apl, apl_n:1-hpl, btts, btts_n:1-btts,
+          "htt2.5":over(fh,2.5), "htt3.5":over(fh,3.5), "att2.5":over(fa,2.5), "att3.5":over(fa,3.5),
+          "p1o0.5":over(t1,0.5), "p1o1.5":over(t1,1.5), "p1o2.5":over(t1,2.5), p1x};
+}
+function marketsBox(g){
+  const M = gameMarkets(g);
+  const row = (k, lbl, p) => { const key = `gm:${g.id}:${k}`, uo = parseFloat(store.get(key)), od = isNaN(uo) ? null : uo, ev = od ? p*od-1 : null;
+    return `<div class="gmr"><span>${lbl}</span><b>${pct(p,1)}</b><span class="meta">${oddsTxt(1/p)}</span>
+      <input class="odds gmodds" data-k="${key}" placeholder="${t("odds_ph")}" value="${od?oddsTxt(od):""}"><span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span></div>`; };
+  const sec = (title, rows, note) => `<div class="gms"><h5>${title}${note?` <span class="meta">${note}</span>`:""}</h5><div class="gmh"><span></span><span>${t("model")}</span><span>${t("h_fair")}</span><span>${t("h_odds")}</span><span>EV</span></div>${rows.join("")}</div>`;
+  return `<div class="box gmbox"><h4>${t("gm_title")} <span class="meta">${t("gm_sub")}</span></h4><div class="gmgrid">
+    ${sec(t("gm_1x2"), [row("1", g.home, M["1"]), row("X", t("gm_draw"), M.X), row("2", g.away, M["2"])], t("gm_60"))}
+    ${sec(t("gm_pl"), [row("hpl", `${g.home} −1.5`, M.hpl), row("apl_n", `${g.away} +1.5`, M.apl_n), row("apl", `${g.away} −1.5`, M.apl), row("hpl_n", `${g.home} +1.5`, M.hpl_n)])}
+    ${sec(t("gm_tt"), [row("htt2.5", `${g.home} ${t("over_short",{l:"2.5"})}`, M["htt2.5"]), row("htt3.5", `${g.home} ${t("over_short",{l:"3.5"})}`, M["htt3.5"]),
+                       row("att2.5", `${g.away} ${t("over_short",{l:"2.5"})}`, M["att2.5"]), row("att3.5", `${g.away} ${t("over_short",{l:"3.5"})}`, M["att3.5"])])}
+    ${sec(t("gm_p1"), [row("p1o0.5", t("over_short",{l:"0.5"}), M["p1o0.5"]), row("p1o1.5", t("over_short",{l:"1.5"}), M["p1o1.5"]), row("p1o2.5", t("over_short",{l:"2.5"}), M["p1o2.5"]), row("p1x", t("gm_p1x"), M.p1x)])}
+    ${sec(t("gm_btts"), [row("btts", t("yes"), M.btts), row("btts_n", t("no"), M.btts_n)])}
+  </div><p class="note">${t("gm_note")}</p></div>`;
+}
+document.addEventListener("change", e => {
+  const i = e.target.closest("input.gmodds"); if (!i) return;
+  const v = parseOdds(i.value); store.set(i.dataset.k, v==null?"":v);
+  const box = i.closest(".gmbox"), g = gameById[state.game]; if (box && g) box.outerHTML = marketsBox(g);
+});
 // ------------------------------------------------------------ first goalscorer
 function fgBox(g){
   const F = fgMap(g);

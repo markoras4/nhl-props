@@ -118,6 +118,46 @@ def game_distribution(mu_h: float, mu_a: float, lines: list[float], tie_boost: f
            "exp_total": float((tot * np.arange(len(tot))).sum())}
     for L in lines:
         out[f"over_{L}"] = float(tot[int(math.floor(L)) + 1:].sum())
+    out["mk"] = game_markets(joint, mu_h, mu_a, share_h)
+    return out
+
+
+GM_CFG = {"p1_share": 0.29, "en_q": 0.25}   # set from config in build_slate
+
+
+def game_markets(joint: np.ndarray, mu_h: float, mu_a: float, share_h: float) -> dict:
+    """Regulation 1X2, puck line (with empty-net goals), team totals, both teams to score, 1st period (backtest_markets)."""
+    n = joint.shape[0]
+    i_, k_ = np.indices(joint.shape)
+    q = GM_CFG["en_q"]
+    fh, fa = np.zeros(n + 1), np.zeros(n + 1)
+    btts = 0.0
+    for a in range(n):
+        for b in range(n):
+            p = joint[a, b]
+            if a == b:
+                fh[a + 1] += p * share_h; fa[b] += p * share_h
+                fh[a] += p * (1 - share_h); fa[b + 1] += p * (1 - share_h)
+                btts += p if a >= 1 else 0.0
+            else:
+                fh[a] += p; fa[b] += p
+                btts += p if (a >= 1 and b >= 1) else 0.0
+    out = {"1": float(joint[i_ > k_].sum()), "X": float(joint[i_ == k_].sum()), "2": float(joint[i_ < k_].sum()),
+           "hpl": float(joint[i_ - k_ >= 2].sum() + q * joint[i_ - k_ == 1].sum()),
+           "apl": float(joint[k_ - i_ >= 2].sum() + q * joint[k_ - i_ == 1].sum()),
+           "btts": float(btts)}
+    for L in (2.5, 3.5):
+        out[f"htt{L}"] = float(fh[int(L) + 1:].sum()); out[f"att{L}"] = float(fa[int(L) + 1:].sum())
+    s1 = GM_CFG["p1_share"]
+    p1h, p1a = pois_pmf(mu_h * s1), pois_pmf(mu_a * s1)
+    j1 = np.outer(p1h, p1a)
+    t1 = np.zeros(2 * len(p1h))
+    for a in range(len(p1h)):
+        for b in range(len(p1a)):
+            t1[a + b] += j1[a, b]
+    for L in (0.5, 1.5, 2.5):
+        out[f"p1o{L}"] = float(t1[int(L) + 1:].sum())
+    out["p1x"] = float(np.trace(j1))
     return out
 
 
@@ -862,6 +902,7 @@ def opponent_by_position(raw: dict) -> dict:
 
 # ---------------------------------------------------------------- slate
 def build_slate(raw: dict, cfg: dict, log=print) -> dict:
+    GM_CFG.update(p1_share=cfg.get("p1_share", 0.29), en_q=cfg.get("en_q", 0.25))
     cur, date = raw["season"], raw["date"]
     yesterday = (dt.date.fromisoformat(date) - dt.timedelta(days=1)).isoformat()
 

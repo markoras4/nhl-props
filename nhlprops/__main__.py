@@ -93,7 +93,7 @@ def save_history(slate: dict, hist_dir: Path):
                  "model": {str(L): g["default"][f"over_{L}"] for L in CONFIG["ou_lines"]},
                  "hist": g["hist_over"],
                  "shots": ({k: g["shots"][k] for k in ("h", "a", "sv_h", "sv_a", "p")} if g.get("shots") else None),
-                 "starters": g.get("starters")} for g in games],
+                 "starters": g.get("starters"), "mk": g["default"].get("mk")} for g in games],
             "props": [p for p in old["props"] if p["game"] not in ids] + [
                 {"id": pr["id"], "name": players[str(pr["id"])]["name"], "game": g["id"], "p": pr["p"],
                  "o": {m: v["o"] for m, v in (slate.get("odds", {}).get(g["id"], {}).get("players", {})
