@@ -16,6 +16,10 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Player probabilities, EV, best picks | 1 forward + 1 defenceman per team | everyone |
 | First goalscorer | team "scores first" % | player list |
 | Hits & blocks | no | yes |
+| Multi-point (2+/3+ points, 2+ goals, hat trick, 2+ assists), PP point, faceoffs won, penalties | no | yes |
+| Shutout chance (goalie card, More markets) | yes | yes |
+| Role & usage box | PP minutes and unit only | everything, incl. tonight's chances |
+| Linemates tonight | yes | yes |
 | Odds movement | no | yes |
 | Player page: last 10 games + chart | yes | yes |
 | Hit rates | L5 | L10, L20, season, vs opponent, model vs market |
