@@ -42,6 +42,10 @@ CONFIG = {
     # ---------- game context ----------
     "home_adv": 1.03,            # home scoring multiplier (away gets 1/x)
     "b2b_factor": 0.97,          # team playing the 2nd night of a back-to-back
+    # backtest_context (2,451 games): away team on a back-to-back lost 0.33 goals of margin vs the model (t = 2.9),
+    # home team only about 0.10; travel distance and time zones showed no effect
+    "b2b_factor_away": 0.945,
+    "b2b_factor_home": 0.984,
     "env_cap": 0.05,             # max +/- adjustment for league scoring environment
     "k_env_team_games": 300,     # current-season league scoring regressed with this many team-games
 

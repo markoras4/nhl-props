@@ -1195,9 +1195,11 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 goalies_out[gid].setdefault("vs", {})[o] = goalie_vs(raw["glogs"].get(gid, [[], [], []]), o)
 
         mh, ma = tm.mu_parts(th, ta), tm.mu_parts(ta, th)
-        ha, bf = cfg["home_adv"], cfg["b2b_factor"]
-        fh = ha * (bf if b2b[H] else 1) / (bf if b2b[A] else 1)
-        fa = (1 / ha) * (bf if b2b[A] else 1) / (bf if b2b[H] else 1)
+        ha = cfg["home_adv"]
+        bfac = {H: cfg.get("b2b_factor_home", cfg["b2b_factor"]) if b2b[H] else 1.0,
+                A: cfg.get("b2b_factor_away", cfg["b2b_factor"]) if b2b[A] else 1.0}
+        fh = ha * bfac[H] / bfac[A]
+        fa = (1 / ha) * bfac[A] / bfac[H]
         mu = {
             "home": {"g": (mh["ev"] + mh["pp"]) * fh, "o": mh["other"], "ev": mh["ev"] * fh, "pp": mh["pp"] * fh},
             "away": {"g": (ma["ev"] + ma["pp"]) * fa, "o": ma["other"], "ev": ma["ev"] * fa, "pp": ma["pp"] * fa},
@@ -1221,7 +1223,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         for t, opp, is_home in ((H, A, True), (A, H, False)):
             octx = team_ctx(opp)
             venue = ha if is_home else 1 / ha
-            bb = (bf if b2b[t] else 1) / (bf if b2b[opp] else 1)
+            bb = bfac[t] / bfac[opp]
             d_xg = octx["xga_all"] / lg_xga
             d_s = octx["sa_all"] / lg_sa
             gr = goalies_out[starters[opp]]["ratio"] if starters.get(opp) else 1.0
