@@ -114,7 +114,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
                     if lp != "REG":                       # the OT/shootout winner's extra goal isn't a regulation goal
                         rh, ra = (hs_ - 1, as__) if hs_ > as__ else (hs_, as__ - 1)
                     res_ = {"1": rh > ra, "X": rh == ra, "2": rh < ra, "hpl": hs_ - as__ >= 2, "apl": as__ - hs_ >= 2,
-                            "btts": hs_ >= 1 and as__ >= 1, "htt2.5": hs_ > 2.5, "htt3.5": hs_ > 3.5, "att2.5": as__ > 2.5, "att3.5": as__ > 3.5}
+                            "btts": hs_ >= 1 and as__ >= 1, "b60": rh >= 1 and ra >= 1, "b2": rh >= 2 and ra >= 2, "htt2.5": hs_ > 2.5, "htt3.5": hs_ > 3.5, "att2.5": as__ > 2.5, "att3.5": as__ > 3.5}
                     p1 = _p1_goals(src, h["date"]).get(g["id"])
                     if p1:
                         res_.update({"p1o0.5": sum(p1) > 0.5, "p1o1.5": sum(p1) > 1.5, "p1o2.5": sum(p1) > 2.5, "p1x": p1[0] == p1[1]})

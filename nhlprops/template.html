@@ -644,8 +644,8 @@ const I18N = {
       <dt>Value bets</dt><dd>Not our picks. Every prop where the model's EV was 5% or more at the sportsbook price we had, staked at 1 unit each, to test whether those edges pay off. It is a check on the model, not advice.</dd></dl>
       <p>With few games graded all of this is noise: one game can swing a row from +30% to −30%. Judge it after several hundred player-games.</p>`,
     r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", of_dec:"Decimal", of_us:"American", of_frac:"Fractional", of_title:"Odds format", odds_bad:"Type odds as 1.85, -118, +185 or 17/20.", gm_title:"More markets", gm_sub:"from the same score model", gm_1x2:"1X2", gm_60:"after 60 minutes", gm_draw:"Draw", gm_pl:"Puck line", gm_tt:"Team totals",
-    gm_p1:"1st period goals", gm_p1x:"1st period draw", gm_btts:"Both teams to score",
-    gm_note:"All from the same projected score as the win chance and total goals, and they move when you switch goalies. Puck line includes empty-net goals. Tested on 2,451 games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers match how often they happen, but the model separates games only slightly there, so treat them as context.",
+    gm_p1:"1st period goals", gm_p1x:"1st period draw", gm_btts:"Both teams to score", gm_b1y:"Both score – yes", gm_b1n:"Both score – no", gm_b2y:"Both 2+ goals – yes", gm_b2n:"Both 2+ goals – no",
+    gm_note:"All from the same projected score as the win chance and total goals, and they move when you switch goalies. Puck line includes empty-net goals. Tested on 2,451 games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers (settled after 60 minutes, like most European books) match how often they happen, but the model separates games only slightly there, so treat them as context.",
     m_fg:"First goal", fg_title:"First goalscorer", fg_none:"no goal before a shootout {p}", fg_team:"scores first {p}",
     fg_note:"His chance of scoring the game's first goal: the chance there is a goal before a shootout × his team scoring first × his share of the team's expected goals tonight. Changes with the goalies you pick.",
     c_form:"Recent form", c_form_tip:"His last 10 games vs what his level would have produced in that ice time, given a little weight: goals ×{g}, assists ×{a}, shots ×{s}. Tested: a small amount of form improved every market.", pv_label:"Game preview", pv_news:"News", pv_records:"Streaks & records", pv_betting:"Betting insights", pv_photo:"Photo",
@@ -844,8 +844,8 @@ const I18N = {
       <dt>Värdespel</dt><dd>Inte våra tips. Alla spel där modellens EV var 5 % eller mer till spelbolagets pris, med 1 enhet per spel, för att testa om de övervärdena lönar sig. En kontroll av modellen, inte råd.</dd></dl>
       <p>Med få rättade matcher är allt detta brus: en match kan svänga en rad från +30 % till −30 %. Döm efter flera hundra spelarmatcher.</p>`,
     r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", of_dec:"Decimal", of_us:"Amerikanska", of_frac:"Bråk", of_title:"Oddsformat", odds_bad:"Skriv odds som 1,85, -118, +185 eller 17/20.", gm_title:"Fler spel", gm_sub:"från samma resultatmodell", gm_1x2:"1X2", gm_60:"efter 60 minuter", gm_draw:"Oavgjort", gm_pl:"Puck line (handikapp)", gm_tt:"Lagets antal mål",
-    gm_p1:"Mål i första perioden", gm_p1x:"Oavgjort i första perioden", gm_btts:"Båda lagen gör mål",
-    gm_note:"Allt bygger på samma beräknade resultat som vinstchansen och totalmålen, och ändras när du byter målvakt. Puck line räknar med mål i tom bur. Testat på 2 451 matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål stämmer nivån, men modellen skiljer matcherna åt bara lite där, så se dem som bakgrund.",
+    gm_p1:"Mål i första perioden", gm_p1x:"Oavgjort i första perioden", gm_btts:"Båda lagen gör mål", gm_b1y:"Båda gör mål – ja", gm_b1n:"Båda gör mål – nej", gm_b2y:"Båda gör 2+ mål – ja", gm_b2n:"Båda gör 2+ mål – nej",
+    gm_note:"Allt bygger på samma beräknade resultat som vinstchansen och totalmålen, och ändras när du byter målvakt. Puck line räknar med mål i tom bur. Testat på 2 451 matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål (avgörs efter 60 minuter, som hos de flesta europeiska spelbolag) stämmer nivån, men modellen skiljer matcherna åt bara lite där, så se dem som bakgrund.",
     m_fg:"Första mål", fg_title:"Första målskytt", fg_none:"inget mål före straffar {p}", fg_team:"gör första målet {p}",
     fg_note:"Hans chans att göra matchens första mål: chansen att det blir mål före straffar × att hans lag gör första målet × hans andel av lagets förväntade mål i kväll. Ändras med målvakterna du väljer.",
     c_form:"Form", c_form_tip:"Hans senaste 10 matcher jämfört med vad hans nivå hade gett på den istiden, med liten vikt: mål ×{g}, assist ×{a}, skott ×{s}. Testat: lite form förbättrade alla spel.", pv_label:"Förhandstitt", pv_news:"Nyheter", pv_records:"Sviter & rekord", pv_betting:"Spelinsikter", pv_photo:"Foto",
@@ -2079,16 +2079,18 @@ document.addEventListener("click", e => {
 // ------------------------------------------------------------ game markets (same score model as everything else)
 function gameMarkets(g){
   const mu = gameMu(g), J = regJoint(mu.h, mu.a), n = J.length, q = C.en_q ?? 0.25, share = (mu.h+mu.a) ? mu.h/(mu.h+mu.a) : 0.5;
-  let h1=0, x=0, a2=0, hpl=0, apl=0, btts=0; const fh = new Array(n+1).fill(0), fa = new Array(n+1).fill(0);
+  let h1=0, x=0, a2=0, hpl=0, apl=0, btts=0, b60=0, b2=0; const fh = new Array(n+1).fill(0), fa = new Array(n+1).fill(0);
   for (let i=0;i<n;i++) for (let k=0;k<n;k++){ const p = J[i][k];
     if (i>k) h1+=p; else if (i<k) a2+=p; else x+=p;
     if (i-k>=2) hpl+=p; if (i-k===1) hpl+=q*p; if (k-i>=2) apl+=p; if (k-i===1) apl+=q*p;
+    if (i>=1 && k>=1) b60+=p; if (i>=2 && k>=2) b2+=p;
     if (i===k){ fh[i+1]+=p*share; fa[k]+=p*share; fh[i]+=p*(1-share); fa[k+1]+=p*(1-share); if (i>=1) btts+=p; }
     else { fh[i]+=p; fa[k]+=p; if (i>=1 && k>=1) btts+=p; } }
   const over = (arr, L) => arr.slice(Math.floor(L)+1).reduce((s_,v)=>s_+v,0);
   const s1 = C.p1_share ?? 0.29, P1h = pmf(mu.h*s1, n), P1a = pmf(mu.a*s1, n), t1 = new Array(2*n).fill(0); let p1x = 0;
   for (let i=0;i<n;i++) for (let k=0;k<n;k++){ t1[i+k] += P1h[i]*P1a[k]; if (i===k) p1x += P1h[i]*P1a[k]; }
-  return {"1":h1, "X":x, "2":a2, hpl, apl, hpl_n:1-apl, apl_n:1-hpl, btts, btts_n:1-btts,
+  b2 *= C.btts2_cal ?? 0.963;   // backtest: predicted 64.7%, happened 62.3%
+  return {"1":h1, "X":x, "2":a2, hpl, apl, hpl_n:1-apl, apl_n:1-hpl, btts, btts_n:1-btts, b60, b60_n:1-b60, b2, b2_n:1-b2,
           "htt2.5":over(fh,2.5), "htt3.5":over(fh,3.5), "att2.5":over(fa,2.5), "att3.5":over(fa,3.5),
           "p1o0.5":over(t1,0.5), "p1o1.5":over(t1,1.5), "p1o2.5":over(t1,2.5), p1x};
 }
@@ -2104,7 +2106,7 @@ function marketsBox(g){
     ${sec(t("gm_tt"), [row("htt2.5", `${g.home} ${t("over_short",{l:"2.5"})}`, M["htt2.5"]), row("htt3.5", `${g.home} ${t("over_short",{l:"3.5"})}`, M["htt3.5"]),
                        row("att2.5", `${g.away} ${t("over_short",{l:"2.5"})}`, M["att2.5"]), row("att3.5", `${g.away} ${t("over_short",{l:"3.5"})}`, M["att3.5"])])}
     ${sec(t("gm_p1"), [row("p1o0.5", t("over_short",{l:"0.5"}), M["p1o0.5"]), row("p1o1.5", t("over_short",{l:"1.5"}), M["p1o1.5"]), row("p1o2.5", t("over_short",{l:"2.5"}), M["p1o2.5"]), row("p1x", t("gm_p1x"), M.p1x)])}
-    ${sec(t("gm_btts"), [row("btts", t("yes"), M.btts), row("btts_n", t("no"), M.btts_n)])}
+    ${sec(t("gm_btts"), [row("b60", t("gm_b1y"), M.b60), row("b60_n", t("gm_b1n"), M.b60_n), row("b2", t("gm_b2y"), M.b2), row("b2_n", t("gm_b2n"), M.b2_n)], t("gm_60"))}
   </div><p class="note">${t("gm_note")}</p></div>`;
 }
 document.addEventListener("change", e => {

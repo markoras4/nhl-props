@@ -145,7 +145,8 @@ def game_markets(joint: np.ndarray, mu_h: float, mu_a: float, share_h: float) ->
     out = {"1": float(joint[i_ > k_].sum()), "X": float(joint[i_ == k_].sum()), "2": float(joint[i_ < k_].sum()),
            "hpl": float(joint[i_ - k_ >= 2].sum() + q * joint[i_ - k_ == 1].sum()),
            "apl": float(joint[k_ - i_ >= 2].sum() + q * joint[k_ - i_ == 1].sum()),
-           "btts": float(btts)}
+           "btts": float(btts), "b60": float(joint[(i_ >= 1) & (k_ >= 1)].sum()),
+           "b2": float(joint[(i_ >= 2) & (k_ >= 2)].sum()) * 0.963}   # backtest_markets: 64.7% predicted vs 62.3%
     for L in (2.5, 3.5):
         out[f"htt{L}"] = float(fh[int(L) + 1:].sum()); out[f"att{L}"] = float(fa[int(L) + 1:].sum())
     s1 = GM_CFG["p1_share"]
