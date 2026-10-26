@@ -1104,7 +1104,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         x["ppp_lam"] = (ppp_cur + cfg["ppp_k"] * lam_prior) / (len(lc_) + cfg["ppp_k"])
         a_c, h_c = ppf.get((pid_, cur), (0.0, 0.0))
         gp_c = float(me_[me_.season == cur].gp.sum()) if len(me_) else 0.0
-        x["pp"] = {"min_pg": round(h_c * 60 / gp_c, 2) if gp_c else None, "min_pg_prev": round(h_ * 60 / gp_prev, 2) if gp_prev else None,
+        # note: for 5-on-4 rows _hours() sees small per-game numbers and returns minutes, not hours (the tested
+        # PP model used the same units, so only this display needs the conversion)
+        x["pp"] = {"min_pg": round(h_c / gp_c, 2) if gp_c else None, "min_pg_prev": round(h_ / gp_prev, 2) if gp_prev else None,
                    "ppp": ppp_cur, "gp": len(lc_), "ppp_prev": int(sum(g_.get("ppp", 0) for g_ in lp_)), "gp_prev": len(lp_)}
         # faceoffs: draws per game and win % (this season from play-by-play, last season from MoneyPuck)
         fw_p, fl_p = float(prev_.get("fow", 0) or 0), float(prev_.get("fol", 0) or 0)
