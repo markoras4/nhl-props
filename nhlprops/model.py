@@ -724,11 +724,14 @@ def shots_block(sh: dict | None, gps: float, cfg: dict, ratio_h: float, ratio_a:
 
     def po(lam, L, r):
         return p_over_nb(lam, L, r) if r else p_over_poisson(lam, L)
-    sh["p"] = {**{f"h{L}": po(sh["h"], L, r1) for L in cfg["team_shot_lines"]},
-               **{f"a{L}": po(sh["a"], L, r1) for L in cfg["team_shot_lines"]},
-               **{f"t{L}": po(sh["h"] + sh["a"], L, rt) for L in cfg["total_shot_lines"]},
-               **{f"svh{L}": po(sh["sv_h"], L, rs) for L in cfg["save_lines"]},
-               **{f"sva{L}": po(sh["sv_a"], L, rs) for L in cfg["save_lines"]}}
+    def around(lam, step):   # lines centred on the projection, as the site shows them
+        c = math.floor(lam) + 0.5 - (1 if step == 2 and math.floor(lam) % 2 else 0)
+        return [c + i * step for i in (-2, -1, 0, 1, 2)]
+    sh["p"] = {**{f"h{L}": po(sh["h"], L, r1) for L in around(sh["h"], 1)},
+               **{f"a{L}": po(sh["a"], L, r1) for L in around(sh["a"], 1)},
+               **{f"t{L}": po(sh["h"] + sh["a"], L, rt) for L in around(sh["h"] + sh["a"], 2)},
+               **{f"svh{L}": po(sh["sv_h"], L, rs) for L in around(sh["sv_h"], 1)},
+               **{f"sva{L}": po(sh["sv_a"], L, rs) for L in around(sh["sv_a"], 1)}}
     return sh
 
 

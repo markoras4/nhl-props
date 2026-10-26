@@ -86,12 +86,12 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
                         got = gl.get(side)
                         if not got or got[1] is None or st.get(team) != got[0]:
                             continue      # graded only when the goalie we projected actually started
-                        shots.setdefault("Over " + k[3:] + " saves", []).append((v, int(got[1] > float(k[3:]))))
+                        shots.setdefault("Goalie saves", []).append((v, int(got[1] > float(k[3:]))))
                     elif k[0] == "t":
-                        shots.setdefault("Over " + k[1:] + " total shots", []).append((v, int(hs + as_ > float(k[1:]))))
+                        shots.setdefault("Total shots", []).append((v, int(hs + as_ > float(k[1:]))))
                     else:
                         val = hs if k[0] == "h" else as_
-                        shots.setdefault("Over " + k[1:] + " team shots", []).append((v, int(val > float(k[1:]))))
+                        shots.setdefault("Team shots", []).append((v, int(val > float(k[1:]))))
             for L, p in g["model"].items():
                 y = int(total > float(L))
                 ou_model.setdefault(L, []).append((p, y))
@@ -130,7 +130,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
         "days": days,
         "props": {name: summarize(props[k]) for k, name in MARKETS},
         "sog": {f"Over {L} SOG": summarize(v) for L, v in sorted(sog.items())},
-        "shots": {k: summarize(v) for k, v in sorted(shots.items(), key=lambda kv: (kv[0].split(" ", 2)[2], float(kv[0].split()[1])))},
+        "shots": {k: summarize(v) for k, v in shots.items()},   # all five lines around each projection pooled
         "hb": {f"Over {k[1:]} {'hits' if k[0] == 'h' else 'blocks'}": summarize(v) for k, v in sorted(hb.items())},
         "ou_model": {f"Over {L}": summarize(v) for L, v in ou_model.items()},
         "ou_hist": {f"Over {L}": summarize(v) for L, v in ou_hist.items()},

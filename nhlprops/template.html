@@ -337,7 +337,8 @@ td.h{text-align:center;padding:4px}
 .shtop>div{display:flex;flex-direction:column;gap:2px}.shtop>div:last-child{text-align:right;align-items:flex-end}
 .shtop small{font-size:11px;color:var(--mute);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .shtop b{font-family:var(--f-disp);font-size:24px;font-variant-numeric:tabular-nums}.shtop .shtot{text-align:center;align-items:center}.shtop .shtot b{font-size:18px;color:var(--mute)}
-.shtop .meta{font-size:11px}.shtab{margin-bottom:8px}.shtab td,.shtab th{white-space:nowrap}.shtab td.n{font-variant-numeric:tabular-nums}
+.shtop .meta{font-size:11px}.shtab th{text-transform:none!important;letter-spacing:0!important}
+@media (max-width:600px){.shtab .shx{display:none}}.shtab{margin-bottom:8px}.shtab td,.shtab th{white-space:nowrap}.shtab td.n{font-variant-numeric:tabular-nums}
 .appfoot{display:flex;gap:12px;align-items:flex-start;color:var(--mute);font-size:12.5px;line-height:1.5;padding-top:18px;padding-bottom:22px;margin-top:22px;border-top:1px solid var(--line)}
 .appfoot a{color:inherit;text-decoration:underline;text-underline-offset:2px}.appfoot .age{flex:none;display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid var(--mute);border-radius:50%;font-weight:800;font-size:11px;color:var(--text)}
 @media (max-width:760px){.appfoot{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
@@ -565,7 +566,7 @@ const I18N = {
     tr_none_h:"No graded predictions yet", tr_none_p:"Every update saves the model's probabilities. The day after games are played they are graded automatically, and this page shows whether the percentages came true.",
     tr_meta:"{d} days graded · {g} games · {p} player-games. Skill above 0% means better than guessing the base rate.",
     tr_market:"Market", tr_bets:"Bets", tr_pred:"Predicted", tr_happ:"Happened", tr_skill:"Skill", tr_game_model:"Game {k} (model)", tr_game_hist:"Game {k} (history only)",
-    tr_sh_team_shots:"Team shots over {l}", tr_sh_total_shots:"Total shots over {l}", tr_sh_saves:"Goalie saves over {l}", tr_n:"Predictions", tr_n_tip:"How many predictions were graded: one per player per game (36 = 36 player-games), or one per game for game totals. Not bets.",
+    tr_sh_team:"Team shots (5 lines around the projection)", tr_sh_total:"Total shots (5 lines)", tr_sh_saves:"Goalie saves (5 lines)", tr_n:"Predictions", tr_n_tip:"How many predictions were graded: one per player per game (36 = 36 player-games), or one per game for game totals. Not bets.",
     tr_pred_tip:"The model's average probability across those predictions.", tr_happ_tip:"How often it actually happened. Close to Predicted = the percentages are honest on average.",
     tr_brier_tip:"Average squared error of the probabilities (0 = perfect). Compare it only within the same row: a rare event always has a low Brier.",
     tr_skill_tip:"How much better than a naive guess that uses only how often this happens in general. Above 0% = the model adds information. Noisy until there are a few hundred predictions.",
@@ -711,7 +712,7 @@ const I18N = {
     tr_none_h:"Inga rättade prognoser än", tr_none_p:"Varje uppdatering sparar modellens sannolikheter. Dagen efter att matcherna spelats rättas de automatiskt, och den här sidan visar om procentsatserna slog in.",
     tr_meta:"{d} dagar rättade · {g} matcher · {p} spelarmatcher. Skicklighet över 0% betyder bättre än att gissa på grundfrekvensen.",
     tr_market:"Spel", tr_bets:"Antal", tr_pred:"Förutsagt", tr_happ:"Utfall", tr_skill:"Skicklighet", tr_game_model:"Match {k} (modell)", tr_game_hist:"Match {k} (endast historik)",
-    tr_sh_team_shots:"Lagskott över {l}", tr_sh_total_shots:"Totala skott över {l}", tr_sh_saves:"Räddningar över {l}", tr_n:"Prognoser", tr_n_tip:"Hur många prognoser som rättats: en per spelare och match (36 = 36 spelarmatcher), eller en per match för matchtotaler. Inte spel.",
+    tr_sh_team:"Lagskott (5 linjer runt prognosen)", tr_sh_total:"Totala skott (5 linjer)", tr_sh_saves:"Räddningar (5 linjer)", tr_n:"Prognoser", tr_n_tip:"Hur många prognoser som rättats: en per spelare och match (36 = 36 spelarmatcher), eller en per match för matchtotaler. Inte spel.",
     tr_pred_tip:"Modellens genomsnittliga sannolikhet för de prognoserna.", tr_happ_tip:"Hur ofta det faktiskt hände. Nära Förutsagt = procentsatserna stämmer i snitt.",
     tr_brier_tip:"Genomsnittligt kvadratfel för sannolikheterna (0 = perfekt). Jämför bara inom samma rad: en ovanlig händelse har alltid låg Brier.",
     tr_skill_tip:"Hur mycket bättre än en naiv gissning som bara använder hur ofta det här händer i allmänhet. Över 0 % = modellen tillför något. Brusigt tills det finns några hundra prognoser.",
@@ -911,6 +912,8 @@ function savesExp(g, team){
   const faced = team===g.home ? sh.a : sh.h;
   return faced * (DATA.league.saves_play_share ?? 0.965) * (1 - (DATA.league.goals_per_shot ?? 0.095) * ratio);
 }
+// betting lines centred on the projection (like a book would hang them): step 1 for a team or goalie, 2 for the total
+const linesAround = (lam, step) => { const c = Math.floor(lam) + 0.5 - (step===2 && Math.floor(lam)%2 ? 1 : 0); return [-2,-1,0,1,2].map(i=>c+i*step); };
 const nearHalf = (lines, f) => lines.reduce((b,x)=>Math.abs(f(x)-0.5) < Math.abs(f(b)-0.5) ? x : b, lines[0]);
 const MGROUPS = {pts:["g","a","pt"], s:C.sog_lines.map(L=>"s"+L), h:HIT_LINES.map(L=>"h"+L), b:BLK_LINES.map(L=>"b"+L)};
 const MKEYS = [...MGROUPS.pts, ...MGROUPS.s];
@@ -1040,7 +1043,7 @@ function gamesList(){
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
       <div class="gou">${C.ou_lines.map(Lx=>{ const p = blendOver(g,d,Lx), o = DATA.odds?.[g.id]?.totals?.[String(Lx)]?.over;
         return `<span>${t("over",{l:Lx})}</span><b>${pct(p)}</b><span class="go ${o && p*o-1>=VALUE ? "val":""}">${o?o.toFixed(2):""}</span>`; }).join("")}${(()=>{ const sh = shotsOf(g); if (!sh) return "";
-        const tot = sh.h+sh.a, L = nearHalf(C.total_shot_lines, x=>pOverR(tot, x, C.total_shots_dispersion));
+        const tot = sh.h+sh.a, L = nearHalf(linesAround(tot, 2).concat(linesAround(tot, 2).map(x=>x+1)), x=>pOverR(tot, x, C.total_shots_dispersion));
         return `<span class="tip" tabindex="0" data-tip="${esc(t("sh_card_tip",{a:g.away, h:g.home, x:fmt(sh.a,1), y:fmt(sh.h,1)}))}">${t("sh_card",{l:L})}</span><b>${pct(pOverR(tot, L, C.total_shots_dispersion))}</b><span class="go">${fmt(tot,1)}</span>`; })()}</div>
     </div>`;
   }
@@ -1654,9 +1657,10 @@ function shotsBox(g){
   const tot = sh.h + sh.a, svA = savesExp(g, g.away), svH = savesExp(g, g.home);
   const gA = G(state.goalie[g.id][g.away]), gH = G(state.goalie[g.id][g.home]);
   const cell = p => `<td class="n"><span class="tip" tabindex="0" data-tip="${esc(t("tip",{p:pct(p,1), f:(1/Math.max(p,1e-6)).toFixed(2)}))}"><b>${pct(p,0)}</b> <span class="meta">${(1/Math.max(p,1e-6)).toFixed(2)}</span></span></td>`;
-  const lineRow = (lbl, lines, lam, r) => `<tr><td>${lbl}</td>${lines.map(L=>cell(pOverR(lam, L, r))).join("")}</tr>`;
-  const head = lines => `<tr><th></th>${lines.map(L=>`<th class="n">${t("over_short",{l:fmt(L,1)})}</th>`).join("")}</tr>`;
-  const TL = C.team_shot_lines, TT = C.total_shot_lines, SL = C.save_lines;
+  const edge = i => i===0||i===4 ? " class=\"n shx\"" : " class=\"n\"";
+  const lineRow = (lbl, lines, lam, r) => `<tr><td>${lbl}</td>${lines.map((L,i)=>cell(pOverR(lam, L, r)).replace('<td class="n">', `<td${edge(i)}>`)).join("")}</tr>`;
+  const head = lines => `<tr><th></th>${lines.map((L,i)=>`<th${edge(i)}>${t("over_short",{l:fmt(L,1)})}</th>`).join("")}</tr>`;
+  const TL = linesAround((sh.h+sh.a)/2, 1), TT = linesAround(tot, 2), SL = linesAround((svA+svH)/2, 1);
   return `<div class="box shbox"><h4>${t("sh_title")} <span class="meta">${t("sh_sub")}</span></h4>
     <div class="shtop">
       <div><small>${g.away}</small><b>${fmt(sh.a,1)}</b><span class="meta">${t("sh_season",{f:fmt(sh.a_sf,1), a:fmt(sh.a_sa,1)})}</span></div>
@@ -1770,7 +1774,8 @@ function rowsTop(){
 }
 
 // ------------------------------------------------------------ track record
-const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1})).replace(/^Over (\d)\.5 hits$/, (_,n)=>t("m_hit",{n:+n+1})).replace(/^Over (\d)\.5 blocks$/, (_,n)=>t("m_blk",{n:+n+1})).replace(/^Over ([\d.]+) (team shots|total shots|saves)$/, (_,l,k)=>t("tr_sh_"+k.replace(" ","_"),{l}));
+const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1})).replace(/^Over (\d)\.5 hits$/, (_,n)=>t("m_hit",{n:+n+1})).replace(/^Over (\d)\.5 blocks$/, (_,n)=>t("m_blk",{n:+n+1}));
+const MKT_NAME2 = k => ({"Team shots":t("tr_sh_team"),"Total shots":t("tr_sh_total"),"Goalie saves":t("tr_sh_saves")})[k] || MKT_NAME(k);
 function calibChart(s){
   if (!s || !s.bins?.length) return "";
   const W=260, Hh=180, pad=28, X=v=>pad+v*(W-pad-8), Y=v=>Hh-pad-v*(Hh-pad-8);
@@ -1793,7 +1798,7 @@ function trackTab(){
   const ouName = (k, key) => t(key,{k:k.replace("Over ", t("over",{l:""}).trim()+" ")});
   $("#main").innerHTML = `<details class="card trhow"><summary>${t("tr_how_h")}</summary><div class="prose">${t("tr_how")}</div></details><p class="meta">${t("tr_meta",{d:T.days.filter(d=>d.games_final>0).length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
     <div class="card tablewrap"><table><thead><tr><th>${t("tr_market")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_n_tip"))}">${t("tr_n")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_pred_tip"))}">${t("tr_pred")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_happ_tip"))}">${t("tr_happ")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_brier_tip"))}">Brier</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_skill_tip"))}">${t("tr_skill")}</th></tr></thead>
-    <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(rename(T.hb))}${rows(rename(T.shots))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
+    <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(rename(T.hb))}${rows(Object.fromEntries(Object.entries(T.shots||{}).map(([k,v])=>[MKT_NAME2(k),v])))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
     ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>${t("tr_val")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_won")}</th><th class="n">${t("tr_profit")}</th><th class="n">ROI</th></tr></thead><tbody>
       ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${esc(MKT_NAME(k))}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
     <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>${t("tr_calib",{k:MKT_NAME(k)})}</h4>${calibChart(s)}<p class="note">${t("tr_calib_note")}</p></div>`).join("")}${blends}</div>`;
