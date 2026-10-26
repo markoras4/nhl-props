@@ -122,7 +122,6 @@ def season_rows(src, season, cfg, log=print):
                 out[f"g{side}_exp"] = out[eo] * play * (1 - gps * gr)
                 l10 = [x[0] for x in gh[-10:]]
                 out[f"g{side}_l10"] = float(np.mean(l10)) if len(l10) >= 5 else np.nan
-                out[f"g{side}_l10hits"] = json.dumps(l10)
         rows.append(out)
         # update
         hist.setdefault(H, []).append((g.hsog, g.asog)); hist.setdefault(A, []).append((g.asog, g.hsog))
