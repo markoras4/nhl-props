@@ -611,6 +611,40 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         tb = float(np.mean([g["toi"] for g in base_g]))
         role = {"toi5": round(t5, 1), "toi_base": round(tb, 1), "toi_delta": round(t5 - tb, 1),
                 "ppp5": sum(g.get("ppp", 0) for g in l5)}
+    # ---- streaks: point drought (how rare for his level), point streak and goal streak (this season)
+    lam_pt = (g60 + a60) * toi_proj / 60
+    p_pt_game = 1 - math.exp(-lam_pt) if lam_pt > 0 else 0.0
+    pt_dry, pt_found = 0, False
+    for g in lc + lp:
+        if g["g"] + g["a"] > 0:
+            pt_found = True
+            break
+        pt_dry += 1
+    pt_streak = 0
+    for g in lc:
+        if g["g"] + g["a"] == 0:
+            break
+        pt_streak += 1
+    g_streak = 0
+    for g in lc:
+        if g["g"] == 0:
+            break
+        g_streak += 1
+    streaks = {"pd": pt_dry, "pp": (1 - p_pt_game) ** pt_dry if pt_found else None, "ppg": round(p_pt_game, 3),
+               "ps": pt_streak, "gst": g_streak,
+               "ps_pts": sum(g["g"] + g["a"] for g in lc[:pt_streak]), "gst_g": sum(g["g"] for g in lc[:g_streak])}
+    # ---- career totals (regular season, including this season) for milestones
+    ct = ((land or {}).get("careerTotals") or {}).get("regularSeason") or {}
+    career = {k: int(ct[k]) for k in ("goals", "assists", "points", "gamesPlayed") if isinstance(ct.get(k), (int, float))}
+    # the player page can be up to a day old: swap its current-season part for our fresher game logs
+    fs = ((land or {}).get("featuredStats") or {})
+    sub = (fs.get("regularSeason") or {}).get("subSeason") or {}
+    if career and sub and str(fs.get("season", ""))[:4] == str(cur):
+        fresh = {"goals": sum(g["g"] for g in lc), "assists": sum(g["a"] for g in lc),
+                 "points": sum(g["g"] + g["a"] for g in lc), "gamesPlayed": len(lc)}
+        for k in list(career):
+            if isinstance(sub.get(k), (int, float)):
+                career[k] = career[k] - int(sub[k]) + fresh[k]
     shots_since, games_since = 0, 0
     found = False
     for g in lc + lp:
@@ -669,7 +703,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         "age": age, "active": played_recent, "toi_proj": toi_proj, "toi_recent": toi_recent, "toi_season": toi_season,
         "rates": {"s60": s60, "xg60": xg60, "a60": a60, "g60": g60, "career_sh": career_sh, **hb,
                   "recent_sh": recent_sh, "finish": finish, "lg_sh": L["sh"]},
-        "form": form, "hr": hr, "role": role,
+        "form": form, "hr": hr, "role": role, "streaks": streaks, "career": career,
         "shp": {str(y): {k: round(float(v), 2) for k, v in me[me.season == y][["gp", "att", "s", "miss", "blkd", "xg", "h"]].sum().items()}
                 for y in (cur, cur - 1) if len(me[me.season == y])},
         "drought": {"shots": shots_since, "games": games_since, "found": found,

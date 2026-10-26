@@ -333,6 +333,15 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.controls.stmode #mgrp,.controls.stmode #mkt,.controls.stmode .toggle{display:none}
+.ststrip{margin:14px 0}.stchips{display:flex;flex-wrap:wrap;gap:8px}
+.stchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:6px 12px 6px 8px;font:500 12.5px var(--f-ui);cursor:pointer}
+.stchip:hover{border-color:var(--accent)}.stchip b{font-weight:700}.stchip span{color:var(--mute)}.stchip em{font-style:normal;font-weight:700;font-family:var(--f-disp);font-variant-numeric:tabular-nums}
+.stchip.st-gd,.stchip.st-pd{box-shadow:inset 3px 0 0 var(--accent2)}.stchip.st-ps,.stchip.st-gs{box-shadow:inset 3px 0 0 var(--warn)}.stchip.st-ms{box-shadow:inset 3px 0 0 var(--accent)}
+.stlab{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.stlab.st-gd,.stlab.st-pd{background:color-mix(in srgb,var(--accent2) 15%,transparent);color:var(--accent2)}
+.stlab.st-ps,.stlab.st-gs{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.stlab.st-ms{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
 .spbox{margin-top:14px;grid-column:1/-1}
 .spctl{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;text-transform:none;letter-spacing:0}
 .spgame{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:6px 8px;font:600 12.5px var(--f-ui);max-width:170px}
@@ -623,6 +632,15 @@ const I18N = {
     sp_xg:"Expected goals per shot", sp_xg_tip:"Average quality of his shots on goal (MoneyPuck expected goals). Higher = better chances.",
     sp_prev:"last season {v}", sp_k_g:"Goal", sp_k_s:"Saved", sp_k_m:"Missed", sp_k_b:"Blocked",
     sp_note:"Every shot attempt over {n} games, all drawn toward the same net. Blocked shots are shown where they were blocked.",
+    st_tab:"Streaks", stf_all:"All", stf_gd:"Goal droughts", stf_pd:"Point droughts", stf_ps:"Hot streaks", stf_ms:"Milestones",
+    st_h:"Streak / milestone", st_h_rare:"How rare", st_h_tonight:"Chance tonight", st_reach:"reach it",
+    st_gd:"No goal in {n} · {s} shots", st_pd:"No point in {n}", st_ps:"Point streak {n} ({x} pts)", st_gs:"Goal streak {n} ({x} G)",
+    ms_goals:"{n} from {x} goals", ms_assists:"{n} from {x} assists", ms_points:"{n} from {x} points", ms_games:"{x}th game tonight",
+    st_rare:"1 in {x}", st_rare_tip:"At his normal level, a run this long without one happens about 1 time in {x}.",
+    st_watch:"Streaks to watch", st_watch_sub:"tap a player to open him",
+    st_note:"A drought or a streak doesn't change his chance tonight: the chance shown already uses his real level.",
+    st_foot:"Droughts are listed only when they're rare for a regular player (12+ minutes); hot streaks from 4 games with a point or 3 with a goal; milestones when within 3 (career, regular season).",
+    st_none:"No notable streaks or milestones for this selection.",
     rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older and understand that NHL Props Lab is an analysis tool, not a sportsbook.", au_need18:"Please confirm that you are 18 or older.",
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
@@ -781,6 +799,15 @@ const I18N = {
     sp_xg:"Förväntade mål per skott", sp_xg_tip:"Genomsnittlig kvalitet på hans skott på mål (MoneyPucks förväntade mål). Högre = bättre chanser.",
     sp_prev:"förra säsongen {v}", sp_k_g:"Mål", sp_k_s:"Räddat", sp_k_m:"Utanför", sp_k_b:"Blockerat",
     sp_note:"Alla skottförsök under {n} matcher, ritade mot samma mål. Blockerade skott visas där de blockerades.",
+    st_tab:"Sviter", stf_all:"Alla", stf_gd:"Måltorka", stf_pd:"Poängtorka", stf_ps:"Heta sviter", stf_ms:"Milstolpar",
+    st_h:"Svit / milstolpe", st_h_rare:"Hur ovanligt", st_h_tonight:"Chans i kväll", st_reach:"nå den",
+    st_gd:"Inget mål på {n} · {s} skott", st_pd:"Ingen poäng på {n}", st_ps:"Poängsvit {n} ({x} p)", st_gs:"Målsvit {n} ({x} mål)",
+    ms_goals:"{n} från {x} mål", ms_assists:"{n} från {x} assist", ms_points:"{n} från {x} poäng", ms_games:"Match nr {x} i kväll",
+    st_rare:"1 på {x}", st_rare_tip:"På hans normala nivå händer en så lång period utan ungefär 1 gång av {x}.",
+    st_watch:"Sviter att hålla koll på", st_watch_sub:"tryck på en spelare för att öppna",
+    st_note:"En torka eller svit ändrar inte hans chans i kväll: chansen som visas bygger redan på hans verkliga nivå.",
+    st_foot:"Torka visas bara när den är ovanlig för en ordinarie spelare (12+ minuter); heta sviter från 4 matcher med poäng eller 3 med mål; milstolpar när det är högst 3 kvar (karriär, grundserie).",
+    st_none:"Inga sviter eller milstolpar för det här urvalet.",
     rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre och förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag.", au_need18:"Bekräfta att du är 18 år eller äldre.",
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
@@ -1014,6 +1041,64 @@ function statusPill(s){
   return `<span class="pill ${cls}"><i></i>${esc(trStatus(s))}</span>`;
 }
 function injPill(inj){ if(!inj) return ""; if(inj.kind==="playing") return `<span class="pill s-confirmed">${t("inj_play")}</span>`; return inj.kind==="out" ? `<span class="pill s-out">${esc(trData(inj.status)||t("inj_out"))}</span>` : `<span class="pill s-q">${esc(trData(inj.status)||t("inj_q"))}</span>`; }
+// ------------------------------------------------------------ streaks & milestones
+const poisAtLeast = (lam, k) => { if (k<=0) return 1; let term=Math.exp(-Math.max(lam,0)), cdf=0; for (let i=0;i<k;i++){ if(i) term*=lam/i; cdf+=term; } return Math.max(0,1-cdf); };
+function streakItems(g, pr){
+  const p = P(pr.id); if (!p?.active) return [];
+  const out = [], d = p.drought, st = p.streaks || {}, regular = (p.toi_proj||0) >= 12, l = lambdas(pr, g);
+  if (regular && d.found && d.p!=null && d.p<0.15 && d.shots>=8)
+    out.push({k:"gd", rank:d.p, m:"g", v:prob(pr,g,"g"), rare:d.p, label:t("st_gd",{n:d.games, s:d.shots})});
+  if (regular && st.pp!=null && st.pp<0.15 && st.pd>=3)
+    out.push({k:"pd", rank:st.pp, m:"pt", v:prob(pr,g,"pt"), rare:st.pp, label:t("st_pd",{n:st.pd})});
+  if (st.ps>=4) out.push({k:"ps", rank:1/st.ps, m:"pt", v:prob(pr,g,"pt"), label:t("st_ps",{n:st.ps, x:st.ps_pts})});
+  if (st.gst>=3) out.push({k:"gs", rank:1/st.gst, m:"g", v:prob(pr,g,"g"), label:t("st_gs",{n:st.gst, x:st.gst_g})});
+  // milestones: career goals / assists / points (next 100; 50 for goals), games played (500, 600, ... 1000 ...)
+  const c = p.career || {};
+  const ms = (key, cur, lam, m) => { if (cur==null) return;
+    const steps = key==="goals" && cur < 100 ? [50, 100] : [Math.floor(cur/100)*100 + 100];
+    const next = steps.find(x=>x>cur); if (!next) return; const need = next - cur; if (need > 3) return;
+    out.push({k:"ms", rank:need, m: need===1 ? m : null, need, v: poisAtLeast(lam, need), label:t("ms_"+key,{n:need, x:next})}); };
+  ms("goals", c.goals, l.g, "g"); ms("assists", c.assists, l.a, "a"); ms("points", c.points, l.g + l.a, "pt");
+  if (c.gamesPlayed!=null && c.gamesPlayed + 1 >= 500 && (c.gamesPlayed + 1) % 100 === 0)
+    out.push({k:"ms", rank:0, m:null, need:0, v:null, label:t("ms_games",{x:c.gamesPlayed+1})});
+  return out;
+}
+function streaksForGame(g){ const all = []; for (const pr of g.props) for (const it of streakItems(g, pr)) all.push({...it, g, pr, p:P(pr.id)}); return all; }
+const ST_ORDER = {ms:0, gd:1, pd:2, ps:3, gs:4};
+function streakStrip(g){
+  const all = streaksForGame(g).sort((a,b)=>ST_ORDER[a.k]-ST_ORDER[b.k] || a.rank-b.rank).slice(0,10);
+  if (!all.length) return "";
+  return `<div class="box ststrip"><h4>${t("st_watch")} <span class="meta">${t("st_watch_sub")}</span></h4><div class="stchips">
+    ${all.map(x=>`<button type="button" class="stchip st-${x.k}" data-stp="${x.pr.id}" data-stt="${x.pr.team}">${logo(x.pr.team,16)}<b>${esc(x.p.name.split(" ").slice(-1)[0])}</b><span>${x.label}</span>${x.v!=null?`<em>${pct(x.v)}</em>`:""}</button>`).join("")}</div>
+    <p class="note">${t("st_note")}</p></div>`;
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-stp]"); if (!c) return;
+  state.side = c.dataset.stt; state.open = c.dataset.stp; render();
+  setTimeout(()=>{ const r = document.querySelector(`tr.row[data-id="${c.dataset.stp}"]`); if (r) r.scrollIntoView({behavior:"smooth", block:"start"}); }, 50);
+});
+function streaksTable(){
+  const f = state.stf || "all", rows = [];
+  for (const g of DATA.games){
+    if (state.pday!=="all" && g.date!==state.pday) continue;
+    if (state.pfilter!=="all" && String(g.id)!==String(state.pfilter)) continue;
+    for (const x of streaksForGame(g)){
+      if (state.q && !x.p.name.toLowerCase().includes(state.q)) continue;
+      if (f==="gd" && x.k!=="gd") continue; if (f==="pd" && x.k!=="pd") continue;
+      if (f==="ps" && !(x.k==="ps"||x.k==="gs")) continue; if (f==="ms" && x.k!=="ms") continue;
+      rows.push(x); } }
+  rows.sort((a,b)=>ST_ORDER[a.k]-ST_ORDER[b.k] || a.rank-b.rank);
+  const mlabel = x => x.k==="ms" ? (x.need ? t("st_reach") : "") : mName(x.m);
+  return rows.map(x=>{ const od = x.m ? getOdds(x.g.id, x.pr.id, x.m) : null, ev = od && x.v!=null ? x.v*od-1 : null;
+    return `<tr class="row" data-g="${x.g.id}" data-id="${x.pr.id}">
+      <td><div class="pl"><div class="jersey">${x.p.num??""}</div><div><div class="nm">${esc(x.p.name)} ${injPill(x.p.injury)}</div><div class="sub">${logo(x.pr.team,18)} ${x.p.pos} · ${x.pr.team} ${x.pr.home?"vs":"@"} ${x.pr.opp} · ${dayLabel(x.g.date)}</div></div></div></td>
+      <td><span class="stlab st-${x.k}">${x.label}</span></td>
+      <td class="n hide-xs">${x.rare!=null?`<span class="tip" tabindex="0" data-tip="${esc(t("st_rare_tip",{x:Math.max(2,Math.round(1/x.rare))}))}">${t("st_rare",{x:Math.max(2,Math.round(1/x.rare))})}</span>`:"–"}</td>
+      <td>${x.v!=null?`<span class="meta">${mlabel(x)}</span> <b>${pct(x.v,1)}</b>`:"–"}</td>
+      <td class="n hide-xs">${x.v?(1/x.v).toFixed(2):"–"}</td>
+      <td class="n">${x.m?`<input class="odds" data-g="${x.g.id}" data-pid="${x.pr.id}" data-m="${x.m}" value="${userOdds(x.g.id,x.pr.id,x.m)??""}" placeholder="${book(x.g.id,x.pr.id,x.m)?.o?.toFixed(2)??"—"}">`:""}</td>
+      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td></tr>`; }).join("") || `<tr><td colspan="7" class="empty">${t("st_none")}</td></tr>`;
+}
 function regPills(p){
   const r = p.regress, d = p.drought, out = [];
   if (r.flag==="due") out.push(`<span class="pill s-due" title="${esc(t("tip_due"))}">${t("pill_due")}</span>`);
@@ -1161,6 +1246,7 @@ function gamePage(){
   </div>
   ${recentBox(g)}
   ${bestPicksBox(g)}
+  ${streakStrip(g)}
   <div class="sides"><div class="seg" id="sides">
     <button data-s="${g.away}" class="${state.side===g.away?"on":""}">${logo(g.away)}${t("roster",{t:g.away})}</button>
     <button data-s="matchup" class="${state.side==="matchup"?"on":""}">${t("matchup")}</button>
@@ -1888,9 +1974,13 @@ function propsTab(){
     <select id="fgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${gameOpts}</select>
     <input type="search" id="fq" placeholder="${t("search")}" value="${esc(state.q)}">
     <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> ${t("reg_only")}</label>
-    <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button></div></div>
-  <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n hide-xs">${t("toi")}</th><th>${t("h_prob")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th></tr></thead><tbody id="ptb"></tbody></table></div>
-  <p class="foot">${t("props_foot")}</p>`;
+    <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button><button data-s="streaks" class="${state.psort==="streaks"?"on":""}">${t("st_tab")}</button></div></div>
+  ${state.psort==="streaks" ? `<div class="controls"><div class="seg" id="stf">${["all","gd","pd","ps","ms"].map(k=>`<button data-f="${k}" class="${(state.stf||"all")===k?"on":""}">${t("stf_"+k)}</button>`).join("")}</div></div>
+  <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th>${t("st_h")}</th><th class="n hide-xs">${t("st_h_rare")}</th><th>${t("st_h_tonight")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th></tr></thead><tbody id="ptb"></tbody></table></div>
+  <p class="foot">${t("st_note")} ${t("st_foot")}</p>` : `<div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n hide-xs">${t("toi")}</th><th>${t("h_prob")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th></tr></thead><tbody id="ptb"></tbody></table></div>
+  <p class="foot">${t("props_foot")}</p>`}`;
+  if ($("#stf")) $("#stf").onclick = e => { const b=e.target.closest("button"); if(b){ state.stf=b.dataset.f; propsTab(); } };
+  document.querySelector("#main .controls").classList.toggle("stmode", state.psort==="streaks");
   $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
   if ($("#mgrp")) $("#mgrp").onclick = e => { const b=e.target.closest("button"); if(b){ const G_=MGROUPS[b.dataset.g]; state.market = b.dataset.g==="pts" ? "pt" : G_[Math.min(1, G_.length-1)]; propsTab(); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
@@ -1901,6 +1991,10 @@ function propsTab(){
   rowsTop();
 }
 function rowsTop(){
+  if (state.psort==="streaks"){ $("#ptb").innerHTML = streaksTable();
+    $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
+    $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,i.dataset.m), isNaN(v)?"":v); rowsTop(); };
+    return; }
   const m = state.market; const rows = [];
   for (const g of DATA.games){
     if (state.pday!=="all" && g.date!==state.pday) continue;
@@ -2013,6 +2107,9 @@ en: `<h3>What the site does</h3>
   <h3>Shots on goal &amp; goalie saves</h3>
   <p>On every matchup the model projects each team's shots on goal and the total, from both teams' shot rates for and against this season and home ice, with the chance of going over the usual lines. The starting goalie's expected saves are the shots he's expected to face times his expected save rate, allowing for the times a goalie gets pulled early. Switch the goalie and the saves update. Tested on more than 2,400 games: team shots and saves were more accurate than simple averages at every line; for total shots the model is about as good as a simple average, so treat that one as context.</p>
 
+  <h3>Streaks &amp; milestones</h3>
+  <p>In Top props, choose <i>Streaks</i> for one list of every notable run on the slate: goal droughts (with the shots taken since his last goal), point droughts, point streaks, goal streaks, and career milestones within reach (for example 1 goal from 100, or a 1,000th game). Droughts are shown only when they're rare for a regular player, with how rare ("1 in 12"). Each row shows his chance tonight and an odds box, so you can compare prices across sportsbooks. Each game page also has a <i>Streaks to watch</i> row. A streak doesn't change his chance tonight; the number shown already uses his real level.</p>
+
   <h3>Hits &amp; blocks</h3>
   <p>Built from each player's hits and blocked shots per minute of ice time, times his projected ice time tonight, adjusted for the opponent (how often they get hit and how many of their shots get blocked) and the arena, since some buildings record far more hits than others. Tested on more than 128,000 player-games, it was clearly more accurate than a player's last-10 average at every line.</p>
 
@@ -2088,6 +2185,9 @@ sv: `<h3>Vad sajten gör</h3>
 
   <h3>Skott på mål &amp; målvaktsräddningar</h3>
   <p>På varje matchsida beräknar modellen varje lags skott på mål och totalen, utifrån båda lagens skott för och emot i år och hemmaplan, med chansen att gå över de vanliga linjerna. Startmålvaktens väntade räddningar är skotten han väntas möta gånger hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Byt målvakt så uppdateras räddningarna. Testat på mer än 2 400 matcher: lagskott och räddningar var träffsäkrare än enkla snitt på alla linjer; för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt, så se den som bakgrund.</p>
+
+  <h3>Sviter &amp; milstolpar</h3>
+  <p>Under Toppspel, välj <i>Sviter</i> för en lista över alla intressanta sviter i kvällens matcher: måltorka (med skotten sedan senaste målet), poängtorka, poängsviter, målsviter och milstolpar i karriären inom räckhåll (till exempel 1 mål från 100, eller match nummer 1 000). Torka visas bara när den är ovanlig för en ordinarie spelare, med hur ovanlig ("1 på 12"). Varje rad visar hans chans i kväll och en oddsruta, så att du kan jämföra priser mellan spelbolag. Varje matchsida har också raden <i>Sviter att hålla koll på</i>. En svit ändrar inte hans chans i kväll; siffran bygger redan på hans verkliga nivå.</p>
 
   <h3>Tacklingar &amp; blockeringar</h3>
   <p>Bygger på varje spelares tacklingar och blockerade skott per minut istid, gånger hans beräknade istid i kväll, justerat för motståndaren (hur ofta de tacklas och hur många av deras skott som blockeras) och arenan, eftersom vissa arenor registrerar betydligt fler tacklingar än andra. Testat på mer än 128 000 spelarmatcher var det klart träffsäkrare än spelarens snitt de senaste 10 matcherna på alla linjer.</p>
