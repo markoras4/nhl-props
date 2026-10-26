@@ -26,6 +26,10 @@ on:
         description: "Test game markets (1X2, puck line, team totals, BTTS, 1st period)"
         type: boolean
         default: false
+      context:
+        description: "Test referees and rest/travel"
+        type: boolean
+        default: false
 permissions:
   contents: write
 jobs:
@@ -48,7 +52,7 @@ jobs:
       - name: Run backtest
         run: |
           mkdir -p backtest
-          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} ${{ inputs.shots && '--shots' || '' }} ${{ inputs.attempts && '--attempts' || '' }} ${{ inputs.markets && '--markets' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
+          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} ${{ inputs.shots && '--shots' || '' }} ${{ inputs.attempts && '--attempts' || '' }} ${{ inputs.markets && '--markets' || '' }} ${{ inputs.context && '--context' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
           tail -60 backtest/log.txt
       - name: Save results to the "backtest" branch
         run: |
