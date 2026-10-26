@@ -16,7 +16,7 @@ CONFIG = {
     "league_env_seasons": 5,
     # Goalie history window (current + previous seasons).
     "goalie_seasons": 4,
-    "goalie_weights": [3, 3, 2, 1],
+    "goalie_weights": [5, 3, 2, 1],   # backtest_goalies: this season 5, then 3 / 2 / 1 for the previous seasons
 
     # ---------- regression to the mean (shrinkage strength) ----------
     # Bigger number = pulled harder toward the average.
@@ -27,7 +27,7 @@ CONFIG = {
     "k_career_sh_shots": 350,    # career shooting % pulled toward position average
     "k_recent_sh_shots": 200,    # recent shooting % pulled toward the player's career level
     "k_finish_xg": 40,           # goals / xG finishing skill, pulled toward 1.0
-    "k_goalie_xga": 120,         # goalie GA/xGA, pulled toward 1.0 (average)
+    "k_goalie_xga": 200,         # goalie GA/xGA pulled toward average; backtest_goalies best ~1,000 in raw weight units = 200 with weights scaled to 1 (was 120, worse than no rating at all)
     "k_team_hours": 8.0,         # team 5v5 xG rates
     "k_team_pp_hours": 3.0,      # team power play / penalty kill rates
     "team_prior_season_weight": 0.35,
