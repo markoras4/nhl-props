@@ -62,7 +62,8 @@ def season_boxscores(src: Source, season: int, workers: int, log=print) -> tuple
             for p in gl:
                 go.append({"gid": gm.id, "date": gm.date, "pid": int(p["playerId"]), "team": team, "opp": opp,
                            "starter": bool(p.get("starter")) if "starter" in p else None,
-                           "toi": _toi(p.get("toi")), "ga": p.get("goalsAgainst", 0) or 0})
+                           "toi": _toi(p.get("toi")), "ga": p.get("goalsAgainst", 0) or 0,
+                           "sa": p.get("shotsAgainst"), "sv": p.get("saves")})
     sk, go = pd.DataFrame(sk), pd.DataFrame(go)
     if len(go) and go["starter"].isna().any():  # fallback: most ice time
         go["starter"] = go.groupby(["gid", "team"])["toi"].transform("max") == go["toi"]
