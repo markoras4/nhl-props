@@ -376,9 +376,24 @@ def render_previews(slate: dict, out_dir: Path, app_url: str = "app/") -> Path:
     return out
 
 
+def app_previews(slate: dict) -> dict:
+    """game id -> written preview (without the source list) for every game on the slate that has one"""
+    out = {}
+    for d in sorted({g["date"] for g in slate["games"]}):
+        f = ROOT / "data" / "previews" / f"{d}.json"
+        if not f.exists():
+            continue
+        try:
+            for p in json.loads(f.read_text(encoding="utf-8")).get("previews", []):
+                out[str(p["id"])] = {k: p[k] for k in ("en", "sv", "photo", "slug") if k in p}
+        except Exception:
+            pass
+    return out
+
+
 def render(slate: dict, graded: dict | None, out_dir: Path, demo: bool) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
-    payload = clean({**slate, "graded": graded, "config": CONFIG, "demo": demo,
+    payload = clean({**slate, "graded": graded, "config": CONFIG, "demo": demo, "previews": app_previews(slate),
                      "built": dt.datetime.now().isoformat(timespec="minutes")})
     js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = TEMPLATE.read_text(encoding="utf-8").replace("/*__DATA__*/null", js)

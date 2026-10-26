@@ -1,0 +1,30 @@
+# Free / Pro / visitors: agreed plan (build together with Stripe)
+
+Rule of thumb: anything about the game or the teams is free; anything that helps decide a bet on a specific player is Pro.
+Locked items are shown blurred with a small lock and an "Unlock with Pro" panel (not hidden).
+Pro data must only be sent to Pro users (served by a Supabase function that checks the subscription), never just hidden in the page.
+
+| Feature | Visitors / Free | Pro |
+|---|---|---|
+| Game cards (projected score, win %, total goals, shots line) | yes | yes |
+| Game previews (landing page, previews page, game pages) | yes, except the player-prop betting bullet (blurred) | everything |
+| Lineups, goalies, injuries, Who's missing | yes | yes |
+| Team ranks, defence by position table, last 6 games, head-to-head | yes | yes |
+| Team shots & total shots | yes | yes |
+| More markets (1X2, puck line, team totals, 1st period, BTTS) | yes (game level) | yes |
+| Goalie saves | expected saves number | line probabilities & fair odds |
+| Player probabilities, EV, best picks | 1 forward + 1 defenceman per team | everyone |
+| First goalscorer | team "scores first" % | player list |
+| Hits & blocks | no | yes |
+| Odds movement | no | yes |
+| Player page: last 10 games + chart | yes | yes |
+| Hit rates | L5 | L10, L20, season, vs opponent, model vs market |
+| Per-player matchup (what the opponent allows his position) | no | yes |
+| Shot map | season map | last 10, single game, profile numbers |
+| Streaks view & "Streaks to watch" | the list (who, what run, how rare) | chance tonight, fair odds, EV |
+| Milestones | yes | yes |
+| My picks (tracking) | yes (free account) | yes (later: export, ROI by market) |
+| Alerts | no | yes |
+| Track record, How it works | yes | yes |
+
+Also planned for that release: 18+ check on the landing page again, Stripe checkout, prices (not decided yet).

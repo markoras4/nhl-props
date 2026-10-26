@@ -333,6 +333,18 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.pvbox{display:grid;grid-template-columns:220px 1fr;gap:18px;padding:14px;margin:12px 0;overflow:hidden}
+.pvbox .pvimg{border-radius:10px;background:var(--panel2) center/cover no-repeat;min-height:150px}
+.pvbox.open .pvimg{max-height:260px}
+@media (max-width:760px){.pvbox{grid-template-columns:1fr;gap:12px}.pvbox .pvimg{min-height:170px}}
+.pvk{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent)}
+.pvbox h3{margin:4px 0 6px;font-size:19px;line-height:1.25}.pvdeck{margin:0;color:color-mix(in srgb,var(--text) 82%,var(--mute));line-height:1.5}
+.pvfull{margin-top:10px}.pvsec h5{margin:12px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mute)}
+.pvsec ul{margin:0;padding-left:18px}.pvsec li{margin:4px 0;line-height:1.45}.pvcred{margin-top:10px}.pvcred a{color:inherit}
+.pvbtn{margin-top:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:7px 12px;font:600 13px var(--f-ui);cursor:pointer}
+.pvbtn:hover{border-color:var(--accent)}
+.pvbadge{display:inline-block;margin-top:5px;font:700 10px var(--f-ui);letter-spacing:.4px;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);border-radius:999px;padding:1px 7px}
+.pvlink{color:var(--accent);text-decoration:none;font-weight:600}.pvlink:hover{text-decoration:underline}
 .kvl.tip{cursor:help;text-decoration:underline dotted color-mix(in srgb,var(--mute) 60%,transparent);text-underline-offset:3px}
 .kvl.tip:hover::after,.kvl.tip:focus::after{left:0;transform:none}.kvl.tip:hover::before,.kvl.tip:focus::before{left:14px;transform:none}
 .chip.tip{cursor:help}.hinfo{color:var(--accent);font-size:13px;margin-left:4px;text-transform:none}
@@ -636,7 +648,9 @@ const I18N = {
     gm_note:"All from the same projected score as the win chance and total goals, and they move when you switch goalies. Puck line includes empty-net goals. Tested on 2,451 games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers match how often they happen, but the model separates games only slightly there, so treat them as context.",
     m_fg:"First goal", fg_title:"First goalscorer", fg_none:"no goal before a shootout {p}", fg_team:"scores first {p}",
     fg_note:"His chance of scoring the game's first goal: the chance there is a goal before a shootout × his team scoring first × his share of the team's expected goals tonight. Changes with the goalies you pick.",
-    c_form:"Recent form", c_form_tip:"His last 10 games vs what his level would have produced in that ice time, given a little weight: goals ×{g}, assists ×{a}, shots ×{s}. Tested: a small amount of form improved every market.", sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
+    c_form:"Recent form", c_form_tip:"His last 10 games vs what his level would have produced in that ice time, given a little weight: goals ×{g}, assists ×{a}, shots ×{s}. Tested: a small amount of form improved every market.", pv_label:"Game preview", pv_news:"News", pv_records:"Streaks & records", pv_betting:"Betting insights", pv_photo:"Photo",
+    pv_more:"Read the full preview", pv_less:"Show less", pv_badge:"Preview", pv_all:"Game previews",
+    sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
     sv_title:"Goalie saves", sv_sub:"follows the goalie you pick", sv_exp:"Expected saves tonight", sv_vs:"on {n} shots", sh_card:"Shots o{l}", sh_card_tip:"Model shots on goal tonight: {a} {x} · {h} {y}. The line shown is the one closest to 50/50.",
     sh_note:"Expected shots come from both teams' shot rates for and against this season (pulled toward last season early on) and home ice. Saves = shots the goalie is expected to face × his expected save rate, allowing for early pulls. Tested on more than 2,400 games: team shots and saves beat simple averages at every line (a goalie's last-10 saves average was worse than guessing); for total shots the model is about as good as a simple average.",
     sp_game:"Game", sp_g_att:"Shot attempts", sp_g_sog:"Shots on goal", sp_g_close:"From close range", sp_g_pts:"Goals + assists", sp_g_none:"No shot attempts in this game.",
@@ -834,7 +848,9 @@ const I18N = {
     gm_note:"Allt bygger på samma beräknade resultat som vinstchansen och totalmålen, och ändras när du byter målvakt. Puck line räknar med mål i tom bur. Testat på 2 451 matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål stämmer nivån, men modellen skiljer matcherna åt bara lite där, så se dem som bakgrund.",
     m_fg:"Första mål", fg_title:"Första målskytt", fg_none:"inget mål före straffar {p}", fg_team:"gör första målet {p}",
     fg_note:"Hans chans att göra matchens första mål: chansen att det blir mål före straffar × att hans lag gör första målet × hans andel av lagets förväntade mål i kväll. Ändras med målvakterna du väljer.",
-    c_form:"Form", c_form_tip:"Hans senaste 10 matcher jämfört med vad hans nivå hade gett på den istiden, med liten vikt: mål ×{g}, assist ×{a}, skott ×{s}. Testat: lite form förbättrade alla spel.", sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
+    c_form:"Form", c_form_tip:"Hans senaste 10 matcher jämfört med vad hans nivå hade gett på den istiden, med liten vikt: mål ×{g}, assist ×{a}, skott ×{s}. Testat: lite form förbättrade alla spel.", pv_label:"Förhandstitt", pv_news:"Nyheter", pv_records:"Sviter & rekord", pv_betting:"Spelinsikter", pv_photo:"Foto",
+    pv_more:"Läs hela förhandstitten", pv_less:"Visa mindre", pv_badge:"Förhandstitt", pv_all:"Förhandstittar",
+    sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
     sv_title:"Målvaktsräddningar", sv_sub:"följer målvakten du väljer", sv_exp:"Väntade räddningar i kväll", sv_vs:"på {n} skott", sh_card:"Skott ö{l}", sh_card_tip:"Modellens skott på mål i kväll: {a} {x} · {h} {y}. Linjen som visas är den som ligger närmast 50/50.",
     sh_note:"Väntade skott bygger på båda lagens skott för och emot i år (dragna mot förra säsongen tidigt på säsongen) och hemmaplan. Räddningar = skotten målvakten väntas möta × hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Testat på mer än 2 400 matcher: lagskott och räddningar slår enkla snitt på alla linjer (en målvakts snitt de senaste 10 matcherna var sämre än att gissa); för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt.",
     sp_game:"Match", sp_g_att:"Skottförsök", sp_g_sog:"Skott på mål", sp_g_close:"Från nära håll", sp_g_pts:"Mål + assist", sp_g_none:"Inga skottförsök i den här matchen.",
@@ -1234,7 +1250,8 @@ const isReg = p => p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.d
 // ------------------------------------------------------------ chrome
 function header(){
   document.documentElement.lang = LANG;
-  $("#meta").innerHTML = t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "");
+  $("#meta").innerHTML = t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "")
+    + (DATA.previews && Object.keys(DATA.previews).length ? ` · <a class="pvlink" href="../previews">${t("pv_all")}</a>` : "");
   const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
     props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
     how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>', picks:'<path d="M6 4h12v16l-6-4-6 4z"/>'};
@@ -1285,7 +1302,7 @@ function gamesList(){
     const ga = G(state.goalie[g.id][g.away]), gh = G(state.goalie[g.id][g.home]);
     const outA = (A.injuries||[]).filter(i=>i.kind==="out").length, outH = (H.injuries||[]).filter(i=>i.kind==="out").length;
     html += `<div class="card grow" data-g="${g.id}" tabindex="0" role="button" aria-label="${g.away} @ ${g.home}">
-      <div class="gtime">${timeOf(g)}<small>${esc(g.venue||"")}</small></div>
+      <div class="gtime">${timeOf(g)}<small>${esc(g.venue||"")}</small>${DATA.previews?.[g.id]?`<span class="pvbadge">${t("pv_badge")}</span>`:""}</div>
       <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"}${altTxt(g,g.away)} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
       <div class="gmid">${statePill(g)?`<div class="stp">${statePill(g)}</div>`:""}${liveScore(g)?`<div class="sc live">${liveScore(g)}</div><div class="meta">${t("proj_short")} ${fmt(mu.a,1)} – ${fmt(mu.h,1)} · ${pct(d.pa)} · ${pct(d.ph)}</div>`:`<div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>`}
@@ -1351,6 +1368,7 @@ function gamePage(){
     <div class="big">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>${t("proj_goals")} · ${dayLabel(g.date)} ${timeOf(g)}</small>${liveScore(g)?`<div class="livebar">${statePill(g)} <b>${g.away} ${liveScore(g)} ${g.home}</b></div>`:""}${g.frozen?`<div class="frozen">${t("frozen_note")}</div>`:""}</div>
     <div class="tm r">${logo(g.home)}<div><div class="abbr">${g.home}</div><div class="meta">${trResults(H.last5)} · ${rec(H)}</div></div></div>
   </div>
+  ${previewBlock(g)}
   <div class="gsum">
     <div class="box"><h4>${t("win_prob")}</h4>
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
@@ -2040,6 +2058,24 @@ function shotsBox(g){
       ${lineRow(gA?esc(gA.name.split(" ").slice(-1)[0]):g.away, SL, svA, rs)}${lineRow(gH?esc(gH.name.split(" ").slice(-1)[0]):g.home, SL, svH, rs)}</tbody></table></div>
     <p class="note">${t("sh_note")}</p></div>`;
 }
+// ------------------------------------------------------------ written game preview (same text as the previews page)
+function previewBlock(g){
+  const P_ = DATA.previews?.[g.id]; if (!P_) return "";
+  const x = P_[LANG] || P_.en; if (!x) return "";
+  state.pvOpen = state.pvOpen || {}; const open = !!state.pvOpen[g.id];
+  const ph = P_.photo, list = (h, arr) => arr?.length ? `<div class="pvsec"><h5>${h}</h5><ul>${arr.map(v=>`<li>${esc(v)}</li>`).join("")}</ul></div>` : "";
+  return `<div class="card pvbox ${open?"open":""}" data-pv="${g.id}">
+    ${ph?.src ? `<div class="pvimg" style="background-image:url('../${esc(ph.src)}');${ph.pos?`background-position:${esc(ph.pos)}`:""}" role="img" aria-label="${esc(ph.alt||"")}"></div>` : ""}
+    <div class="pvtxt"><div class="pvk">${esc(x.kicker||t("pv_label"))}</div><h3>${esc(x.title||"")}</h3><p class="pvdeck">${esc(x.deck||"")}</p>
+      ${open ? `<div class="pvfull">${list(t("pv_news"), x.news)}${list(t("pv_records"), x.records)}${list(t("pv_betting"), x.betting)}
+        ${ph?.author ? `<p class="meta pvcred">${t("pv_photo")}: ${esc(ph.author)}${ph.license?` · ${ph.license_url?`<a href="${esc(ph.license_url)}" rel="noopener" target="_blank">${esc(ph.license)}</a>`:esc(ph.license)}`:""}</p>` : ""}</div>` : ""}
+      <button type="button" class="pvbtn" data-pvt="${g.id}">${open?t("pv_less"):t("pv_more")}</button></div></div>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-pvt]"); if (!b) return;
+  state.pvOpen = state.pvOpen || {}; state.pvOpen[b.dataset.pvt] = !state.pvOpen[b.dataset.pvt];
+  const box = b.closest(".pvbox"), g = gameById[b.dataset.pvt]; if (box && g) box.outerHTML = previewBlock(g);
+});
 // ------------------------------------------------------------ game markets (same score model as everything else)
 function gameMarkets(g){
   const mu = gameMu(g), J = regJoint(mu.h, mu.a), n = J.length, q = C.en_q ?? 0.25, share = (mu.h+mu.a) ? mu.h/(mu.h+mu.a) : 0.5;
