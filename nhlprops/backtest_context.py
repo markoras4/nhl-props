@@ -63,7 +63,12 @@ def officials(src, gid):
     """referee names and penalties called (minors and majors) for one game"""
     rr = src.json(f"{NHL}/gamecenter/{gid}/right-rail", f"nhl/rr/{gid}.json", None) or {}
     refs = _find(rr, "referees") or []
-    names = sorted({(r.get("default") if isinstance(r, dict) else str(r)) for r in refs if r})
+    def nm(r):
+        if isinstance(r, dict):
+            f = r.get("fullName") or r.get("name") or r
+            return f.get("default") if isinstance(f, dict) else str(f)
+        return str(r)
+    names = sorted({nm(r) for r in refs if r} - {None, "None"})
     land = src.json(f"{NHL}/gamecenter/{gid}/landing", f"nhl/land/{gid}.json", None) or {}
     pens = 0
     for per in ((land.get("summary") or {}).get("penalties") or []):
