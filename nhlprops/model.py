@@ -114,7 +114,7 @@ def game_distribution(mu_h: float, mu_a: float, lines: list[float], tie_boost: f
             tot[t] += joint[i, j]
     share_h = mu_h / (mu_h + mu_a) if (mu_h + mu_a) > 0 else 0.5
     p_home = p_home_reg + p_tie * share_h
-    out = {"p_home": p_home, "p_away": 1 - p_home, "p_tie_reg": p_tie,
+    out = {"p_home": p_home, "p_away": 1 - p_home, "p_tie_reg": p_tie, "p00": float(joint[0, 0]),
            "exp_total": float((tot * np.arange(len(tot))).sum())}
     for L in lines:
         out[f"over_{L}"] = float(tot[int(math.floor(L)) + 1:].sum())
@@ -1209,6 +1209,17 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
                           **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}, **hbp},
                 })
+        # first goalscorer: chance there's a goal before a shootout x his team scores first x his share of its goals
+        p_any = 1 - dist["p00"] * cfg["ot_no_goal"]
+        tot_mu = dist["proj_h"] + dist["proj_a"]
+        for t in (H, A):
+            team_props = [x for x in props if x["team"] == t and profiles[x["id"]]["active"]]
+            lam_sum = sum(x["base"]["g"] * x["factors"]["goalie"] for x in team_props) or 1.0
+            share_t = (dist["proj_h"] if t == H else dist["proj_a"]) / tot_mu if tot_mu else 0.5
+            for x in props:
+                if x["team"] == t:
+                    lam = x["base"]["g"] * x["factors"]["goalie"]
+                    x["p"]["fg"] = p_any * share_t * lam / lam_sum if profiles[x["id"]]["active"] else 0.0
         games_out.append({**gm, "mu": mu, "starters": starters, "starter_status": starter_status, "starter_alt": starter_alt, "b2b": b2b,
                           "h2h": hh, "hist_over": hist_p, "default": dist, "props": props,
                           "shots": shots_block(game_shots(shr, H, A, cfg), shr["gps"], cfg,

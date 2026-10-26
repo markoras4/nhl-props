@@ -29,7 +29,7 @@ def pois(lam):
     return out
 
 
-def markets(mh, ma, tie_boost, p1_share, p1_tie):
+def markets(mh, ma, tie_boost, p1_share, p1_tie, en_q=0.0):
     j = np.outer(pois(mh * 0.985), pois(ma * 0.985))
     j[np.diag_indices(N)] *= tie_boost
     j /= j.sum()
@@ -50,7 +50,8 @@ def markets(mh, ma, tie_boost, p1_share, p1_tie):
                 fh[a] += p; fa[b] += p
                 btts += p if (a >= 1 and b >= 1) else 0.0
     out = {"h1": hw, "x": tie, "a2": aw,
-           "hpl": j[i_ - k_ >= 2].sum(), "apl": j[k_ - i_ >= 2].sum(),
+           # empty net: a one-goal lead at the end of regulation becomes two with probability en_q
+           "hpl": j[i_ - k_ >= 2].sum() + en_q * j[i_ - k_ == 1].sum(), "apl": j[k_ - i_ >= 2].sum() + en_q * j[k_ - i_ == 1].sum(),
            "btts": btts}
     for L in (2.5, 3.5):
         out[f"htt{L}"] = fh[int(L) + 1:].sum()
@@ -145,7 +146,18 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
                 best = (share, t1, ll)
     rep["p1_grid"] = grid
     rep["p1_best"] = {"share": best[0], "tie": best[1]}
-    P = [markets(r.mh2, r.ma2, tb, best[0], best[1]) for r in d.itertuples()]
+    # empty-net term for the puck line
+    en_grid, en_best = [], None
+    yh, ya = np.asarray(y["hpl"]).astype(int), np.asarray(y["apl"]).astype(int)
+    for q in (0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5):
+        Pq = [markets(r.mh2, r.ma2, tb, best[0], best[1], q) for r in d.itertuples()]
+        ph = np.clip([x["hpl"] for x in Pq], 1e-4, 1 - 1e-4); pa = np.clip([x["apl"] for x in Pq], 1e-4, 1 - 1e-4)
+        ll = float(-(yh * np.log(ph) + (1 - yh) * np.log(1 - ph)).mean() - (ya * np.log(pa) + (1 - ya) * np.log(1 - pa)).mean())
+        en_grid.append({"q": q, "logloss": ll / 2})
+        if en_best is None or ll < en_best[1]:
+            en_best = (q, ll)
+    rep["en_grid"], rep["en_best"] = en_grid, en_best[0]
+    P = [markets(r.mh2, r.ma2, tb, best[0], best[1], en_best[0]) for r in d.itertuples()]
     res = {}
     for k, yy in y.items():
         p = np.clip([x[k] for x in P], 1e-4, 1 - 1e-4)
@@ -173,7 +185,8 @@ NAMES = {"h1": "Home win (regulation)", "x": "Draw after 60 min", "a2": "Away wi
 def to_md(r):
     L = [f"# Game markets backtest: {', '.join(f'{s}-{s + 1}' for s in r['seasons'])}",
          f"Games: {r['games']:,} (1st period data: {r['p1_games']:,}) · actual 1st-period share of regulation goals: "
-         f"{(r['p1_share_actual'] or 0):.3f} · best 1st-period share {r['p1_best']['share']} · tie boost {r['p1_best']['tie']}", "",
+         f"{(r['p1_share_actual'] or 0):.3f} · best 1st-period share {r['p1_best']['share']} · tie boost {r['p1_best']['tie']} · empty-net term {r.get('en_best')}",
+         "Empty-net grid: " + " · ".join(f"{x['q']}: {x['logloss']:.4f}" for x in r.get('en_grid', [])), "",
          "| Market | Predicted | Happened | Brier | Skill |", "|---|---|---|---|---|"]
     for k, s in r["markets"].items():
         L.append(f"| {NAMES.get(k, k)} | {s['mean_pred']:.1%} | {s['hit_rate']:.1%} | {s['brier']:.4f} | {s['skill'] * 100:+.1f}% |")

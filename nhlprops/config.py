@@ -79,6 +79,7 @@ CONFIG = {
     "hb_dispersion": 10.0,
     "k_hb_hours": {"hit": 3.0, "blk": 6.0},
     # team shots on goal and goalie saves (backtest_shots)
+    "ot_no_goal": 0.40,            # share of tied games that reach a shootout (no overtime goal)
     "shots_k_games": 15,
     "shots_home_adv": 1.018,
     "shots_calibration": 0.99,     # backtest ran ~1% high for team shots and saves

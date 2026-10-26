@@ -333,6 +333,10 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.fgbox{margin:14px 0}.fggrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:760px){.fggrid{grid-template-columns:1fr}}
+.fgh{display:flex;align-items:center;gap:6px;margin-bottom:6px}.fgtab td,.fgtab th{white-space:nowrap}.fgtab .odds{width:64px}
+.ofmt{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:7px 6px;font:600 12.5px var(--f-ui);max-width:128px}
+@media (max-width:760px){.ofmt{max-width:78px;padding:7px 4px;font-size:12px}}
 .controls.stmode #mgrp,.controls.stmode #mkt,.controls.stmode .toggle{display:none}
 .ststrip{margin:14px 0}.stchips{display:flex;flex-wrap:wrap;gap:8px}
 .stchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:6px 12px 6px 8px;font:500 12.5px var(--f-ui);cursor:pointer}
@@ -502,7 +506,7 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
     <div class="brand" id="home">NHL Props <b>Lab</b></div>
     <div class="meta" id="meta"></div>
     <nav id="nav"></nav>
-    <div class="tools"><div class="seg" id="lang"></div><button class="iconbtn" id="theme" type="button"></button><button class="acctbtn" id="acct" type="button"></button></div>
+    <div class="tools"><select id="ofmt" class="ofmt" aria-label="Odds format"></select><div class="seg" id="lang"></div><button class="iconbtn" id="theme" type="button"></button><button class="acctbtn" id="acct" type="button"></button></div>
   </div>
 </header>
 <main class="wrap" id="main"></main>
@@ -617,7 +621,9 @@ const I18N = {
       <dt>History weight</dt><dd>The game total (over 5.5 / 6.5) can blend the model with teams' scoring history. The table shows which mix would have scored best so far.</dd>
       <dt>Value bets</dt><dd>Not our picks. Every prop where the model's EV was 5% or more at the sportsbook price we had, staked at 1 unit each, to test whether those edges pay off. It is a check on the model, not advice.</dd></dl>
       <p>With few games graded all of this is noise: one game can swing a row from +30% to −30%. Judge it after several hundred player-games.</p>`,
-    r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
+    r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", of_dec:"Decimal", of_us:"American", of_frac:"Fractional", of_title:"Odds format", odds_bad:"Type odds as 1.85, -118, +185 or 17/20.", m_fg:"First goal", fg_title:"First goalscorer", fg_none:"no goal before a shootout {p}", fg_team:"scores first {p}",
+    fg_note:"His chance of scoring the game's first goal: the chance there is a goal before a shootout × his team scoring first × his share of the team's expected goals tonight. Changes with the goalies you pick.",
+    sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
     sv_title:"Goalie saves", sv_sub:"follows the goalie you pick", sv_exp:"Expected saves tonight", sv_vs:"on {n} shots", sh_card:"Shots o{l}", sh_card_tip:"Model shots on goal tonight: {a} {x} · {h} {y}. The line shown is the one closest to 50/50.",
     sh_note:"Expected shots come from both teams' shot rates for and against this season (pulled toward last season early on) and home ice. Saves = shots the goalie is expected to face × his expected save rate, allowing for early pulls. Tested on more than 2,400 games: team shots and saves beat simple averages at every line (a goalie's last-10 saves average was worse than guessing); for total shots the model is about as good as a simple average.",
     sp_game:"Game", sp_g_att:"Shot attempts", sp_g_sog:"Shots on goal", sp_g_close:"From close range", sp_g_pts:"Goals + assists", sp_g_none:"No shot attempts in this game.",
@@ -784,7 +790,9 @@ const I18N = {
       <dt>Historikvikt</dt><dd>Matchtotalen (över 5,5 / 6,5) kan blanda modellen med lagens målhistorik. Tabellen visar vilken blandning som hittills hade träffat bäst.</dd>
       <dt>Värdespel</dt><dd>Inte våra tips. Alla spel där modellens EV var 5 % eller mer till spelbolagets pris, med 1 enhet per spel, för att testa om de övervärdena lönar sig. En kontroll av modellen, inte råd.</dd></dl>
       <p>Med få rättade matcher är allt detta brus: en match kan svänga en rad från +30 % till −30 %. Döm efter flera hundra spelarmatcher.</p>`,
-    r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
+    r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", of_dec:"Decimal", of_us:"Amerikanska", of_frac:"Bråk", of_title:"Oddsformat", odds_bad:"Skriv odds som 1,85, -118, +185 eller 17/20.", m_fg:"Första mål", fg_title:"Första målskytt", fg_none:"inget mål före straffar {p}", fg_team:"gör första målet {p}",
+    fg_note:"Hans chans att göra matchens första mål: chansen att det blir mål före straffar × att hans lag gör första målet × hans andel av lagets förväntade mål i kväll. Ändras med målvakterna du väljer.",
+    sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
     sv_title:"Målvaktsräddningar", sv_sub:"följer målvakten du väljer", sv_exp:"Väntade räddningar i kväll", sv_vs:"på {n} skott", sh_card:"Skott ö{l}", sh_card_tip:"Modellens skott på mål i kväll: {a} {x} · {h} {y}. Linjen som visas är den som ligger närmast 50/50.",
     sh_note:"Väntade skott bygger på båda lagens skott för och emot i år (dragna mot förra säsongen tidigt på säsongen) och hemmaplan. Räddningar = skotten målvakten väntas möta × hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Testat på mer än 2 400 matcher: lagskott och räddningar slår enkla snitt på alla linjer (en målvakts snitt de senaste 10 matcherna var sämre än att gissa); för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt.",
     sp_game:"Match", sp_g_att:"Skottförsök", sp_g_sog:"Skott på mål", sp_g_close:"Från nära håll", sp_g_pts:"Mål + assist", sp_g_none:"Inga skottförsök i den här matchen.",
@@ -970,7 +978,21 @@ function lambdas(pr, game){
   const gr = goalieRatio(game, pr.opp), sm = streakMult(pr.team, pr.opp);
   return { g: pr.base.g*gr*sm, a: pr.base.a*gr*sm, s: pr.base.s*sm, gr, sm };
 }
+// first goalscorer: a goal before a shootout x his team scores first x his share of the team's expected goals
+const FG_MEMO = new Map();
+function fgMap(g){
+  const key = `${g.id}|${state.goalie[g.id]?.[g.home]}|${state.goalie[g.id]?.[g.away]}`;
+  if (FG_MEMO.has(key)) return FG_MEMO.get(key);
+  const mu = gameMu(g), J = regJoint(mu.h, mu.a), pAny = 1 - J[0][0] * (C.ot_no_goal ?? 0.4), out = {none: 1 - pAny};
+  for (const [t, mt] of [[g.home, mu.h], [g.away, mu.a]]){
+    const rows = g.props.filter(pr => pr.team===t && P(pr.id)?.active).map(pr => [pr.id, lambdas(pr, g).g]);
+    const sum = rows.reduce((a, r) => a + r[1], 0) || 1, share = (mu.h+mu.a) ? mt/(mu.h+mu.a) : 0.5;
+    for (const [id, lam] of rows) out[id] = pAny * share * lam / sum;
+  }
+  FG_MEMO.set(key, out); return out;
+}
 function prob(pr, game, m){
+  if (m==="fg") return fgMap(game)[pr.id] || 0;
   const l = lambdas(pr, game);
   if (m==="g") return atLeastOne(l.g);
   if (m==="a") return atLeastOne(l.a);
@@ -992,14 +1014,15 @@ function savesExp(g, team){
 // betting lines centred on the projection (like a book would hang them): step 1 for a team or goalie, 2 for the total
 const linesAround = (lam, step) => { const c = Math.floor(lam) + 0.5 - (step===2 && Math.floor(lam)%2 ? 1 : 0); return [-2,-1,0,1,2].map(i=>c+i*step); };
 const nearHalf = (lines, f) => lines.reduce((b,x)=>Math.abs(f(x)-0.5) < Math.abs(f(b)-0.5) ? x : b, lines[0]);
-const MGROUPS = {pts:["g","a","pt"], s:C.sog_lines.map(L=>"s"+L), h:HIT_LINES.map(L=>"h"+L), b:BLK_LINES.map(L=>"b"+L)};
+const MGROUPS = {pts:["g","a","pt","fg"], s:C.sog_lines.map(L=>"s"+L), h:HIT_LINES.map(L=>"h"+L), b:BLK_LINES.map(L=>"b"+L)};
 const MKEYS = [...MGROUPS.pts, ...MGROUPS.s];
 const isHB = m => m[0]==="h" || m[0]==="b";
 const hasHB = pr => pr && pr.base && pr.base.hit != null;
 const mkeysFor = pr => hasHB(pr) ? [...MKEYS, ...MGROUPS.h, ...MGROUPS.b] : MKEYS;
 const mGroup = m => m==="g"||m==="a"||m==="pt" ? "pts" : m[0];
-const mName = m => m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt") : m[0]==="h" ? t("m_hit",{n:Math.ceil(parseFloat(m.slice(1)))}) : m[0]==="b" ? t("m_blk",{n:Math.ceil(parseFloat(m.slice(1)))}) : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
+const mName = m => m==="fg" ? t("m_fg") : m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt") : m[0]==="h" ? t("m_hit",{n:Math.ceil(parseFloat(m.slice(1)))}) : m[0]==="b" ? t("m_blk",{n:Math.ceil(parseFloat(m.slice(1)))}) : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
 function hitGame(gm, m){
+  if (m==="fg") return false;
   if (m==="g") return gm.g>=1; if (m==="a") return gm.a>=1; if (m==="pt") return gm.g+gm.a>=1;
   if (m[0]==="h") return gm.hit > parseFloat(m.slice(1));
   if (m[0]==="b") return gm.blk > parseFloat(m.slice(1));
@@ -1016,8 +1039,26 @@ function moveTag(g, pr, m, compact){
   if (!b?.o || !o0 || Math.abs(b.o - o0) < 0.01) return "";
   const fair = 1/Math.max(prob(pr, g, m), 1e-6), toward = Math.abs(b.o - fair) < Math.abs(o0 - fair);
   const arrow = b.o < o0 ? "↓" : "↑";
-  const tip = t(toward ? "mv_tip_to" : "mv_tip_away", {a:o0.toFixed(2), b:b.o.toFixed(2), f:fair.toFixed(2)});
-  return `<span class="mv ${toward?"to":"away"}" title="${esc(tip)}">${arrow} ${compact?"":t("mv_from")+" "}${o0.toFixed(2)}</span>`;
+  const tip = t(toward ? "mv_tip_to" : "mv_tip_away", {a:oddsTxt(o0), b:oddsTxt(b.o), f:oddsTxt(fair)});
+  return `<span class="mv ${toward?"to":"away"}" title="${esc(tip)}">${arrow} ${compact?"":t("mv_from")+" "}${oddsTxt(o0)}</span>`;
+}
+// odds format: decimal (1.85), American (-118 / +185) or fractional (17/20). Inputs accept any of the three.
+let OFMT = (()=>{ const v = store.get("set:ofmt"); return ["dec","us","frac"].includes(v) ? v : "dec"; })();
+// the standard UK bookmaker ladder, so fractions look like what a sportsbook shows
+const FRAC = "1/20 1/10 1/8 1/7 1/6 1/5 2/9 1/4 2/7 3/10 1/3 4/11 2/5 4/9 1/2 8/15 4/7 8/13 4/6 8/11 4/5 5/6 10/11 1/1 11/10 6/5 5/4 11/8 6/4 13/8 7/4 15/8 2/1 9/4 5/2 11/4 3/1 10/3 7/2 4/1 9/2 5/1 11/2 6/1 13/2 7/1 15/2 8/1 9/1 10/1 11/1 12/1 14/1 16/1 18/1 20/1 25/1 33/1 40/1 50/1 66/1 100/1 150/1 250/1 500/1".split(" ").map(f=>{ const [a,b]=f.split("/"); return [f, a/b]; });
+function fracOf(x){ return FRAC.reduce((b,c)=>Math.abs(c[1]-x) < Math.abs(b[1]-x) ? c : b)[0]; }
+function oddsTxt(dec){
+  if (dec==null || !isFinite(dec) || dec<=1) return "–";
+  if (OFMT==="us") return dec>=2 ? "+"+Math.round((dec-1)*100) : "−"+Math.round(100/(dec-1));
+  if (OFMT==="frac") return fracOf(dec-1);
+  return dec.toFixed(2);
+}
+function parseOdds(str){
+  const v = String(str??"").trim().replace("−","-").replace(",", ".");
+  if (!v) return null;
+  let m = v.match(/^(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)$/); if (m) return +m[2] ? 1 + (+m[1])/(+m[2]) : null;
+  m = v.match(/^([+-])(\d{3,})$/); if (m) return m[1]==="+" ? 1 + (+m[2])/100 : 1 + 100/(+m[2]);
+  const d = parseFloat(v); return isNaN(d) || d < 1.01 ? null : d;
 }
 const userOdds = (gid,pid,m) => { const v = parseFloat(store.get(oddsKey(gid,pid,m))); return isNaN(v)?null:v; };
 const getOdds = (gid,pid,m) => userOdds(gid,pid,m) ?? book(gid,pid,m)?.o ?? null;
@@ -1099,8 +1140,8 @@ function streaksTable(){
       <td><span class="stlab st-${x.k}">${x.label}</span></td>
       <td class="n hide-xs">${x.rare!=null?`<span class="tip" tabindex="0" data-tip="${esc(t("st_rare_tip",{x:Math.max(2,Math.round(1/x.rare))}))}">${t("st_rare",{x:Math.max(2,Math.round(1/x.rare))})}</span>`:"–"}</td>
       <td>${x.v!=null?`<span class="meta">${mlabel(x)}</span> <b>${pct(x.v,1)}</b>`:"–"}</td>
-      <td class="n hide-xs">${x.v?(1/x.v).toFixed(2):"–"}</td>
-      <td class="n">${x.m?`<input class="odds" data-g="${x.g.id}" data-pid="${x.pr.id}" data-m="${x.m}" value="${userOdds(x.g.id,x.pr.id,x.m)??""}" placeholder="${book(x.g.id,x.pr.id,x.m)?.o?.toFixed(2)??"—"}">`:""}</td>
+      <td class="n hide-xs">${x.v?oddsTxt(1/x.v):"–"}</td>
+      <td class="n">${x.m?`<input class="odds" data-g="${x.g.id}" data-pid="${x.pr.id}" data-m="${x.m}" value="${userOdds(x.g.id,x.pr.id,x.m)!=null?oddsTxt(userOdds(x.g.id,x.pr.id,x.m)):""}" placeholder="${book(x.g.id,x.pr.id,x.m)?.o!=null?oddsTxt(book(x.g.id,x.pr.id,x.m).o):"—"}">`:""}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td></tr>`; }).join("") || `<tr><td colspan="7" class="empty">${t("st_none")}</td></tr>`;
 }
 function regPills(p){
@@ -1133,6 +1174,8 @@ function header(){
   $("#acct").classList.toggle("in", !!USER);
   $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
     .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}"><svg class="nico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${t(l)}</span></button>`).join("");
+  $("#ofmt").innerHTML = [["dec","1.85"],["us","−118"],["frac","17/20"]].map(([k,l])=>`<option value="${k}" ${OFMT===k?"selected":""}>${l} · ${t("of_"+k)}</option>`).join("");
+  $("#ofmt").title = t("of_title"); $("#ofmt").setAttribute("aria-label", t("of_title"));
   $("#lang").innerHTML = `<button data-l="en" class="${LANG==="en"?"on":""}" aria-label="English">EN</button><button data-l="sv" class="${LANG==="sv"?"on":""}" aria-label="Svenska">SV</button>`;
   const th = currentTheme();
   $("#theme").textContent = th==="dark" ? "☀" : "☾";
@@ -1144,6 +1187,7 @@ function wireHeader(){
   $("#nav").onclick = e => { const b=e.target.closest("button"); if(!b) return; go({tab:b.dataset.tab, game:null}); };
   $("#home").onclick = () => go({tab:"games", game:null});
   $("#acct").onclick = () => USER ? openAccount() : openAuth("in");
+  $("#ofmt").onchange = e => { OFMT = e.target.value; store.set("set:ofmt", OFMT); header(); render(); };
   $("#lang").onclick = e => { const b=e.target.closest("button"); if(!b || b.dataset.l===LANG) return; LANG=b.dataset.l; store.set("set:lang", LANG); header(); render(); };
   $("#theme").onclick = () => { const next = currentTheme()==="dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next); store.set("set:theme", next); header(); };
   const tt = $("#totop");
@@ -1181,7 +1225,7 @@ function gamesList(){
       <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"}${altTxt(g,g.home)} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
       <div class="gou">${C.ou_lines.map(Lx=>{ const p = blendOver(g,d,Lx), o = DATA.odds?.[g.id]?.totals?.[String(Lx)]?.over;
-        return `<span>${t("over",{l:Lx})}</span><b>${pct(p)}</b><span class="go ${o && p*o-1>=VALUE ? "val":""}">${o?o.toFixed(2):""}</span>`; }).join("")}${(()=>{ const sh = shotsOf(g); if (!sh) return "";
+        return `<span>${t("over",{l:Lx})}</span><b>${pct(p)}</b><span class="go ${o && p*o-1>=VALUE ? "val":""}">${o?oddsTxt(o):""}</span>`; }).join("")}${(()=>{ const sh = shotsOf(g); if (!sh) return "";
         const tot = sh.h+sh.a, L = nearHalf(linesAround(tot, 2).concat(linesAround(tot, 2).map(x=>x+1)), x=>pOverR(tot, x, C.total_shots_dispersion));
         return `<span class="tip" tabindex="0" data-tip="${esc(t("sh_card_tip",{a:g.away, h:g.home, x:fmt(sh.a,1), y:fmt(sh.h,1)}))}">${t("sh_card",{l:L})}</span><b>${pct(pOverR(tot, L, C.total_shots_dispersion))}</b><span class="go">${fmt(tot,1)}</span>`; })()}</div>
     </div>`;
@@ -1214,7 +1258,7 @@ function h2hBlock(g){
 }
 function winOdds(g, d){
   const w = DATA.odds?.[g.id]?.winner; if (!w || (!w.home && !w.away)) return "";
-  const cell = (o, p) => o ? `<span class="${p*o-1>=VALUE?"val":""}">${o.toFixed(2)}</span>` : `<span>–</span>`;
+  const cell = (o, p) => o ? `<span class="${p*o-1>=VALUE?"val":""}">${oddsTxt(o)}</span>` : `<span>–</span>`;
   return `<div class="godds">${cell(w.away, d.pa)}<small>${t("odds_word")}</small>${cell(w.home, d.ph)}</div>`;
 }
 const blendOver = (g, d, L) => { const w = state.histW/100; return (1-w)*d.over(L) + w*g.hist_over[String(L)]; };
@@ -1230,8 +1274,8 @@ function gamePage(){
     const k = `ou:${g.id}:${Lx}`, bt = DATA.odds?.[g.id]?.totals?.[String(Lx)], uo = parseFloat(store.get(k));
     const od = !isNaN(uo) ? uo : (bt?.over ?? NaN), ev = isNaN(od)?null:b*od-1;
     return `<div><b>${Lx}</b></div><div>${pct(m,1)}</div><div>${pct(hst,1)}</div>
-      <div><b>${pct(b,1)}</b> <span class="meta">${(1/b).toFixed(2)} / ${(1/(1-b)).toFixed(2)}</span></div>
-      <div><input class="odds ouodds" id="ou-${g.id}-${Lx}" data-k="${k}" placeholder="${bt?.over?bt.over.toFixed(2):t("over_ph")}" value="${isNaN(uo)?"":uo}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span></div>`;
+      <div><b>${pct(b,1)}</b> <span class="meta">${oddsTxt(1/b)} / ${oddsTxt(1/(1-b))}</span></div>
+      <div><input class="odds ouodds" id="ou-${g.id}-${Lx}" data-k="${k}" placeholder="${bt?.over?oddsTxt(bt.over):t("over_ph")}" value="${isNaN(uo)?"":oddsTxt(uo)}"> <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span></div>`;
   }).join("");
   let html = `<button class="back" id="back">${t("all_games")}</button>
   <div class="card ghero">
@@ -1243,7 +1287,7 @@ function gamePage(){
     <div class="box"><h4>${t("win_prob")}</h4>
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
       <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
-      ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away?.toFixed(2)??"–", th:g.home, h:DATA.odds[g.id].winner.home?.toFixed(2)??"–", fa:(1/d.pa).toFixed(2), fh:(1/d.ph).toFixed(2)})}${(()=>{ const w=DATA.odds[g.id].winner, o=DATA.odds[g.id].open?.winner; if(!o||(Math.abs((o.home||0)-(w.home||0))<0.01&&Math.abs((o.away||0)-(w.away||0))<0.01)) return ""; return ` · ${t("mv_opened",{a:o.away?.toFixed(2)??"–", h:o.home?.toFixed(2)??"–"})}`; })()}</p>` : ""}
+      ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away!=null?oddsTxt(DATA.odds[g.id].winner.away):"–", th:g.home, h:DATA.odds[g.id].winner.home!=null?oddsTxt(DATA.odds[g.id].winner.home):"–", fa:oddsTxt(1/d.pa), fh:oddsTxt(1/d.ph)})}${(()=>{ const w=DATA.odds[g.id].winner, o=DATA.odds[g.id].open?.winner; if(!o||(Math.abs((o.home||0)-(w.home||0))<0.01&&Math.abs((o.away||0)-(w.away||0))<0.01)) return ""; return ` · ${t("mv_opened",{a:(o.away!=null?oddsTxt(o.away):"–"), h:(o.home!=null?oddsTxt(o.home):"–")})}`; })()}</p>` : ""}
       ${h2hBlock(g)}</div>
     <div class="box"><h4>${t("total_goals")}</h4>
       <div class="ou"><div class="h">${t("line")}</div><div class="h">${t("model")}</div><div class="h">${t("history")}</div><div class="h">${t("over_fair")}</div><div class="h">${t("over_odds")}</div>${ou}</div></div>
@@ -1262,9 +1306,9 @@ function gamePage(){
     document.querySelector(`tr.row[data-id="${el.dataset.open}"]`)?.scrollIntoView({behavior:"smooth", block:"center"}); });
   $("#sides").onclick = e => { const b=e.target.closest("button"); if(b){ state.side=b.dataset.s; state.open=null; gamePage(); } };
   $("#main").onchange = e => {
-    const o = e.target.closest("input.ouodds"); if(o){ const v=parseFloat(o.value.replace(",",".")); store.set(o.dataset.k, isNaN(v)?"":v); gamePage(); return; }
+    const o = e.target.closest("input.ouodds"); if(o){ const v=parseOdds(o.value)??NaN; store.set(o.dataset.k, isNaN(v)?"":v); gamePage(); return; }
     const s = e.target.closest("select[data-gteam]"); if(s){ state.goalie[g.id][s.dataset.gteam]=s.value; store.set(`goalie:${g.id}:${s.dataset.gteam}`, s.value); gamePage(); return; }
-    const pi = e.target.closest("input.podds"); if(pi){ const v=parseFloat(pi.value.replace(",",".")); store.set(oddsKey(g.id,pi.dataset.pid,pi.dataset.m), isNaN(v)?"":v); gamePage(); }
+    const pi = e.target.closest("input.podds"); if(pi){ const v=parseOdds(pi.value)??NaN; store.set(oddsKey(g.id,pi.dataset.pid,pi.dataset.m), isNaN(v)?"":v); gamePage(); }
   };
   if (state.side==="matchup") matchup(g); else sidePanel(g, state.side);
 }
@@ -1340,7 +1384,7 @@ function bestPicksBox(g){
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
         <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?t("point1"):t("goal")}</span>
-          <div class="po">${c.od?c.od.toFixed(2):"–"}</div>${moveTag(g,c.pr,c.m)}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
+          <div class="po">${c.od?oddsTxt(c.od):"–"}</div>${moveTag(g,c.pr,c.m)}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
       <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul>${saveBtn(g, c.pr, c.m)}</div>`; }).join("");
   const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
   const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
@@ -1459,8 +1503,8 @@ function sidePanel(g, team){
       <td class="n hide-sm num">${fmt(r.p.toi_proj,1)}</td>
       ${GRID.map(m=>{ const v=r.probs[m]; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
         const val = r.p.active && ev!=null && ev>=VALUE;
-        const tip = t("tip",{p:pct(v,1), f:(1/v).toFixed(2)}) + (od ? t("tip_odds",{o:od.toFixed(2), e:evTxt(ev)}) : "");
-        return `<td class="h"><div class="cell ${val?"val":""}" title="${esc(tip)}" style="${r.p.active?heat(v,colMax[m]):""}"><b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${od.toFixed(2)}</span>`:(1/v).toFixed(2)}</small></div></td>`; }).join("")}
+        const tip = t("tip",{p:pct(v,1), f:oddsTxt(1/v)}) + (od ? t("tip_odds",{o:oddsTxt(od), e:evTxt(ev)}) : "");
+        return `<td class="h"><div class="cell ${val?"val":""}" title="${esc(tip)}" style="${r.p.active?heat(v,colMax[m]):""}"><b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:oddsTxt(1/v)}</small></div></td>`; }).join("")}
       <td>${regPills(r.p)}</td></tr>
       ${open?`<tr><td colspan="${GRID.length+3}">${detail(r.pr, g)}</td></tr>`:""}`;
   }
@@ -1620,9 +1664,9 @@ function detail(pr, g){
   const og = G(state.goalie[g.id][pr.opp]);
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
   const oddsRows = mkeysFor(pr).map(m=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
-    return `<span>${mName(m)}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${(1/pv).toFixed(2)}</span></span>
-      <span class="num">${b?`<b>${b.o.toFixed(2)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}`:`<span class="meta">–</span>`}</span>
-      <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?b.o.toFixed(2):t("odds_ph")}" value="${uo??""}">
+    return `<span>${mName(m)}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${oddsTxt(1/pv)}</span></span>
+      <span class="num">${b?`<b>${oddsTxt(b.o)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}`:`<span class="meta">–</span>`}</span>
+      <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span><span>${saveBtn(g, pr, m)}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
     <div class="box" style="grid-column:span 2"><h4>${t("pv")}</h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
@@ -1876,6 +1920,7 @@ function matchup(g){
   const streak = x => !x.streak_kind ? "–" : `${kindL(x.streak_kind)}${x.streak}${x.streak_excess>0?` <span class="pill s-q" title="${esc(t("rule6_tip",{tier:trTier(x.tier), n:x.streak_threshold}))}">${t("rule6")}</span>`:` <span class="meta">/${x.streak_threshold}</span>`}`;
   $("#sidebody").innerHTML = `${scoreGrid(g)}<div class="gsum">${goalieCard(g,g.away,t("goalie_team",{t:g.away}))}${goalieCard(g,g.home,t("goalie_team",{t:g.home}))}</div>
   ${shotsBox(g)}
+  ${fgBox(g)}
   ${ranksBox(g)}
   <div class="card" style="padding:6px 14px"><table class="cmp"><tbody>
     <tr><td><b>${g.away}</b></td><td>${t("cmp")}</td><td><b>${g.home}</b></td></tr>
@@ -1900,7 +1945,7 @@ function shotsBox(g){
   const r1 = C.shots_dispersion, rt = C.total_shots_dispersion, rs = C.saves_dispersion;
   const tot = sh.h + sh.a, svA = savesExp(g, g.away), svH = savesExp(g, g.home);
   const gA = G(state.goalie[g.id][g.away]), gH = G(state.goalie[g.id][g.home]);
-  const cell = p => `<td class="n"><span class="tip" tabindex="0" data-tip="${esc(t("tip",{p:pct(p,1), f:(1/Math.max(p,1e-6)).toFixed(2)}))}"><b>${pct(p,0)}</b> <span class="meta">${(1/Math.max(p,1e-6)).toFixed(2)}</span></span></td>`;
+  const cell = p => `<td class="n"><span class="tip" tabindex="0" data-tip="${esc(t("tip",{p:pct(p,1), f:oddsTxt(1/Math.max(p,1e-6))}))}"><b>${pct(p,0)}</b> <span class="meta">${oddsTxt(1/Math.max(p,1e-6))}</span></span></td>`;
   const edge = i => i===0||i===4 ? " class=\"n shx\"" : " class=\"n\"";
   const lineRow = (lbl, lines, lam, r) => `<tr><td>${lbl}</td>${lines.map((L,i)=>cell(pOverR(lam, L, r)).replace('<td class="n">', `<td${edge(i)}>`)).join("")}</tr>`;
   const head = lines => `<tr><th></th>${lines.map((L,i)=>`<th${edge(i)}>${t("over_short",{l:fmt(L,1)})}</th>`).join("")}</tr>`;
@@ -1923,6 +1968,24 @@ function shotsBox(g){
       ${lineRow(gA?esc(gA.name.split(" ").slice(-1)[0]):g.away, SL, svA, rs)}${lineRow(gH?esc(gH.name.split(" ").slice(-1)[0]):g.home, SL, svH, rs)}</tbody></table></div>
     <p class="note">${t("sh_note")}</p></div>`;
 }
+// ------------------------------------------------------------ first goalscorer
+function fgBox(g){
+  const F = fgMap(g);
+  const side = t_ => g.props.filter(pr=>pr.team===t_ && F[pr.id]>0).sort((a,b)=>F[b.id]-F[a.id]).slice(0,6).map(pr=>{
+    const p = P(pr.id), v = F[pr.id], od = getOdds(g.id, pr.id, "fg"), ev = od ? v*od-1 : null;
+    return `<tr><td>${esc(p.name)} <span class="meta">${p.pos}</span></td><td class="n"><b>${pct(v,1)}</b></td><td class="n meta">${oddsTxt(1/v)}</td>
+      <td class="n"><input class="odds fgodds" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,"fg")!=null?oddsTxt(userOdds(g.id,pr.id,"fg")):""}" placeholder="${book(g.id,pr.id,"fg")?.o!=null?oddsTxt(book(g.id,pr.id,"fg").o):t("odds_ph")}"></td>
+      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</td></tr>`; }).join("");
+  const tbl = t_ => `<div><div class="fgh">${logo(t_,18)} <b>${t_}</b> <span class="meta">${t("fg_team",{p:pct(g.props.filter(pr=>pr.team===t_).reduce((a,pr)=>a+(F[pr.id]||0),0))})}</span></div>
+    <table class="mini fgtab"><thead><tr><th>${t("h_player")}</th><th class="n">${t("model")}</th><th class="n">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th></tr></thead><tbody>${side(t_)}</tbody></table></div>`;
+  return `<div class="box fgbox"><h4>${t("fg_title")} <span class="meta">${t("fg_none",{p:pct(F.none,1)})}</span></h4>
+    <div class="fggrid">${tbl(g.away)}${tbl(g.home)}</div><p class="note">${t("fg_note")}</p></div>`;
+}
+document.addEventListener("change", e => {
+  const i = e.target.closest("input.fgodds"); if (!i) return;
+  const v = parseOdds(i.value); store.set(oddsKey(i.dataset.g, i.dataset.pid, "fg"), v==null?"":v);
+  const box = i.closest(".fgbox"), g = gameById[i.dataset.g]; if (box && g) box.outerHTML = fgBox(g);
+});
 // ------------------------------------------------------------ team ranks
 function ranksBox(g){
   const R = DATA.team_ranks, A = R?.teams?.[g.away], H = R?.teams?.[g.home]; if (!A || !H) return "";
@@ -1997,7 +2060,7 @@ function propsTab(){
 function rowsTop(){
   if (state.psort==="streaks"){ $("#ptb").innerHTML = streaksTable();
     $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
-    $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,i.dataset.m), isNaN(v)?"":v); rowsTop(); };
+    $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,i.dataset.m), isNaN(v)?"":v); rowsTop(); };
     return; }
   const m = state.market; const rows = [];
   for (const g of DATA.games){
@@ -2016,13 +2079,13 @@ function rowsTop(){
       <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</div></div></div></td>
       <td class="n num hide-xs">${fmt(p.toi_proj,1)}</td>
       <td><div class="bar"><i style="width:${Math.min(100,v*100)}%"></i><span>${pct(v,1)}</span></div></td>
-      <td class="n num hide-xs">${(1/v).toFixed(2)}</td>
-      <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)??""}" placeholder="${book(g.id,pr.id,m)?.o?.toFixed(2)??"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
+      <td class="n num hide-xs">${oddsTxt(1/v)}</td>
+      <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)!=null?oddsTxt(userOdds(g.id,pr.id,m)):""}" placeholder="${book(g.id,pr.id,m)?.o!=null?oddsTxt(book(g.id,pr.id,m).o):"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${esc(gameTip(x,m))}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
       <td>${regPills(p)} ${saveBtn(g, pr, m)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
-  $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseFloat(i.value.replace(",",".")); store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
+  $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
 
 // ------------------------------------------------------------ track record
@@ -2285,12 +2348,13 @@ function openSave(gid, pid, m){
   const p = P(pr.id), b = book(g.id, pr.id, m), uo = userOdds(g.id, pr.id, m), od = uo ?? b?.o ?? "";
   const pv = prob(pr, g, m);
   modal(`<h3>${t("sv_h")}</h3><p class="meta">${esc(p.name)} · ${mName(m)} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</p>
-    <form id="savef"><label for="sv_o">${t("sv_odds")}</label><input id="sv_o" type="number" step="0.01" min="1.01" inputmode="decimal" value="${od}" required>
+    <form id="savef"><label for="sv_o">${t("sv_odds")}</label><input id="sv_o" type="text" inputmode="text" value="${od!==""?oddsTxt(od):""}" required>
     <label for="sv_s">${t("sv_stake")}</label><input id="sv_s" type="number" step="0.5" min="0.5" inputmode="decimal" value="1" required>
     <p class="meta" style="margin:10px 0 0">${t("sv_model",{p:pct(pv,1)})}</p>
     <div class="mrow"><button class="mbtn pri" type="submit">${t("save")}</button><button class="mbtn" type="button" data-close>${t("cancel")}</button></div></form><div class="mmsg" id="sv_msg"></div>`);
   $("#savef").onsubmit = async e => { e.preventDefault();
-    const odds = parseFloat($("#sv_o").value), stake = parseFloat($("#sv_s").value);
+    const odds = parseOdds($("#sv_o").value), stake = parseFloat($("#sv_s").value);
+    if (!odds) return $("#sv_msg").textContent = t("odds_bad");
     const row = {game_id: g.id, game_date: g.date, start_time: g.start || null, player_id: pr.id, player_name: p.name, team: pr.team, opp: pr.opp,
                  market: m, odds, model_p: Math.round(pv*10000)/10000, stake};
     const {error} = await sb.from("picks").insert(row);
@@ -2359,7 +2423,7 @@ function picksTab(){
   const kpi = (lbl, v, cls="") => `<div class="kpi"><small>${lbl}</small><b class="${cls}">${v}</b></div>`;
   const rows = MYPICKS.map(x => { const r = x.result || "open";
     return `<tr><td>${x.game_date.slice(5)}</td><td><b>${esc(x.player_name)}</b><div class="meta">${x.team} ${t("vs_short")} ${x.opp}</div></td><td>${mName(x.market)}</td>
-      <td class="n num">${(+x.odds).toFixed(2)}</td><td class="n num hide-xs">${x.closing_odds?(+x.closing_odds).toFixed(2):"–"}</td><td class="n num hide-xs">${x.model_p!=null?pct(+x.model_p,0):"–"}</td>
+      <td class="n num">${oddsTxt(+x.odds)}</td><td class="n num hide-xs">${x.closing_odds?oddsTxt(+x.closing_odds):"–"}</td><td class="n num hide-xs">${x.model_p!=null?pct(+x.model_p,0):"–"}</td>
       <td class="n num hide-xs">${+x.stake}</td><td><span class="res ${r}">${t("res_"+r)}${x.stat_value!=null?` · ${x.stat_value}`:""}</span></td>
       <td>${x.result?"":`<button class="delbtn" data-del="${x.id}" title="${t("pk_del")}" aria-label="${t("pk_del")}">✕</button>`}</td></tr>`; }).join("");
   $("#main").innerHTML = `<div class="ptab"><h2 style="margin:4px 0 14px">${t("pk_h")}</h2>

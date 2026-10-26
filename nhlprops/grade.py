@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .sources import Source
 
-MARKETS = [("g", "Goal"), ("a", "Assist"), ("pt", "Point")]
+MARKETS = [("g", "Goal"), ("a", "Assist"), ("pt", "Point"), ("fg", "First goal")]
 
 
 def _ll(p, y):
@@ -47,6 +47,18 @@ def _box_players(box: dict) -> dict[int, dict]:
                 out[int(p["playerId"])] = {"g": p.get("goals", 0) or 0, "a": p.get("assists", 0) or 0,
                                            "s": p.get("sog", p.get("shots", 0)) or 0,
                                            "h": p.get("hits", 0) or 0, "b": p.get("blockedShots", 0) or 0}
+    return out
+
+
+def _first_scorers(src: Source, date: str) -> dict:
+    """game id -> player id of the first goal (None if no goal before a shootout), from the NHL daily score feed"""
+    js = src.json(f"https://api-web.nhle.com/v1/score/{date}", f"nhl/score_final/{date}.json", 6) or {}
+    out = {}
+    for g in js.get("games") or []:
+        if g.get("gameState") not in ("OFF", "FINAL"):
+            continue
+        goals = [x for x in (g.get("goals") or []) if (x.get("periodDescriptor") or {}).get("periodType") != "SO"]
+        out[int(g["id"])] = int(goals[0]["playerId"]) if goals and goals[0].get("playerId") else None
     return out
 
 
@@ -97,6 +109,7 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
                 ou_model.setdefault(L, []).append((p, y))
                 ou_hist.setdefault(L, []).append((g["hist"][L], y))
         stats = {gid: _box_players(b) for gid, b in boxes.items()}
+        first_scorer = _first_scorers(src, h["date"]) if boxes else {}
         n_props = 0
         for pr in h["props"]:
             st = stats.get(pr["game"], {}).get(pr["id"])
@@ -104,6 +117,9 @@ def grade(src: Source, history_dir: Path, log=print) -> dict:
                 continue  # game not final, or player scratched
             n_props += 1
             props["g"].append((pr["p"]["g"], int(st["g"] >= 1)))
+            fgs = first_scorer.get(pr["game"], "?")
+            if "fg" in pr["p"] and fgs != "?":
+                props["fg"].append((pr["p"]["fg"], int(fgs == pr["id"])))
             props["a"].append((pr["p"]["a"], int(st["a"] >= 1)))
             props["pt"].append((pr["p"]["pt"], int(st["g"] + st["a"] >= 1)))
             res = {"g": st["g"] >= 1, "a": st["a"] >= 1, "pt": st["g"] + st["a"] >= 1}
