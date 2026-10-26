@@ -1106,7 +1106,7 @@ const MKEYS = [...MGROUPS.pts, ...MGROUPS.s];
 const isHB = m => m[0]==="h" || m[0]==="b";
 const hasHB = pr => pr && pr.base && pr.base.hit != null;
 const mkeysFor = pr => hasHB(pr) ? [...MKEYS, ...MGROUPS.h, ...MGROUPS.b] : MKEYS;
-const mGroup = m => m==="g"||m==="a"||m==="pt" ? "pts" : m[0];
+const mGroup = m => m==="g"||m==="a"||m==="pt"||m==="fg" ? "pts" : m[0];
 const mName = m => m==="fg" ? t("m_fg") : m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt") : m[0]==="h" ? t("m_hit",{n:Math.ceil(parseFloat(m.slice(1)))}) : m[0]==="b" ? t("m_blk",{n:Math.ceil(parseFloat(m.slice(1)))}) : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
 function hitGame(gm, m){
   if (m==="fg") return false;
@@ -2231,7 +2231,7 @@ function rowsTop(){
       <td class="n num hide-xs">${oddsTxt(1/v)}</td>
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)!=null?oddsTxt(userOdds(g.id,pr.id,m)):""}" placeholder="${book(g.id,pr.id,m)?.o!=null?oddsTxt(book(g.id,pr.id,m).o):"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
-      <td class="hide-sm"><div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${esc(gameTip(x,m))}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}</td>
+      <td class="hide-sm">${m==="fg" ? `<span class="meta">–</span>` : `<div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${esc(gameTip(x,m))}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}`}</td>
       <td>${regPills(p)} ${saveBtn(g, pr, m)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
