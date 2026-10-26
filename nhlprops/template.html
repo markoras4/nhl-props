@@ -535,7 +535,7 @@ const I18N = {
     k_xga:"Expected goals / assists", k_xs:"Expected shots on goal", k_og:"Opposing goalie", k_toi:"TOI last 10 / season",
     reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
-    k_spg:"Typical shots per goal", k_drought:"Chance of a drought this long",
+    k_spg:"Typical shots per goal", k_drought:"How often a drought this long happens at his level",
     last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", l10_h:"H", l10_b:"B", l10_tip_h:"Hits", l10_tip_b:"Blocked shots", l10_avg_last:"Average, last {n}",
     l10_colour:"Colour bars by", l10_by_avg:"Average", l10_1plus:"1+", l10_line:"Line", l10_over:"Over the line", l10_under:"Under the line",
     hr_over_s:"Over {l} shots: how often it happened", hr_g:"1+ goal: how often it happened", hr_a:"1+ assist: how often it happened", hr_p:"1+ point: how often it happened", hr_over_h:"Over {l} hits: how often it happened", hr_over_b:"Over {l} blocked shots: how often it happened",
@@ -575,7 +575,7 @@ const I18N = {
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
     tip_due:"Scoring below his true talent this season: positive regression expected", tip_hot:"Scoring above his true talent this season: negative regression expected",
-    tip_dry:"{n} shots since his last goal. That long a drought happens {p} of the time for his talent.",
+    tip_dry:"{n} shots without a goal. At his normal level, that happens only about 1 time in {x} — likely bad luck, but it doesn't raise his chance tonight.",
     st_live:"Live", st_final:"Final", st_int:"Intermission",
     ms_title:"Who's missing", ms_sub:"regulars out tonight", ms_new:"New", ms_new_tip:"Played in recent games, so tonight's lineup really changes. His ice time is shared out and the team adjusted.",
     ms_line:"{p} of team points · {g} of goals · {t} min a game", ms_ben:"More ice time:", ms_team:"Team adjustment:", ms_att:"attack", ms_def:"goals allowed",
@@ -677,7 +677,7 @@ const I18N = {
     k_xga:"Förväntade mål / assist", k_xs:"Förväntade skott på mål", k_og:"Motståndarmålvakt", k_toi:"Istid senaste 10 / säsong",
     reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
-    k_spg:"Typiskt antal skott per mål", k_drought:"Chans för en så lång torka",
+    k_spg:"Typiskt antal skott per mål", k_drought:"Hur ofta en så lång torka händer på hans nivå",
     last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", l10_h:"T", l10_b:"B", l10_tip_h:"Tacklingar", l10_tip_b:"Blockerade skott", l10_avg_last:"Snitt, senaste {n}",
     l10_colour:"Färga staplar efter", l10_by_avg:"Snitt", l10_1plus:"1+", l10_line:"Linje", l10_over:"Över linjen", l10_under:"Under linjen",
     hr_over_s:"Över {l} skott: hur ofta det hänt", hr_g:"1+ mål: hur ofta det hänt", hr_a:"1+ assist: hur ofta det hänt", hr_p:"1+ poäng: hur ofta det hänt", hr_over_h:"Över {l} tacklingar: hur ofta det hänt", hr_over_b:"Över {l} blockerade skott: hur ofta det hänt",
@@ -717,7 +717,7 @@ const I18N = {
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
     tip_due:"Gör färre mål än sin verkliga nivå i år: positiv regression väntas", tip_hot:"Gör fler mål än sin verkliga nivå i år: negativ regression väntas",
-    tip_dry:"{n} skott sedan senaste målet. En så lång torka händer {p} av gångerna för hans nivå.",
+    tip_dry:"{n} skott utan mål. På hans normala nivå händer det bara ungefär 1 gång av {x} — troligen otur, men det höjer inte hans chans i kväll.",
     st_live:"Live", st_final:"Slut", st_int:"Paus",
     ms_title:"Vilka saknas", ms_sub:"ordinarie spelare borta i kväll", ms_new:"Ny", ms_new_tip:"Spelade i de senaste matcherna, så kvällens uppställning ändras på riktigt. Hans istid fördelas och laget justeras.",
     ms_line:"{p} av lagets poäng · {g} av målen · {t} min per match", ms_ben:"Mer istid:", ms_team:"Lagjustering:", ms_att:"anfall", ms_def:"insläppta mål",
@@ -937,7 +937,7 @@ function regPills(p){
   const r = p.regress, d = p.drought, out = [];
   if (r.flag==="due") out.push(`<span class="pill s-due" title="${esc(t("tip_due"))}">${t("pill_due")}</span>`);
   if (r.flag==="hot") out.push(`<span class="pill s-hot" title="${esc(t("tip_hot"))}">${t("pill_hot")}</span>`);
-  if (d.found && d.p!=null && d.p<0.15 && d.shots>=8) out.push(`<span class="pill s-dry" title="${esc(t("tip_dry",{n:d.shots,p:pct(d.p)}))}">${t("pill_dry",{n:d.shots})}</span>`);
+  if (d.found && d.p!=null && d.p<0.15 && d.shots>=8) out.push(`<span class="pill s-dry" title="${esc(t("tip_dry",{n:d.shots,p:pct(d.p),x:Math.max(2,Math.round(1/d.p))}))}">${t("pill_dry",{n:d.shots})}</span>`);
   return out.concat(roleTags(p)).join(" ");
 }
 function roleTags(p){
@@ -1466,7 +1466,7 @@ function detail(pr, g){
         <span>${t("k_gmx")}</span><span>${xgw.cur?fmt(xgw.cur.g-xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.g-xgw.prev3.xg,1):"–"}</span>
         <span>${t("k_since")}</span><span>${d.found?d.shots:d.shots+"+"} <span class="meta">(${d.games} ${t("gm")})</span></span>
         <span>${t("k_spg")}</span><span>${fmt(d.shots_per_goal,1)}</span>
-        <span>${t("k_drought")}</span><span>${pct(d.p,0)}</span>
+        <span>${t("k_drought")}</span><span>${pct(d.p,0)}${d.p>0&&d.p<0.5?` <span class="meta">(1 / ${Math.round(1/d.p)})</span>`:""}</span>
       </div></div>
     ${oppPosPlayer(pr, p)}
     <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
