@@ -57,7 +57,8 @@ def season_boxscores(src: Source, season: int, workers: int, log=print) -> tuple
                                "home": home, "posg": "D" if key != "forwards" else "F",
                                "g": p.get("goals", 0) or 0, "a": p.get("assists", 0) or 0,
                                "s": p.get("sog", p.get("shots", 0)) or 0, "toi": _toi(p.get("toi")),
-                               "hit": p.get("hits", 0) or 0, "blk": p.get("blockedShots", p.get("blocks", 0)) or 0})
+                               "hit": p.get("hits", 0) or 0, "blk": p.get("blockedShots", p.get("blocks", 0)) or 0,
+                               "pim": p.get("pim", p.get("penaltyMinutes", 0)) or 0})
             gl = grp.get("goalies") or []
             for p in gl:
                 go.append({"gid": gm.id, "date": gm.date, "pid": int(p["playerId"]), "team": team, "opp": opp,
@@ -183,6 +184,7 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     df["lam_g"] = g60 * base * df.opp_goalie
     df["lam_a"] = a60 * base * df.opp_goalie
     df["lam_s"] = s60 * hrs * venue
+    df["toi_proj"] = toi_proj
     df["due"] = (df.c_s >= 15) & (df.c_g < (df.c_s * recent_sh - 1.0 * np.sqrt(df.c_s * recent_sh)))
     return df
 

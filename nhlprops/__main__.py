@@ -428,6 +428,7 @@ def main(argv=None):
     bt.add_argument("--hot", action="store_true", help="test player hot streaks vs the model")
     bt.add_argument("--form", action="store_true", help="test a recent-form term for player props")
     bt.add_argument("--goalies", action="store_true", help="test goalie rating weights and regression")
+    bt.add_argument("--extra", action="store_true", help="test multi-point, PIM, PP points and faceoff props")
     args = ap.parse_args(argv)
 
     data_dir = ROOT / "data"
@@ -454,6 +455,10 @@ def main(argv=None):
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())
         seasons = [int(x) for x in args.seasons.split(",") if x.strip()] or [cur - 2, cur - 1]
+        if args.extra:
+            from .backtest_extra import run as run_ex
+            run_ex(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
         if args.goalies:
             from .backtest_goalies import run as run_gk
             run_gk(src, seasons, CONFIG, ROOT / "backtest")
