@@ -7,29 +7,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: FanDuel event props
+      - name: Superbet NHL player props
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import json, urllib.request, re, collections
+          import json, urllib.request, re, collections, datetime as dt
           H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36","Accept":"application/json"}
-          get=lambda u: json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=25).read())
-          AK="FhMFpcPWXMeyZxOx"
-          page=get(f"https://sbapi.nj.sportsbook.fanduel.com/api/content-managed-page?page=CUSTOM&customPageId=nhl&_ak={AK}&timezone=America%2FNew_York")
-          evs=page.get("attachments",{}).get("events",{})
-          print("events", len(evs), [ (k,v.get("name"),v.get("openDate")) for k,v in list(evs.items())[:6]])
-          for eid,ev in [(k,v) for k,v in evs.items() if "@" in str(v.get("name"))][-2:]:
-              for tab in ["","player-props","shots","player-shots","blocks","hits","skater-props"]:
-                  u=f"https://sbapi.nj.sportsbook.fanduel.com/api/event-page?_ak={AK}&eventId={eid}" + (f"&tab={tab}" if tab else "")
-                  try: js=get(u)
-                  except Exception as e: print(eid, tab, "ERR", str(e)[:80]); continue
-                  mk=js.get("attachments",{}).get("markets",{})
-                  types=collections.Counter(m.get("marketType") for m in mk.values())
-                  names=sorted({m.get("marketName") for m in mk.values() if re.search("hit|block",str(m.get("marketName")),re.I)})
-                  tabs=[t.get("title") for t in (js.get("layout",{}).get("tabs",{}) or {}).values()] if isinstance(js.get("layout",{}).get("tabs"),dict) else js.get("layout",{}).get("tabs")
-                  print(eid, ev.get("name"), "tab", tab or "-", "markets", len(mk), "HB names", names[:12])
-                  if tab=="": print("  TAB TITLES:", [v.get("title") for v in (js.get("layout",{}).get("tabs") or {}).values()])
-                  if tab=="shots": print("  shots types:", list(types)[:30]); print("  sample market:", json.dumps(next(iter(mk.values())))[:900])
+          def get(u):
+              return json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=25).read())
+          now=dt.datetime.utcnow(); a=(now-dt.timedelta(hours=6)).strftime("%Y-%m-%d+%H:%M:%S"); b=(now+dt.timedelta(hours=36)).strftime("%Y-%m-%d+%H:%M:%S")
+          KW=re.compile(r"lovitur|blocaj|blocat|uderz|zablok|hit|block|blok|udar|bloqu|chute|šut|suturi|șut|puncte|punkt|points|asist|gol", re.I)
+          for host, lang in (("ro","ro-RO"),("pl","pl-PL"),("rs","sr-Latn-RS"),("br","pt-BR")):
+              base=f"https://production-superbet-offer-{host}.freetls.fastly.net/v2/{lang}"
+              try:
+                  js=get(f"{base}/events/by-date?currentStatus=active&offerState=prematch&startDate={a}&endDate={b}")
+              except Exception as e:
+                  print(host, "by-date ERR", str(e)[:120]); continue
+              evs=js.get("data") or []
+              nhl=[e for e in evs if re.search("NHL", json.dumps({k:e.get(k) for k in ("tournamentName","categoryName","matchName","tournamentId")}) , re.I) or (e.get("sportId") in (4,) and "NHL" in str(e))]
+              print(host, "events", len(evs), "NHL-ish", len(nhl), [e.get("matchName") for e in nhl[:6]])
+              if not nhl:
+                  sp=collections.Counter((e.get("sportId"), str(e.get("tournamentName"))[:30]) for e in evs if "hok" in str(e).lower() or "hock" in str(e).lower())
+                  print("  hockey tournaments:", sp.most_common(8))
+              for e in nhl[:2]:
+                  try:
+                      d=get(f"{base}/events/{e.get('eventId')}")
+                  except Exception as ex:
+                      print("  event ERR", str(ex)[:100]); continue
+                  ev=(d.get("data") or [{}])[0] if isinstance(d.get("data"), list) else d.get("data") or {}
+                  odds=ev.get("odds") or []
+                  names=collections.Counter(o.get("marketName") for o in odds)
+                  print("  ", e.get("matchName"), "markets", len(names))
+                  print("     ALL:", list(names)[:80])
+                  print("     PLAYER/HB:", [n for n in names if KW.search(str(n))][:60])
+                  hb=[o for o in odds if re.search(r"lovitur|blocaj|blocat|uderz|zablok|hit|block|blok", str(o.get("marketName")), re.I)]
+                  if hb: print("     SAMPLE:", json.dumps(hb[:3])[:1500])
           PY
       - name: Save output to the probe branch
         run: |
