@@ -2046,7 +2046,8 @@ if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || nul
 const SCORES_URL = "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/scores";
 async function pollScores(){
   const now = Date.now();
-  const active = DATA.games.filter(g => g.start && !["FINAL","OFF"].includes(g.state) && new Date(g.start).getTime() - now < 10*60e3 && now - new Date(g.start).getTime() < 6*3600e3);
+  // any game that should have started and isn't marked final yet (also games long over, if the page is older than the result)
+  const active = DATA.games.filter(g => g.start && !["FINAL","OFF"].includes(g.state) && new Date(g.start).getTime() - now < 10*60e3 && now - new Date(g.start).getTime() < 48*3600e3);
   if (!active.length) return;
   try {
     const dates = [...new Set(active.map(g=>g.date))];

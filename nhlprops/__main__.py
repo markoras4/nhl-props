@@ -507,6 +507,13 @@ def pregame(src: Source, state_file: Path, window: int) -> int:
         for w in (window, 35):
             if 0 < mins <= w and f"{s}|{w}" not in done:
                 due.append(f"{s}|{w}")
+    # post-game refresh: once every game of a night is final, rebuild so results show and picks get graded
+    yday = (dt.date.fromisoformat(today) - dt.timedelta(days=1)).isoformat()
+    for d in (yday, today):
+        sj = src.json(f"https://api-web.nhle.com/v1/score/{d}", f"pregame/score_{d}.json", 0.0) or {}
+        gs = sj.get("games") or []
+        if gs and all(g.get("gameState") in ("OFF", "FINAL") for g in gs) and f"final|{d}" not in done:
+            due.append(f"final|{d}")
     run = bool(due)
     if run:
         state_file.write_text(json.dumps(sorted(set(done) | set(due))[-120:]))
