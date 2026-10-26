@@ -482,6 +482,13 @@ def main(argv=None):
     except Exception as e:  # alerts are optional; never break the build
         print("Alerts feed skipped:", e)
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
+    if not args.demo:
+        try:
+            from .shots import build as build_shots
+            build_shots(src, raw["league_games"], slate["season"], data_dir / "shots", ROOT / "output" / "shots.json",
+                        CONFIG["workers"])
+        except Exception as e:  # shot maps are optional; never break the build
+            print("Shot maps skipped:", e)
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))

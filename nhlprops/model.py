@@ -451,9 +451,11 @@ def skater_frame(mp_sk: dict[int, pd.DataFrame]) -> pd.DataFrame:
             "s": _num(d, "I_F_shotsOnGoal"), "g": _num(d, "I_F_goals"), "xg": _num(d, "I_F_xGoals"),
             "a": _num(d, "I_F_primaryAssists") + _num(d, "I_F_secondaryAssists"),
             "hit": _num(d, "I_F_hits"), "blk": _num(d, "shotsBlockedByPlayer"),
+            "att": _num(d, "I_F_shotAttempts"), "miss": _num(d, "I_F_missedShots"),
+            "blkd": _num(d, "I_F_blockedShotAttempts"),
         }))
     if not frames:
-        return pd.DataFrame(columns=["pid", "season", "posg", "gp", "h", "s", "g", "xg", "a", "hit", "blk"])
+        return pd.DataFrame(columns=["pid", "season", "posg", "gp", "h", "s", "g", "xg", "a", "hit", "blk", "att", "miss", "blkd"])
     f = pd.concat(frames)
     return f.groupby(["pid", "season", "posg"], as_index=False).sum()
 
@@ -668,6 +670,8 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
         "rates": {"s60": s60, "xg60": xg60, "a60": a60, "g60": g60, "career_sh": career_sh, **hb,
                   "recent_sh": recent_sh, "finish": finish, "lg_sh": L["sh"]},
         "form": form, "hr": hr, "role": role,
+        "shp": {str(y): {k: round(float(v), 2) for k, v in me[me.season == y][["gp", "att", "s", "miss", "blkd", "xg", "h"]].sum().items()}
+                for y in (cur, cur - 1) if len(me[me.season == y])},
         "drought": {"shots": shots_since, "games": games_since, "found": found,
                     "shots_per_goal": 1 / recent_sh if recent_sh else None,
                     # chance a shooter of his talent goes this many shots without scoring

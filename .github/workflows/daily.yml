@@ -67,6 +67,7 @@ jobs:
           if [ -f output/previews.html ]; then cp output/previews.html site/previews.html; fi
           mkdir -p site/data && if [ -f output/closing.json ]; then cp output/closing.json site/data/closing.json; fi
           if [ -f output/alerts.json ]; then cp output/alerts.json site/data/alerts.json; fi
+          if [ -f output/shots.json ]; then cp output/shots.json site/data/shots.json; fi
           cp site-assets/sw.js site/sw.js 2>/dev/null || true
           cp site-assets/manifest.webmanifest site/manifest.webmanifest 2>/dev/null || true
           mkdir -p site/icons && cp site-assets/icons/*.png site/icons/ 2>/dev/null || true
@@ -80,7 +81,7 @@ jobs:
         run: |
           git config user.name "nhl-props-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/history data/frozen data/lineups data/odds_open data/logos data/last-build.log || true
+          git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/last-build.log || true
           [ -f data/pregame.json ] && git add data/pregame.json || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
 
