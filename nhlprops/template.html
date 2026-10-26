@@ -340,6 +340,7 @@ td.h{text-align:center;padding:4px}
 .pvtabs{text-transform:none;letter-spacing:0;flex-wrap:wrap}.pvtabs button{padding:4px 9px;font-size:12px}
 .cell.na{color:var(--mute);background:none;opacity:.6}
 .rolebox,.matebox{grid-column:1/-1}.rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 26px}
+.lmtab td:first-child{white-space:nowrap}.lmtab th{white-space:nowrap}
 .rsec h5{margin:0 0 6px;font-size:12.5px;display:flex;align-items:center;gap:6px}.matebox .up{color:var(--good)}.matebox .down{color:var(--bad)}
 .pvbox{display:grid;grid-template-columns:220px 1fr;gap:18px;padding:14px;margin:12px 0;overflow:hidden}
 .pvbox .pvimg{border-radius:10px;background:var(--panel2) center/cover no-repeat;min-height:150px}
@@ -628,7 +629,7 @@ const I18N = {
     c_ppg:"Power play goals /60", c_pkga:"Penalty kill goals against /60", c_ppm:"Power play minutes / game", c_o55:"Over 5.5 this season", c_o55rh:"Over 5.5 road / home",
     c_o553:"Over 5.5 last 3 seasons", c_o65:"Over 6.5 this season", yes:"Yes", no:"No", rule6:"6-game rule", rule6_tip:"{tier} team, rule threshold {n}",
     tier_strong:"strong", tier_average:"average", tier_weak:"weak", res_letters:"WLO",
-    all_days:"All days", all_games2:"All games", search:"Search player", reg_only:"regression signals only", most_likely:"Most likely", best_value:"Best value",
+    all_days:"All days", all_games2:"All games", search:"Search player", reg_only:"only Due, Hot or shots-dry players", most_likely:"Most likely", best_value:"Best value",
     h_player:"Player", h_prob:"Probability", h_fair:"Fair", h_odds:"Odds", h_last10:"Last 10", no_match:"No players match.",
     props_foot:"Only players expected to play. The odds box shows the market price in grey. Type your own to override it. Click a player to open his game.",
     day:"Day", game:"Game",
@@ -713,7 +714,7 @@ const I18N = {
     pvt_sc:"Scoring", pvt_mu:"Multi & PP", pvt_sh:"Shots", pvt_ph:"Hits, blocks, PIM", pvt_fo:"Faceoffs", gm_multi:"Multi-point & PP",
     rb_title:"Role & usage", rb_pp:"Power play", rb_nounit:"not on a PP unit tonight", rb_ppmin:"PP minutes per game", rb_prev:"last season {v}", rb_ppp:"PP points this season", rb_in:"in {n} games",
     rb_opppen:"{t} penalties per game", rb_lg:"league {v}", rb_pppch:"PP point chance tonight", rb_fo:"Faceoffs", rb_fopg:"Draws per game", rb_fopct:"Faceoff win %", rb_of:"of {n}",
-    rb_foopp:"{t} team faceoff %", rb_foexp:"Expected faceoffs won tonight", rb_pen:"Penalties", rb_pim:"PIM this season", rb_gw:"penalty in {n} of {g} games", rb_pench:"Chance of a penalty tonight",
+    rb_foopp:"{t} team faceoff %", rb_foexp:"Expected faceoffs won tonight", rb_pen:"Penalties", rb_pim:"PIM this season", rb_gw:"min · a penalty in {n} of {g} games", rb_pench:"Chance of a penalty tonight",
     tt_rb:"How he's used: power-play time and production, faceoffs (centres) and penalties, with tonight's chances for those markets.",
     tt_rb_ppmin:"Average power-play (5-on-4) minutes per game. PP1 players usually get 2.5-4 minutes.", tt_rb_ppp:"Points scored on the power play.",
     tt_rb_opppen:"How many penalties tonight's opponent takes per game; more penalties = more power-play time. Rank 1 = takes the most.",
@@ -723,7 +724,7 @@ const I18N = {
     tt_rb_pim:"Penalty minutes this season, and in how many games he took a penalty.", tt_rb_pench:"His penalty rate per minute (this season, last season, position average) × ice time tonight. Tested: better than the simple share of games with a penalty.",
     gk_shut:"Shutout chance", tt_shut:"Chance his team allows no goals in regulation and overtime (shootout goals don't count). Assumes he plays the whole game.",
     gm_sh:"Shutout", gm_shx:"{t} keeps a shutout",
-    lm_title:"Linemates tonight · {l}", lm_mate:"Linemate", lm_gp:"Games together", lm_with:"His pts/gm with", lm_without:"without", lm_diff:"Diff", lm_combo:"Goals together",
+    lm_title:"Linemates tonight · {l}", lm_mate:"Linemate", lm_gp:"Games", lm_with:"Pts/gm with", lm_without:"without", lm_diff:"Diff", lm_combo:"Goals together",
     lm_note:"This season: his points per game in games where the linemate also played vs games he didn't, and goals where both were on the scoresheet. Small samples swing a lot.",
     tt_lm:"Who he plays with tonight and how he has scored with and without them this season.",
     trm_2__points:"2+ points", trm_3__points:"3+ points", trm_2__goals:"2+ goals", trm_Hat_trick:"Hat trick", trm_2__assists:"2+ assists", trm_PIM_over_0_5:"PIM over 0.5", trm_PIM_over_2_5:"PIM over 2.5",
@@ -850,7 +851,7 @@ const I18N = {
     c_ppg:"Powerplaymål /60", c_pkga:"Insläppta mål i boxplay /60", c_ppm:"Powerplayminuter / match", c_o55:"Över 5.5 i år", c_o55rh:"Över 5.5 borta / hemma",
     c_o553:"Över 5.5 senaste 3 säsongerna", c_o65:"Över 6.5 i år", yes:"Ja", no:"Nej", rule6:"6-matchersregeln", rule6_tip:"{tier} lag, regelns gräns {n}",
     tier_strong:"starkt", tier_average:"medel", tier_weak:"svagt", res_letters:"VFÖ",
-    all_days:"Alla dagar", all_games2:"Alla matcher", search:"Sök spelare", reg_only:"endast regressionssignaler", most_likely:"Mest troliga", best_value:"Bäst värde",
+    all_days:"Alla dagar", all_games2:"Alla matcher", search:"Sök spelare", reg_only:"bara Bör lyfta, Kan svalna eller skott utan mål", most_likely:"Mest troliga", best_value:"Bäst värde",
     h_player:"Spelare", h_prob:"Sannolikhet", h_fair:"Rättvisa", h_odds:"Odds", h_last10:"Senaste 10", no_match:"Inga spelare matchar.",
     props_foot:"Endast spelare som väntas spela. Oddsrutan visar marknadspriset i grått. Skriv in egna odds för att ersätta det. Klicka på en spelare för att öppna hans match.",
     day:"Dag", game:"Match",
@@ -935,7 +936,7 @@ const I18N = {
     pvt_sc:"Poäng", pvt_mu:"Flera poäng & PP", pvt_sh:"Skott", pvt_ph:"Tackl., block., utv.", pvt_fo:"Tekningar", gm_multi:"Flera poäng & PP",
     rb_title:"Roll & speltid", rb_pp:"Powerplay", rb_nounit:"inte i någon PP-femma i kväll", rb_ppmin:"PP-minuter per match", rb_prev:"förra säsongen {v}", rb_ppp:"PP-poäng i år", rb_in:"på {n} matcher",
     rb_opppen:"{t} utvisningar per match", rb_lg:"ligan {v}", rb_pppch:"Chans till PP-poäng i kväll", rb_fo:"Tekningar", rb_fopg:"Tekningar per match", rb_fopct:"Vunna tekningar %", rb_of:"av {n}",
-    rb_foopp:"{t} lagets tekning-%", rb_foexp:"Väntade vunna tekningar i kväll", rb_pen:"Utvisningar", rb_pim:"Utvisningsminuter i år", rb_gw:"utvisning i {n} av {g} matcher", rb_pench:"Chans till utvisning i kväll",
+    rb_foopp:"{t} lagets tekning-%", rb_foexp:"Väntade vunna tekningar i kväll", rb_pen:"Utvisningar", rb_pim:"Utvisningsminuter i år", rb_gw:"min · utvisning i {n} av {g} matcher", rb_pench:"Chans till utvisning i kväll",
     tt_rb:"Hur han används: speltid och produktion i powerplay, tekningar (centrar) och utvisningar, med kvällens chanser för de spelen.",
     tt_rb_ppmin:"Snitt powerplay-minuter (5 mot 4) per match. PP1-spelare får oftast 2,5–4 minuter.", tt_rb_ppp:"Poäng i powerplay.",
     tt_rb_opppen:"Hur många utvisningar kvällens motståndare tar per match; fler utvisningar = mer powerplay. Plats 1 = tar flest.",
@@ -945,7 +946,7 @@ const I18N = {
     tt_rb_pim:"Utvisningsminuter i år, och i hur många matcher han åkte ut.", tt_rb_pench:"Hans utvisningstakt per minut (i år, förra säsongen, positionssnitt) × istid i kväll. Testat: bättre än den enkla andelen matcher med utvisning.",
     gk_shut:"Chans till nolla", tt_shut:"Chansen att hans lag inte släpper in något mål under ordinarie tid och förlängning (straffmål räknas inte). Förutsätter att han spelar hela matchen.",
     gm_sh:"Nolla", gm_shx:"{t} håller nollan",
-    lm_title:"Kedjekamrater i kväll · {l}", lm_mate:"Kedjekamrat", lm_gp:"Matcher ihop", lm_with:"Hans p/match med", lm_without:"utan", lm_diff:"Diff", lm_combo:"Mål ihop",
+    lm_title:"Kedjekamrater i kväll · {l}", lm_mate:"Kedjekamrat", lm_gp:"Matcher", lm_with:"P/match med", lm_without:"utan", lm_diff:"Diff", lm_combo:"Mål ihop",
     lm_note:"I år: hans poäng per match i matcher där kedjekamraten också spelade jämfört med matcher utan honom, och mål där båda var med i protokollet. Litet underlag svänger mycket.",
     tt_lm:"Vilka han spelar med i kväll och hur han har gjort poäng med och utan dem i år.",
     trm_2__points:"2+ poäng", trm_3__points:"3+ poäng", trm_2__goals:"2+ mål", trm_Hat_trick:"Hattrick", trm_2__assists:"2+ assist", trm_PIM_over_0_5:"Utvisning (över 0,5 min)", trm_PIM_over_2_5:"Utv.min över 2,5",
@@ -2188,7 +2189,7 @@ function matesBox(pr, p){
       <td class="n">${pw!=null?fmt(pw,2):"–"}</td><td class="n">${pwo!=null&&m.gp_wo>=2?fmt(pwo,2):"–"}</td>
       <td class="n">${diff!=null&&m.gp_wo>=2?`<span class="${diff>0.05?"up":diff<-0.05?"down":""}">${diff>0?"+":""}${fmt(diff,2)}</span>`:"–"}</td><td class="n">${m.combo}</td></tr>`; }).join("");
   return `<div class="box matebox"><h4><span>${t("lm_title",{l:(M.line||"").toUpperCase()})} ${HI("tt_lm")}</span></h4>
-    <table class="mini"><thead><tr><th>${t("lm_mate")}</th><th class="n">${t("lm_gp")}</th><th class="n">${t("lm_with")}</th><th class="n">${t("lm_without")}</th><th class="n">${t("lm_diff")}</th><th class="n">${t("lm_combo")}</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="tablewrap"><table class="mini lmtab"><thead><tr><th>${t("lm_mate")}</th><th class="n">${t("lm_gp")}</th><th class="n">${t("lm_with")}</th><th class="n">${t("lm_without")}</th><th class="n">${t("lm_diff")}</th><th class="n">${t("lm_combo")}</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="note">${t("lm_note")}</p></div>`;
 }
 // ------------------------------------------------------------ written game preview (same text as the previews page)
