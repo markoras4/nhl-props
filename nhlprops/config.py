@@ -85,7 +85,7 @@ CONFIG = {
     # team shots on goal and goalie saves (backtest_shots)
     "p1_share": 0.29,              # backtest_markets: 1st-period share of regulation goals (29.5% actual)
     "en_q": 0.35,                  # backtest_markets: a one-goal lead becomes two via the empty net 35% of the time (puck line)
-    "form_k": 40.0,                # backtest_form: recent-form weight (last 10 games); smaller = more weight
+    "form_k": {"g": 40.0, "a": 40.0, "s": 80.0},   # backtest_form: recent-form cushion per market (bigger = less weight on the last 10 games)
     "ot_no_goal": 0.40,            # share of tied games that reach a shootout (no overtime goal)
     "shots_k_games": 15,
     "shots_home_adv": 1.018,

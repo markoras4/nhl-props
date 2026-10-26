@@ -653,15 +653,15 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
                 "ppp5": sum(g.get("ppp", 0) for g in l5)}
     # ---- recent form (backtest_form: K=40 improved every market out of sample): his last 10 games vs what his
     #      level would have produced in the ice time he got
-    K = cfg.get("form_k", 40.0)
+    Kf = cfg.get("form_k", {"g": 40.0, "a": 40.0, "s": 80.0})
     last10 = (lc + lp)[:10]
     fm = {"g": 1.0, "a": 1.0, "s": 1.0}
-    if K and last10:
+    if last10:
         hrs10 = sum(x["toi"] for x in last10) / 60
         for key, rate in (("g", g60), ("a", a60), ("s", s60)):
-            exp10 = rate * hrs10
-            got10 = sum(x[key] for x in last10)
-            fm[key] = (got10 + K) / (exp10 + K)
+            K = Kf.get(key) if isinstance(Kf, dict) else Kf
+            if K:
+                fm[key] = (sum(x[key] for x in last10) + K) / (rate * hrs10 + K)
     # ---- streaks: point drought (how rare for his level), point streak and goal streak (this season)
     lam_pt = (g60 + a60) * toi_proj / 60
     p_pt_game = 1 - math.exp(-lam_pt) if lam_pt > 0 else 0.0
