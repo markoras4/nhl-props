@@ -110,19 +110,19 @@ footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}foote
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer><div class="wrap" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span data-t="rg"></span><button class="iconbtn" id="theme2" type="button" aria-label="Theme"></button></div></footer>
+<footer><div class="wrap" style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><span data-t="rg"></span><span style="display:flex;gap:14px;align-items:center"><a href="legal.html#terms" data-t="terms"></a><a href="legal.html#disclaimer" data-t="disclaimer"></a><a href="legal.html#privacy" data-t="privacy"></a><button class="iconbtn" id="theme2" type="button" aria-label="Theme"></button></span></div></footer>
 <script>
 const PDATA = /*__DATA__*/null;
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const I18N = {
- en:{ eyebrow:"Game previews", h1:"Monday's slate, read in two minutes", h1_any:"{d}: every game, read in two minutes",
+ en:{ terms:"Terms", disclaimer:"Disclaimer", privacy:"Privacy", eyebrow:"Game previews", h1:"Monday's slate, read in two minutes", h1_any:"{d}: every game, read in two minutes",
       intro:"News from around the league, the streaks and records that matter, and where our model and the betting market disagree. Numbers update with every refresh.",
       news:"News", records:"Streaks & records", betting:"Betting insights", open_app:"Open app", open_match:"Open matchup →",
       proj:"Projected", total:"Expected total {x} goals", win:"win", photo:"Photo", sources:"Sources",
       none:"Previews for the next slate are written on game day.",
       note:"Model numbers are probabilities, not tips. Odds are the market's at the time of writing and change during the day.",
       rg:`18+. Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.` },
- sv:{ eyebrow:"Förhandstittar", h1:"Måndagens matcher, lästa på två minuter", h1_any:"{d}: varje match, läst på två minuter",
+ sv:{ terms:"Villkor", disclaimer:"Ansvarsfriskrivning", privacy:"Integritet", eyebrow:"Förhandstittar", h1:"Måndagens matcher, lästa på två minuter", h1_any:"{d}: varje match, läst på två minuter",
       intro:"Nyheter från ligan, sviterna och rekorden som spelar roll, och var vår modell och spelmarknaden är oense. Siffrorna uppdateras vid varje uppdatering.",
       news:"Nyheter", records:"Sviter & rekord", betting:"Spelinsikter", open_app:"Öppna appen", open_match:"Öppna matchen →",
       proj:"Beräknat", total:"Förväntat totalt {x} mål", win:"vinst", photo:"Foto", sources:"Källor",

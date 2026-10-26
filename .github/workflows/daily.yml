@@ -65,6 +65,7 @@ jobs:
           cp site-assets/*.webp site/assets/
           mkdir -p site/assets/previews && cp site-assets/previews/*.webp site/assets/previews/ 2>/dev/null || true
           if [ -f output/previews.html ]; then cp output/previews.html site/previews.html; fi
+          cp nhlprops/legal.html site/legal.html
           mkdir -p site/data && if [ -f output/closing.json ]; then cp output/closing.json site/data/closing.json; fi
           if [ -f output/alerts.json ]; then cp output/alerts.json site/data/alerts.json; fi
           if [ -f output/shots.json ]; then cp output/shots.json site/data/shots.json; fi

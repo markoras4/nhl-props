@@ -454,7 +454,7 @@ th.tip:hover::before,th.tip:focus::before{bottom:auto;top:calc(100% + 3px);borde
 .better{color:var(--good);font-weight:700}
 .empty{padding:40px;text-align:center;color:var(--mute)}
 .prose{max-width:760px}
-.prose.how{margin:0 auto;padding:0 4px 24px}.prose.how h3:first-child{margin-top:8px}.prose.how li{margin-bottom:6px}
+.prose.how{margin:0 auto;padding:0 4px 24px}.prose.how details{border:1px solid var(--line);background:var(--panel);border-radius:12px;margin:0 0 8px}.prose.how summary{cursor:pointer;padding:12px 14px;font-weight:700;list-style:none}.prose.how summary::-webkit-details-marker{display:none}.prose.how summary::after{content:"+";float:right;color:var(--accent);font-weight:800}.prose.how details[open] summary::after{content:"−"}.prose.how details p{margin:0;padding:0 14px 12px}.appfoot .legal{display:inline-block;margin-top:4px}.prose.how h3:first-child{margin-top:8px}.prose.how li{margin-bottom:6px}
 .prose h3{margin:26px 0 6px}
 .prose p,.prose li{color:color-mix(in srgb,var(--text) 86%,var(--mute))}
 .prose .exp{margin:12px 0;padding:14px}
@@ -654,14 +654,14 @@ const I18N = {
       <p>With few games graded all of this is noise: one game can swing a row from +30% to −30%. Judge it after several hundred player-games.</p>`,
     r6_title:"{t} last 6 games", r6_gfga:"{f} GF / {a} GA per game", r6_vs:"vs", r6_ot:"OT", r6_so:"Pen", r6_W:"W", r6_L:"L", r6_O:"OTL", of_dec:"Decimal", of_us:"American", of_frac:"Fractional", of_title:"Odds format", odds_bad:"Type odds as 1.85, -118, +185 or 17/20.", gm_title:"More markets", gm_sub:"from the same score model", gm_1x2:"1X2", gm_60:"after 60 minutes", gm_draw:"Draw", gm_pl:"Puck line", gm_tt:"Team totals",
     gm_p1:"1st period goals", gm_p1x:"1st period draw", gm_btts:"Both teams to score", gm_b1y:"Both score – yes", gm_b1n:"Both score – no", gm_b2y:"Both 2+ goals – yes", gm_b2n:"Both 2+ goals – no",
-    gm_note:"All from the same projected score as the win chance and total goals, and they move when you switch goalies. Puck line includes empty-net goals. Tested on 2,451 games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers (settled after 60 minutes, like most European books) match how often they happen, but the model separates games only slightly there, so treat them as context.",
+    gm_note:"All from the same projected score as the win chance and total goals, and they move when you switch goalies. Puck line includes empty-net goals. Tested on thousands of past games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers (settled after 60 minutes, like most European books) match how often they happen, but the model separates games only slightly there, so treat them as context.",
     m_fg:"First goal", fg_title:"First goalscorer", fg_none:"no goal before a shootout {p}", fg_team:"scores first {p}",
     fg_note:"His chance of scoring the game's first goal: the chance there is a goal before a shootout × his team scoring first × his share of the team's expected goals tonight. Changes with the goalies you pick.",
     c_form:"Recent form", c_form_tip:"His last 10 games vs what his level would have produced in that ice time, given a little weight: goals ×{g}, assists ×{a}, shots ×{s}. Tested: a small amount of form improved every market.", pv_label:"Game preview", pv_news:"News", pv_records:"Streaks & records", pv_betting:"Betting insights", pv_photo:"Photo",
     pv_more:"Read the full preview", pv_less:"Show less", pv_badge:"Preview", pv_all:"Game previews",
     sh_title:"Shots on goal", sh_sub:"model tonight", sh_total:"Total", sh_total_row:"Total shots", sh_team:"{t} shots", sh_season:"season {f} for · {a} against", over_short:"o{l}",
     sv_title:"Goalie saves", sv_sub:"follows the goalie you pick", sv_exp:"Expected saves tonight", sv_vs:"on {n} shots", sh_card:"Shots o{l}", sh_card_tip:"Model shots on goal tonight: {a} {x} · {h} {y}. The line shown is the one closest to 50/50.",
-    sh_note:"Expected shots come from both teams' shot rates for and against this season (pulled toward last season early on) and home ice. Saves = shots the goalie is expected to face × his expected save rate, allowing for early pulls. Tested on more than 2,400 games: team shots and saves beat simple averages at every line (a goalie's last-10 saves average was worse than guessing); for total shots the model is about as good as a simple average.",
+    sh_note:"Expected shots come from both teams' shot rates for and against this season (pulled toward last season early on) and home ice. Saves = shots the goalie is expected to face × his expected save rate, allowing for early pulls. Tested on thousands of past games: team shots and saves beat simple averages at every line (a goalie's last-10 saves average was worse than guessing); for total shots the model is about as good as a simple average.",
     sp_game:"Game", sp_g_att:"Shot attempts", sp_g_sog:"Shots on goal", sp_g_close:"From close range", sp_g_pts:"Goals + assists", sp_g_none:"No shot attempts in this game.",
     sp_g_note:"{d} {o}: every shot attempt in the game. One game is a tiny sample, so only counts are shown.", sp_row_tip:"Show this game's shots on the map",
     sp_title:"Shot profile", sp_season:"Season", sp_l10:"Last 10", sp_loading:"Loading shot map…", sp_none:"No shot attempts recorded yet this season.", sp_map:"Shot map",
@@ -731,7 +731,7 @@ const I18N = {
     trm_Power_play_point:"Power-play point", trm_Faceoffs_won__all_lines_:"Faceoffs won (all lines)",
     trg_1:"1X2 home (60 min)", trg_X:"Draw after 60 min", trg_2:"1X2 away (60 min)", trg_hpl:"Home −1.5", trg_apl:"Away −1.5", trg_btts:"Both teams to score (incl. OT)", trg_b60:"Both score (60 min)", trg_b2:"Both 2+ goals (60 min)",
     trg_htt2_5:"Home over 2.5", trg_htt3_5:"Home over 3.5", trg_att2_5:"Away over 2.5", trg_att3_5:"Away over 3.5", trg_p1o0_5:"1st period over 0.5", trg_p1o1_5:"1st period over 1.5", trg_p1o2_5:"1st period over 2.5", trg_p1x:"1st period draw", trg_sh_h:"Home shutout", trg_sh_a:"Away shutout",
-    rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older and understand that NHL Props Lab is an analysis tool, not a sportsbook.", au_need18:"Please confirm that you are 18 or older.",
+    rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older, understand that NHL Props Lab is an analysis tool, not a sportsbook, and accept the <a href='/legal.html#terms' target='_blank' rel='noopener'>Terms</a> and <a href='/legal.html#privacy' target='_blank' rel='noopener'>Privacy policy</a>.", legal_links:"<a href='/legal.html#terms'>Terms</a> · <a href='/legal.html#disclaimer'>Disclaimer</a> · <a href='/legal.html#privacy'>Privacy</a>", au_need18:"Please confirm that you are 18 or older.",
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
@@ -780,7 +780,7 @@ const I18N = {
     sc_title:"Chance of each final score", sc_sub:"overtime and shootout included", sc_goals:"{t} goals", sc_tie:"A tie is decided in overtime or a shootout",
     sc_note:"Most hockey scores are individually unlikely: even the top score is usually around 10%. Ties after 60 minutes are decided in overtime or a shootout, so they become a one-goal win. Edges show how often each team scores that many. Changes when you switch goalies.",
     to_top:"Back to top", odds_word:"odds", win_odds:"Market odds: {ta} {a} · {th} {h} (fair {fa} · {fh})",
-    footer:"Updated four times a day. Stats: MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
+    footer:"Updated through the day and again before every puck drop. Stats: MoneyPuck.com. Personal, non-commercial use. Gamble responsibly. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   },
   sv: {
     nav_games:"Matcher", nav_props:"Toppspel", nav_track:"Facit", nav_how:"Så fungerar det",
@@ -876,14 +876,14 @@ const I18N = {
       <p>Med få rättade matcher är allt detta brus: en match kan svänga en rad från +30 % till −30 %. Döm efter flera hundra spelarmatcher.</p>`,
     r6_title:"{t} senaste 6 matcherna", r6_gfga:"{f} gjorda / {a} insläppta per match", r6_vs:"mot", r6_ot:"Förl", r6_so:"Str", r6_W:"V", r6_L:"F", r6_O:"FÖ", of_dec:"Decimal", of_us:"Amerikanska", of_frac:"Bråk", of_title:"Oddsformat", odds_bad:"Skriv odds som 1,85, -118, +185 eller 17/20.", gm_title:"Fler spel", gm_sub:"från samma resultatmodell", gm_1x2:"1X2", gm_60:"efter 60 minuter", gm_draw:"Oavgjort", gm_pl:"Puck line (handikapp)", gm_tt:"Lagets antal mål",
     gm_p1:"Mål i första perioden", gm_p1x:"Oavgjort i första perioden", gm_btts:"Båda lagen gör mål", gm_b1y:"Båda gör mål – ja", gm_b1n:"Båda gör mål – nej", gm_b2y:"Båda gör 2+ mål – ja", gm_b2n:"Båda gör 2+ mål – nej",
-    gm_note:"Allt bygger på samma beräknade resultat som vinstchansen och totalmålen, och ändras när du byter målvakt. Puck line räknar med mål i tom bur. Testat på 2 451 matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål (avgörs efter 60 minuter, som hos de flesta europeiska spelbolag) stämmer nivån, men modellen skiljer matcherna åt bara lite där, så se dem som bakgrund.",
+    gm_note:"Allt bygger på samma beräknade resultat som vinstchansen och totalmålen, och ändras när du byter målvakt. Puck line räknar med mål i tom bur. Testat på tusentals tidigare matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål (avgörs efter 60 minuter, som hos de flesta europeiska spelbolag) stämmer nivån, men modellen skiljer matcherna åt bara lite där, så se dem som bakgrund.",
     m_fg:"Första mål", fg_title:"Första målskytt", fg_none:"inget mål före straffar {p}", fg_team:"gör första målet {p}",
     fg_note:"Hans chans att göra matchens första mål: chansen att det blir mål före straffar × att hans lag gör första målet × hans andel av lagets förväntade mål i kväll. Ändras med målvakterna du väljer.",
     c_form:"Form", c_form_tip:"Hans senaste 10 matcher jämfört med vad hans nivå hade gett på den istiden, med liten vikt: mål ×{g}, assist ×{a}, skott ×{s}. Testat: lite form förbättrade alla spel.", pv_label:"Förhandstitt", pv_news:"Nyheter", pv_records:"Sviter & rekord", pv_betting:"Spelinsikter", pv_photo:"Foto",
     pv_more:"Läs hela förhandstitten", pv_less:"Visa mindre", pv_badge:"Förhandstitt", pv_all:"Förhandstittar",
     sh_title:"Skott på mål", sh_sub:"modellen i kväll", sh_total:"Totalt", sh_total_row:"Totalt antal skott", sh_team:"{t} skott", sh_season:"säsong {f} för · {a} emot", over_short:"ö{l}",
     sv_title:"Målvaktsräddningar", sv_sub:"följer målvakten du väljer", sv_exp:"Väntade räddningar i kväll", sv_vs:"på {n} skott", sh_card:"Skott ö{l}", sh_card_tip:"Modellens skott på mål i kväll: {a} {x} · {h} {y}. Linjen som visas är den som ligger närmast 50/50.",
-    sh_note:"Väntade skott bygger på båda lagens skott för och emot i år (dragna mot förra säsongen tidigt på säsongen) och hemmaplan. Räddningar = skotten målvakten väntas möta × hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Testat på mer än 2 400 matcher: lagskott och räddningar slår enkla snitt på alla linjer (en målvakts snitt de senaste 10 matcherna var sämre än att gissa); för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt.",
+    sh_note:"Väntade skott bygger på båda lagens skott för och emot i år (dragna mot förra säsongen tidigt på säsongen) och hemmaplan. Räddningar = skotten målvakten väntas möta × hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Testat på tusentals tidigare matcher: lagskott och räddningar slår enkla snitt på alla linjer (en målvakts snitt de senaste 10 matcherna var sämre än att gissa); för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt.",
     sp_game:"Match", sp_g_att:"Skottförsök", sp_g_sog:"Skott på mål", sp_g_close:"Från nära håll", sp_g_pts:"Mål + assist", sp_g_none:"Inga skottförsök i den här matchen.",
     sp_g_note:"{d} {o}: alla skottförsök i matchen. En match är ett mycket litet underlag, så bara antal visas.", sp_row_tip:"Visa matchens skott på kartan",
     sp_title:"Skottprofil", sp_season:"Säsong", sp_l10:"Senaste 10", sp_loading:"Laddar skottkarta…", sp_none:"Inga skottförsök registrerade än i år.", sp_map:"Skottkarta",
@@ -953,7 +953,7 @@ const I18N = {
     trm_Power_play_point:"PP-poäng", trm_Faceoffs_won__all_lines_:"Vunna tekningar (alla linjer)",
     trg_1:"1X2 hemma (60 min)", trg_X:"Oavgjort efter 60 min", trg_2:"1X2 borta (60 min)", trg_hpl:"Hemma −1,5", trg_apl:"Borta −1,5", trg_btts:"Båda gör mål (inkl. förl.)", trg_b60:"Båda gör mål (60 min)", trg_b2:"Båda 2+ mål (60 min)",
     trg_htt2_5:"Hemma över 2,5", trg_htt3_5:"Hemma över 3,5", trg_att2_5:"Borta över 2,5", trg_att3_5:"Borta över 3,5", trg_p1o0_5:"1:a perioden över 0,5", trg_p1o1_5:"1:a perioden över 1,5", trg_p1o2_5:"1:a perioden över 2,5", trg_p1x:"1:a perioden oavgjort", trg_sh_h:"Hemmanolla", trg_sh_a:"Bortanolla",
-    rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre och förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag.", au_need18:"Bekräfta att du är 18 år eller äldre.",
+    rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre, förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag, och godkänner <a href='/legal.html#terms' target='_blank' rel='noopener'>villkoren</a> och <a href='/legal.html#privacy' target='_blank' rel='noopener'>integritetspolicyn</a>.", legal_links:"<a href='/legal.html#terms'>Villkor</a> · <a href='/legal.html#disclaimer'>Ansvarsfriskrivning</a> · <a href='/legal.html#privacy'>Integritet</a>", au_need18:"Bekräfta att du är 18 år eller äldre.",
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
@@ -1002,7 +1002,7 @@ const I18N = {
     sc_title:"Chans för varje slutresultat", sc_sub:"inklusive förlängning och straffar", sc_goals:"{t} mål", sc_tie:"Oavgjort avgörs i förlängning eller straffar",
     sc_note:"Varje enskilt resultat är ovanligt i hockey: även det troligaste ligger oftast runt 10 %. Lika efter 60 minuter avgörs i förlängning eller straffar och blir då vinst med ett mål. Kanterna visar hur ofta varje lag gör så många mål. Ändras när du byter målvakt.",
     to_top:"Till toppen", odds_word:"odds", win_odds:"Marknadsodds: {ta} {a} · {th} {h} (rättvisa {fa} · {fh})",
-    footer:"Uppdateras fyra gånger om dagen. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
+    footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
 let LANG = (()=>{ const s = store.get("set:lang"); if (s==="sv"||s==="en") return s; return (navigator.language||"").toLowerCase().startsWith("sv") ? "sv" : "en"; })();
@@ -2407,7 +2407,7 @@ function trackTab(){
 // ------------------------------------------------------------ how it works
 const HOW = {
 en: `<h3>What the site does</h3>
-  <p>For every skater in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point, reach a number of shots on goal, and make a number of hits and blocked shots. For each game it also projects the score, the win chances, the total goals, each team's shots on goal and the starting goalies' saves. Every number is shown next to the sportsbook odds, so you can see where the model and the market agree and where they don't. It's a tool to help you decide, not a tipster.</p>
+  <p>For every skater in every upcoming game, the model estimates his chance to score a goal, get an assist, get a point, reach a number of shots on goal, and make a number of hits and blocked shots, plus multi-point games, power-play points, faceoffs won and penalties. For each game it also projects the score, the win chances, the total goals, the puck line, 1st-period goals, each team's shots on goal, the starting goalies' saves and shutout chances. Every number is shown next to the sportsbook odds, so you can see where the model and the market agree and where they don't. It's a tool to help you decide, not a tipster.</p>
 
   <h3>How a probability is built</h3>
   <p>Each player's chance starts from his real level: how much he plays, how many shots and chances he creates, and how well he finishes them over a long stretch, not just his last few games. A hot or cold run is mostly treated as noise until there's enough evidence that something has really changed.</p>
@@ -2415,7 +2415,7 @@ en: `<h3>What the site does</h3>
   <p>Game projections use both teams' attack and defence, the goalies, and how often games really go to overtime, so ties and totals come out realistic.</p>
 
   <h3>Has it been tested?</h3>
-  <p>Yes. Every market was replayed over more than 200,000 past player-games, using only information that was available before each game.</p>
+  <p>Yes. Every market was replayed over thousands of past games, using only information that was available before each game.</p>
   <ul>
     <li><b>The percentages are honest.</b> Goals: predicted 15.5%, happened 15.4%. Points: 35.8% vs 35.2%.</li>
     <li><b>It beats a player's simple average</b> in every market: goals, assists, points, shots, hits and blocks.</li>
@@ -2434,7 +2434,8 @@ en: `<h3>What the site does</h3>
   <h3>The game page</h3>
   <ul>
     <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the biggest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Green lines are the facts behind the pick, orange lines are warnings. When most of the value sits on one team it says so: those bets tend to win or lose together.</li>
-    <li><b>Matchup:</b> the projected score, win and overtime chances, over/under for total goals, shots on goal for each team and goalie saves, and recent form and head-to-head.</li>
+    <li><b>Game preview:</b> a short read on the game when one is written: the news, the streaks and records, and where the model and the market disagree.</li>
+    <li><b>Matchup:</b> the projected score, win and overtime chances, over/under for total goals, each team's last 6 games, shots on goal for each team and goalie saves, first goalscorer, and head-to-head.</li>
     <li><b>Team ranks:</b> both teams ranked 1–32 on attack, defence, shot share (CF%), expected-goals share (xGF%), high-danger chances (HDCF%), power play, penalty kill, goaltending (GSAx) and PDO. Green = top 8, red = bottom 8. PDO is shown as normal, running lucky or running unlucky, because it usually returns to normal.</li>
     <li><b>What each defence allows, by position:</b> shots and points each team gives up per game to centres, wingers and defencemen. #1 allows the most (the easiest matchup for that position), #32 the least. Hover a number for the details.</li>
     <li><b>Who's missing:</b> key absences for each team and their effect. When a regular is out, his ice time is shared among the players who step in, and the team's attack or defence is adjusted a little.</li>
@@ -2454,16 +2455,16 @@ en: `<h3>What the site does</h3>
   </ul>
 
   <h3>Top props</h3>
-  <p>Every player on the slate in one list. Pick Points, Shots, Hits or Blocks, then the line, and sort by <i>Most likely</i> or <i>Best value</i>. Filter by day, game or player, and type your own odds to see your EV.</p>
+  <p>Every player on the slate in one list. Pick a market (points, multi-point, power play, shots, hits, blocks, faceoffs, penalties or first goal), then the line, and sort by <i>Most likely</i> or <i>Best value</i>. Filter by day, game or player, and type your own odds to see your EV.</p>
 
   <h3>Shots on goal &amp; goalie saves</h3>
-  <p>On every matchup the model projects each team's shots on goal and the total, from both teams' shot rates for and against this season and home ice, with the chance of going over the usual lines. The starting goalie's expected saves are the shots he's expected to face times his expected save rate, allowing for the times a goalie gets pulled early. Switch the goalie and the saves update. Tested on more than 2,400 games: team shots and saves were more accurate than simple averages at every line; for total shots the model is about as good as a simple average, so treat that one as context.</p>
+  <p>On every matchup the model projects each team's shots on goal and the total, from both teams' shot rates for and against this season and home ice, with the chance of going over the usual lines. The starting goalie's expected saves are the shots he's expected to face times his expected save rate, allowing for the times a goalie gets pulled early. Switch the goalie and the saves update. Tested on thousands of past games: team shots and saves were more accurate than simple averages at every line; for total shots the model is about as good as a simple average, so treat that one as context.</p>
 
   <h3>More game markets &amp; first goalscorer</h3>
-  <p>Every game page has <i>More markets</i>, all from the same projected score: 1X2 after 60 minutes, puck line ±1.5 (including empty-net goals), team totals, 1st-period goals and draw, and both teams to score, each with fair odds and a box for your own odds. The matchup tab shows the <i>First goalscorer</i> chances: the chance of a goal before a shootout, times his team scoring first, times his share of the team's expected goals. Tested on 2,451 games: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers are right on average but separate games only slightly.</p>
+  <p>Every game page has <i>More markets</i>, all from the same projected score: 1X2 after 60 minutes, puck line ±1.5 (including empty-net goals), team totals, 1st-period goals and draw, and both teams to score, each with fair odds and a box for your own odds. The matchup tab shows the <i>First goalscorer</i> chances: the chance of a goal before a shootout, times his team scoring first, times his share of the team's expected goals. Tested: 1X2, puck line and team totals are well calibrated; 1st-period and both-teams-to-score numbers are right on average but separate games only slightly.</p>
   <h3>More player markets</h3>
   <ul>
-    <li><b>Multi-point:</b> 2+ and 3+ points, 2+ goals, hat trick and 2+ assists, from the same expected goals and assists as everything else. Tested: well calibrated (2+ points: 9.0% predicted, 8.9% happened).</li>
+    <li><b>Multi-point:</b> 2+ and 3+ points, 2+ goals, hat trick and 2+ assists, from the same expected goals and assists as everything else. Tested: well calibrated.</li>
     <li><b>Power-play point:</b> his power-play scoring rate × his PP time, updated with this season's PP points and adjusted for how often tonight's opponent takes penalties. Tested: clearly better than a player's simple PP-points average.</li>
     <li><b>Faceoffs won</b> (centres): draws per game × win %, adjusted for the opponent's faceoff strength. Tested: about as accurate as his simple average, so treat it as context.</li>
     <li><b>Penalties:</b> chance he takes a penalty (PIM over 0.5) and PIM over 2.5, from his penalty rate and ice time. Tested: better than the simple share of games with a penalty.</li>
@@ -2477,7 +2478,7 @@ en: `<h3>What the site does</h3>
   <p>In Top props, choose <i>Streaks</i> for one list of every notable run on the slate: goal droughts (with the shots taken since his last goal), point droughts, point streaks, goal streaks, and career milestones within reach (for example 1 goal from 100, or a 1,000th game). Droughts are shown only when they're rare for a regular player, with how rare ("1 in 12"). Each row shows his chance tonight and an odds box, so you can compare prices across sportsbooks. Each game page also has a <i>Streaks to watch</i> row. A streak doesn't change his chance tonight; the number shown already uses his real level.</p>
 
   <h3>Hits &amp; blocks</h3>
-  <p>Built from each player's hits and blocked shots per minute of ice time, times his projected ice time tonight, adjusted for the opponent (how often they get hit and how many of their shots get blocked) and the arena, since some buildings record far more hits than others. Tested on more than 128,000 player-games, it was clearly more accurate than a player's last-10 average at every line.</p>
+  <p>Built from each player's hits and blocked shots per minute of ice time, times his projected ice time tonight, adjusted for the opponent (how often they get hit and how many of their shots get blocked) and the arena, since some buildings record far more hits than others. Tested on thousands of past games, it was clearly more accurate than a player's last-10 average at every line.</p>
 
   <h3>Your account</h3>
   <ul>
@@ -2498,9 +2499,18 @@ en: `<h3>What the site does</h3>
     <li><b>Projected / Likely / Confirmed / Not decided</b> goalie = from the latest starting-goalie reports. Projected means no report yet: the goalie with the most recent starts, or the backup on a back-to-back.</li>
     <li><b>Out / Day-to-Day / Playing</b>: Out players are removed from the props; questionable players stay in with a yellow mark until the lineup shows them dressed.</li>
     <li><b>B2B</b> = the team played yesterday.</li>
-  </ul>`,
+  </ul>
+
+  <h3>Questions</h3>
+  <details><summary>Is this a betting site?</summary><p>No. NHL Props Lab is an analysis tool. We don't take bets or hold money; you place bets with your own licensed sportsbook, if you want to.</p></details>
+  <details><summary>Does a high percentage mean I should bet?</summary><p>Not on its own. What matters is the chance compared with the odds: a 60% chance at 1.50 loses money over time, a 30% chance at 4.00 makes money. That's what value and EV show.</p></details>
+  <details><summary>Why doesn't a hot player get a higher chance?</summary><p>Because streaks mostly don't continue. The model starts from his real level over a long stretch and gives recent form a little weight; in testing, that beat following the streak.</p></details>
+  <details><summary>Why did the numbers change during the day?</summary><p>New lineups, a confirmed goalie, an injury or new odds. Once the game starts, everything is locked.</p></details>
+  <details><summary>My sportsbook has different odds. What do I do?</summary><p>Type your odds in the odds box (decimal, American or fractional). The EV updates for your price.</p></details>
+  <details><summary>How do I delete my account or my data?</summary><p>Contact us and we'll delete it within 30 days. See the <a href="/legal.html#privacy">privacy policy</a>.</p></details>
+  <p>Read the <a href="/legal.html#terms">Terms of use</a>, <a href="/legal.html#disclaimer">Disclaimer</a> and <a href="/legal.html#privacy">Privacy policy</a>. Everything here is an estimate, not advice or a guarantee. 18+, gamble responsibly.</p>`,
 sv: `<h3>Vad sajten gör</h3>
-  <p>För varje spelare i varje kommande match räknar modellen ut hans chans att göra mål, få en assist, ta en poäng, nå ett visst antal skott på mål och göra ett visst antal tacklingar och blockerade skott. För varje match beräknas också resultatet, vinstchanserna, det totala antalet mål, varje lags skott på mål och startmålvakternas räddningar. Allt visas bredvid spelbolagens odds, så att du ser var modellen och marknaden är överens och var de skiljer sig åt. Det är ett verktyg som hjälper dig att bestämma, inte en tipstjänst.</p>
+  <p>För varje spelare i varje kommande match räknar modellen ut hans chans att göra mål, få en assist, ta en poäng, nå ett visst antal skott på mål och göra ett visst antal tacklingar och blockerade skott, plus flera poäng i en match, PP-poäng, vunna tekningar och utvisningar. För varje match beräknas också resultatet, vinstchanserna, det totala antalet mål, puck line, mål i första perioden, varje lags skott på mål, startmålvakternas räddningar och chansen till nolla. Allt visas bredvid spelbolagens odds, så att du ser var modellen och marknaden är överens och var de skiljer sig åt. Det är ett verktyg som hjälper dig att bestämma, inte en tipstjänst.</p>
 
   <h3>Hur en sannolikhet räknas fram</h3>
   <p>Varje spelares chans utgår från hans verkliga nivå: hur mycket han spelar, hur många skott och chanser han skapar och hur bra han gör mål på dem över en längre period, inte bara de senaste matcherna. En het eller kall svit behandlas främst som brus tills det finns tillräckligt med bevis för att något verkligen förändrats.</p>
@@ -2508,7 +2518,7 @@ sv: `<h3>Vad sajten gör</h3>
   <p>Matchprognoserna bygger på båda lagens anfall och försvar, målvakterna och hur ofta matcher faktiskt går till förlängning, så att oavgjort och totalmål blir realistiska.</p>
 
   <h3>Har den testats?</h3>
-  <p>Ja. Varje spelform spelades upp på nytt över mer än 200 000 tidigare spelarmatcher, med bara den information som fanns före varje match.</p>
+  <p>Ja. Varje spelform spelades upp på nytt över tusentals tidigare matcher, med bara den information som fanns före varje match.</p>
   <ul>
     <li><b>Procentsatserna stämmer.</b> Mål: förutsagt 15,5 %, utfall 15,4 %. Poäng: 35,8 % mot 35,2 %.</li>
     <li><b>Den slår spelarens enkla snitt</b> i alla spel: mål, assist, poäng, skott, tacklingar och blockeringar.</li>
@@ -2527,7 +2537,8 @@ sv: `<h3>Vad sajten gör</h3>
   <h3>Matchsidan</h3>
   <ul>
     <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Gröna rader är fakta bakom spelet, orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
-    <li><b>Matchup:</b> beräknat resultat, vinst- och förlängningschanser, över/under för totalmål, skott på mål för varje lag och målvaktsräddningar samt form och inbördes möten.</li>
+    <li><b>Förhandstitt:</b> en kort text om matchen när en är skriven: nyheterna, sviterna och rekorden, och var modellen och marknaden är oense.</li>
+    <li><b>Matchup:</b> beräknat resultat, vinst- och förlängningschanser, över/under för totalmål, varje lags senaste 6 matcher, skott på mål för varje lag och målvaktsräddningar, första målskytt samt inbördes möten.</li>
     <li><b>Lagrankning:</b> båda lagen rankade 1–32 i anfall, försvar, skottandel (CF%), andel förväntade mål (xGF%), farliga chanser (HDCF%), powerplay, boxplay, målvaktsspel (GSAx) och PDO. Grönt = topp 8, rött = botten 8. PDO visas som normal, tur eller otur, eftersom den brukar återgå till det normala.</li>
     <li><b>Vad varje försvar släpper till, per position:</b> skott och poäng varje lag släpper till per match mot centrar, yttrar och backar. #1 släpper till mest (lättast för den positionen), #32 minst. Håll muspekaren över en siffra för detaljer.</li>
     <li><b>Vilka saknas:</b> viktiga frånvaron i varje lag och vad de betyder. När en ordinarie spelare saknas fördelas hans istid på dem som kliver in, och lagets anfall eller försvar justeras något.</li>
@@ -2547,16 +2558,16 @@ sv: `<h3>Vad sajten gör</h3>
   </ul>
 
   <h3>Toppspel</h3>
-  <p>Alla spelare i kvällens matcher i en lista. Välj Poäng, Skott, Tacklingar eller Blockeringar, sedan linjen, och sortera efter <i>Mest troliga</i> eller <i>Bäst värde</i>. Filtrera på dag, match eller spelare, och skriv in dina egna odds för att se din EV.</p>
+  <p>Alla spelare i kvällens matcher i en lista. Välj spel (poäng, flera poäng, powerplay, skott, tacklingar, blockeringar, tekningar, utvisningar eller första mål), sedan linjen, och sortera efter <i>Mest troliga</i> eller <i>Bäst värde</i>. Filtrera på dag, match eller spelare, och skriv in dina egna odds för att se din EV.</p>
 
   <h3>Skott på mål &amp; målvaktsräddningar</h3>
-  <p>På varje matchsida beräknar modellen varje lags skott på mål och totalen, utifrån båda lagens skott för och emot i år och hemmaplan, med chansen att gå över de vanliga linjerna. Startmålvaktens väntade räddningar är skotten han väntas möta gånger hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Byt målvakt så uppdateras räddningarna. Testat på mer än 2 400 matcher: lagskott och räddningar var träffsäkrare än enkla snitt på alla linjer; för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt, så se den som bakgrund.</p>
+  <p>På varje matchsida beräknar modellen varje lags skott på mål och totalen, utifrån båda lagens skott för och emot i år och hemmaplan, med chansen att gå över de vanliga linjerna. Startmålvaktens väntade räddningar är skotten han väntas möta gånger hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Byt målvakt så uppdateras räddningarna. Testat på tusentals tidigare matcher: lagskott och räddningar var träffsäkrare än enkla snitt på alla linjer; för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt, så se den som bakgrund.</p>
 
   <h3>Fler spel &amp; första målskytt</h3>
-  <p>Varje matchsida har <i>Fler spel</i>, allt från samma beräknade resultat: 1X2 efter 60 minuter, puck line ±1,5 (med mål i tom bur), lagets antal mål, mål och oavgjort i första perioden samt båda lagen gör mål, alla med rättvisa odds och en ruta för dina egna odds. Matchup-fliken visar chanserna för <i>Första målskytt</i>: chansen att det blir mål före straffar, gånger att hans lag gör första målet, gånger hans andel av lagets förväntade mål. Testat på 2 451 matcher: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål stämmer nivån, men matcherna skiljs åt bara lite.</p>
+  <p>Varje matchsida har <i>Fler spel</i>, allt från samma beräknade resultat: 1X2 efter 60 minuter, puck line ±1,5 (med mål i tom bur), lagets antal mål, mål och oavgjort i första perioden samt båda lagen gör mål, alla med rättvisa odds och en ruta för dina egna odds. Matchup-fliken visar chanserna för <i>Första målskytt</i>: chansen att det blir mål före straffar, gånger att hans lag gör första målet, gånger hans andel av lagets förväntade mål. Testat: 1X2, puck line och lagets mål stämmer väl; för första perioden och båda lagen gör mål stämmer nivån, men matcherna skiljs åt bara lite.</p>
   <h3>Fler spelarspel</h3>
   <ul>
-    <li><b>Flera poäng:</b> 2+ och 3+ poäng, 2+ mål, hattrick och 2+ assist, från samma förväntade mål och assist som allt annat. Testat: stämmer väl (2+ poäng: 9,0 % förutsagt, 8,9 % utfall).</li>
+    <li><b>Flera poäng:</b> 2+ och 3+ poäng, 2+ mål, hattrick och 2+ assist, från samma förväntade mål och assist som allt annat. Testat: stämmer väl.</li>
     <li><b>PP-poäng:</b> hans poängtakt i powerplay × hans PP-tid, uppdaterat med årets PP-poäng och justerat för hur ofta kvällens motståndare åker ut. Testat: klart bättre än spelarens enkla snitt av PP-poäng.</li>
     <li><b>Vunna tekningar</b> (centrar): tekningar per match × vinstprocent, justerat för motståndarens tekningsstyrka. Testat: ungefär lika träffsäkert som hans enkla snitt, så se det som bakgrund.</li>
     <li><b>Utvisningar:</b> chansen att han åker ut (över 0,5 utvisningsminuter) och över 2,5 minuter, från hans utvisningstakt och istid. Testat: bättre än den enkla andelen matcher med utvisning.</li>
@@ -2570,7 +2581,7 @@ sv: `<h3>Vad sajten gör</h3>
   <p>Under Toppspel, välj <i>Sviter</i> för en lista över alla intressanta sviter i kvällens matcher: måltorka (med skotten sedan senaste målet), poängtorka, poängsviter, målsviter och milstolpar i karriären inom räckhåll (till exempel 1 mål från 100, eller match nummer 1 000). Torka visas bara när den är ovanlig för en ordinarie spelare, med hur ovanlig ("1 på 12"). Varje rad visar hans chans i kväll och en oddsruta, så att du kan jämföra priser mellan spelbolag. Varje matchsida har också raden <i>Sviter att hålla koll på</i>. En svit ändrar inte hans chans i kväll; siffran bygger redan på hans verkliga nivå.</p>
 
   <h3>Tacklingar &amp; blockeringar</h3>
-  <p>Bygger på varje spelares tacklingar och blockerade skott per minut istid, gånger hans beräknade istid i kväll, justerat för motståndaren (hur ofta de tacklas och hur många av deras skott som blockeras) och arenan, eftersom vissa arenor registrerar betydligt fler tacklingar än andra. Testat på mer än 128 000 spelarmatcher var det klart träffsäkrare än spelarens snitt de senaste 10 matcherna på alla linjer.</p>
+  <p>Bygger på varje spelares tacklingar och blockerade skott per minut istid, gånger hans beräknade istid i kväll, justerat för motståndaren (hur ofta de tacklas och hur många av deras skott som blockeras) och arenan, eftersom vissa arenor registrerar betydligt fler tacklingar än andra. Testat på tusentals tidigare matcher var det klart träffsäkrare än spelarens snitt de senaste 10 matcherna på alla linjer.</p>
 
   <h3>Ditt konto</h3>
   <ul>
@@ -2591,7 +2602,16 @@ sv: `<h3>Vad sajten gör</h3>
     <li><b>Prognos / Trolig / Bekräftad / Inte avgjort</b> målvakt = från de senaste rapporterna om startmålvakter. Prognos betyder att ingen rapport finns än: målvakten med flest starter på sistone, eller reserven vid back-to-back.</li>
     <li><b>Ute / Dag till dag / Spelar</b>: spelare som är Ute tas bort från spelen; osäkra spelare finns kvar med gul markering tills uppställningen visar att de spelar.</li>
     <li><b>B2B</b> = laget spelade i går.</li>
-  </ul>`
+  </ul>
+
+  <h3>Frågor</h3>
+  <details><summary>Är det här en spelsajt?</summary><p>Nej. NHL Props Lab är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar; du spelar hos ditt eget licensierade spelbolag, om du vill.</p></details>
+  <details><summary>Betyder en hög procent att jag ska spela?</summary><p>Inte i sig. Det som räknas är chansen jämfört med oddset: en chans på 60 % till 1,50 förlorar pengar över tid, en chans på 30 % till 4,00 vinner. Det är det värde och EV visar.</p></details>
+  <details><summary>Varför får inte en spelare i het form högre chans?</summary><p>För att sviter oftast inte håller i sig. Modellen utgår från hans verkliga nivå över en längre period och ger den senaste formen lite vikt; i testerna slog det att följa sviten.</p></details>
+  <details><summary>Varför ändrades siffrorna under dagen?</summary><p>Nya uppställningar, en bekräftad målvakt, en skada eller nya odds. När matchen startar låses allt.</p></details>
+  <details><summary>Mitt spelbolag har andra odds. Vad gör jag?</summary><p>Skriv in ditt odds i oddsrutan (decimal, amerikanska eller bråk). EV uppdateras för ditt pris.</p></details>
+  <details><summary>Hur raderar jag mitt konto eller mina uppgifter?</summary><p>Kontakta oss så raderar vi dem inom 30 dagar. Se <a href="/legal.html#privacy">integritetspolicyn</a>.</p></details>
+  <p>Läs <a href="/legal.html#terms">användarvillkoren</a>, <a href="/legal.html#disclaimer">ansvarsfriskrivningen</a> och <a href="/legal.html#privacy">integritetspolicyn</a>. Allt här är bedömningar, inte råd eller garantier. 18+, spela ansvarsfullt.</p>`
 };
 function howTab(){
   $("#main").innerHTML = `<div class="prose how">${HOW[LANG]||HOW.en}<p class="foot">${t("footer")}</p></div>`;
@@ -2599,7 +2619,7 @@ function howTab(){
 
 function render(){
   header();
-  const af = $("#appfoot"); if (af) af.innerHTML = `<span class="age">18+</span><span>${t("rg_foot")}</span>`;
+  const af = $("#appfoot"); if (af) af.innerHTML = `<span class="age">18+</span><span>${t("rg_foot")}<br><span class="legal">${t("legal_links")}</span></span>`;
   if (state.tab==="games") (state.game ? gamePage : gamesList)();
   else if (state.tab==="props") propsTab();
   else if (state.tab==="track") trackTab();

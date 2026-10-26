@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terms, Disclaimer &amp; Privacy · NHL Props Lab</title>
+<meta name="description" content="Terms of use, disclaimer and privacy policy for NHL Props Lab.">
+<meta name="theme-color" content="#0a0e13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@600;700;800&display=swap">
+<style>
+:root{
+  --bg:#0a0e13; --panel:#111821; --panel2:#17202b; --line:#22303f; --text:#e7eef6; --mute:#8796a8;
+  --accent:#3ddc97; --accent-ink:#06210f; color-scheme:dark;
+  --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-disp:"Oxanium","Exo 2",-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){--bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b; --accent:#0d9a60; --accent-ink:#fff; color-scheme:light}
+}
+:root[data-theme="light"]{--bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b; --accent:#0d9a60; --accent-ink:#fff; color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 var(--f-ui)}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:820px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:12px;height:60px}
+.brand{font-family:var(--f-disp);font-weight:800;font-size:18px;letter-spacing:.6px;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.brand b{color:var(--accent)}
+.hright{margin-left:auto;display:flex;gap:8px;align-items:center}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:2px}
+.seg button{border:0;background:none;padding:5px 9px;font-size:12px;font-weight:700;border-radius:8px;color:var(--mute)}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.iconbtn{border:1px solid var(--line);background:var(--panel);border-radius:10px;width:36px;height:34px;display:grid;place-items:center;font-size:15px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:none;text-decoration:none;font-weight:600;font-size:14px;color:var(--mute);padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.tabs a.on,.tabs a:hover{color:var(--text);border-color:var(--accent)}
+h1{font-family:var(--f-disp);font-size:clamp(28px,5vw,38px);line-height:1.15;margin:34px 0 6px}
+.upd{color:var(--mute);font-size:14px;margin:0 0 8px}
+section{padding:26px 0 8px;scroll-margin-top:118px}
+section+section{border-top:1px solid var(--line);margin-top:22px}
+h2{font-family:var(--f-disp);font-size:24px;margin:0 0 10px}
+h3{font-size:16.5px;margin:22px 0 4px}
+p,li{color:color-mix(in srgb,var(--text) 86%,var(--mute))}
+ul{padding-left:20px}
+li{margin:4px 0}
+.box{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px 16px;margin:14px 0}
+.box p{margin:0}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 calc(28px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:13px}
+footer .wrap{display:flex;gap:10px 22px;flex-wrap:wrap;justify-content:space-between}
+footer a{text-decoration:underline;text-underline-offset:2px}
+@media (max-width:560px){.brand{font-size:15px} section{scroll-margin-top:112px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap top">
+    <a class="brand" href="/">NHL Props <b>Lab</b></a>
+    <div class="hright">
+      <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
+      <button class="iconbtn" id="theme" type="button" aria-label="Theme"></button>
+    </div>
+  </div>
+  <nav class="wrap tabs" id="tabs"></nav>
+</header>
+<main class="wrap" id="main"></main>
+<footer><div class="wrap"><span id="rg"></span><span>© <span id="yr"></span> NHL Props Lab</span></div></footer>
+
+<script>
+// Set this to the contact address before launch; the contact lines stay hidden while it is empty.
+const CONTACT = "";
+const UPDATED = "2026-10-26";
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+const mail = () => CONTACT ? `<a href="mailto:${CONTACT}">${CONTACT}</a>` : "";
+const C = {
+en:{
+  title:"Terms, disclaimer & privacy", upd:"Last updated {d}",
+  tabs:[["terms","Terms of use"],["disclaimer","Disclaimer"],["privacy","Privacy"]],
+  rg:`18+ · Gambling can be addictive. Need help? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>`,
+  terms:()=>`
+  <h2>Terms of use</h2>
+  <p>These terms apply when you use NHL Props Lab (“the site”, “we”). By using the site or creating an account you accept them.</p>
+  <h3>1. What the site is</h3>
+  <p>NHL Props Lab shows statistical estimates for NHL games and players: probabilities, fair odds and comparisons with sportsbook prices. It is an analysis and information tool. We are not a gambling operator: we don't take bets, hold money for you or settle bets.</p>
+  <h3>2. Age and where you live</h3>
+  <p>You must be at least 18, or the legal gambling age where you live if that is higher. You are responsible for following the laws that apply to you, including whether sports betting is allowed where you are. In Sweden, only play with operators licensed by Spelinspektionen.</p>
+  <h3>3. Your account</h3>
+  <ul>
+    <li>Give a correct email address and keep your password to yourself. An account is for one person.</li>
+    <li>You are responsible for what happens on your account.</li>
+    <li>We may suspend or close accounts that break these terms.</li>
+  </ul>
+  <h3>4. Pro subscription</h3>
+  <p>When Pro is available, the price, billing period and how to cancel are shown before you pay. A subscription renews until you cancel it. You can cancel at any time and keep Pro until the end of the period you've paid for. Your right of withdrawal under consumer law, and how it applies to a digital service you start using straight away, is explained at checkout.</p>
+  <h3>5. Fair use</h3>
+  <p>The site is for your own personal use. You may not:</p>
+  <ul>
+    <li>copy, scrape, resell or republish the site's probabilities, picks or data, in whole or in large parts;</li>
+    <li>share your account or Pro access with others;</li>
+    <li>try to get around access limits or interfere with the site's security or operation.</li>
+  </ul>
+  <p>Sharing a single pick or screenshot with friends or on social media is fine.</p>
+  <h3>6. Ownership</h3>
+  <p>The site, its model, texts and design belong to NHL Props Lab. Team names, logos and player names belong to their owners and are used only to identify games and players. NHL Props Lab is not affiliated with, endorsed by or sponsored by the NHL, its teams or any sportsbook.</p>
+  <h3>7. No guarantee</h3>
+  <p>The site is provided as it is. We work to keep it accurate and available, but we can't promise that every number, lineup or price is correct or up to date, or that the site is always online. Features may change. Read the <a href="#disclaimer">disclaimer</a>.</p>
+  <h3>8. Liability</h3>
+  <p>To the extent the law allows, we are not responsible for betting losses or other losses that come from using the site, including decisions based on its probabilities, picks or odds. Nothing in these terms limits rights you have under mandatory consumer law.</p>
+  <h3>9. Changes</h3>
+  <p>We may update these terms. If a change matters for you, we'll say so on the site or by email before it applies. The date at the top shows the latest version.</p>
+  <h3>10. Law and disputes</h3>
+  <p>Swedish law applies. If we can't solve a problem together, consumers in Sweden can turn to the National Board for Consumer Disputes (<a href="https://www.arn.se" rel="noopener">ARN</a>) or a Swedish court.</p>
+  ${CONTACT?`<h3>Contact</h3><p>${mail()}</p>`:""}`,
+  disclaimer:()=>`
+  <h2>Disclaimer</h2>
+  <div class="box"><p><b>Everything on NHL Props Lab is an estimate, not a promise.</b> Nothing on the site is advice to place a bet, financial advice or a guarantee of any result.</p></div>
+  <ul>
+    <li><b>Probabilities are estimates.</b> They come from a statistical model built on past data. The model can be wrong, and a single game is largely chance: a 35% chance misses two times out of three.</li>
+    <li><b>“Best picks” and “value”</b> mean the model's estimate is higher than the chance implied by the odds. They don't mean a bet will win.</li>
+    <li><b>Past results don't guarantee future results.</b> The Track record shows how the model has done; it says nothing certain about tonight.</li>
+    <li><b>Data can be late or wrong.</b> Lineups, starting goalies, injuries and statistics come from public sources and can change or contain errors, sometimes after the site has updated.</li>
+    <li><b>Odds change.</b> Prices shown may be out of date or differ from your sportsbook. Always check the price before you bet.</li>
+    <li><b>Gambling involves risk.</b> Only bet money you can afford to lose, set limits, and take a break if it stops being fun.</li>
+  </ul>
+  <h3>Need help?</h3>
+  <p>Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Exclude yourself from all licensed gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a><br>Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK) · <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US)</p>
+  <h3>Sources</h3>
+  <p>Statistics from MoneyPuck.com and public NHL data. NHL Props Lab is not affiliated with the NHL, its teams or any sportsbook.</p>`,
+  privacy:()=>`
+  <h2>Privacy policy</h2>
+  <p>We collect as little as we can, use it only to run the site, and never sell it.</p>
+  <h3>Who is responsible</h3>
+  <p>NHL Props Lab is responsible (data controller) for the personal data described here.${CONTACT?` Contact: ${mail()}.`:""}</p>
+  <h3>What we store</h3>
+  <ul>
+    <li><b>Account:</b> your email address and login details (your password is stored encrypted by our login provider; we never see it), and your confirmation that you are 18 or older.</li>
+    <li><b>What you save:</b> your picks and the odds you entered, and your alert settings.</li>
+    <li><b>Notifications:</b> if you turn on alerts, a push-notification address for your device.</li>
+    <li><b>Payments (when Pro launches):</b> handled by a payment provider. We see your subscription status, never your full card details.</li>
+    <li><b>Technical logs:</b> our hosting providers keep short-lived logs such as IP address and browser type, for security and to keep the site running.</li>
+  </ul>
+  <h3>In your browser</h3>
+  <p>The site remembers your language, theme, odds format and similar settings in your browser's local storage, and keeps you logged in. We don't use advertising or tracking cookies, and we don't run analytics trackers.</p>
+  <h3>Why we use it</h3>
+  <p>To give you the account and features you asked for (contract), to keep the site secure (legitimate interest), and, once payments exist, to keep accounting records required by law.</p>
+  <h3>Who helps us</h3>
+  <ul>
+    <li>Supabase: database and login, hosted in the EU (Ireland).</li>
+    <li>Vercel and Cloudflare: hosting and fast delivery of the site.</li>
+    <li>Google Fonts: the site's fonts are loaded from Google, which receives your IP address when it delivers them.</li>
+    <li>A payment provider, when Pro launches.</li>
+  </ul>
+  <p>Some of these companies are based in the US; transfers are covered by the EU's standard safeguards.</p>
+  <h3>How long we keep it</h3>
+  <p>As long as you have an account. If you ask us to delete your account, we delete your data within 30 days, except what accounting law requires us to keep (in Sweden, 7 years for payment records).</p>
+  <h3>Your rights</h3>
+  <p>You can ask to see, correct, download or delete your data, or object to how we use it${CONTACT?` by writing to ${mail()}`:""}. You can also complain to the Swedish Authority for Privacy Protection (<a href="https://www.imy.se" rel="noopener">IMY</a>).</p>`
+},
+sv:{
+  title:"Villkor, ansvarsfriskrivning & integritet", upd:"Senast uppdaterad {d}",
+  tabs:[["terms","Användarvillkor"],["disclaimer","Ansvarsfriskrivning"],["privacy","Integritet"]],
+  rg:`18+ · Spel kan vara beroendeframkallande. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>`,
+  terms:()=>`
+  <h2>Användarvillkor</h2>
+  <p>Villkoren gäller när du använder NHL Props Lab (”sajten”, ”vi”). Genom att använda sajten eller skapa ett konto godkänner du dem.</p>
+  <h3>1. Vad sajten är</h3>
+  <p>NHL Props Lab visar statistiska bedömningar för NHL-matcher och spelare: sannolikheter, rättvisa odds och jämförelser med spelbolagens odds. Det är ett analys- och informationsverktyg. Vi är inte ett spelbolag: vi tar inte emot spel, förvarar inga pengar åt dig och avgör inga spel.</p>
+  <h3>2. Ålder och var du bor</h3>
+  <p>Du måste vara minst 18 år, eller den lagliga åldern för spel där du bor om den är högre. Du ansvarar själv för att följa de lagar som gäller för dig, bland annat om sportspel är tillåtet där du är. I Sverige ska du bara spela hos bolag med licens från Spelinspektionen.</p>
+  <h3>3. Ditt konto</h3>
+  <ul>
+    <li>Ange en korrekt e-postadress och håll ditt lösenord för dig själv. Ett konto är för en person.</li>
+    <li>Du ansvarar för det som händer på ditt konto.</li>
+    <li>Vi kan stänga av eller avsluta konton som bryter mot villkoren.</li>
+  </ul>
+  <h3>4. Pro-prenumeration</h3>
+  <p>När Pro finns visas pris, betalningsperiod och hur du säger upp innan du betalar. En prenumeration förnyas tills du säger upp den. Du kan säga upp när som helst och behåller Pro till slutet av perioden du betalat för. Din ångerrätt enligt konsumentlagstiftningen, och hur den gäller för en digital tjänst som du börjar använda direkt, förklaras i kassan.</p>
+  <h3>5. Rimlig användning</h3>
+  <p>Sajten är för ditt eget, personliga bruk. Du får inte:</p>
+  <ul>
+    <li>kopiera, skrapa, sälja vidare eller publicera sajtens sannolikheter, spel eller data, helt eller i stora delar;</li>
+    <li>dela ditt konto eller din Pro-tillgång med andra;</li>
+    <li>försöka kringgå begränsningar eller störa sajtens säkerhet eller drift.</li>
+  </ul>
+  <p>Att dela ett enstaka spel eller en skärmbild med vänner eller i sociala medier går bra.</p>
+  <h3>6. Äganderätt</h3>
+  <p>Sajten, modellen, texterna och designen tillhör NHL Props Lab. Lagnamn, logotyper och spelarnamn tillhör sina ägare och används bara för att visa vilka matcher och spelare det gäller. NHL Props Lab är inte knutet till, godkänt av eller sponsrat av NHL, lagen eller något spelbolag.</p>
+  <h3>7. Ingen garanti</h3>
+  <p>Sajten tillhandahålls i befintligt skick. Vi arbetar för att den ska vara korrekt och tillgänglig, men vi kan inte lova att varje siffra, uppställning eller odds stämmer eller är uppdaterad, eller att sajten alltid är uppe. Funktioner kan ändras. Läs <a href="#disclaimer">ansvarsfriskrivningen</a>.</p>
+  <h3>8. Ansvar</h3>
+  <p>I den mån lagen tillåter ansvarar vi inte för spelförluster eller andra förluster som uppstår när du använder sajten, inklusive beslut som bygger på dess sannolikheter, spel eller odds. Inget i villkoren begränsar dina rättigheter enligt tvingande konsumentlagstiftning.</p>
+  <h3>9. Ändringar</h3>
+  <p>Vi kan uppdatera villkoren. Om en ändring har betydelse för dig meddelar vi det på sajten eller via e-post innan den börjar gälla. Datumet högst upp visar senaste versionen.</p>
+  <h3>10. Lag och tvister</h3>
+  <p>Svensk lag gäller. Om vi inte löser ett problem tillsammans kan konsumenter i Sverige vända sig till Allmänna reklamationsnämnden (<a href="https://www.arn.se" rel="noopener">ARN</a>) eller svensk domstol.</p>
+  ${CONTACT?`<h3>Kontakt</h3><p>${mail()}</p>`:""}`,
+  disclaimer:()=>`
+  <h2>Ansvarsfriskrivning</h2>
+  <div class="box"><p><b>Allt på NHL Props Lab är bedömningar, inga löften.</b> Inget på sajten är en uppmaning att spela, finansiell rådgivning eller en garanti för något resultat.</p></div>
+  <ul>
+    <li><b>Sannolikheter är bedömningar.</b> De kommer från en statistisk modell byggd på historisk data. Modellen kan ha fel, och en enskild match är till stor del slump: en chans på 35 % missar två gånger av tre.</li>
+    <li><b>”Bästa spel” och ”värde”</b> betyder att modellens bedömning är högre än chansen som oddset motsvarar. Det betyder inte att spelet vinner.</li>
+    <li><b>Tidigare resultat är ingen garanti för framtida.</b> Facit visar hur modellen har gått; det säger inget säkert om kvällens matcher.</li>
+    <li><b>Data kan vara sen eller fel.</b> Uppställningar, startmålvakter, skador och statistik kommer från offentliga källor och kan ändras eller innehålla fel, ibland efter att sajten uppdaterats.</li>
+    <li><b>Odds ändras.</b> Oddsen som visas kan vara inaktuella eller skilja sig från ditt spelbolag. Kontrollera alltid oddset innan du spelar.</li>
+    <li><b>Spel innebär risk.</b> Spela bara för pengar du har råd att förlora, sätt gränser och ta en paus om det slutar vara roligt.</li>
+  </ul>
+  <h3>Behöver du hjälp?</h3>
+  <p>Sverige: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från allt licensierat spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a><br>Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK) · <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA)</p>
+  <h3>Källor</h3>
+  <p>Statistik från MoneyPuck.com och offentlig NHL-data. NHL Props Lab är inte knutet till NHL, lagen eller något spelbolag.</p>`,
+  privacy:()=>`
+  <h2>Integritetspolicy</h2>
+  <p>Vi samlar in så lite som möjligt, använder det bara för att driva sajten och säljer det aldrig.</p>
+  <h3>Vem som ansvarar</h3>
+  <p>NHL Props Lab är personuppgiftsansvarig för de uppgifter som beskrivs här.${CONTACT?` Kontakt: ${mail()}.`:""}</p>
+  <h3>Vad vi sparar</h3>
+  <ul>
+    <li><b>Konto:</b> din e-postadress och inloggningsuppgifter (lösenordet lagras krypterat hos vår inloggningsleverantör; vi ser det aldrig) och din bekräftelse på att du är 18 år eller äldre.</li>
+    <li><b>Det du sparar:</b> dina spel och oddsen du angett, och dina aviseringsinställningar.</li>
+    <li><b>Aviseringar:</b> om du slår på aviseringar, en pushadress för din enhet.</li>
+    <li><b>Betalningar (när Pro lanseras):</b> hanteras av en betalleverantör. Vi ser din prenumerationsstatus, aldrig dina fullständiga kortuppgifter.</li>
+    <li><b>Tekniska loggar:</b> våra driftleverantörer sparar kortlivade loggar som IP-adress och webbläsartyp, för säkerhet och drift.</li>
+  </ul>
+  <h3>I din webbläsare</h3>
+  <p>Sajten kommer ihåg språk, tema, oddsformat och liknande inställningar i webbläsarens lokala lagring, och håller dig inloggad. Vi använder inga reklam- eller spårningskakor och inga analysverktyg som spårar dig.</p>
+  <h3>Varför vi använder uppgifterna</h3>
+  <p>För att ge dig kontot och funktionerna du bett om (avtal), för att hålla sajten säker (berättigat intresse) och, när betalningar finns, för bokföring som lagen kräver.</p>
+  <h3>Vem som hjälper oss</h3>
+  <ul>
+    <li>Supabase: databas och inloggning, i EU (Irland).</li>
+    <li>Vercel och Cloudflare: drift och snabb leverans av sajten.</li>
+    <li>Google Fonts: sajtens typsnitt hämtas från Google, som får din IP-adress när de levereras.</li>
+    <li>En betalleverantör, när Pro lanseras.</li>
+  </ul>
+  <p>Vissa av företagen finns i USA; överföringar skyddas av EU:s standardskydd.</p>
+  <h3>Hur länge vi sparar</h3>
+  <p>Så länge du har ett konto. Om du ber oss radera kontot raderar vi dina uppgifter inom 30 dagar, utom det bokföringslagen kräver att vi sparar (7 år för betalningsunderlag).</p>
+  <h3>Dina rättigheter</h3>
+  <p>Du kan begära att se, rätta, ladda ner eller radera dina uppgifter, eller invända mot hur vi använder dem${CONTACT?` genom att skriva till ${mail()}`:""}. Du kan också klaga hos Integritetsskyddsmyndigheten (<a href="https://www.imy.se" rel="noopener">IMY</a>).</p>`
+}};
+let LANG = (()=>{ const s=store.get("set:lang"); if(s==="en"||s==="sv") return s; return (navigator.language||"").toLowerCase().startsWith("sv")?"sv":"en"; })();
+const $ = s => document.querySelector(s);
+function currentTheme(){ return document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"); }
+function applyTheme(th){ if (th) document.documentElement.dataset.theme = th; $("#theme").textContent = currentTheme()==="light" ? "☾" : "☀"; }
+function render(){
+  const L = C[LANG];
+  document.documentElement.lang = LANG;
+  document.title = L.title + " · NHL Props Lab";
+  document.querySelectorAll("#lang button").forEach(b => b.classList.toggle("on", b.dataset.l===LANG));
+  $("#tabs").innerHTML = L.tabs.map(([id,n]) => `<a href="#${id}" data-id="${id}">${n}</a>`).join("");
+  $("#main").innerHTML = `<h1>${L.title}</h1><p class="upd">${L.upd.replace("{d}", new Date(UPDATED+"T12:00:00").toLocaleDateString(LANG==="sv"?"sv-SE":"en-GB",{day:"numeric",month:"long",year:"numeric"}))}</p>`
+    + L.tabs.map(([id]) => `<section id="${id}">${L[id]()}</section>`).join("");
+  $("#rg").innerHTML = L.rg;
+  $("#yr").textContent = new Date().getFullYear();
+  spy();
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView({behavior:"instant"}); }
+}
+function spy(){
+  let cur = "terms";
+  document.querySelectorAll("main section").forEach(s => { if (s.getBoundingClientRect().top < 160) cur = s.id; });
+  document.querySelectorAll("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.id===cur));
+}
+addEventListener("scroll", spy, {passive:true});
+$("#lang").addEventListener("click", e => { const b = e.target.closest("button[data-l]"); if (!b) return; LANG = b.dataset.l; store.set("set:lang", LANG); render(); });
+$("#theme").addEventListener("click", () => { const nx = currentTheme()==="light" ? "dark" : "light"; store.set("set:theme", nx); applyTheme(nx); });
+applyTheme(store.get("set:theme"));
+render();
+</script>
+</body>
+</html>

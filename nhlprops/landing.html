@@ -191,6 +191,21 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
 .age{display:inline-grid;place-items:center;width:34px;height:34px;border:2px solid var(--mute);border-radius:50%;font-weight:800;font-size:12px;color:var(--text);margin-right:10px}
 .rg{display:flex;align-items:center;max-width:620px;line-height:1.5}.rg a{color:inherit;text-decoration:underline;text-underline-offset:2px}.age{flex:none}
 
+/* also inside + faq */
+.also{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.also-h{font-weight:700;font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--mute)}
+.also ul{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.also li{font-size:13.5px;font-weight:600;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.faqwrap{max-width:820px}
+.faq details{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);margin-bottom:10px;transition:border-color .2s}
+.faq details[open]{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.faq summary{cursor:pointer;list-style:none;padding:16px 48px 16px 18px;font-weight:700;font-size:16px;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font:700 22px/1 var(--f-disp);color:var(--accent);transition:transform .2s}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq .a{padding:0 18px 16px;color:var(--mute);font-size:15px}
+.faq .a p{margin:0 0 8px}.faq .a a{color:var(--text);text-decoration:underline;text-underline-offset:2px}
+
 /* responsive */
 @media (max-width:1000px){
   .links{display:none}
@@ -231,6 +246,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
       <a href="#previews" data-t="nav_previews"></a>
       <a href="#features" data-t="nav_features"></a>
       <a href="#plans" data-t="nav_plans"></a>
+      <a href="#faq" data-t="nav_faq"></a>
     </nav>
     <div class="hright">
       <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
@@ -253,8 +269,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
           <a class="btn ghost" href="#tonight" data-t="cta_tonight"></a>
         </div>
         <div class="proof">
-          <div><b>214,000</b><span data-t="p1"></span></div>
-          <div><b>6,128</b><span data-t="p2"></span></div>
+          <div><b>200k+</b><span data-t="p1"></span></div>
+          <div><b>6,000+</b><span data-t="p2"></span></div>
           <div><b data-t="p3n"></b><span data-t="p3"></span></div>
         </div>
       </div>
@@ -287,6 +303,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
         <div class="fcard"><div class="fshot"><img src="assets/el-picks.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f2h"></h3><p data-t="f2p"></p></div></div>
         <div class="fcard"><div class="fshot"><img src="assets/el-grid.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f3h"></h3><p data-t="f3p"></p></div></div>
       </div>
+      <div class="also"><span class="also-h" data-t="also_h"></span><ul id="also"></ul></div>
     </div>
   </section>
 
@@ -337,6 +354,13 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
     </div>
   </section>
 
+  <section id="faq">
+    <div class="wrap faqwrap">
+      <div class="sh" style="justify-content:center;text-align:center"><div><h2 data-t="faq_h"></h2><p class="sub" data-t="faq_sub" style="margin-inline:auto"></p></div></div>
+      <div class="faq" id="faqlist"></div>
+    </div>
+  </section>
+
   <div class="final wrap">
     <h2 data-t="final_h"></h2>
     <p class="sub" data-t="final_p" style="margin-inline:auto"></p>
@@ -347,7 +371,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
 <footer>
   <div class="wrap fgrid2">
     <div class="rg"><span class="age">18+</span><span data-t="rg" data-html></span></div>
-    <div class="fl"><button class="iconbtn show-m themebtn" type="button" aria-label="Theme"></button><a href="#" data-t="terms"></a><a href="#" data-t="privacy"></a><span>Stats: MoneyPuck.com</span><span>© <span id="yr"></span> NHL Props Lab</span></div>
+    <div class="fl"><button class="iconbtn show-m themebtn" type="button" aria-label="Theme"></button><a href="legal.html#terms" data-t="terms"></a><a href="legal.html#disclaimer" data-t="disclaimer"></a><a href="legal.html#privacy" data-t="privacy"></a><a href="#faq">FAQ</a><span>Stats: MoneyPuck.com</span><span>© <span id="yr"></span> NHL Props Lab</span></div>
   </div>
 </footer>
 
@@ -356,11 +380,11 @@ const LDATA = /*__DATA__*/null;
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const I18N = {
  en:{
-  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans",
+  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans", nav_faq:"FAQ",
   login:"Log in", start_free:"Start free",
   eyebrow:"Updated before every puck drop",
   h1:"Pick NHL props with <em>numbers</em>, not hunches.",
-  lead:"The chance of a goal, assist, point and shots for every skater, every game. Tested on thousands of real games, so the percentages mean what they say.",
+  lead:"The chance of a goal, point, shots, hits and blocks for every skater, plus the score, puck line and totals for every game. Tested on thousands of real games, so the percentages mean what they say.",
   cta_free:"Create free account", cta_tonight:"See tonight's games", cta_pro:"Go Pro",
   p1:"player-games tested", p2:"games replayed", p3n:"2×", p3:"lineup checks per game",
   tonight_h:"Tonight", all_games:"All games →",
@@ -368,29 +392,42 @@ const I18N = {
   prev_h:"Game previews", prev_sub:"A two-minute read on every game: the news, the streaks and records, and where the model and the market disagree.",
   prev_soon:"Preview publishes on game day", read_prev:"Read preview →", all_prev:"All previews →", open_match:"Open matchup →", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
   feat_h:"Everything you need, nothing you don't", feat_sub:"Three views do most of the work.",
-  f1h:"Every skater, every market", f1p:"Goal, assist, point and shots on goal for the whole lineup, with the market's price next to the model's.",
+  f1h:"Every skater, every market", f1p:"Goals, assists, points, shots, hits, blocks, multi-point, power-play points, faceoffs and penalties for the whole lineup, with the market's price next to the model's.",
   f2h:"Two picks per game, with reasons", f2p:"The two strongest options in each game and the facts behind them: ice time, opponent, goalie, recent form.",
-  f3h:"The whole game in one view", f3p:"Win chance, total goals and the most likely final scores, updated when the starting goalie changes.",
+  f3h:"The whole game in one view", f3p:"Win chance, total goals, puck line, 1st period, team shots and goalie saves, plus each team's last 6 games. Everything updates when the starting goalie changes.",
   scr_h:"Phone, tablet or desktop", scr_sub:"Built for every screen. Add it to your home screen and it opens like an app.",
   s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
   plans_h:"Start free. Upgrade when it pays.", plans_sub:"A free account shows how it works. Pro unlocks every player and every edge.",
   free_n:"Free", per_month:"/ month", pro_n:"Pro", pro_badge:"Full access", pro_price:"– <small>price at launch</small>",
-  free_items:[["y","Tonight's games: projected score, win chance, total goals"],["y","Game previews, injuries, lineups and starting goalies"],["y","One forward and one defenceman per team, fully open"],["y","Top 3 players in each market"],["y","Player pages: last 10 games and hit rates"],["n","Every player's goal, assist, point and shot chances"],["n","Best picks and value against the market"]],
-  pro_items:[["y","Everything in Free"],["y","Every player's goal, assist, point and shot chances"],["y","Best picks in every game"],["y","Value against the market on every prop"],["y","Full Top props with filters and sorting"],["y","Player charts, full history and how each number is built"],["y","Lineup and goalie refreshes before every puck drop"]],
+  free_items:[["y","Every game: projected score, win chance, total goals, puck line and more markets"],["y","Previews, lineups, starting goalies and injuries"],["y","Team ranks, what each defence allows, team shots"],["y","One forward and one defenceman per team, fully open"],["y","Player pages: last 10 games, streaks and milestones"],["n","Every player in every market"],["n","Best picks and value against the market"]],
+  pro_items:[["y","Everything in Free"],["y","Every player: goals, points, shots, hits, blocks and more"],["y","Best picks and value against the market on every prop"],["y","First goalscorer, multi-point, power play, faceoffs, penalties"],["y","Full hit rates, matchups and shot maps"],["y","Odds movement and alerts"],["y","How every number is built"]],
   how_h:"How it works",
   st1h:"Real talent, not hot streaks", st1p:"Each player's scoring rate is pulled toward his true level, so a lucky week doesn't fool the numbers.",
-  st2h:"Tonight's context", st2p:"Ice time, the opponent's defence, the starting goalie, home ice and rest, all checked against the latest lineups.",
+  st2h:"Tonight's context", st2p:"Ice time, line and power-play role, the opponent's defence, the starting goalie, home ice and back-to-backs, all checked against the latest lineups.",
   st3h:"A chance you can compare", st3p:"Every number is a probability you can hold up against the odds. You decide.",
   final_h:"Tonight's numbers are ready.", final_p:"Free to start. No card needed.",
   rg:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`,
-  terms:"Terms", privacy:"Privacy"
+  terms:"Terms", privacy:"Privacy", disclaimer:"Disclaimer",
+  also_h:"Also inside", also:["Shot maps","Streaks & milestones","Linemates","Goalie saves & shutouts","First goalscorer","Game previews","Odds alerts","Track record"],
+  faq_h:"Questions", faq_sub:"The short answers. Everything else is in How it works inside the app.",
+  faq:[
+   ["Is this a betting site?","<p>No. NHL Props Lab is an analysis tool. We don't take bets or hold money. You place bets with your own licensed sportsbook, if you want to.</p>"],
+   ["Does a high percentage mean I should bet?","<p>Not on its own. What matters is the chance compared with the odds. A 60% chance at odds of 1.50 loses money over time; a 30% chance at 4.00 makes money. That's what <i>value</i> and <i>EV</i> show.</p>"],
+   ["How accurate is it?","<p>The model was tested on thousands of past games using only what was known before each game, and its percentages match how often things really happen. Every prediction is also graded after the game on the Track record page. Even good probabilities lose often: a 35% chance misses two times out of three.</p>"],
+   ["Why doesn't a player on a hot streak get a higher chance?","<p>Because streaks mostly don't continue. The model starts from a player's real level over a long stretch, then gives recent form a little weight. In testing, that beat following the streak.</p>"],
+   ["When is it updated?","<p>Through the day, then about an hour before each puck drop with the official lineups, and again about 30 minutes before, when starting goalies are usually confirmed. At puck drop the numbers are locked.</p>"],
+   ["Which odds are shown?","<p>Prices from a major sportsbook when they're available. You can type the odds from your own sportsbook in any odds box, as decimal, American or fractional, and the value updates.</p>"],
+   ["What does Pro add?","<p>Pro unlocks every player in every market, best picks and value against the market, first goalscorer, multi-point, power-play, faceoff and penalty props, full hit rates, matchups and shot maps, odds movement and alerts. Free keeps every game page, previews and team stats.</p>"],
+   ["What do you store about me?","<p>Your email, your saved picks and your settings. No advertising or tracking cookies. Read the <a href=\"legal.html#privacy\">privacy policy</a>.</p>"],
+   ["I'm worried about my gambling.","<p>Talk to someone. In Sweden, call <a href=\"https://www.stodlinjen.se\" rel=\"noopener\">Stödlinjen</a> on 020-81 91 00 (free and anonymous) or exclude yourself from all licensed gambling at <a href=\"https://www.spelpaus.se\" rel=\"noopener\">Spelpaus.se</a>. Elsewhere: <a href=\"https://www.begambleaware.org\" rel=\"noopener\">BeGambleAware</a> (UK), <a href=\"https://www.ncpgambling.org\" rel=\"noopener\">1-800-GAMBLER</a> (US).</p>"]
+  ]
  },
  sv:{
-  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer",
+  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer", nav_faq:"Frågor",
   login:"Logga in", start_free:"Börja gratis",
   eyebrow:"Uppdateras före varje nedsläpp",
   h1:"Välj NHL-spel med <em>siffror</em>, inte magkänsla.",
-  lead:"Chansen till mål, assist, poäng och skott för varje spelare i varje match. Testat på tusentals riktiga matcher, så att procenten betyder det de säger.",
+  lead:"Chansen till mål, poäng, skott, tacklingar och blockeringar för varje spelare, plus resultat, puck line och totalmål för varje match. Testat på tusentals riktiga matcher, så att procenten betyder det de säger.",
   cta_free:"Skapa gratiskonto", cta_tonight:"Se kvällens matcher", cta_pro:"Uppgradera till Pro",
   p1:"testade spelarmatcher", p2:"matcher omspelade", p3n:"2×", p3:"uppställningskontroller per match",
   tonight_h:"I kväll", all_games:"Alla matcher →",
@@ -398,22 +435,35 @@ const I18N = {
   prev_h:"Förhandstittar", prev_sub:"Två minuters läsning om varje match: nyheterna, sviterna och rekorden, och var modellen och marknaden är oense.",
   prev_soon:"Förhandstitten publiceras på matchdagen", read_prev:"Läs förhandstitten →", all_prev:"Alla förhandstittar →", open_match:"Öppna matchen →", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
   feat_h:"Allt du behöver, inget du inte behöver", feat_sub:"Tre vyer gör det mesta av jobbet.",
-  f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng och skott på mål för hela uppställningen, med marknadens odds bredvid modellens.",
+  f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng, skott, tacklingar, blockeringar, flera poäng, PP-poäng, tekningar och utvisningar för hela uppställningen, med marknadens odds bredvid modellens.",
   f2h:"Två spel per match, med skäl", f2p:"De två starkaste alternativen i varje match och fakta bakom dem: istid, motstånd, målvakt, aktuell form.",
-  f3h:"Hela matchen i en vy", f3p:"Vinstchans, totalt antal mål och de mest troliga slutresultaten, uppdaterat när startmålvakten ändras.",
+  f3h:"Hela matchen i en vy", f3p:"Vinstchans, totalmål, puck line, första perioden, lagens skott och målvaktsräddningar, plus varje lags senaste 6 matcher. Allt uppdateras när startmålvakten ändras.",
   scr_h:"Mobil, surfplatta eller dator", scr_sub:"Byggd för alla skärmar. Lägg den på hemskärmen så öppnas den som en app.",
   s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
   plans_h:"Börja gratis. Uppgradera när det lönar sig.", plans_sub:"Ett gratiskonto visar hur det fungerar. Pro låser upp varje spelare och varje edge.",
   free_n:"Gratis", per_month:"/ månad", pro_n:"Pro", pro_badge:"Full tillgång", pro_price:"– <small>pris vid lansering</small>",
-  free_items:[["y","Kvällens matcher: beräknat resultat, vinstchans, totalt antal mål"],["y","Förhandstittar, skador, uppställningar och startmålvakter"],["y","En forward och en back per lag, helt öppna"],["y","Topp 3 spelare i varje marknad"],["y","Spelarsidor: senaste 10 matcherna och träffprocent"],["n","Varje spelares chans till mål, assist, poäng och skott"],["n","Bästa spelen och värde mot marknaden"]],
-  pro_items:[["y","Allt i Gratis"],["y","Varje spelares chans till mål, assist, poäng och skott"],["y","Bästa spelen i varje match"],["y","Värde mot marknaden på varje spel"],["y","Fullständiga toppspel med filter och sortering"],["y","Spelargrafer, full historik och hur varje siffra byggs"],["y","Uppställnings- och målvaktsuppdateringar före varje nedsläpp"]],
+  free_items:[["y","Varje match: beräknat resultat, vinstchans, totalmål, puck line och fler spel"],["y","Förhandstittar, uppställningar, startmålvakter och skador"],["y","Lagrankning, vad varje försvar släpper till, lagens skott"],["y","En forward och en back per lag, helt öppna"],["y","Spelarsidor: senaste 10 matcherna, sviter och milstolpar"],["n","Varje spelare i varje spel"],["n","Bästa spelen och värde mot marknaden"]],
+  pro_items:[["y","Allt i Gratis"],["y","Varje spelare: mål, poäng, skott, tacklingar, blockeringar med mera"],["y","Bästa spelen och värde mot marknaden på varje spel"],["y","Första målskytt, flera poäng, powerplay, tekningar, utvisningar"],["y","Full träffprocent, matchups och skottkartor"],["y","Oddsrörelser och aviseringar"],["y","Hur varje siffra byggs"]],
   how_h:"Så fungerar det",
   st1h:"Verklig talang, inte heta sviter", st1p:"Varje spelares målfrekvens dras mot hans verkliga nivå, så en tursam vecka lurar inte siffrorna.",
-  st2h:"Kvällens sammanhang", st2p:"Istid, motståndarens försvar, startmålvakten, hemmaplan och vila, allt kontrollerat mot de senaste uppställningarna.",
+  st2h:"Kvällens sammanhang", st2p:"Istid, kedja och powerplayroll, motståndarens försvar, startmålvakten, hemmaplan och back-to-back, allt kontrollerat mot de senaste uppställningarna.",
   st3h:"En chans du kan jämföra", st3p:"Varje siffra är en sannolikhet du kan ställa mot oddsen. Du bestämmer.",
   final_h:"Kvällens siffror är klara.", final_p:"Gratis att börja. Inget kort behövs.",
   rg:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`,
-  terms:"Villkor", privacy:"Integritet"
+  terms:"Villkor", privacy:"Integritet", disclaimer:"Ansvarsfriskrivning",
+  also_h:"Även i appen", also:["Skottkartor","Sviter & milstolpar","Kedjekamrater","Räddningar & nollor","Första målskytt","Förhandstittar","Oddsaviseringar","Facit"],
+  faq_h:"Frågor", faq_sub:"De korta svaren. Allt annat finns under Så fungerar det i appen.",
+  faq:[
+   ["Är det här en spelsajt?","<p>Nej. NHL Props Lab är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar. Du spelar hos ditt eget licensierade spelbolag, om du vill.</p>"],
+   ["Betyder en hög procent att jag ska spela?","<p>Inte i sig. Det som räknas är chansen jämfört med oddset. En chans på 60 % till odds 1,50 förlorar pengar över tid; en chans på 30 % till 4,00 vinner. Det är det <i>värde</i> och <i>EV</i> visar.</p>"],
+   ["Hur träffsäker är den?","<p>Modellen har testats på tusentals tidigare matcher med bara det som var känt före varje match, och procenten stämmer med hur ofta saker faktiskt händer. Varje prognos rättas också efter matchen på sidan Facit. Även bra sannolikheter förlorar ofta: en chans på 35 % missar två gånger av tre.</p>"],
+   ["Varför får inte en spelare i het form högre chans?","<p>För att sviter oftast inte håller i sig. Modellen utgår från spelarens verkliga nivå över en längre period och ger den senaste formen lite vikt. I testerna slog det att följa sviten.</p>"],
+   ["När uppdateras den?","<p>Under dagen, sedan ungefär en timme före varje nedsläpp med de officiella uppställningarna, och igen ungefär 30 minuter före, när startmålvakterna brukar bekräftas. Vid nedsläpp låses siffrorna.</p>"],
+   ["Vilka odds visas?","<p>Odds från ett stort spelbolag när de finns. Du kan skriva in oddsen från ditt eget spelbolag i varje oddsruta, som decimal, amerikanska eller bråk, så uppdateras värdet.</p>"],
+   ["Vad ger Pro?","<p>Pro låser upp varje spelare i varje spel, bästa spelen och värde mot marknaden, första målskytt, flera poäng, powerplay, tekningar och utvisningar, full träffprocent, matchups och skottkartor, oddsrörelser och aviseringar. Gratis behåller alla matchsidor, förhandstittar och lagstatistik.</p>"],
+   ["Vad sparar ni om mig?","<p>Din e-post, dina sparade spel och dina inställningar. Inga reklam- eller spårningskakor. Läs <a href=\"legal.html#privacy\">integritetspolicyn</a>.</p>"],
+   ["Jag är orolig för mitt spelande.","<p>Prata med någon. Ring <a href=\"https://www.stodlinjen.se\" rel=\"noopener\">Stödlinjen</a> på 020-81 91 00 (gratis och anonymt) eller stäng av dig från allt licensierat spel på <a href=\"https://www.spelpaus.se\" rel=\"noopener\">Spelpaus.se</a>. Utanför Sverige: <a href=\"https://www.begambleaware.org\" rel=\"noopener\">BeGambleAware</a> (UK), <a href=\"https://www.ncpgambling.org\" rel=\"noopener\">1-800-GAMBLER</a> (USA).</p>"]
+  ]
  }
 };
 let LANG = (()=>{ const s=store.get("set:lang"); if(s==="en"||s==="sv") return s; return (navigator.language||"").toLowerCase().startsWith("sv")?"sv":"en"; })();
@@ -466,6 +516,9 @@ function plans(){
   const li = ([k,txt]) => `<li class="${k}">${ico[k]}<span>${esc(txt)}</span></li>`;
   $("#free_list").innerHTML = t("free_items").map(li).join("");
   $("#pro_list").innerHTML = t("pro_items").map(li).join("");
+  $("#also").innerHTML = t("also").map(x => `<li>${x}</li>`).join("");
+  const open = new Set([...document.querySelectorAll("#faqlist details[open]")].map(d => d.dataset.i));
+  $("#faqlist").innerHTML = t("faq").map(([q,a],i) => `<details data-i="${i}"${open.has(String(i))?" open":""}><summary>${q}</summary><div class="a">${a}</div></details>`).join("");
 }
 function render(){
   document.documentElement.lang = LANG;
