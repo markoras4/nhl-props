@@ -52,7 +52,7 @@ def markets(mh, ma, tie_boost, p1_share, p1_tie, en_q=0.0):
     out = {"h1": hw, "x": tie, "a2": aw,
            # empty net: a one-goal lead at the end of regulation becomes two with probability en_q
            "hpl": j[i_ - k_ >= 2].sum() + en_q * j[i_ - k_ == 1].sum(), "apl": j[k_ - i_ >= 2].sum() + en_q * j[k_ - i_ == 1].sum(),
-           "btts": btts}
+           "btts": btts, "btts60": j[(i_ >= 1) & (k_ >= 1)].sum(), "btts2_60": j[(i_ >= 2) & (k_ >= 2)].sum()}
     for L in (2.5, 3.5):
         out[f"htt{L}"] = fh[int(L) + 1:].sum()
         out[f"att{L}"] = fa[int(L) + 1:].sum()
@@ -124,7 +124,7 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     rh = np.where(reg_tie & (d.hs > d.as_), d.hs - 1, d.hs)
     ra = np.where(reg_tie & (d.as_ > d.hs), d.as_ - 1, d.as_)
     y = {"h1": (rh > ra), "x": (rh == ra), "a2": (rh < ra), "hpl": (d.hs - d.as_ >= 2), "apl": (d.as_ - d.hs >= 2),
-         "btts": (d.hs >= 1) & (d.as_ >= 1), "htt2.5": d.hs > 2.5, "htt3.5": d.hs > 3.5, "att2.5": d.as_ > 2.5, "att3.5": d.as_ > 3.5}
+         "btts": (d.hs >= 1) & (d.as_ >= 1), "btts60": (rh >= 1) & (ra >= 1), "btts2_60": (rh >= 2) & (ra >= 2), "htt2.5": d.hs > 2.5, "htt3.5": d.hs > 3.5, "att2.5": d.as_ > 2.5, "att3.5": d.as_ > 3.5}
     ok1 = d.p1h.notna()
     rep = {"seasons": seasons, "games": int(len(d)), "p1_games": int(ok1.sum())}
     tot_reg = (rh + ra).astype(float)
@@ -177,7 +177,7 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
 
 
 NAMES = {"h1": "Home win (regulation)", "x": "Draw after 60 min", "a2": "Away win (regulation)",
-         "hpl": "Home -1.5", "apl": "Away -1.5", "btts": "Both teams to score",
+         "hpl": "Home -1.5", "apl": "Away -1.5", "btts": "Both teams to score (incl. OT)", "btts60": "Both teams to score (60 min)", "btts2_60": "Both teams 2+ goals (60 min)",
          "htt2.5": "Home over 2.5", "htt3.5": "Home over 3.5", "att2.5": "Away over 2.5", "att3.5": "Away over 3.5",
          "p1o0.5": "1st period over 0.5", "p1o1.5": "1st period over 1.5", "p1o2.5": "1st period over 2.5", "p1x": "1st period draw"}
 
