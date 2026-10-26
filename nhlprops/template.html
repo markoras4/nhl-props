@@ -333,6 +333,11 @@ td.h{text-align:center;padding:4px}
 .hrc{display:flex;flex-wrap:wrap;gap:8px}
 .hr{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:6px 10px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
 .gridm{margin:10px 0 8px}
+.kvl.tip{cursor:help;text-decoration:underline dotted color-mix(in srgb,var(--mute) 60%,transparent);text-underline-offset:3px}
+.kvl.tip:hover::after,.kvl.tip:focus::after{left:0;transform:none}.kvl.tip:hover::before,.kvl.tip:focus::before{left:14px;transform:none}
+.chip.tip{cursor:help}.hinfo{color:var(--accent);font-size:13px;margin-left:4px;text-transform:none}
+.hinfo.tip:hover::after,.hinfo.tip:focus::after{left:0;transform:none;width:280px;max-width:80vw;top:calc(100% + 8px);bottom:auto}
+.hinfo.tip:hover::before,.hinfo.tip:focus::before{display:none}
 .gmbox{margin:14px 0}.gmgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px 22px}
 .gms h5{margin:0 0 6px;font-size:13px}.gmh,.gmr{display:grid;grid-template-columns:minmax(0,1fr) 54px 50px 70px 54px;gap:6px;align-items:center}
 .gmh{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;padding-bottom:4px;border-bottom:1px solid var(--line)}
@@ -588,7 +593,7 @@ const I18N = {
     pv_note:"\"Market %\" is the probability implied by the odds, with the margin removed. EV uses your odds if you type them, otherwise the market odds. EV = model probability × odds − 1.",
     built:"How the number is built", c_g60:"Goals/60", c_a60:"Assists/60", c_s60:"Shots/60", c_def:"Opp defence", c_gk:"Opp goalie", c_home:"Home", c_away:"Away", c_b2b:"Back-to-back", c_env:"League scoring", c_streak:"Streak rule",
     k_xga:"Expected goals / assists", k_xs:"Expected shots on goal", k_og:"Opposing goalie", k_toi:"TOI last 10 / season",
-    reg:"Regression to the mean", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
+    reg:"Skill or luck?", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
     k_spg:"Typical shots per goal", k_drought:"How often a drought this long happens at his level",
     last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", l10_h:"H", l10_b:"B", l10_tip_h:"Hits", l10_tip_b:"Blocked shots", l10_avg_last:"Average, last {n}",
@@ -655,6 +660,32 @@ const I18N = {
     st_note:"A drought or a streak doesn't change his chance tonight: the chance shown already uses his real level.",
     st_foot:"Droughts are listed only for regular producers (12+ minutes, goal chance 12%+ or point chance 35%+) and only when rare (1 in 12 or less at his level); hot streaks from 5 games with a point or 3 with a goal; career milestones (regular season) within 2, when he has a real chance (8%+) to reach one tonight.",
     st_none:"No notable streaks or milestones for this selection.",
+    tt_built:"How tonight's chances are calculated: his level per 60 minutes × the minutes he's expected to play × tonight's adjustments. ×1.000 means no effect; above 1 helps him, below 1 hurts.",
+    tt_g60:"His real goal-scoring rate per 60 minutes on the ice, blended from this season and previous seasons so a few lucky or unlucky games don't swing it.",
+    tt_a60:"His real assist rate per 60 minutes on the ice, blended from this season and previous seasons.",
+    tt_s60:"His real shots-on-goal rate per 60 minutes on the ice.",
+    tt_toi:"Minutes he's expected to play tonight, from his recent and season ice time (and tonight's lineup).",
+    tt_def:"How many chances tonight's opponent gives up compared with an average team. Above 1 = a softer defence.",
+    tt_gk:"Tonight's opposing goalie compared with an average goalie. Below 1 = a better goalie, so a little harder to score. Changes when you switch goalies.",
+    tt_home:"Players score slightly more at home.", tt_away:"Players score slightly less on the road.",
+    tt_b2b:"Back-to-back: a team playing its second game in two nights is a little weaker (more so on the road). 1.000 = neither team played yesterday.",
+    tt_env:"League scoring this season compared with normal. Above 1 = goals are a bit easier to come by this year.",
+    tt_streak:"Team streak adjustment: long winning or losing runs are pulled back toward normal.",
+    tt_xga:"Tonight's expected goals and assists: rate × minutes × all the factors. A goal chance is 1 − e^(−expected goals).",
+    tt_xs:"Tonight's expected shots on goal, the basis for the shots lines.",
+    tt_og:"The goalie the numbers are calculated against (change him on the game page).",
+    tt_ktoi:"His actual average ice time over the last 10 games and this season.",
+    tt_reg:"Is his scoring this season skill or luck? Compares what he has done with what his shots and chances deserved. Big gaps usually shrink over time.",
+    tt_shcur:"Goals divided by shots on goal this season. Early in the season this swings a lot.",
+    tt_shtrue:"The shooting % the model expects from him over time: his career blended with recent seasons, pulled toward the league average for small samples.",
+    tt_shcar:"His career shooting %, pulled slightly toward the league average depending on how many shots he has taken.",
+    tt_lgavg:"Average shooting % for his position, for reference.",
+    tt_gvx:"Goals this season vs what his shots and true-talent shooting % would normally produce. A big gap = running hot or cold.",
+    tt_ixg:"Individual expected goals (from shot location and type): this season / the previous 3 seasons. Measures the quality of his chances.",
+    tt_gmx:"Goals minus expected goals: this season / previous 3 seasons. Positive over several seasons = a genuinely good finisher; this season alone is mostly luck.",
+    tt_since:"Shots on goal since his last goal, and over how many games.",
+    tt_spg:"How many shots he typically needs per goal at his level.",
+    tt_drought:"How often a player of his level goes this many shots without scoring. Low (e.g. 1 in 12) = unusual; high = completely normal.",
     rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older and understand that NHL Props Lab is an analysis tool, not a sportsbook.", au_need18:"Please confirm that you are 18 or older.",
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
@@ -760,7 +791,7 @@ const I18N = {
     pv_note:"\"Marknad-%\" är sannolikheten som oddsen motsvarar, med marginalen borträknad. EV använder dina odds om du skriver in dem, annars marknadsoddsen. EV = modellens sannolikhet × odds − 1.",
     built:"Så räknas siffran fram", c_g60:"Mål/60", c_a60:"Assist/60", c_s60:"Skott/60", c_def:"Motst. försvar", c_gk:"Motst. målvakt", c_home:"Hemma", c_away:"Borta", c_b2b:"Back-to-back", c_env:"Ligans målnivå", c_streak:"Svitregeln",
     k_xga:"Förväntade mål / assist", k_xs:"Förväntade skott på mål", k_og:"Motståndarmålvakt", k_toi:"Istid senaste 10 / säsong",
-    reg:"Regression mot medelvärdet", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
+    reg:"Skicklighet eller tur?", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
     k_spg:"Typiskt antal skott per mål", k_drought:"Hur ofta en så lång torka händer på hans nivå",
     last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", l10_h:"T", l10_b:"B", l10_tip_h:"Tacklingar", l10_tip_b:"Blockerade skott", l10_avg_last:"Snitt, senaste {n}",
@@ -827,6 +858,32 @@ const I18N = {
     st_note:"En torka eller svit ändrar inte hans chans i kväll: chansen som visas bygger redan på hans verkliga nivå.",
     st_foot:"Torka visas bara för ordinarie poänggörare (12+ minuter, målchans 12 %+ eller poängchans 35 %+) och bara när den är ovanlig (1 på 12 eller mer sällan på hans nivå); heta sviter från 5 matcher med poäng eller 3 med mål; milstolpar i karriären (grundserie) inom 2, när han har verklig chans (8 %+) att nå en i kväll.",
     st_none:"Inga sviter eller milstolpar för det här urvalet.",
+    tt_built:"Så räknas kvällens chanser fram: hans nivå per 60 minuter × minuterna han väntas spela × kvällens justeringar. ×1,000 betyder ingen effekt; över 1 hjälper, under 1 sänker.",
+    tt_g60:"Hans verkliga måltakt per 60 minuter på isen, vägd mellan den här och tidigare säsonger så att några tur- eller oturmatcher inte svänger den.",
+    tt_a60:"Hans verkliga assisttakt per 60 minuter på isen, vägd mellan den här och tidigare säsonger.",
+    tt_s60:"Hans verkliga takt för skott på mål per 60 minuter på isen.",
+    tt_toi:"Minuter han väntas spela i kväll, utifrån senaste och säsongens istid (och kvällens uppställning).",
+    tt_def:"Hur många chanser kvällens motståndare släpper till jämfört med ett genomsnittslag. Över 1 = mjukare försvar.",
+    tt_gk:"Kvällens motståndarmålvakt jämfört med en genomsnittlig målvakt. Under 1 = bättre målvakt, lite svårare att göra mål. Ändras när du byter målvakt.",
+    tt_home:"Spelare gör något fler mål hemma.", tt_away:"Spelare gör något färre mål borta.",
+    tt_b2b:"Back-to-back: ett lag som spelar andra matchen på två kvällar är lite svagare (mer på bortaplan). 1,000 = inget av lagen spelade i går.",
+    tt_env:"Ligans målproduktion i år jämfört med normalt. Över 1 = målen kommer lite lättare i år.",
+    tt_streak:"Justering för lagets svit: långa vinst- eller förlustsviter dras tillbaka mot det normala.",
+    tt_xga:"Kvällens förväntade mål och assist: takt × minuter × alla faktorer. Målchansen är 1 − e^(−förväntade mål).",
+    tt_xs:"Kvällens förväntade skott på mål, grunden för skottlinjerna.",
+    tt_og:"Målvakten siffrorna räknas mot (byt på matchsidan).",
+    tt_ktoi:"Hans faktiska snittistid de senaste 10 matcherna och i år.",
+    tt_reg:"Är hans målskytte i år skicklighet eller tur? Jämför vad han gjort med vad hans skott och chanser var värda. Stora skillnader brukar krympa med tiden.",
+    tt_shcur:"Mål delat med skott på mål i år. Tidigt på säsongen svänger det mycket.",
+    tt_shtrue:"Skottprocenten modellen väntar sig av honom över tid: karriären vägd med senaste säsongerna, dragen mot ligasnittet vid litet underlag.",
+    tt_shcar:"Hans skottprocent i karriären, dragen något mot ligasnittet beroende på hur många skott han skjutit.",
+    tt_lgavg:"Genomsnittlig skottprocent för hans position, som jämförelse.",
+    tt_gvx:"Mål i år jämfört med vad hans skott och verkliga skottprocent normalt skulle ge. Stor skillnad = het eller kall period.",
+    tt_ixg:"Individuella förväntade mål (utifrån skottens plats och typ): i år / de tre föregående säsongerna. Mäter kvaliteten på hans chanser.",
+    tt_gmx:"Mål minus förväntade mål: i år / tre föregående säsonger. Positivt över flera säsonger = en riktigt bra avslutare; bara i år är det mest tur.",
+    tt_since:"Skott på mål sedan senaste målet, och på hur många matcher.",
+    tt_spg:"Hur många skott han normalt behöver per mål på sin nivå.",
+    tt_drought:"Hur ofta en spelare på hans nivå går så här många skott utan mål. Lågt (t.ex. 1 på 12) = ovanligt; högt = helt normalt.",
     rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre och förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag.", au_need18:"Bekräfta att du är 18 år eller äldre.",
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
@@ -1671,6 +1728,9 @@ function statsBox(p){
     <p class="note">${note}</p></div>`;
 }
 
+const TT = k => ` tip" tabindex="0" data-tip="${esc(t(k))}`;          // adds a hover/tap explanation to a class list
+const KL = (k, label) => `<span class="kvl tip" tabindex="0" data-tip="${esc(t(k))}">${label}</span>`;
+const HI = k => `<span class="hinfo tip" tabindex="0" data-tip="${esc(t(k))}">ⓘ</span>`;
 function detail(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
@@ -1683,33 +1743,33 @@ function detail(pr, g){
   return `<div class="detail"><div class="dgrid">
     <div class="box" style="grid-column:span 2"><h4>${t("pv")}</h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
       <p class="note">${t("pv_note")}</p></div>
-    <div class="box"><h4>${t("built")}</h4>
+    <div class="box"><h4><span>${t("built")} ${HI("tt_built")}</span></h4>
       <div class="chips">
-        <span class="chip">${t("c_g60")} <b>${fmt(r.g60,2)}</b></span><span class="chip">${t("c_a60")} <b>${fmt(r.a60,2)}</b></span>
-        <span class="chip">${t("c_s60")} <b>${fmt(r.s60,2)}</b></span><span class="chip">${t("toi")} <b>${fmt(p.toi_proj,1)}</b></span>
-        <span class="chip">${t("c_def")} ${x(f.opp_def)}</span><span class="chip">${t("c_gk")} ${x(l.gr)}</span>
-        <span class="chip">${pr.home?t("c_home"):t("c_away")} ${x(f.venue)}</span><span class="chip">${t("c_b2b")} ${x(f.b2b)}</span>${r.fm_g!=null?`<span class="chip tip" tabindex="0" data-tip="${esc(t("c_form_tip",{g:r.fm_g.toFixed(3), a:r.fm_a.toFixed(3), s:r.fm_s.toFixed(3)}))}">${t("c_form")} ${x(r.fm_g)}</span>`:""}
-        <span class="chip">${t("c_env")} ${x(f.env)}</span>${l.sm!==1?`<span class="chip">${t("c_streak")} ${x(l.sm)}</span>`:""}
-        ${p.toi_boost?`<span class="chip" title="${esc(t("ms_boost_tip",{n:p.toi_boost.from.join(", ")}))}">${t("ms_boost")} <b class="up">+${fmt(p.toi_boost.min,1)}</b></span>`:""}
+        <span class="chip${TT("tt_g60")}">${t("c_g60")} <b>${fmt(r.g60,2)}</b></span><span class="chip${TT("tt_a60")}">${t("c_a60")} <b>${fmt(r.a60,2)}</b></span>
+        <span class="chip${TT("tt_s60")}">${t("c_s60")} <b>${fmt(r.s60,2)}</b></span><span class="chip${TT("tt_toi")}">${t("toi")} <b>${fmt(p.toi_proj,1)}</b></span>
+        <span class="chip${TT("tt_def")}">${t("c_def")} ${x(f.opp_def)}</span><span class="chip${TT("tt_gk")}">${t("c_gk")} ${x(l.gr)}</span>
+        <span class="chip${TT(pr.home?"tt_home":"tt_away")}">${pr.home?t("c_home"):t("c_away")} ${x(f.venue)}</span><span class="chip${TT("tt_b2b")}">${t("c_b2b")} ${x(f.b2b)}</span>${r.fm_g!=null?`<span class="chip tip" tabindex="0" data-tip="${esc(t("c_form_tip",{g:r.fm_g.toFixed(3), a:r.fm_a.toFixed(3), s:r.fm_s.toFixed(3)}))}">${t("c_form")} ${x(r.fm_g)}</span>`:""}
+        <span class="chip${TT("tt_env")}">${t("c_env")} ${x(f.env)}</span>${l.sm!==1?`<span class="chip${TT("tt_streak")}">${t("c_streak")} ${x(l.sm)}</span>`:""}
+        ${p.toi_boost?`<span class="chip tip" tabindex="0" data-tip="${esc(t("ms_boost_tip",{n:p.toi_boost.from.join(", ")}))}">${t("ms_boost")} <b class="up">+${fmt(p.toi_boost.min,1)}</b></span>`:""}
       </div>
       <div class="kv" style="margin-top:10px">
-        <span>${t("k_xga")}</span><span>${fmt(l.g,3)} / ${fmt(l.a,3)}</span>
-        <span>${t("k_xs")}</span><span>${fmt(l.s,2)}</span>
-        <span>${t("k_og")}</span><span>${og?esc(og.name):t("unknown")}</span>
-        <span>${t("k_toi")}</span><span>${fmt(p.toi_recent,1)} / ${fmt(p.toi_season,1)}</span>
+        ${KL("tt_xga", t("k_xga"))}<span>${fmt(l.g,3)} / ${fmt(l.a,3)}</span>
+        ${KL("tt_xs", t("k_xs"))}<span>${fmt(l.s,2)}</span>
+        ${KL("tt_og", t("k_og"))}<span>${og?esc(og.name):t("unknown")}</span>
+        ${KL("tt_ktoi", t("k_toi"))}<span>${fmt(p.toi_recent,1)} / ${fmt(p.toi_season,1)}</span>
       </div></div>
-    <div class="box"><h4>${t("reg")}</h4>
+    <div class="box"><h4><span>${t("reg")} ${HI("tt_reg")}</span></h4>
       <div class="kv">
-        <span>${t("k_shcur")}</span><span>${pct(rg.sh,1)} <span class="meta">(${t("g_s",{g:rg.g, s:rg.s})})</span></span>
-        <span>${t("k_shtrue")}</span><span>${pct(r.recent_sh,1)}</span>
-        <span>${t("k_shcar")}</span><span>${pct(r.career_sh,1)}</span>
-        <span>${t("k_lgavg",{p:p.posg})}</span><span>${pct(r.lg_sh,1)}</span>
-        <span>${t("k_gvx")}</span><span>${fmt(rg.g,0)} ${t("vs")} ${fmt(rg.exp,1)}</span>
-        <span>${t("k_ixg")}</span><span>${xgw.cur?fmt(xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.xg,1):"–"}</span>
-        <span>${t("k_gmx")}</span><span>${xgw.cur?fmt(xgw.cur.g-xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.g-xgw.prev3.xg,1):"–"}</span>
-        <span>${t("k_since")}</span><span>${d.found?d.shots:d.shots+"+"} <span class="meta">(${d.games} ${t("gm")})</span></span>
-        <span>${t("k_spg")}</span><span>${fmt(d.shots_per_goal,1)}</span>
-        <span>${t("k_drought")}</span><span>${pct(d.p,0)}${d.p>0&&d.p<0.5?` <span class="meta">(1 / ${Math.round(1/d.p)})</span>`:""}</span>
+        ${KL("tt_shcur", t("k_shcur"))}<span>${pct(rg.sh,1)} <span class="meta">(${t("g_s",{g:rg.g, s:rg.s})})</span></span>
+        ${KL("tt_shtrue", t("k_shtrue"))}<span>${pct(r.recent_sh,1)}</span>
+        ${KL("tt_shcar", t("k_shcar"))}<span>${pct(r.career_sh,1)}</span>
+        ${KL("tt_lgavg", t("k_lgavg",{p:p.posg}))}<span>${pct(r.lg_sh,1)}</span>
+        ${KL("tt_gvx", t("k_gvx"))}<span>${fmt(rg.g,0)} ${t("vs")} ${fmt(rg.exp,1)}</span>
+        ${KL("tt_ixg", t("k_ixg"))}<span>${xgw.cur?fmt(xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.xg,1):"–"}</span>
+        ${KL("tt_gmx", t("k_gmx"))}<span>${xgw.cur?fmt(xgw.cur.g-xgw.cur.xg,1):"–"} / ${xgw.prev3?fmt(xgw.prev3.g-xgw.prev3.xg,1):"–"}</span>
+        ${KL("tt_since", t("k_since"))}<span>${d.found?d.shots:d.shots+"+"} <span class="meta">(${d.games} ${t("gm")})</span></span>
+        ${KL("tt_spg", t("k_spg"))}<span>${fmt(d.shots_per_goal,1)}</span>
+        ${KL("tt_drought", t("k_drought"))}<span>${pct(d.p,0)}${d.p>0&&d.p<0.5?` <span class="meta">(1 / ${Math.round(1/d.p)})</span>`:""}</span>
       </div></div>
     ${oppPosPlayer(pr, p)}
     <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
