@@ -57,6 +57,9 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:co
 nav{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
 .tools{display:flex;gap:8px;align-items:center}
 .tools .seg button{padding:5px 9px;font-size:12px}
+/* desktop/tablet: settings and login top right, the navigation on its own row below (phones use the bottom bar) */
+@media (min-width:641px){ .top{row-gap:10px} .tools{order:3;margin-left:auto} nav{order:4;flex-basis:100%;margin-left:-8px} }
+@media (min-width:641px) and (max-width:1000px){ .brand{order:1} .tools{order:2} .top>.meta{order:3;flex-basis:100%;margin-top:-6px} nav{order:4} }
 .iconbtn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:9px;width:34px;height:32px;display:grid;place-items:center;cursor:pointer;font-size:15px}
 .iconbtn:hover{border-color:var(--accent)}
 nav button{background:none;border:0;color:var(--mute);font-weight:600;padding:8px 12px;border-radius:8px;cursor:pointer}
