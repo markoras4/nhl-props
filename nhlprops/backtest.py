@@ -54,7 +54,7 @@ def season_boxscores(src: Source, season: int, workers: int, log=print) -> tuple
             for key in ("forwards", "defense", "defensemen"):
                 for p in grp.get(key) or []:
                     sk.append({"gid": gm.id, "date": gm.date, "pid": int(p["playerId"]), "team": team, "opp": opp,
-                               "home": home, "posg": "D" if key != "forwards" else "F",
+                               "home": home, "posg": "D" if key != "forwards" else "F", "pos": p.get("position") or ("D" if key != "forwards" else "F"),
                                "g": p.get("goals", 0) or 0, "a": p.get("assists", 0) or 0,
                                "s": p.get("sog", p.get("shots", 0)) or 0, "toi": _toi(p.get("toi")),
                                "hit": p.get("hits", 0) or 0, "blk": p.get("blockedShots", p.get("blocks", 0)) or 0,

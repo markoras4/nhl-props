@@ -18,10 +18,10 @@ on:
         description: "Test team shots and goalie saves"
         type: boolean
         default: false
-      attempts:
-        description: "Test shot attempts vs shots for SOG props"
-        type: boolean
-        default: false
+      other:
+        description: "Other test by name: attempts, oppos, hot (empty = none)"
+        required: false
+        default: ""
       markets:
         description: "Test game markets (1X2, puck line, team totals, BTTS, 1st period)"
         type: boolean
@@ -64,7 +64,7 @@ jobs:
       - name: Run backtest
         run: |
           mkdir -p backtest
-          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} ${{ inputs.shots && '--shots' || '' }} ${{ inputs.attempts && '--attempts' || '' }} ${{ inputs.markets && '--markets' || '' }} ${{ inputs.context && '--context' || '' }} ${{ inputs.extra && '--extra' || '' }} ${{ inputs.form && '--form' || '' }} ${{ inputs.goalies && '--goalies' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
+          python -m nhlprops backtest --seasons "${{ inputs.seasons }}" ${{ inputs.totals && '--totals' || '' }} ${{ inputs.hb && '--hb' || '' }} ${{ inputs.shots && '--shots' || '' }} ${{ inputs.other != '' && format('--{0}', inputs.other) || '' }} ${{ inputs.markets && '--markets' || '' }} ${{ inputs.context && '--context' || '' }} ${{ inputs.extra && '--extra' || '' }} ${{ inputs.form && '--form' || '' }} ${{ inputs.goalies && '--goalies' || '' }} > backtest/log.txt 2>&1 || echo "FAILED" >> backtest/log.txt
           tail -60 backtest/log.txt
       - name: Save results to the "backtest" branch
         run: |
