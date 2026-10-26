@@ -639,7 +639,7 @@ const I18N = {
     st_rare:"1 in {x}", st_rare_tip:"At his normal level, a run this long without one happens about 1 time in {x}.",
     st_watch:"Streaks to watch", st_watch_sub:"tap a player to open him",
     st_note:"A drought or a streak doesn't change his chance tonight: the chance shown already uses his real level.",
-    st_foot:"Droughts are listed only when they're rare for a regular player (12+ minutes); hot streaks from 4 games with a point or 3 with a goal; milestones when within 3 (career, regular season).",
+    st_foot:"Droughts are listed only for regular producers (12+ minutes, goal chance 12%+ or point chance 35%+) and only when rare (1 in 12 or less at his level); hot streaks from 5 games with a point or 3 with a goal; career milestones (regular season) within 2, when he has a real chance (8%+) to reach one tonight.",
     st_none:"No notable streaks or milestones for this selection.",
     rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older and understand that NHL Props Lab is an analysis tool, not a sportsbook.", au_need18:"Please confirm that you are 18 or older.",
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
@@ -806,7 +806,7 @@ const I18N = {
     st_rare:"1 på {x}", st_rare_tip:"På hans normala nivå händer en så lång period utan ungefär 1 gång av {x}.",
     st_watch:"Sviter att hålla koll på", st_watch_sub:"tryck på en spelare för att öppna",
     st_note:"En torka eller svit ändrar inte hans chans i kväll: chansen som visas bygger redan på hans verkliga nivå.",
-    st_foot:"Torka visas bara när den är ovanlig för en ordinarie spelare (12+ minuter); heta sviter från 4 matcher med poäng eller 3 med mål; milstolpar när det är högst 3 kvar (karriär, grundserie).",
+    st_foot:"Torka visas bara för ordinarie poänggörare (12+ minuter, målchans 12 %+ eller poängchans 35 %+) och bara när den är ovanlig (1 på 12 eller mer sällan på hans nivå); heta sviter från 5 matcher med poäng eller 3 med mål; milstolpar i karriären (grundserie) inom 2, när han har verklig chans (8 %+) att nå en i kväll.",
     st_none:"Inga sviter eller milstolpar för det här urvalet.",
     rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre och förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag.", au_need18:"Bekräfta att du är 18 år eller äldre.",
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
@@ -1046,17 +1046,21 @@ const poisAtLeast = (lam, k) => { if (k<=0) return 1; let term=Math.exp(-Math.ma
 function streakItems(g, pr){
   const p = P(pr.id); if (!p?.active) return [];
   const out = [], d = p.drought, st = p.streaks || {}, regular = (p.toi_proj||0) >= 12, l = lambdas(pr, g);
-  if (regular && d.found && d.p!=null && d.p<0.15 && d.shots>=8)
+  const pg = prob(pr,g,"g"), ppt = prob(pr,g,"pt");
+  // droughts only for players expected to produce (goal chance 12%+ / point chance 35%+), and only when rare (1 in 7+)
+  const RARE = 0.08;   // a run this long happens 1 time in 12 or less at his level
+  if (regular && pg >= 0.12 && d.found && d.p!=null && d.p<RARE && d.shots>=8)
     out.push({k:"gd", rank:d.p, m:"g", v:prob(pr,g,"g"), rare:d.p, label:t("st_gd",{n:d.games, s:d.shots})});
-  if (regular && st.pp!=null && st.pp<0.15 && st.pd>=3)
+  if (regular && ppt >= 0.35 && st.pp!=null && st.pp<RARE && st.pd>=3)
     out.push({k:"pd", rank:st.pp, m:"pt", v:prob(pr,g,"pt"), rare:st.pp, label:t("st_pd",{n:st.pd})});
-  if (st.ps>=4) out.push({k:"ps", rank:1/st.ps, m:"pt", v:prob(pr,g,"pt"), label:t("st_ps",{n:st.ps, x:st.ps_pts})});
+  if (st.ps>=5) out.push({k:"ps", rank:1/st.ps, m:"pt", v:prob(pr,g,"pt"), label:t("st_ps",{n:st.ps, x:st.ps_pts})});
   if (st.gst>=3) out.push({k:"gs", rank:1/st.gst, m:"g", v:prob(pr,g,"g"), label:t("st_gs",{n:st.gst, x:st.gst_g})});
   // milestones: career goals / assists / points (next 100; 50 for goals), games played (500, 600, ... 1000 ...)
   const c = p.career || {};
   const ms = (key, cur, lam, m) => { if (cur==null) return;
     const steps = key==="goals" && cur < 100 ? [50, 100] : [Math.floor(cur/100)*100 + 100];
-    const next = steps.find(x=>x>cur); if (!next) return; const need = next - cur; if (need > 3) return;
+    const next = steps.find(x=>x>cur); if (!next) return; const need = next - cur; if (need > 2) return;
+    if (poisAtLeast(lam, need) < 0.08) return;          // only milestones with a real chance tonight
     out.push({k:"ms", rank:need, m: need===1 ? m : null, need, v: poisAtLeast(lam, need), label:t("ms_"+key,{n:need, x:next})}); };
   ms("goals", c.goals, l.g, "g"); ms("assists", c.assists, l.a, "a"); ms("points", c.points, l.g + l.a, "pt");
   if (c.gamesPlayed!=null && c.gamesPlayed + 1 >= 500 && (c.gamesPlayed + 1) % 100 === 0)
