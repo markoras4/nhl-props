@@ -20,6 +20,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Shutout chance (goalie card, More markets) | yes | yes |
 | Role & usage box | PP minutes and unit only | everything, incl. tonight's chances |
 | Linemates tonight | yes | yes |
+| Compare players (2–4, any game) | only the open players (1 F + 1 D per team) | everyone, every market |
 | Odds movement | no | yes |
 | Player page: last 10 games + chart | yes | yes |
 | Hit rates | L5 | L10, L20, season, vs opponent, model vs market |

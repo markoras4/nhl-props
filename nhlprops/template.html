@@ -21,6 +21,7 @@
 :root{
   --bg:#0a0e13; --panel:#111821; --panel2:#17202b; --line:#22303f; --text:#e7eef6; --mute:#8796a8;
   --accent:#3ddc97; --accent2:#5aa9ff; --warn:#ffb547; --bad:#ff6b6b; --good:#3ddc97; --chip:#1b2533;
+  --pc1:#3ddc97; --pc2:#5aa9ff; --pc3:#ffb547; --pc4:#f07ac0;
   --heat:61,220,151; --line2:#7ff3ff; --radius:12px; color-scheme:dark;
   --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --f-disp:"Oxanium","Exo 2",-apple-system,"Segoe UI",sans-serif;
@@ -32,6 +33,7 @@
   :root:not([data-theme="dark"]){
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
+    --pc1:#0d9a60; --pc2:#1d6bd0; --pc3:#c27a00; --pc4:#c2347f;
     --heat:13,154,96; --line2:#0aa3c2; color-scheme:light;
   }
 }
@@ -40,6 +42,7 @@
 :root[data-theme="light"]{
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
+    --pc1:#0d9a60; --pc2:#1d6bd0; --pc3:#c27a00; --pc4:#c2347f;
     --heat:13,154,96; --line2:#0aa3c2; color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -491,6 +494,116 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
 .savebtn:hover{border-color:var(--accent);color:var(--accent)}
 .savebtn.saved{border-color:transparent;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);cursor:default}
 .pick .savebtn{margin-top:8px}
+/* compare players */
+.cmpbtn{display:inline-grid;place-items:center;grid-auto-flow:column;gap:5px;flex:none;width:28px;height:26px;border:1px solid var(--line);background:var(--panel);color:var(--mute);border-radius:8px;cursor:pointer;padding:0;transition:color .15s,border-color .15s,background .15s}
+.cmpbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cmpbtn:hover{color:var(--accent);border-color:var(--accent)}
+.cmpbtn.on{color:var(--accent-ink,#06210f);background:var(--accent);border-color:var(--accent)}
+.cmpbtn.wide{width:auto;padding:0 10px;font-size:12px;font-weight:700}
+.pl .cmpbtn{margin-left:auto}
+.ptact{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cmptray{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:45;width:min(760px,calc(100% - 24px));background:color-mix(in srgb,var(--panel) 96%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:16px;box-shadow:0 18px 50px -12px rgba(0,0,0,.55);padding:10px 12px;animation:ctin .22s ease-out}
+.cmptray[hidden]{display:none}
+@keyframes ctin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+.ctin{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.ctchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex:1;min-width:0}
+.ctchip{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 9px;font-size:12.5px;max-width:190px}
+.ctchip>i{width:8px;height:8px;border-radius:50%;background:var(--pc);flex:none}
+.ctchip b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.ctchip .lg,.ctchip .lgfb{--lg:16px}
+.ctchip button{border:0;background:none;color:var(--mute);font-size:16px;line-height:1;width:22px;height:22px;border-radius:50%;cursor:pointer;flex:none}
+.ctchip button:hover{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.cthint{font-size:12px;color:var(--mute)}.cthint.warn{color:var(--warn)}
+.ctact{display:flex;gap:8px;margin-left:auto}
+.ctclr{border:0;background:none;color:var(--mute);font-weight:600;font-size:13px;cursor:pointer;padding:8px}
+.ctclr:hover{color:var(--text)}
+.ctgo{border:0;background:var(--accent);color:var(--accent-ink,#06210f);font-weight:800;font-size:14px;border-radius:10px;padding:9px 16px;cursor:pointer;white-space:nowrap}
+.ctgo:disabled{opacity:.45;cursor:default}
+body.has-cmp .totop{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+body.has-cmp main{padding-bottom:110px}
+.modal.cmpm{padding:20px}
+.cmpbox{width:min(1080px,100%);max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);display:flex;flex-direction:column;padding:0;overflow:hidden}
+.cmtop{display:flex;align-items:center;gap:10px;padding:16px 18px 6px;flex-wrap:nowrap}
+.cmtop h3{white-space:nowrap}
+.cmtop h3{margin:0}.cmtop .meta{margin:0}
+.cmclose{margin-left:auto;border:1px solid var(--line);background:var(--panel2);color:var(--text);width:34px;height:34px;border-radius:10px;font-size:20px;line-height:1;cursor:pointer;align-self:center}
+.cmpick{display:flex;flex-direction:column;gap:8px;padding:6px 18px 12px;border-bottom:1px solid var(--line)}
+.cmpick .seg{overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap;max-width:100%;align-self:flex-start}
+.cmpick .seg::-webkit-scrollbar{display:none}
+.cmpick .seg button{white-space:nowrap}
+.cmscroll{overflow-y:auto;padding:14px 18px 20px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.cmsum{display:flex;flex-wrap:wrap;gap:8px 22px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:14px;font-size:14px}
+.cmsum small{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.cmsec{font-family:var(--f-disp);font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--mute);margin:20px 0 8px}
+.ctab{display:grid;grid-template-columns:minmax(150px,200px) repeat(var(--n),minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.ctab .cr{display:contents}
+.ctab .cl,.ctab .cv{padding:9px 12px;border-top:1px solid var(--line);display:flex;align-items:center;min-width:0}
+.ctab .cr:first-child>.cl,.ctab .cr:first-child>.cv{border-top:0}
+.ctab .cl{color:var(--mute);font-size:13px;font-weight:600}
+.ctab .cv{justify-content:center;text-align:center;font-variant-numeric:tabular-nums;font-size:14px;flex-direction:column;gap:4px;position:relative}
+.ctab .cv.best{background:color-mix(in srgb,var(--pc) 13%,transparent)}
+.ctab .cv.best::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--pc)}
+.ctab .rbig .cv{padding-block:12px}
+.cbig{font-family:var(--f-disp);font-weight:800;font-size:24px;line-height:1}
+.cbar{width:min(120px,90%);height:5px;border-radius:3px;background:var(--panel2);overflow:hidden}
+.cbar s{display:block;height:100%;background:var(--pc);border-radius:3px}
+.ctab .codds{width:78px;text-align:center}
+.chead .cv{padding:12px 8px 10px;border-top:3px solid var(--pc)!important}
+.chead .cl{background:var(--panel)}
+.chc{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;gap:2px}
+.chtop{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.chtop .jersey{width:26px;height:26px;font-size:11px}
+.chn{font-weight:800;font-size:14.5px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chs{font-size:12px;color:var(--mute)}
+.chx{position:absolute;top:-6px;right:-2px;border:0;background:none;color:var(--mute);font-size:18px;width:24px;height:24px;border-radius:50%;cursor:pointer}
+.chx:hover{color:var(--bad)}
+.hrc2{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%}
+.hrc2 i{display:block;width:min(90px,85%);height:4px;border-radius:2px;background:var(--panel2);overflow:hidden}
+.hrc2 i s{display:block;height:100%;background:var(--mute)}
+.hrc2.hr-hi b{color:var(--good)}.hrc2.hr-hi i s{background:var(--good)}
+.hrc2.hr-lo b{color:var(--bad)}.hrc2.hr-lo i s{background:var(--bad)}
+.cmcharts{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:10px}
+.cmc{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:10px 10px 4px;border-top:3px solid var(--pc);min-width:0}
+.cmh{display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:4px}
+.cmh i{width:8px;height:8px;border-radius:50%;background:var(--pc)}
+.cmh b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmh span{margin-left:auto;font-weight:700;font-size:12px;white-space:nowrap}
+.cmh .hr-hi{color:var(--good)}.cmh .hr-lo{color:var(--bad)}
+.cmsvg{width:100%;height:auto;display:block}
+.cmsvg .cmo{fill:var(--pc)}.cmsvg .cmu{fill:color-mix(in srgb,var(--mute) 35%,transparent)}
+.cmsvg .cmv{font-size:10px;font-weight:700;fill:var(--text)}
+.cmsvg .cmd{font-size:8.5px;fill:var(--mute)}
+.cmsvg .cmax{stroke:var(--line);stroke-width:1}
+.cmsvg .cml{stroke:var(--text);stroke-width:1.2;stroke-dasharray:4 3;opacity:.7}
+.cmsvg .cmlt{font-size:9.5px;font-weight:700;fill:var(--text)}
+.cmc-empty{font-size:12.5px;color:var(--mute);padding:26px 4px;text-align:center}
+@media (max-width:760px){
+  .modal.cmpm{padding:0}
+  .cmpbox{width:100%;max-height:100vh;max-height:100dvh;height:100%;border-radius:0;border:0}
+  .cmtop{padding:calc(12px + env(safe-area-inset-top,0px)) 12px 4px}.cmtop .meta{display:none}.cmtop h3{font-size:18px}
+  .cmpick{padding:4px 12px 10px}
+  .cmscroll{padding:12px 12px calc(24px + env(safe-area-inset-bottom,0px))}
+  .ctab{grid-template-columns:repeat(var(--n),minmax(0,1fr))}
+  .ctab .cl{grid-column:1/-1;padding:7px 10px 0;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;justify-content:center}
+  .ctab .cl+.cv,.ctab .cl~.cv{border-top:0}
+  .ctab .cv{padding:4px 4px 9px;font-size:13px}
+  .chead .cl{display:none}
+  .chead .cv{border-top:3px solid var(--pc)!important}
+  .cbig{font-size:20px}
+  .ctab .codds{width:100%;max-width:74px;padding:6px 4px}
+  .chn{font-size:13px}
+  .cmcharts{grid-template-columns:1fr}
+  .cmsum{font-size:13px;gap:8px 16px}
+  .cmptray{bottom:calc(70px + env(safe-area-inset-bottom,0px));padding:8px 10px}
+  body.has-cmp .totop{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+  body.has-cmp main{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
+  .ctin{flex-wrap:nowrap;gap:8px}
+  .ctchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.ctchips::-webkit-scrollbar{display:none}
+  .ctchip{max-width:none;flex:none}
+  .cthint{display:none}.cthint.warn,.cthint.need{display:block;white-space:nowrap}
+  .ctact{gap:2px}.ctclr{padding:8px 6px;font-size:12.5px}.ctgo{padding:9px 12px}
+}
+
 .ptab .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
 .ptab .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .ptab .kpi small{display:block;font-size:11px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
@@ -544,6 +657,7 @@ code{background:var(--chip);padding:1px 5px;border-radius:4px;font-size:12px}
 <footer class="wrap appfoot" id="appfoot"></footer>
 <button class="totop" id="totop" type="button">↑</button>
 <div class="modal" id="modal" hidden></div>
+<div class="cmptray" id="cmptray" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 
 <script>
@@ -756,7 +870,7 @@ const I18N = {
     op_player:"{t} against {p}", op_shots_pg:"Shots allowed per game", op_goals_pg:"Goals allowed per game", op_pts_pg:"Points allowed per game", op_vs_lg:"(avg {v})",
     op_pnote:"What this opponent has given up this season to players in his position. Green rank = one of the 8 most generous defences.",
     mv_from:"from", mv_opened:"opened {a} · {h}", mv_tip_to:"Opened at {a} today, now {b}: the market has moved toward the model's fair odds ({f}).", mv_tip_away:"Opened at {a} today, now {b}: the market has moved away from the model's fair odds ({f}).",
-    login:"Log in", logout:"Log out", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
+    login:"Log in", logout:"Log out", cmp_add:"Add to compare", cmp_in:"In compare", cmp_remove:"Remove", cmp_clear:"Clear", cmp_open:"Compare {n}", cmp_close:"Close", cmp_need:"Add one more player to compare", cmp_more:"Add up to 4 players, from any game", cmp_max:"You can compare up to {n} players", cmp_title:"Compare players", cmp_tonight:"Tonight", cmp_chance:"Chance tonight", cmp_fair:"Fair odds", cmp_mkt:"Market odds", cmp_na:"Not offered", cmp_role:"Line · PP unit", cmp_opp_s:"Opponent allows (shots, his position)", cmp_opp_g:"Opponent allows (goals, his position)", cmp_opp_pt:"Opponent allows (points, his position)", cmp_x_g:"Expected goals", cmp_x_a:"Expected assists", cmp_x_p:"Expected points", cmp_x_s:"Expected shots", cmp_x_hit:"Expected hits", cmp_x_blk:"Expected blocks", cmp_x_pp:"Expected PP points", cmp_x_pm:"Expected penalties", cmp_x_fo:"Expected faceoffs won", cmp_l10:"Last 10 games (line {l})", cmp_over:"{h}/{n} over", cmp_nohist:"No game-by-game record for this market", cmp_hr:"Hit rates", cmp_vs:"vs tonight's opponent", cmp_season:"This season", cmp_gp:"Games", cmp_gpg:"Goals / game", cmp_apg:"Assists / game", cmp_ppg:"Points / game", cmp_spg:"Shots / game", cmp_sh:"Shooting %", cmp_gvx:"Goals vs expected", cmp_toi:"Ice time / game", cmp_ppmin:"PP minutes / game", cmp_hpg:"Hits / game (last 10)", cmp_bpg:"Blocks / game (last 10)", cmp_fo:"Faceoff %", cmp_pim:"Penalty minutes", cmp_streak:"Run", cmp_ps:"{n}-game point streak", cmp_gs:"{n}-game goal streak", cmp_pd:"No point in {n}", cmp_gd:"No goal in {n}", cmp_best_p:"Highest chance", cmp_best_ev:"Best value", cmp_best_hr:"Best last 10", cmp_note:"The best number in each row is highlighted in that player's colour. Goals vs expected above zero means he has finished better than his chances (often luck); below zero, worse. A higher chance isn't automatically the better bet: compare it with the odds.", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
     au_in_h:"Log in", au_up_h:"Create a free account", au_sub:"Save picks and track how they do. Results are graded automatically after each game.",
     au_email:"Email", au_pass:"Password (8+ characters)", au_in_btn:"Log in", au_up_btn:"Create account", au_have:"I already have an account", au_new:"New here? Create an account",
     au_link:"Email me a login link", au_link_sent:"Check your email for the login link.", au_need_email:"Enter your email first.", au_need_pass:"Enter your password, or use a login link.",
@@ -978,7 +1092,7 @@ const I18N = {
     op_player:"{t} mot {p}", op_shots_pg:"Insläppta skott per match", op_goals_pg:"Insläppta mål per match", op_pts_pg:"Insläppta poäng per match", op_vs_lg:"(snitt {v})",
     op_pnote:"Vad motståndaren har släppt till i år mot spelare på hans position. Grön placering = ett av de 8 generösaste försvaren.",
     mv_from:"från", mv_opened:"öppnade {a} · {h}", mv_tip_to:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig mot modellens rättvisa odds ({f}).", mv_tip_away:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig bort från modellens rättvisa odds ({f}).",
-    login:"Logga in", logout:"Logga ut", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
+    login:"Logga in", logout:"Logga ut", cmp_add:"Lägg till i jämförelse", cmp_in:"I jämförelsen", cmp_remove:"Ta bort", cmp_clear:"Rensa", cmp_open:"Jämför {n}", cmp_close:"Stäng", cmp_need:"Lägg till en spelare till för att jämföra", cmp_more:"Lägg till upp till 4 spelare, från valfri match", cmp_max:"Du kan jämföra upp till {n} spelare", cmp_title:"Jämför spelare", cmp_tonight:"I kväll", cmp_chance:"Chans i kväll", cmp_fair:"Rättvisa odds", cmp_mkt:"Marknadsodds", cmp_na:"Erbjuds inte", cmp_role:"Kedja · PP-femma", cmp_opp_s:"Motståndaren släpper till (skott, hans position)", cmp_opp_g:"Motståndaren släpper till (mål, hans position)", cmp_opp_pt:"Motståndaren släpper till (poäng, hans position)", cmp_x_g:"Förväntade mål", cmp_x_a:"Förväntade assist", cmp_x_p:"Förväntade poäng", cmp_x_s:"Förväntade skott", cmp_x_hit:"Förväntade tacklingar", cmp_x_blk:"Förväntade blockeringar", cmp_x_pp:"Förväntade PP-poäng", cmp_x_pm:"Förväntade utvisningar", cmp_x_fo:"Förväntade vunna tekningar", cmp_l10:"Senaste 10 matcherna (linje {l})", cmp_over:"{h}/{n} över", cmp_nohist:"Ingen match-för-match-historik för det här spelet", cmp_hr:"Träffprocent", cmp_vs:"mot kvällens motståndare", cmp_season:"I år", cmp_gp:"Matcher", cmp_gpg:"Mål / match", cmp_apg:"Assist / match", cmp_ppg:"Poäng / match", cmp_spg:"Skott / match", cmp_sh:"Skottprocent", cmp_gvx:"Mål mot förväntat", cmp_toi:"Istid / match", cmp_ppmin:"PP-minuter / match", cmp_hpg:"Tacklingar / match (senaste 10)", cmp_bpg:"Blockeringar / match (senaste 10)", cmp_fo:"Tekningsprocent", cmp_pim:"Utvisningsminuter", cmp_streak:"Svit", cmp_ps:"Poäng i {n} raka", cmp_gs:"Mål i {n} raka", cmp_pd:"Ingen poäng på {n}", cmp_gd:"Inget mål på {n}", cmp_best_p:"Högst chans", cmp_best_ev:"Bäst värde", cmp_best_hr:"Bäst senaste 10", cmp_note:"Bästa siffran på varje rad markeras i spelarens färg. Mål mot förväntat över noll betyder att han avslutat bättre än sina chanser (ofta tur); under noll, sämre. Högre chans är inte automatiskt det bättre spelet: jämför med oddset.", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
     au_in_h:"Logga in", au_up_h:"Skapa ett gratiskonto", au_sub:"Spara spel och följ hur de går. Resultaten rättas automatiskt efter varje match.",
     au_email:"E-post", au_pass:"Lösenord (minst 8 tecken)", au_in_btn:"Logga in", au_up_btn:"Skapa konto", au_have:"Jag har redan ett konto", au_new:"Ny här? Skapa ett konto",
     au_link:"Mejla mig en inloggningslänk", au_link_sent:"Kolla din e-post efter inloggningslänken.", au_need_email:"Skriv din e-post först.", au_need_pass:"Skriv ditt lösenord, eller använd en inloggningslänk.",
@@ -1668,7 +1782,7 @@ function sidePanel(g, team){
     const open = String(state.open)===String(r.pr.id);
     body += `<tr class="row ${open?"open":""} ${r.p.active?"":"out"}" data-id="${r.pr.id}">
       <td><div class="pl"><div class="jersey">${r.p.num??""}</div><div><div class="nm">${esc(r.p.name)} ${injPill(r.p.injury)}</div>
-        <div class="sub">${r.p.pos}${pos[r.pr.id]?" · "+pos[r.pr.id].toUpperCase():""}${r.p.why && !r.p.injury?" · "+esc(trWhy(r.p.why)):""}</div></div></div></td>
+        <div class="sub">${r.p.pos}${pos[r.pr.id]?" · "+pos[r.pr.id].toUpperCase():""}${r.p.why && !r.p.injury?" · "+esc(trWhy(r.p.why)):""}</div></div>${r.p.active?cmpBtn(g, r.pr):""}</div></td>
       <td class="n hide-sm num">${fmt(r.p.toi_proj,1)}</td>
       ${GRID.map(m=>{ const v=r.probs[m]; if (v==null) return `<td class="h"><div class="cell na">–</div></td>`; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
         const val = r.p.active && ev!=null && ev>=VALUE;
@@ -1846,7 +1960,7 @@ function detail(pr, g){
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span><span>${saveBtn(g, pr, m)}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box" style="grid-column:span 2"><h4>${t("pv")} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
+    <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${cmpBtn(g, pr, true)} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
       <p class="note">${t("pv_note")}</p></div>
     <div class="box"><h4><span>${t("built")} ${HI("tt_built")}</span></h4>
       <div class="chips">
@@ -2368,9 +2482,207 @@ function rowsTop(){
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)!=null?oddsTxt(userOdds(g.id,pr.id,m)):""}" placeholder="${book(g.id,pr.id,m)?.o!=null?oddsTxt(book(g.id,pr.id,m).o):"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm">${noHistory(m) ? `<span class="meta">–</span>` : `<div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""}" title="${esc(gameTip(x,m))}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}`}</td>
-      <td>${regPills(p)} ${saveBtn(g, pr, m)}</td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
+      <td><div class="ptact">${cmpBtn(g, pr)}${regPills(p)} ${saveBtn(g, pr, m)}</div></td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
+}
+
+// ------------------------------------------------------------ compare players (up to 4, any game on the slate)
+const CMP_MAX = 4;
+let CMP = (()=>{ try { return (JSON.parse(store.get("cmp")||"[]")||[]).filter(x => cmpFind(x)); } catch(e){ return []; } })();
+let CMP_MSG = "";
+function cmpFind(x){ const g = x && gameById[String(x.g)]; const pr = g && g.props.find(p => String(p.id)===String(x.p)); return pr && P(pr.id) ? {g, pr, p:P(pr.id)} : null; }
+const cmpHas = (gid, pid) => CMP.some(x => String(x.g)===String(gid) && String(x.p)===String(pid));
+function cmpSave(){ store.set("cmp", JSON.stringify(CMP)); }
+function cmpBtn(g, pr, wide){
+  const on = cmpHas(g.id, pr.id);
+  return `<button type="button" class="cmpbtn ${wide?"wide":""} ${on?"on":""}" data-cmp="${g.id}|${pr.id}" aria-pressed="${on}" title="${esc(t(on?"cmp_in":"cmp_add"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M17 4v16M3 9l4-5 4 5M13 15l4 5 4-5"/></svg>${wide?`<span>${t(on?"cmp_in":"cmp_add")}</span>`:""}</button>`;
+}
+function cmpToggle(gid, pid){
+  if (cmpHas(gid, pid)) CMP = CMP.filter(x => !(String(x.g)===String(gid) && String(x.p)===String(pid)));
+  else if (CMP.length >= CMP_MAX){ CMP_MSG = t("cmp_max",{n:CMP_MAX}); cmpTray(); setTimeout(()=>{ CMP_MSG = ""; cmpTray(); }, 2600); return; }
+  else CMP.push({g:String(gid), p:String(pid)});
+  cmpSave(); cmpSync();
+}
+function cmpSync(){
+  document.querySelectorAll("[data-cmp]").forEach(b => { const [g,p] = b.dataset.cmp.split("|"), on = cmpHas(g,p);
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.title = t(on?"cmp_in":"cmp_add");
+    const s = b.querySelector("span"); if (s) s.textContent = t(on?"cmp_in":"cmp_add"); });
+  cmpTray();
+  if (document.querySelector("#modal .cmpbox")) { if (CMP.length < 2) closeModal(); else cmpRender(); }
+}
+const CMP_COL = i => `var(--pc${i+1})`;
+const shortName = n => { const a = String(n).split(" "); return a.length > 1 ? a[0][0] + ". " + a.slice(1).join(" ") : n; };
+function cmpTray(){
+  const el = $("#cmptray"); if (!el) return;
+  const items = CMP.map(cmpFind).filter(Boolean);
+  document.body.classList.toggle("has-cmp", items.length > 0);
+  if (!items.length){ el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  el.innerHTML = `<div class="ctin">
+    <div class="ctchips">${items.map((x,i)=>`<span class="ctchip" style="--pc:${CMP_COL(i)}"><i></i>${logo(x.pr.team,16)}<b>${esc(shortName(x.p.name))}</b><button type="button" data-cx="${x.g.id}|${x.pr.id}" aria-label="${t("cmp_remove")}">×</button></span>`).join("")}
+      ${items.length < CMP_MAX ? `<span class="cthint ${CMP_MSG?"warn":items.length<2?"need":""}">${CMP_MSG || (items.length < 2 ? t("cmp_need") : t("cmp_more"))}</span>` : CMP_MSG ? `<span class="cthint warn">${CMP_MSG}</span>` : ""}</div>
+    <div class="ctact"><button type="button" class="ctclr" id="cmpclr">${t("cmp_clear")}</button><button type="button" class="ctgo" id="cmpgo" ${items.length<2?"disabled":""}>${t("cmp_open",{n:items.length})}</button></div></div>`;
+  el.onclick = e => {
+    const x = e.target.closest("[data-cx]"); if (x){ const [g,p] = x.dataset.cx.split("|"); cmpToggle(g,p); return; }
+    if (e.target.closest("#cmpclr")){ CMP = []; cmpSave(); cmpSync(); return; }
+    if (e.target.closest("#cmpgo") && CMP.length >= 2) openCompare();
+  };
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-cmp]"); if (!b) return;
+  e.stopPropagation(); e.preventDefault(); const [g,p] = b.dataset.cmp.split("|"); cmpToggle(g,p); }, true);
+
+// market helpers for the compare window
+const cmpStat = m => m==="fg"||m==="g"||m==="g2"||m==="g3" ? "g" : m==="a"||m==="a2" ? "a" : m==="pt"||m==="pt2"||m==="pt3" ? "p"
+  : m==="ppp" ? "pp" : m.startsWith("pim") ? "pm" : m.startsWith("fo") ? null : m[0]==="h" ? "hit" : m[0]==="b" ? "blk" : "s";
+const cmpLine = m => ({g:.5,a:.5,pt:.5,fg:.5,g2:1.5,a2:1.5,pt2:1.5,g3:2.5,pt3:2.5,ppp:.5,"pim0.5":.5,"pim2.5":2.5})[m] ?? parseFloat(m.replace(/^[a-z]+/,""));
+const cmpVal = (x, st) => st==="p" ? (x.g||0)+(x.a||0) : (x[st]||0);
+const cmpOver = (x, m) => m==="fg" ? x.g>=1 : hitGame(x, m);
+function cmpExp(pr, g, m){
+  const l = lambdas(pr, g), st = cmpStat(m);
+  if (m.startsWith("fo")) return pr.base.fow;
+  return st==="g" ? l.g : st==="a" ? l.a : st==="p" ? l.g + l.a : st==="s" ? l.s : st==="hit" ? pr.base.hit : st==="blk" ? pr.base.blk : st==="pp" ? pr.base.ppp : st==="pm" ? pr.base.pen : null;
+}
+const cmpXLabel = m => t("cmp_x_" + (m.startsWith("fo") ? "fo" : cmpStat(m)));
+function cmpHits(x, m){
+  // [hits, games] for L5, L10, L20, this season and vs tonight's opponent; null where we have no record
+  const p = x.p, pr = x.pr, mk = m==="fg" ? "g" : m, H = p.hr?.[mk];
+  const out = {L5:null, L10:null, L20:null, S:null, V:null};
+  if (noHistory(m) && m!=="fg") return out;
+  if (H){ const n = isHB(m) ? p.hr.hbn : p.hr.n;
+    out.L5 = n[0] ? [H[0], n[0]] : null; out.L10 = n[1] ? [H[1], n[1]] : null;
+    if (!isHB(m)){ out.L20 = n[2] ? [H[2], n[2]] : null; out.S = n[3] ? [H[3], n[3]] : null; } }
+  else { const gs = lastGames(p, m).slice(0,10);
+    const c = k => { const s = gs.slice(0,k); return s.length ? [s.filter(y=>cmpOver(y,m)).length, s.length] : null; };
+    out.L5 = c(5); out.L10 = c(10); }
+  if (pr.hv?.n && pr.hv[mk] != null) out.V = [pr.hv[mk], pr.hv.n];
+  return out;
+}
+function cmpMiniChart(x, m, ymax, i){
+  const st = cmpStat(m), gs = lastGames(x.p, m).slice(0,10).reverse(), L = cmpLine(m);
+  if (!st || !gs.length) return `<div class="cmc-empty">${t("cmp_nohist")}</div>`;
+  const W = 260, H = 118, T = 14, B = 22, pad = 4, RM = 22, cw = (W - pad - RM) / 10, bw = Math.min(18, cw*0.62);
+  const y = v => T + (H - T - B) * (1 - v / ymax);
+  const bars = gs.map((g_, k) => { const v = cmpVal(g_, st), ov = cmpOver(g_, m), cx = pad + cw*(k + (10 - gs.length)) + cw/2, h = Math.max(v===0?2:0, (H-T-B) * v / ymax);
+    return `<g><title>${esc(gameTip(g_, m))}</title><rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="2.5" class="${ov?"cmo":"cmu"}"/>${v>0?`<text x="${cx}" y="${y(v)-3}" text-anchor="middle" class="cmv">${v}</text>`:""}<text x="${cx}" y="${H-7}" text-anchor="middle" class="cmd">${g_.o}</text></g>`; }).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" class="cmsvg" style="--pc:${CMP_COL(i)}" role="img" aria-label="${esc(x.p.name)}">
+    <line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" class="cmax"/>${bars}
+    <line x1="0" x2="${W-RM+2}" y1="${y(L)}" y2="${y(L)}" class="cml"/><text x="${W-1}" y="${y(L)+3.5}" text-anchor="end" class="cmlt">${L}</text></svg>`;
+}
+function openCompare(){
+  if (state.tab==="props" && state.psort!=="streaks" && state.market) state.cmpM = state.market;
+  const el = $("#modal"); el.classList.add("cmpm");
+  el.innerHTML = `<div class="mbox cmpbox" role="dialog" aria-modal="true" aria-label="${esc(t("cmp_title"))}"></div>`;
+  el.hidden = false; document.documentElement.style.overflow = "hidden";
+  cmpRender();
+}
+function cmpRender(){
+  const box = document.querySelector("#modal .cmpbox"); if (!box) return;
+  const items = CMP.map(cmpFind).filter(Boolean); if (items.length < 2){ closeModal(); return; }
+  const scroll = box.querySelector(".cmscroll")?.scrollTop || 0;
+  const groups = GROUP_ORDER.filter(gk => items.some(x => MGROUPS[gk].some(m => hasM(x.pr, m))));
+  let m = state.cmpM || "pt"; if (!groups.includes(mGroup(m))) m = "pt"; state.cmpM = m;
+  const n = items.length, cols = `--n:${n}`;
+  const ok = items.map(x => hasM(x.pr, m));
+  const pv = items.map((x,i) => ok[i] ? prob(x.pr, x.g, m) : null);
+  const bk = items.map((x,i) => ok[i] ? book(x.g.id, x.pr.id, m) : null);
+  const uo = items.map((x,i) => ok[i] ? userOdds(x.g.id, x.pr.id, m) : null);
+  const od = items.map((x,i) => uo[i] ?? bk[i]?.o ?? null);
+  const ev = items.map((x,i) => od[i] && pv[i]!=null ? pv[i]*od[i] - 1 : null);
+  const hits = items.map(x => cmpHits(x, m));
+  const best = (arr, low) => { const v = arr.map(a => a==null || isNaN(a) ? null : a); const ok_ = v.filter(a => a!=null); if (ok_.length < 2) return -1;
+    const b = low ? Math.min(...ok_) : Math.max(...ok_); return v.filter(a => a===b).length === ok_.length ? -1 : v.indexOf(b); };
+  const row = (label, cells, bi, cls) => `<div class="cr ${cls||""}"><div class="cl">${label}</div>${cells.map((c,i)=>`<div class="cv ${i===bi?"best":""}" style="--pc:${CMP_COL(i)}">${c}</div>`).join("")}</div>`;
+  const rate = h => h ? h[0]/h[1] : null;
+  const hrCell = h => { if (!h) return `<span class="meta">–</span>`; const r = h[0]/h[1], c = h[1]>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : "";
+    return `<span class="hrc2 ${c}"><b>${h[0]}/${h[1]}</b><i><s style="width:${Math.round(r*100)}%"></s></i></span>`; };
+  // summary
+  const iP = best(pv), iE = best(ev.map(e => e!=null ? e : null)), iH = best(hits.map(h => rate(h.L10)));
+  const sum = [iP>=0 ? `<span><small>${t("cmp_best_p")}</small><b style="color:${CMP_COL(iP)}">${esc(shortName(items[iP].p.name))}</b> ${pct(pv[iP],0)}</span>` : "",
+    iE>=0 && ev[iE]>0 ? `<span><small>${t("cmp_best_ev")}</small><b style="color:${CMP_COL(iE)}">${esc(shortName(items[iE].p.name))}</b> ${evTxt(ev[iE])}</span>` : "",
+    iH>=0 ? `<span><small>${t("cmp_best_hr")}</small><b style="color:${CMP_COL(iH)}">${esc(shortName(items[iH].p.name))}</b> ${hits[iH].L10[0]}/${hits[iH].L10[1]}</span>` : ""].filter(Boolean).join("");
+  // header cards
+  const head = `<div class="cr chead"><div class="cl"></div>${items.map((x,i)=>{ const g = x.g, opp = x.pr.opp;
+    return `<div class="cv" style="--pc:${CMP_COL(i)}"><div class="chc"><button type="button" class="chx" data-cx="${g.id}|${x.pr.id}" aria-label="${t("cmp_remove")}">×</button>
+      <div class="chtop">${logo(x.pr.team,22)}<span class="jersey">${x.p.num??""}</span></div>
+      <div class="chn">${esc(x.p.name)}</div><div class="chs">${x.p.pos} · ${x.pr.home?"vs":"@"} ${opp}</div><div class="chs">${dayShort(g.date)} ${timeOf(g)}</div></div></div>`; }).join("")}</div>`;
+  // tonight
+  const ogName = x => { const q = G(state.goalie[x.g.id]?.[x.pr.opp]); return q ? esc(shortName(q.name)) : "–"; };
+  const opPos = x => { const o = DATA.opp_pos?.[x.pr.opp]?.[posGroup(x.p.pos)]; if (!o) return null; const k = cmpStat(m)==="s" ? "s" : cmpStat(m)==="g" ? "g" : "pt"; return {v:o[k], r:o[k+"_rk"], k}; };
+  const ops = items.map(opPos), opKey = ops.find(Boolean)?.k || "pt";
+  const role = x => { const M = x.p.mates || {}; return [M.line ? M.line.toUpperCase() : null, M.pp ? M.pp.toUpperCase() : null].filter(Boolean).join(" · ") || "–"; };
+  const exps = items.map((x,i) => ok[i] ? cmpExp(x.pr, x.g, m) : null);
+  const tonight = [
+    row(t("cmp_chance"), pv.map((v,i) => v==null ? `<span class="meta">${t("cmp_na")}</span>` : `<div class="cbig">${pct(v,1)}</div><div class="cbar"><s style="width:${Math.min(100,v*100)}%"></s></div>`), best(pv.map(v => v==null ? null : Math.round(v*1000))), "rbig"),
+    row(t("cmp_fair"), pv.map(v => v ? oddsTxt(1/v) : "–"), -1),
+    row(t("cmp_mkt"), bk.map(b => b?.o ? `<b>${oddsTxt(b.o)}</b>${noVig(b)!=null?` <span class="meta">${pct(noVig(b),0)}</span>`:""}` : `<span class="meta">–</span>`), -1),
+    row(t("h_yours"), items.map((x,i) => ok[i] ? `<input class="odds codds" data-g="${x.g.id}" data-pid="${x.pr.id}" placeholder="${bk[i]?.o?oddsTxt(bk[i].o):t("odds_ph")}" value="${uo[i]!=null?oddsTxt(uo[i]):""}" inputmode="decimal">` : ""), -1),
+    row("EV", ev.map(e => e==null ? `<span class="meta">–</span>` : `<b class="${e>0?"ev-pos":"ev-neg"}">${evTxt(e)}</b>`), best(ev)),
+    row(cmpXLabel(m), exps.map(v => v==null ? "–" : fmt(v, v < 1 ? 2 : 1)), best(exps.map(v => v==null ? null : Math.round(v*100)))),
+    row(t("toi"), items.map(x => fmt(x.p.toi_proj,1)), best(items.map(x => x.p.toi_proj!=null ? Math.round(x.p.toi_proj*10) : null))),
+    row(t("cmp_role"), items.map(role), -1),
+    row(t("k_og"), items.map(ogName), -1),
+    row(t("cmp_opp_"+opKey), ops.map(o => o ? `${fmt(o.v, o.k==="s"?1:2)} ${rkTxt(o.r)}` : "–"), best(ops.map(o => o ? -o.r : null))),
+  ].join("");
+  // last 10 charts (same scale for everyone)
+  const st = cmpStat(m);
+  const ymax = st ? Math.max(cmpLine(m) + 1, ...items.flatMap(x => lastGames(x.p, m).slice(0,10).map(g_ => cmpVal(g_, st)))) : 1;
+  const charts = items.map((x,i) => { const h = hits[i].L10;
+    return `<div class="cmc" style="--pc:${CMP_COL(i)}"><div class="cmh"><i></i><b>${esc(shortName(x.p.name))}</b>${h?`<span class="${h[0]/h[1]>=0.6?"hr-hi":h[0]/h[1]<=0.4?"hr-lo":""}">${t("cmp_over",{h:h[0], n:h[1]})}</span>`:""}</div>${cmpMiniChart(x, m, ymax, i)}</div>`; }).join("");
+  // hit rates
+  const hrows = [["L5","L5"],["L10","L10"],["L20","L20"],["S",t("hr_season")],["V",t("cmp_vs")]]
+    .filter(([k]) => hits.some(h => h[k]))
+    .map(([k,lbl]) => row(lbl, hits.map(h => hrCell(h[k])), best(hits.map(h => h[k] && h[k][1]>=3 ? rate(h[k]) : null)))).join("");
+  // season numbers
+  const W_ = x => x.p.windows?.cur || {}, X_ = x => x.p.x || {};
+  const hbAvg = (x, k) => { const gs = (x.p.hb_games||[]).slice(0,10); return gs.length ? gs.reduce((a,g_)=>a+(g_[k]||0),0)/gs.length : null; };
+  const streak = x => { const s = x.p.streaks || {}, d = x.p.drought || {};
+    if ((s.ps||0) >= 3) return `<span class="up">${t("cmp_ps",{n:s.ps})}</span>`;
+    if ((s.gst||0) >= 2) return `<span class="up">${t("cmp_gs",{n:s.gst})}</span>`;
+    if ((s.pd||0) >= 3) return `<span class="down">${t("cmp_pd",{n:s.pd})}</span>`;
+    if (d.found && (d.games||0) >= 5) return `<span class="down">${t("cmp_gd",{n:d.games})}</span>`;
+    return `<span class="meta">–</span>`; };
+  const num = (arr, d) => arr.map(v => v==null || isNaN(v) ? "–" : fmt(v, d));
+  const S = [
+    [t("cmp_gp"), items.map(x => W_(x).gp ?? null), 0, true],
+    [t("cmp_gpg"), items.map(x => W_(x).g_pg ?? null), 2],
+    [t("cmp_apg"), items.map(x => W_(x).a_pg ?? null), 2],
+    [t("cmp_ppg"), items.map(x => W_(x).p_pg ?? null), 2],
+    [t("cmp_spg"), items.map(x => W_(x).s_pg ?? null), 2],
+    [t("cmp_sh"), items.map(x => x.p.regress?.sh ?? null), "%"],
+    [t("cmp_gvx"), items.map(x => x.p.regress ? x.p.regress.g - x.p.regress.exp : null), "+"],
+    [t("cmp_toi"), items.map(x => x.p.toi_season ?? null), 1],
+    [t("cmp_ppmin"), items.map(x => X_(x).pp?.min_pg ?? null), 1],
+    [t("cmp_hpg"), items.map(x => hbAvg(x, "hit")), 1],
+    [t("cmp_bpg"), items.map(x => hbAvg(x, "blk")), 1],
+    [t("cmp_fo"), items.map(x => (X_(x).fo?.taken||0) >= 20 ? X_(x).fo.pct_cur : null), "%"],
+    [t("cmp_pim"), items.map(x => X_(x).pim?.cur ?? null), 0, true],
+  ].filter(([,v]) => v.some(a => a!=null)).map(([lbl, v, d, nob]) => row(lbl,
+    d==="%" ? v.map(a => a==null ? "–" : pct(a,1)) : d==="+" ? v.map(a => a==null ? "–" : `<span class="${a>0.5?"up":a<-0.5?"down":""}">${a>0?"+":""}${fmt(a,1)}</span>`) : num(v, d),
+    nob || d==="+" ? -1 : best(v.map(a => a==null ? null : d==="%" ? Math.round(a*1000) : Math.round(a*Math.pow(10,d)))))).join("") + row(t("cmp_streak"), items.map(streak), -1);
+  // market picker
+  const mg = mGroup(m);
+  const picker = `<div class="cmpick"><div class="seg mgrp">${groups.map(k=>`<button data-cmg="${k}" class="${mg===k?"on":""}">${t("mg_"+k)}</button>`).join("")}</div>
+    ${MGROUPS[mg].length > 1 ? `<div class="seg">${MGROUPS[mg].filter(k => items.some(x => hasM(x.pr, k))).map(k=>`<button data-cmk="${k}" class="${m===k?"on":""}">${mName(k)}</button>`).join("")}</div>` : ""}</div>`;
+  box.innerHTML = `<div class="cmtop"><h3>${t("cmp_title")}</h3><span class="meta">${mName(m)}</span><button type="button" class="cmclose" data-close aria-label="${t("cmp_close")}">×</button></div>
+    ${picker}
+    <div class="cmscroll">
+      ${sum ? `<div class="cmsum">${sum}</div>` : ""}
+      <div class="ctab" style="${cols}">${head}</div>
+      <h4 class="cmsec">${t("cmp_tonight")}</h4><div class="ctab" style="${cols}">${tonight}</div>
+      <h4 class="cmsec">${t("cmp_l10",{l:st ? cmpLine(m) : ""})}</h4><div class="cmcharts" style="${cols}">${charts}</div>
+      ${hrows ? `<h4 class="cmsec">${t("cmp_hr")}</h4><div class="ctab" style="${cols}">${hrows}</div>` : ""}
+      <h4 class="cmsec">${t("cmp_season")}</h4><div class="ctab" style="${cols}">${S}</div>
+      <p class="note">${t("cmp_note")}</p>
+    </div>`;
+  const sc = box.querySelector(".cmscroll"); if (sc) sc.scrollTop = scroll;
+  box.onclick = e => {
+    const g_ = e.target.closest("[data-cmg]"); if (g_){ const G_ = MGROUPS[g_.dataset.cmg]; state.cmpM = GROUP_DEFAULT[g_.dataset.cmg] || G_[Math.min(1, G_.length-1)]; cmpRender(); return; }
+    const k = e.target.closest("[data-cmk]"); if (k){ state.cmpM = k.dataset.cmk; cmpRender(); return; }
+    const x = e.target.closest("[data-cx]"); if (x){ const [gg,p] = x.dataset.cx.split("|"); cmpToggle(gg,p); }
+  };
+  box.onchange = e => { const i = e.target.closest("input.codds"); if (!i) return; const v = parseOdds(i.value) ?? NaN;
+    store.set(oddsKey(i.dataset.g, i.dataset.pid, state.cmpM), isNaN(v) ? "" : v); cmpRender(); };
 }
 
 // ------------------------------------------------------------ track record
@@ -2451,6 +2763,7 @@ en: `<h3>What the site does</h3>
     <li><b>Role tags:</b> <i>TOI ▲/▼</i> when his ice time over the last 5 games is 3+ minutes (and at least 18%) above or below his usual; <i>New on PP1</i>, <i>Promoted</i> and similar when his power-play unit or line changed. Role changes often show in the numbers before the scoring does.</li>
     <li><b>Odds movement:</b> the first price we saw for the prop that day and where it went since. Green means the market moved toward the model's fair odds, a good sign the model saw something real.</li>
     <li><b>Shot profile:</b> every shot attempt he has taken this season (or in his last 10 games) on a map of the offensive zone: goals, saved shots, misses and blocks. Next to it: attempts and shots on goal per game, how many of his attempts hit the net, how many come from close range, and the quality of his shots, compared with last season.</li>
+    <li><b>Compare:</b> tap ⇄ next to any player (roster grid, Props or his breakdown) to add him to the compare tray at the bottom. Pick 2–4 players from any game and open <i>Compare</i> to see them side by side for any market: chance tonight, odds and EV, expected numbers, ice time and role, the last 10 games on the same scale, hit rates and this season's numbers. The best value in each row is highlighted.</li>
     <li><b>History:</b> his seasons as a table or chart. Choose goals, assists, points, shots, shooting % (with his real level and the league average) or goals vs expected. Compare this season, the previous 3 or 5, or his career, per game or at an 82-game pace. Faded bars are small samples.</li>
   </ul>
 
@@ -2554,6 +2867,7 @@ sv: `<h3>Vad sajten gör</h3>
     <li><b>Rolltaggar:</b> <i>Istid ▲/▼</i> när istiden de senaste 5 matcherna är 3+ minuter (och minst 18 %) över eller under det vanliga; <i>Ny i PP1</i>, <i>Uppflyttad</i> och liknande när powerplayfemman eller kedjan ändrats. Rolländringar syns ofta i siffrorna innan målen kommer.</li>
     <li><b>Oddsrörelse:</b> det första priset vi såg för spelet under dagen och vart det gått sedan. Grönt betyder att marknaden rört sig mot modellens rättvisa odds, ett gott tecken på att modellen såg något verkligt.</li>
     <li><b>Skottprofil:</b> alla skottförsök han gjort i år (eller de senaste 10 matcherna) på en karta över anfallszonen: mål, räddade skott, missar och blockeringar. Bredvid: skottförsök och skott på mål per match, hur många av försöken som träffar mål, hur många som kommer från nära håll och kvaliteten på skotten, jämfört med förra säsongen.</li>
+    <li><b>Jämför:</b> tryck på ⇄ bredvid en spelare (spelarlistan, Props eller spelardetaljerna) för att lägga honom i jämförelsefältet längst ner. Välj 2–4 spelare från valfri match och öppna <i>Jämför</i> för att se dem sida vid sida i valfritt spel: chansen i kväll, odds och EV, förväntade siffror, istid och roll, de senaste 10 matcherna på samma skala, träffprocent och årets siffror. Bästa värdet på varje rad markeras.</li>
     <li><b>Historik:</b> hans säsonger som tabell eller diagram. Välj mål, assist, poäng, skott, skottprocent (med hans verkliga nivå och ligasnittet) eller mål mot förväntat. Jämför i år, förra 3 eller 5 säsongerna eller karriären, per match eller i 82-matcherstakt. Bleka staplar bygger på litet underlag.</li>
   </ul>
 
@@ -2625,6 +2939,7 @@ function render(){
   else if (state.tab==="track") trackTab();
   else if (state.tab==="picks") picksTab();
   else howTab();
+  cmpTray();
 }
 // ------------------------------------------------------------ accounts & my picks (Supabase)
 const SB_URL = "https://evxnevqxykbfocqfqxid.supabase.co", SB_KEY = "sb_publishable_ZQQw6R--FoIe0CzNqEkeLg_O5qv4TQO";
@@ -2645,7 +2960,7 @@ function saveBtn(g, pr, m){
   return `<button class="savebtn" data-save="${g.id}|${pr.id}|${m}" type="button">＋ ${t("save")}</button>`;
 }
 function modal(html){ const el = $("#modal"); el.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${html}</div>`; el.hidden = false; const f = el.querySelector("input"); if (f) f.focus(); }
-function closeModal(){ const el = $("#modal"); el.hidden = true; el.innerHTML = ""; }
+function closeModal(){ const el = $("#modal"); el.hidden = true; el.innerHTML = ""; if (el.classList.contains("cmpm")){ el.classList.remove("cmpm"); document.documentElement.style.overflow = ""; } }
 $("#modal").addEventListener("click", e => { if (e.target.id === "modal" || e.target.closest("[data-close]")) closeModal(); });
 addEventListener("keydown", e => { if (e.key === "Escape" && !$("#modal").hidden) closeModal(); });
 function openAuth(mode, after){
