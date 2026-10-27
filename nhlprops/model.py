@@ -525,7 +525,7 @@ def pp_frame(mp_sk: dict) -> dict:
 def pbp_season_stats(pbp: dict, team_of_player: dict) -> dict:
     """From this season's play-by-play: faceoffs per player, team faceoff %, penalties taken per team-game,
     power-play goals/assists per player, and goals two players combined on."""
-    fo_t, fo_w, team_fo, pens, tgp, combo = {}, {}, {}, {}, {}, {}
+    fo_t, fo_w, team_fo, pens, tgp, combo, ppg, ppa = {}, {}, {}, {}, {}, {}, {}, {}
     for g in (pbp or {}).values():
         if "fo" not in g:
             continue
@@ -541,12 +541,32 @@ def pbp_season_stats(pbp: dict, team_of_player: dict) -> dict:
             if t:
                 pens[t] = pens.get(t, 0) + (g.get("pen") or {}).get(t, 0); tgp[t] = tgp.get(t, 0) + 1
         for sc, a1, a2, team, pp in g.get("gl") or []:
+            if pp:
+                ppg[sc] = ppg.get(sc, 0) + 1
+                for a_ in (a1, a2):
+                    if a_:
+                        ppa[a_] = ppa.get(a_, 0) + 1
             ids = [x for x in (sc, a1, a2) if x]
             for i in ids:
                 for j in ids:
                     if i < j:
                         combo[(i, j)] = combo.get((i, j), 0) + 1
-    return {"fo_t": fo_t, "fo_w": fo_w, "team_fo": team_fo, "pens": pens, "tgp": tgp, "combo": combo}
+    return {"fo_t": fo_t, "fo_w": fo_w, "team_fo": team_fo, "pens": pens, "tgp": tgp, "combo": combo, "ppg": ppg, "ppa": ppa}
+
+
+def pp_shots(mp_sk: dict, season: int) -> dict:
+    """pid -> 5-on-4 shots on goal this season (MoneyPuck)"""
+    df = (mp_sk or {}).get(season)
+    if df is None or not len(df):
+        return {}
+    d = df[_sit(df) == "5on4"]
+    if not len(d) or "I_F_shotsOnGoal" not in d.columns:
+        return {}
+    out = {}
+    for pid, v in zip(pd.to_numeric(d["playerId"], errors="coerce"), _num(d, "I_F_shotsOnGoal")):
+        if pid == pid:
+            out[int(pid)] = out.get(int(pid), 0) + int(v)
+    return out
 
 
 def onice_impact(mp_sk: dict, cur: int) -> dict:
@@ -1084,6 +1104,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     team_of_player = {p["id"]: p["team"] for p in raw["skaters"]}
     pst = pbp_season_stats(raw.get("pbp") or {}, team_of_player)
     ppf = pp_frame(raw["mp"]["skaters"])
+    pps = pp_shots(raw["mp"]["skaters"], cur)
     pp_tot = [v for (pid_, y_), v in ppf.items() if y_ == cur - 1]
     pp_lg = (sum(a for a, b in pp_tot) / sum(b for a, b in pp_tot)) if pp_tot and sum(b for a, b in pp_tot) else 4.0
     lg_pen_pg = (sum(pst["pens"].values()) / sum(pst["tgp"].values())) if sum(pst["tgp"].values()) else 3.3
@@ -1107,7 +1128,11 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         # note: for 5-on-4 rows _hours() sees small per-game numbers and returns minutes, not hours (the tested
         # PP model used the same units, so only this display needs the conversion)
         x["pp"] = {"min_pg": round(h_c / gp_c, 2) if gp_c else None, "min_pg_prev": round(h_ / gp_prev, 2) if gp_prev else None,
-                   "ppp": ppp_cur, "gp": len(lc_), "ppp_prev": int(sum(g_.get("ppp", 0) for g_ in lp_)), "gp_prev": len(lp_)}
+                   "ppp": ppp_cur, "gp": len(lc_), "ppp_prev": int(sum(g_.get("ppp", 0) for g_ in lp_)), "gp_prev": len(lp_),
+                   # split of this season's power-play points (play-by-play), PP shots (5-on-4), and all his points for the share
+                   "g": int(pst["ppg"].get(pid_, 0)), "a": int(pst["ppa"].get(pid_, 0)), "s": pps.get(pid_),
+                   "pts": int(sum(g_.get("g", 0) + g_.get("a", 0) for g_ in lc_)),
+                   "pts_prev": int(sum(g_.get("g", 0) + g_.get("a", 0) for g_ in lp_))}
         # faceoffs: draws per game and win % (this season from play-by-play, last season from MoneyPuck)
         fw_p, fl_p = float(prev_.get("fow", 0) or 0), float(prev_.get("fol", 0) or 0)
         ct, cw = pst["fo_t"].get(pid_, 0), pst["fo_w"].get(pid_, 0)
