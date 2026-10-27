@@ -100,3 +100,46 @@ def fetch_odds(src, games: list[dict], players: list[dict], log=print) -> dict:
                         "fetched": dt.datetime.utcnow().isoformat(timespec="minutes") + "Z"}
     log(f"Odds: bookmaker prices for {len(out)} games, {n_p} players")
     return out
+
+
+FUT_URL = BASE + "/listView/ice_hockey/nhl/all/all/competitions.json?lang=en_GB&market=SE&useCombined=true"
+
+
+def fetch_futures(src, log=print) -> dict:
+    """Season markets: Stanley Cup winner, conference winner (= reaches the final), division winner,
+    and per team: to reach the playoffs (yes/no) and regular-season points over/under."""
+    lst = src.json(FUT_URL, "odds/kambi_futures.json", 3)
+    out = {"cup": {}, "final": {}, "div": {}, "playoffs": {}, "points": {},
+           "fetched": dt.datetime.utcnow().isoformat(timespec="minutes") + "Z"}
+    for e in (lst or {}).get("events", []):
+        ev = e.get("event") or {}
+        name = str(ev.get("name") or "")
+        labels = " ".join(str((b.get("criterion") or {}).get("label") or "") for b in e.get("betOffers") or [])
+        kind = ("cup" if "Winner - Including Playoffs" in labels else "final" if "Conference Winner" in labels
+                else "div" if "Division Winner" in labels else "team" if " Markets" in name else None)
+        if not kind:
+            continue
+        js = src.json(EVENT_URL.format(eid=ev["id"]), f"odds/kambi_fut_{ev['id']}.json", 3) or {}
+        for b in js.get("betOffers") or []:
+            lab = str((b.get("criterion") or {}).get("label") or "")
+            oc = b.get("outcomes") or []
+            if kind in ("cup", "final", "div"):
+                for o in oc:
+                    tm = team_from_name(o.get("participant") or o.get("label") or "")
+                    od = _odds(o)
+                    if tm and od:
+                        out[kind][tm] = od
+            else:
+                tm = team_from_name(name.split(" Markets")[0].strip())
+                if not tm:
+                    continue
+                if lab.startswith("To reach the Playoffs"):
+                    yn = {str(o.get("label")).lower(): _odds(o) for o in oc}
+                    out["playoffs"][tm] = {"yes": yn.get("yes"), "no": yn.get("no")}
+                elif lab.startswith("Team Total Points"):
+                    ou = {str(o.get("label")).lower(): (_odds(o), o.get("line")) for o in oc}
+                    if "over" in ou and ou["over"][1]:
+                        out["points"][tm] = {"line": ou["over"][1] / 1000, "over": ou["over"][0], "under": (ou.get("under") or (None,))[0]}
+    log(f"Futures odds: Cup {len(out['cup'])}, conference {len(out['final'])}, division {len(out['div'])}, "
+        f"playoffs {len(out['playoffs'])}, points {len(out['points'])}")
+    return out

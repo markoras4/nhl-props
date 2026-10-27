@@ -196,7 +196,8 @@ def simulate(teams: list[str], rat: dict, played: list[tuple], remaining: list[t
         cup[ar, series(champs["East"], champs["West"])] = True
     res = {"teams": {t: {"playoffs": float(made[:, k].mean()), "r2": float(r2[:, k].mean()), "cf": float(cf[:, k].mean()),
                          "final": float(fin[:, k].mean()), "cup": float(cup[:, k].mean()), "div": float(divw[:, k].mean()),
-                         "pts": float(pts[:, k].mean()), "pts_now": float(pts0[k]), "sigma": float(sig[k])}
+                         "pts": float(pts[:, k].mean()), "pts_now": float(pts0[k]), "sigma": float(sig[k]),
+                         "ph": _hist(pts[:, k])}
                      for k, t in enumerate(teams)},
            "games": {}}
     for gid, (h, a, hw) in tracked.items():
@@ -210,16 +211,25 @@ def simulate(teams: list[str], rat: dict, played: list[tuple], remaining: list[t
     return res
 
 
+def _hist(x):
+    """final points distribution: [lowest, count, count, ...] (for over/under season points)"""
+    x = x.astype(int)
+    lo = int(x.min())
+    return [lo] + np.bincount(x - lo).astype(int).tolist()
+
+
 def importance_level(swing: float | None) -> str:
     """playoff-chance swing between winning and losing this game"""
     if swing is None:
         return "low"
-    return "critical" if swing >= 0.10 else "high" if swing >= 0.06 else "medium" if swing >= 0.03 else "low"
+    # cut-offs from backtest_season (games after New Year): critical ~ top 10% of games, high ~ top 25%
+    return "critical" if swing >= 0.14 else "high" if swing >= 0.08 else "medium" if swing >= 0.04 else "low"
 
 
 def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
     """Futures for the website from the data the daily build already has."""
     from .model import _num, _sit
+    from .news import TEAM_NAMES
     cur = raw["season"]
     lg_df = raw["league_games"]
     g = lg_df[lg_df.season == cur]
@@ -257,6 +267,7 @@ def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
     for t, v in res["teams"].items():
         v["div_name"], v["conf"] = DIV_OF.get(t), CONF_OF.get(DIV_OF.get(t))
         v["gp"], v["att"], v["def"] = gp.get(t, 0), round(rat[t][0], 3), round(rat[t][1], 3)
+        v["name"] = TEAM_NAMES.get(t, t)
     for gid, v in res["games"].items():
         for t, x in v.items():
             sw = (x["win"] - x["lose"]) if x["win"] is not None and x["lose"] is not None else None

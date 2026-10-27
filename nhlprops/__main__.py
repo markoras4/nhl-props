@@ -573,6 +573,17 @@ def main(argv=None):
         except Exception as e:  # shot maps are optional; never break the build
             print("Shot maps skipped:", e)
     if not args.demo:
+        try:   # playoff / round / Cup chances and how much each game matters (season simulation)
+            from .season import live as season_live
+            slate["futures"] = season_live(raw, slate, CONFIG)
+            try:
+                from .odds import fetch_futures
+                slate["futures"]["odds"] = fetch_futures(src)
+            except Exception as e:  # futures odds are optional
+                print("Futures odds unavailable:", e)
+        except Exception as e:  # never break the build
+            print("Season simulation skipped:", e)
+    if not args.demo:
         try:   # the last 7 days as they looked before puck drop, with results (opened from the Games tab)
             from .archive import build as build_archive
             slate["archive_dates"] = build_archive(slate, src, data_dir, ROOT / "output", raw.get("pbp"))
