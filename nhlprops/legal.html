@@ -271,5 +271,62 @@ $("#theme").addEventListener("click", () => { const nx = currentTheme()==="light
 applyTheme(store.get("set:theme"));
 render();
 </script>
+<script>
+/* colour themes: the accent (buttons, tabs, logo, highlights, heatmap) follows the visitor's choice;
+   meaning colours (green = good/value, red = bad, amber = warning) never change */
+(function(){
+  const A = {
+    green:  {en:"Rink Green", sv:"Isgrön",   c:"#3ddc97", d:null, l:null},
+    blue:   {en:"Ice Blue",   sv:"Isblå",    c:"#5ab8ff", d:["#5ab8ff","#03121f","90,184,255"],  l:["#1f74c4","#ffffff","31,116,196"]},
+    mint:   {en:"Mint",       sv:"Mint",     c:"#2ee6c5", d:["#2ee6c5","#03201a","46,230,197"],  l:["#0b8f7b","#ffffff","11,143,123"]},
+    violet: {en:"Violet",     sv:"Violett",  c:"#a78bfa", d:["#a78bfa","#150933","167,139,250"], l:["#6a48d6","#ffffff","106,72,214"]},
+    pink:   {en:"Pink",       sv:"Rosa",     c:"#f27ac0", d:["#f27ac0","#2a0619","242,122,192"], l:["#b8327a","#ffffff","184,50,122"]},
+    gold:   {en:"Gold",       sv:"Guld",     c:"#f2b544", d:["#f2b544","#241600","242,181,68"],  l:["#9a6a08","#ffffff","154,106,8"]}
+  };
+  const get = () => { try { const v = localStorage.getItem("set:accent"); return A[v] ? v : "green"; } catch(e){ return "green"; } };
+  const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
+  const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
+  function apply(){
+    const k = get(), v = A[k][theme()==="light" ? "l" : "d"], st = document.documentElement.style;
+    ["--accent","--accent-ink","--heat","--glow","--pc1"].forEach(p => st.removeProperty(p));
+    if (v){ st.setProperty("--accent", v[0]); st.setProperty("--accent-ink", v[1]); st.setProperty("--heat", v[2]); st.setProperty("--glow", v[2]); st.setProperty("--pc1", v[0]); }
+    document.documentElement.dataset.accent = k;
+  }
+  apply();
+  new MutationObserver(apply).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  try { matchMedia("(prefers-color-scheme: light)").addEventListener("change", apply); } catch(e){}
+  const css = document.createElement("style");
+  css.textContent = `.accbtn{display:inline-grid;place-items:center}.accbtn i{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--panel,#111),0 0 0 3px color-mix(in srgb,var(--accent) 60%,transparent)}
+#accpop{position:absolute;z-index:200;background:var(--panel,#111821);border:1px solid var(--line,#22303f);border-radius:14px;padding:6px;box-shadow:0 18px 50px -12px rgba(0,0,0,.55);display:grid;gap:2px;min-width:170px;font:600 13.5px var(--f-ui,system-ui)}
+#accpop .ah{font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--mute,#8796a8);padding:6px 10px 4px}
+#accpop button{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--text,#e7eef6);padding:8px 10px;border-radius:9px;cursor:pointer;text-align:left;font:inherit}
+#accpop button:hover{background:var(--panel2,#17202b)}
+#accpop button i{width:16px;height:16px;border-radius:50%;flex:none}
+#accpop button.on{background:var(--panel2,#17202b)}#accpop button.on::after{content:"✓";margin-left:auto;color:var(--text,#e7eef6)}`;
+  document.head.appendChild(css);
+  const close = () => { const p = document.getElementById("accpop"); if (p) p.remove(); };
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".accbtn");
+    if (b){
+      e.stopPropagation();
+      if (document.getElementById("accpop")){ close(); return; }
+      const sv = (document.documentElement.lang||"").startsWith("sv");
+      const r = b.getBoundingClientRect(), p = document.createElement("div");
+      p.id = "accpop"; p.setAttribute("role", "menu");
+      p.innerHTML = `<div class="ah">${sv ? "Färg" : "Colour"}</div>` + Object.entries(A).map(([k,x]) => `<button type="button" role="menuitemradio" aria-checked="${get()===k}" data-acc="${k}" class="${get()===k?"on":""}"><i style="background:${x.c}"></i><span>${sv ? x.sv : x.en}</span></button>`).join("");
+      document.body.appendChild(p);
+      const w = p.offsetWidth;
+      p.style.top = (r.bottom + 8 + scrollY) + "px";
+      p.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + scrollX + "px";
+      return;
+    }
+    const o = e.target.closest("[data-acc]");
+    if (o){ set(o.dataset.acc); apply(); close(); return; }
+    if (!e.target.closest("#accpop")) close();
+  }, true);
+  addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+  addEventListener("resize", close);
+})();
+</script>
 </body>
 </html>
