@@ -87,6 +87,8 @@ CONFIG = {
     "en_q": 0.35,                  # backtest_markets: a one-goal lead becomes two via the empty net 35% of the time (puck line)
     "season_sigma": 0.15,   # backtest_season: strength uncertainty per simulated season (best calibrated)
     "season_sigma_k": 30.0,
+    "season_prior_r": 0.7,   # backtest_season: last season's team level pulled 30% toward average (best game-level fit)
+    "season_k": 20.0,
     "prior_toi_beta": 1.0,   # backtest_depth: rookies / depth players pulled toward players with their ice time (0 = position average)
     "form_k": {"g": 40.0, "a": 40.0, "s": 80.0},   # backtest_form: recent-form cushion per market (bigger = less weight on the last 10 games)
     "btts2_cal": 0.963,            # backtest_markets: both teams 2+ goals ran 64.7% vs 62.3%

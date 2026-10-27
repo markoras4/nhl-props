@@ -82,8 +82,6 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         # importance: weekly from 1 Jan, games in the following 7 days
         best_guess = 0.15
         day = dt.date(season + 1, 1, 1)
-        if True:      # importance already tested; skip in this run
-            day = dt.date(season + 9, 1, 1)
         end = dt.date.fromisoformat(games.date.max())
         while day < end:
             cut, nxt = day.isoformat(), (day + dt.timedelta(days=7)).isoformat()
