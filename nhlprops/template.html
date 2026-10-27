@@ -99,7 +99,10 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 
 /* ---------- games list */
 .abar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 14px;margin:6px 0 14px;border:1px solid color-mix(in srgb,var(--accent2) 45%,var(--line));background:color-mix(in srgb,var(--accent2) 8%,var(--panel));border-radius:12px;font-size:14px}
-.abar.live{border-color:var(--line);background:var(--panel);font-size:13px;color:var(--mute)}
+.day.past{position:relative;border-style:dashed;color:var(--mute)}
+.day.past b{color:var(--text)}
+.day.past select{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;font-size:16px}
+@media (max-width:640px){.abar .meta{font-size:12px}.abar .abtn{width:100%;margin-left:0}.abar .abtn select{flex:1}}
 .abar b{font-family:var(--f-disp);letter-spacing:.3px}
 .abar .meta{flex:1 1 320px;margin:0}
 .abar .abtn{display:flex;gap:8px;margin-left:auto}
@@ -557,6 +560,25 @@ body.has-cmp main{padding-bottom:110px}
 .cmscroll{overflow-y:auto;padding:14px 18px 20px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .cmsum{display:flex;flex-wrap:wrap;gap:8px 22px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:14px;font-size:14px}
 .cmsum small{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.r6row[data-rd],.h2r[data-rd]{cursor:pointer;border-radius:8px;transition:background .15s}
+.r6row[data-rd]:hover,.h2r[data-rd]:hover{background:var(--panel2)}
+.rcp{width:min(820px,100%)}
+.rchead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:6px 0 4px}
+.rct{display:flex;align-items:center;gap:10px;font-family:var(--f-disp);font-size:22px;opacity:.75}.rct.r{justify-content:flex-end}.rct.w{opacity:1}
+.rcs{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}.rcs .meta{margin:0}
+.rcsc{font-family:var(--f-disp);font-weight:800;font-size:34px;line-height:1}
+.rcarch{display:block;margin:12px auto 0;border:1px solid var(--accent2);background:color-mix(in srgb,var(--accent2) 10%,transparent);color:var(--text);border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
+.rcper{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);margin:10px 0 4px}
+.rcg{display:grid;grid-template-columns:44px 24px 1fr auto;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.rcg .lg,.rcg .lgfb{--lg:20px}
+.rctime{font-variant-numeric:tabular-nums;color:var(--mute);font-size:12.5px}
+.rcwho small{display:block;color:var(--mute);font-size:12px}
+.rcst{font-size:10px;padding:1px 6px;margin-left:4px}
+.rcscore{font-weight:700}
+.rcpts td:first-child b{color:var(--good)}
+.rcgk td{border-top:1px dashed var(--line)}
+.rcseg{margin-left:auto}
+.cmsec .rcseg{text-transform:none;letter-spacing:0}
 .cmquick{border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 6%,var(--panel));border-radius:12px;padding:12px 16px;margin-bottom:12px}
 .cmquick h5{margin:0 0 6px;font-family:var(--f-disp);font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--accent)}
 .cmquick ul{margin:0;padding-left:18px;display:grid;gap:5px;font-size:14px;line-height:1.45}
@@ -898,7 +920,7 @@ const I18N = {
     op_player:"{t} against {p}", op_shots_pg:"Shots allowed per game", op_goals_pg:"Goals allowed per game", op_pts_pg:"Points allowed per game", op_vs_lg:"(avg {v})",
     op_pnote:"What this opponent has given up this season to players in his position. Green rank = one of the 8 most generous defences. Tested: beyond the team's overall defence (already in the model), this didn't predict goals or points, so it's context, not an edge.",
     mv_from:"from", mv_opened:"opened {a} · {h}", mv_tip_to:"Opened at {a} today, now {b}: the market has moved toward the model's fair odds ({f}).", mv_tip_away:"Opened at {a} today, now {b}: the market has moved away from the model's fair odds ({f}).",
-    login:"Log in", logout:"Log out", qr_title:"Quick read", qr_top:"Highest chance: {a} ({p}), then {b} ({q}).", qr_close:"Chances are almost level: {a} {p} and {b} {q}.", qr_short:"Only {n} NHL games behind that number, so it is less certain.", qr_value:"Best value at the current odds: {a} ({e} EV at {o}).", qr_novalue:"None of them is priced as value at the current odds.", qr_role:"Biggest role: {a}, about {m} min{r} tonight.", qr_inj:"{a} is listed as questionable: check that he plays.", qr_lucky:"{a} has scored {v} goals more than his chances suggest: expect that to cool, the chance shown already allows for it.", qr_unlucky:"{a} has scored {v} goals fewer than his chances suggest: the chances are there, the finishing has been unlucky.", qr_form:"{a} cleared this line in {h} of his last {n} games.", qr_gk:"{t}'s starting goalie isn't confirmed yet: numbers can move.", qr_gks:"Starting goalies for {t} aren't confirmed yet: numbers can move.", qr_bl:"On these numbers, {a} is the stronger option, ahead of {b}.", qr_bl_tight:"Too close to call between {a} and {b}: the difference is within the model's margin.", qr_bl_none:"On these numbers, none of them stands out at the current prices.", qr_reminder:"Even the top option at {p} misses about {n} times in {k}.", qr_note:"Built from the numbers below, not advice. Short NHL histories count for less in the bottom line.", ar_hit:"happened", ar_miss:"didn't happen", ar_dnp:"Did not play", ar_sv:"saves", ar_ga:"GA", ar_cta:"Look back: open any game from the last 7 days exactly as it was before puck drop, with what happened.", ar_pick:"Past 7 days", ar_title:"Archive · {d}", ar_sub:"Every number as it was at the game's last update before puck drop, with ✓ / ✗ for what happened.", ar_partial:"For a few games saved before the archive started, the player details are from the day after.", ar_back:"Back to today", bp_won:"Won", bp_lost:"Lost", cmp_add:"Add to compare", cmp_in:"In compare", cmp_remove:"Remove", cmp_clear:"Clear", cmp_open:"Compare {n}", cmp_close:"Close", cmp_need:"Add one more player to compare", cmp_more:"Add up to 4 players, from any game", cmp_max:"You can compare up to {n} players", cmp_title:"Compare players", cmp_tonight:"Tonight", cmp_chance:"Chance tonight", cmp_fair:"Fair odds", cmp_mkt:"Market odds", cmp_na:"Not offered", cmp_role:"Line · PP unit", cmp_opp_s:"Opponent allows (shots, his position)", cmp_opp_g:"Opponent allows (goals, his position)", cmp_opp_pt:"Opponent allows (points, his position)", cmp_x_g:"Expected goals", cmp_x_a:"Expected assists", cmp_x_p:"Expected points", cmp_x_s:"Expected shots", cmp_x_hit:"Expected hits", cmp_x_blk:"Expected blocks", cmp_x_pp:"Expected PP points", cmp_x_pm:"Expected penalties", cmp_x_fo:"Expected faceoffs won", cmp_l10:"Last 10 games (line {l})", cmp_over:"{h}/{n} over", cmp_nohist:"No game-by-game record for this market", cmp_hr:"Hit rates", cmp_vs:"vs tonight's opponent", cmp_season:"This season", cmp_gp:"Games", cmp_gpg:"Goals / game", cmp_apg:"Assists / game", cmp_ppg:"Points / game", cmp_spg:"Shots / game", cmp_sh:"Shooting %", cmp_gvx:"Goals vs expected", cmp_toi:"Ice time / game", cmp_ppmin:"PP minutes / game", cmp_ppp:"PP points", cmp_ppsh:"Share of points on the PP", cmp_hpg:"Hits / game (last 10)", cmp_bpg:"Blocks / game (last 10)", cmp_fo:"Faceoff %", cmp_pim:"Penalty minutes", cmp_streak:"Run", cmp_ps:"{n}-game point streak", cmp_gs:"{n}-game goal streak", cmp_pd:"No point in {n}", cmp_gd:"No goal in {n}", cmp_best_p:"Highest chance", cmp_best_ev:"Best value", cmp_best_hr:"Best last 10", cmp_note:"The best number in each row is highlighted in that player's colour. Goals vs expected above zero means he has finished better than his chances (often luck); below zero, worse. A higher chance isn't automatically the better bet: compare it with the odds.", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
+    login:"Log in", logout:"Log out", qr_title:"Quick read", qr_top:"Highest chance: {a} ({p}), then {b} ({q}).", qr_close:"Chances are almost level: {a} {p} and {b} {q}.", qr_short:"Only {n} NHL games behind that number, so it is less certain.", qr_value:"Best value at the current odds: {a} ({e} EV at {o}).", qr_novalue:"None of them is priced as value at the current odds.", qr_role:"Biggest role: {a}, about {m} min{r} tonight.", qr_inj:"{a} is listed as questionable: check that he plays.", qr_lucky:"{a} has scored {v} goals more than his chances suggest: expect that to cool, the chance shown already allows for it.", qr_unlucky:"{a} has scored {v} goals fewer than his chances suggest: the chances are there, the finishing has been unlucky.", qr_form:"{a} cleared this line in {h} of his last {n} games.", qr_gk:"{t}'s starting goalie isn't confirmed yet: numbers can move.", qr_gks:"Starting goalies for {t} aren't confirmed yet: numbers can move.", qr_bl:"On these numbers, {a} is the stronger option, ahead of {b}.", qr_bl_tight:"Too close to call between {a} and {b}: the difference is within the model's margin.", qr_bl_none:"On these numbers, none of them stands out at the current prices.", qr_reminder:"Even the top option at {p} misses about {n} times in {k}.", qr_note:"Built from the numbers below, not advice. Short NHL histories count for less in the bottom line.", ar_hit:"happened", ar_miss:"didn't happen", ar_dnp:"Did not play", ar_sv:"saves", ar_ga:"GA", ar_cta:"Look back: open any game from the last 7 days exactly as it was before puck drop, with what happened.", ar_pick:"Past 7 days", ar_title:"Archive · {d}", ar_sub:"Numbers as they were before puck drop. ✓ / ✗ = what happened.", ar_earlier:"Earlier", ar_7d:"Last 7 days", ar_meta:"Archive · {d} · {n} games", ar_partial:"(Player details for this date were saved the day after, as the archive started then.)", ar_back:"Back to today", bp_won:"Won", bp_lost:"Lost", rc_title:"Game recap", rc_none:"Couldn't load this game right now.", rc_sog:"Shots {a} – {h}", rc_arch:"Open as it looked before puck drop", rc_p:"Period {n}", rc_unass:"unassisted", rc_nogoals:"No goals.", rc_goals:"Goals", rc_players:"Players", rc_open:"Open the recap of this game", cmp_add:"Add to compare", cmp_in:"In compare", cmp_remove:"Remove", cmp_clear:"Clear", cmp_open:"Compare {n}", cmp_close:"Close", cmp_need:"Add one more player to compare", cmp_more:"Add up to 4 players, from any game", cmp_max:"You can compare up to {n} players", cmp_title:"Compare players", cmp_tonight:"Tonight", cmp_chance:"Chance tonight", cmp_fair:"Fair odds", cmp_mkt:"Market odds", cmp_na:"Not offered", cmp_role:"Line · PP unit", cmp_opp_s:"Opponent allows (shots, his position)", cmp_opp_g:"Opponent allows (goals, his position)", cmp_opp_pt:"Opponent allows (points, his position)", cmp_x_g:"Expected goals", cmp_x_a:"Expected assists", cmp_x_p:"Expected points", cmp_x_s:"Expected shots", cmp_x_hit:"Expected hits", cmp_x_blk:"Expected blocks", cmp_x_pp:"Expected PP points", cmp_x_pm:"Expected penalties", cmp_x_fo:"Expected faceoffs won", cmp_l10:"Last 10 games (line {l})", cmp_over:"{h}/{n} over", cmp_nohist:"No game-by-game record for this market", cmp_hr:"Hit rates", cmp_vs:"vs tonight's opponent", cmp_season:"This season", cmp_gp:"Games", cmp_gpg:"Goals / game", cmp_apg:"Assists / game", cmp_ppg:"Points / game", cmp_spg:"Shots / game", cmp_sh:"Shooting %", cmp_gvx:"Goals vs expected", cmp_toi:"Ice time / game", cmp_ppmin:"PP minutes / game", cmp_ppp:"PP points", cmp_ppsh:"Share of points on the PP", cmp_hpg:"Hits / game (last 10)", cmp_bpg:"Blocks / game (last 10)", cmp_fo:"Faceoff %", cmp_pim:"Penalty minutes", cmp_streak:"Run", cmp_ps:"{n}-game point streak", cmp_gs:"{n}-game goal streak", cmp_pd:"No point in {n}", cmp_gd:"No goal in {n}", cmp_best_p:"Highest chance", cmp_best_ev:"Best value", cmp_best_hr:"Best last 10", cmp_note:"The best number in each row is highlighted in that player's colour. Goals vs expected above zero means he has finished better than his chances (often luck); below zero, worse. A higher chance isn't automatically the better bet: compare it with the odds.", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
     au_in_h:"Log in", au_up_h:"Create a free account", au_sub:"Save picks and track how they do. Results are graded automatically after each game.",
     au_email:"Email", au_pass:"Password (8+ characters)", au_in_btn:"Log in", au_up_btn:"Create account", au_have:"I already have an account", au_new:"New here? Create an account",
     au_link:"Email me a login link", au_link_sent:"Check your email for the login link.", au_need_email:"Enter your email first.", au_need_pass:"Enter your password, or use a login link.",
@@ -1120,7 +1142,7 @@ const I18N = {
     op_player:"{t} mot {p}", op_shots_pg:"Insläppta skott per match", op_goals_pg:"Insläppta mål per match", op_pts_pg:"Insläppta poäng per match", op_vs_lg:"(snitt {v})",
     op_pnote:"Vad motståndaren har släppt till i år mot spelare på hans position. Grön placering = ett av de 8 generösaste försvaren. Testat: utöver lagets totala försvar (redan i modellen) förutsade det inte mål eller poäng, så det är bakgrund, inte en edge.",
     mv_from:"från", mv_opened:"öppnade {a} · {h}", mv_tip_to:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig mot modellens rättvisa odds ({f}).", mv_tip_away:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig bort från modellens rättvisa odds ({f}).",
-    login:"Logga in", logout:"Logga ut", qr_title:"Snabbläsning", qr_top:"Högst chans: {a} ({p}), sedan {b} ({q}).", qr_close:"Chanserna är nästan lika: {a} {p} och {b} {q}.", qr_short:"Bara {n} NHL-matcher bakom den siffran, så den är osäkrare.", qr_value:"Bäst värde till nuvarande odds: {a} ({e} EV till {o}).", qr_novalue:"Ingen av dem är prissatt som värde till nuvarande odds.", qr_role:"Störst roll: {a}, ungefär {m} min{r} i kväll.", qr_inj:"{a} är listad som osäker: kontrollera att han spelar.", qr_lucky:"{a} har gjort {v} mål fler än hans chanser antyder: räkna med att det svalnar, chansen som visas tar redan hänsyn till det.", qr_unlucky:"{a} har gjort {v} mål färre än hans chanser antyder: chanserna finns, avsluten har haft otur.", qr_form:"{a} gick över linjen i {h} av sina senaste {n} matcher.", qr_gk:"{t}s startmålvakt är inte bekräftad än: siffrorna kan ändras.", qr_gks:"Startmålvakterna för {t} är inte bekräftade än: siffrorna kan ändras.", qr_bl:"Utifrån siffrorna är {a} det starkare alternativet, före {b}.", qr_bl_tight:"För jämnt för att skilja {a} och {b}: skillnaden ligger inom modellens marginal.", qr_bl_none:"Utifrån siffrorna sticker ingen av dem ut till nuvarande priser.", qr_reminder:"Även det bästa alternativet på {p} missar ungefär {n} gånger av {k}.", qr_note:"Byggt på siffrorna nedan, inga råd. Kort NHL-historik väger mindre i slutsatsen.", ar_hit:"hände", ar_miss:"hände inte", ar_dnp:"Spelade inte", ar_sv:"räddningar", ar_ga:"insläppta", ar_cta:"Titta tillbaka: öppna valfri match från de senaste 7 dagarna precis som den såg ut före nedsläpp, med vad som hände.", ar_pick:"Senaste 7 dagarna", ar_title:"Arkiv · {d}", ar_sub:"Alla siffror som de var vid matchens sista uppdatering före nedsläpp, med ✓ / ✗ för vad som hände.", ar_partial:"För några matcher som sparades innan arkivet startade är spelardetaljerna från dagen efter.", ar_back:"Tillbaka till i dag", bp_won:"Vann", bp_lost:"Förlorade", cmp_add:"Lägg till i jämförelse", cmp_in:"I jämförelsen", cmp_remove:"Ta bort", cmp_clear:"Rensa", cmp_open:"Jämför {n}", cmp_close:"Stäng", cmp_need:"Lägg till en spelare till för att jämföra", cmp_more:"Lägg till upp till 4 spelare, från valfri match", cmp_max:"Du kan jämföra upp till {n} spelare", cmp_title:"Jämför spelare", cmp_tonight:"I kväll", cmp_chance:"Chans i kväll", cmp_fair:"Rättvisa odds", cmp_mkt:"Marknadsodds", cmp_na:"Erbjuds inte", cmp_role:"Kedja · PP-femma", cmp_opp_s:"Motståndaren släpper till (skott, hans position)", cmp_opp_g:"Motståndaren släpper till (mål, hans position)", cmp_opp_pt:"Motståndaren släpper till (poäng, hans position)", cmp_x_g:"Förväntade mål", cmp_x_a:"Förväntade assist", cmp_x_p:"Förväntade poäng", cmp_x_s:"Förväntade skott", cmp_x_hit:"Förväntade tacklingar", cmp_x_blk:"Förväntade blockeringar", cmp_x_pp:"Förväntade PP-poäng", cmp_x_pm:"Förväntade utvisningar", cmp_x_fo:"Förväntade vunna tekningar", cmp_l10:"Senaste 10 matcherna (linje {l})", cmp_over:"{h}/{n} över", cmp_nohist:"Ingen match-för-match-historik för det här spelet", cmp_hr:"Träffprocent", cmp_vs:"mot kvällens motståndare", cmp_season:"I år", cmp_gp:"Matcher", cmp_gpg:"Mål / match", cmp_apg:"Assist / match", cmp_ppg:"Poäng / match", cmp_spg:"Skott / match", cmp_sh:"Skottprocent", cmp_gvx:"Mål mot förväntat", cmp_toi:"Istid / match", cmp_ppmin:"PP-minuter / match", cmp_ppp:"PP-poäng", cmp_ppsh:"Andel poäng i PP", cmp_hpg:"Tacklingar / match (senaste 10)", cmp_bpg:"Blockeringar / match (senaste 10)", cmp_fo:"Tekningsprocent", cmp_pim:"Utvisningsminuter", cmp_streak:"Svit", cmp_ps:"Poäng i {n} raka", cmp_gs:"Mål i {n} raka", cmp_pd:"Ingen poäng på {n}", cmp_gd:"Inget mål på {n}", cmp_best_p:"Högst chans", cmp_best_ev:"Bäst värde", cmp_best_hr:"Bäst senaste 10", cmp_note:"Bästa siffran på varje rad markeras i spelarens färg. Mål mot förväntat över noll betyder att han avslutat bättre än sina chanser (ofta tur); under noll, sämre. Högre chans är inte automatiskt det bättre spelet: jämför med oddset.", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
+    login:"Logga in", logout:"Logga ut", qr_title:"Snabbläsning", qr_top:"Högst chans: {a} ({p}), sedan {b} ({q}).", qr_close:"Chanserna är nästan lika: {a} {p} och {b} {q}.", qr_short:"Bara {n} NHL-matcher bakom den siffran, så den är osäkrare.", qr_value:"Bäst värde till nuvarande odds: {a} ({e} EV till {o}).", qr_novalue:"Ingen av dem är prissatt som värde till nuvarande odds.", qr_role:"Störst roll: {a}, ungefär {m} min{r} i kväll.", qr_inj:"{a} är listad som osäker: kontrollera att han spelar.", qr_lucky:"{a} har gjort {v} mål fler än hans chanser antyder: räkna med att det svalnar, chansen som visas tar redan hänsyn till det.", qr_unlucky:"{a} har gjort {v} mål färre än hans chanser antyder: chanserna finns, avsluten har haft otur.", qr_form:"{a} gick över linjen i {h} av sina senaste {n} matcher.", qr_gk:"{t}s startmålvakt är inte bekräftad än: siffrorna kan ändras.", qr_gks:"Startmålvakterna för {t} är inte bekräftade än: siffrorna kan ändras.", qr_bl:"Utifrån siffrorna är {a} det starkare alternativet, före {b}.", qr_bl_tight:"För jämnt för att skilja {a} och {b}: skillnaden ligger inom modellens marginal.", qr_bl_none:"Utifrån siffrorna sticker ingen av dem ut till nuvarande priser.", qr_reminder:"Även det bästa alternativet på {p} missar ungefär {n} gånger av {k}.", qr_note:"Byggt på siffrorna nedan, inga råd. Kort NHL-historik väger mindre i slutsatsen.", ar_hit:"hände", ar_miss:"hände inte", ar_dnp:"Spelade inte", ar_sv:"räddningar", ar_ga:"insläppta", ar_cta:"Titta tillbaka: öppna valfri match från de senaste 7 dagarna precis som den såg ut före nedsläpp, med vad som hände.", ar_pick:"Senaste 7 dagarna", ar_title:"Arkiv · {d}", ar_sub:"Siffrorna som de var före nedsläpp. ✓ / ✗ = vad som hände.", ar_earlier:"Tidigare", ar_7d:"Senaste 7 dagarna", ar_meta:"Arkiv · {d} · {n} matcher", ar_partial:"(Spelardetaljerna för det här datumet sparades dagen efter, när arkivet startade.)", ar_back:"Tillbaka till i dag", bp_won:"Vann", bp_lost:"Förlorade", rc_title:"Matchsammanfattning", rc_none:"Kunde inte ladda matchen just nu.", rc_sog:"Skott {a} – {h}", rc_arch:"Öppna som den såg ut före nedsläpp", rc_p:"Period {n}", rc_unass:"utan assist", rc_nogoals:"Inga mål.", rc_goals:"Mål", rc_players:"Spelare", rc_open:"Öppna sammanfattningen av matchen", cmp_add:"Lägg till i jämförelse", cmp_in:"I jämförelsen", cmp_remove:"Ta bort", cmp_clear:"Rensa", cmp_open:"Jämför {n}", cmp_close:"Stäng", cmp_need:"Lägg till en spelare till för att jämföra", cmp_more:"Lägg till upp till 4 spelare, från valfri match", cmp_max:"Du kan jämföra upp till {n} spelare", cmp_title:"Jämför spelare", cmp_tonight:"I kväll", cmp_chance:"Chans i kväll", cmp_fair:"Rättvisa odds", cmp_mkt:"Marknadsodds", cmp_na:"Erbjuds inte", cmp_role:"Kedja · PP-femma", cmp_opp_s:"Motståndaren släpper till (skott, hans position)", cmp_opp_g:"Motståndaren släpper till (mål, hans position)", cmp_opp_pt:"Motståndaren släpper till (poäng, hans position)", cmp_x_g:"Förväntade mål", cmp_x_a:"Förväntade assist", cmp_x_p:"Förväntade poäng", cmp_x_s:"Förväntade skott", cmp_x_hit:"Förväntade tacklingar", cmp_x_blk:"Förväntade blockeringar", cmp_x_pp:"Förväntade PP-poäng", cmp_x_pm:"Förväntade utvisningar", cmp_x_fo:"Förväntade vunna tekningar", cmp_l10:"Senaste 10 matcherna (linje {l})", cmp_over:"{h}/{n} över", cmp_nohist:"Ingen match-för-match-historik för det här spelet", cmp_hr:"Träffprocent", cmp_vs:"mot kvällens motståndare", cmp_season:"I år", cmp_gp:"Matcher", cmp_gpg:"Mål / match", cmp_apg:"Assist / match", cmp_ppg:"Poäng / match", cmp_spg:"Skott / match", cmp_sh:"Skottprocent", cmp_gvx:"Mål mot förväntat", cmp_toi:"Istid / match", cmp_ppmin:"PP-minuter / match", cmp_ppp:"PP-poäng", cmp_ppsh:"Andel poäng i PP", cmp_hpg:"Tacklingar / match (senaste 10)", cmp_bpg:"Blockeringar / match (senaste 10)", cmp_fo:"Tekningsprocent", cmp_pim:"Utvisningsminuter", cmp_streak:"Svit", cmp_ps:"Poäng i {n} raka", cmp_gs:"Mål i {n} raka", cmp_pd:"Ingen poäng på {n}", cmp_gd:"Inget mål på {n}", cmp_best_p:"Högst chans", cmp_best_ev:"Bäst värde", cmp_best_hr:"Bäst senaste 10", cmp_note:"Bästa siffran på varje rad markeras i spelarens färg. Mål mot förväntat över noll betyder att han avslutat bättre än sina chanser (ofta tur); under noll, sämre. Högre chans är inte automatiskt det bättre spelet: jämför med oddset.", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
     au_in_h:"Logga in", au_up_h:"Skapa ett gratiskonto", au_sub:"Spara spel och följ hur de går. Resultaten rättas automatiskt efter varje match.",
     au_email:"E-post", au_pass:"Lösenord (minst 8 tecken)", au_in_btn:"Logga in", au_up_btn:"Skapa konto", au_have:"Jag har redan ett konto", au_new:"Ny här? Skapa ett konto",
     au_link:"Mejla mig en inloggningslänk", au_link_sent:"Kolla din e-post efter inloggningslänken.", au_need_email:"Skriv din e-post först.", au_need_pass:"Skriv ditt lösenord, eller använd en inloggningslänk.",
@@ -1472,7 +1494,7 @@ const isReg = p => p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.d
 // ------------------------------------------------------------ chrome
 function header(){
   document.documentElement.lang = LANG;
-  $("#meta").innerHTML = t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "")
+  $("#meta").innerHTML = ARCH ? t("ar_meta",{d:dayLabel(ARCH.date), n:DATA.games.length}) : t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "")
     + (DATA.previews && Object.keys(DATA.previews).length ? ` · <a class="pvlink" href="../previews">${t("pv_all")}</a>` : "");
   const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
     props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
@@ -1516,7 +1538,9 @@ function gamesList(){
   if (!dates.includes(state.day)) state.day = dates[0];
   const games = DATA.games.filter(g=>g.date===state.day);
   const L = DATA.league;
-  let html = `<div class="days">${dates.map(d=>`<button class="day ${d===state.day?"on":""}" data-d="${d}"><b>${d===dates[0]&&!ARCH?t("today"):dayShort(d)}</b><span>${dayLabel(d)} · ${t("n_games",{n:DATA.games.filter(g=>g.date===d).length})}</span></button>`).join("")}</div>
+  const ads = ARCH ? [] : archDates();
+  const pastChip = ads.length ? `<div class="day past" title="${esc(t("ar_cta"))}"><b>◷ ${t("ar_earlier")}</b><span>${t("ar_7d")}</span><select id="archsel2" aria-label="${t("ar_pick")}"><option value="">${t("ar_pick")}</option>${ads.map(d=>`<option value="${d}">${dayLabel(d)}</option>`).join("")}</select></div>` : "";
+  let html = `<div class="days">${pastChip}${dates.map(d=>`<button class="day ${d===state.day?"on":""}" data-d="${d}"><b>${d===dates[0]&&!ARCH?t("today"):dayShort(d)}</b><span>${dayLabel(d)} · ${t("n_games",{n:DATA.games.filter(g=>g.date===d).length})}</span></button>`).join("")}</div>
   <div class="glist">`;
   for (const g of games){
     const A = DATA.teams[g.away]||{}, H = DATA.teams[g.home]||{};
@@ -1539,7 +1563,9 @@ function gamesList(){
   }
   html += `</div><p class="foot">${t("league_foot",{a:fmt(L.cur_gpg,2), b:fmt(L.base_gpg,2)})}</p>`;
   $("#main").innerHTML = html;
+  const as2 = $("#archsel2"); if (as2) as2.onchange = () => { if (as2.value) archGo(as2.value); };
   $("#main").onclick = e => {
+    if (e.target.closest(".day.past")) return;
     const d = e.target.closest(".day"); if (d){ state.day = d.dataset.d; render(); return; }
     const r = e.target.closest(".grow"); if (r) go({game:r.dataset.g, side:null});
   };
@@ -1558,7 +1584,7 @@ function h2hBlock(g){
     const left = x.hHome ? team(A, x.ag, x.ag>x.hg, "l") : team(H, x.hg, x.hg>x.ag, "l");    // away side of that meeting
     const right = x.hHome ? team(H, x.hg, x.hg>x.ag, "r") : team(A, x.ag, x.ag>x.hg, "r");   // home side of that meeting
     const d = new Date(x.date+"T12:00:00").toLocaleDateString(LOCALE(),{day:"numeric",month:"short",year:"numeric"});
-    return `<div class="h2r"><span class="h2d">${d}</span>${left}<span class="h2at">–</span>${right}<span class="h2tot">${x.hg+x.ag}</span></div>`;
+    return `<div class="h2r" data-rd="${x.date}" data-rt="${H}" role="button" tabindex="0" title="${esc(t("rc_open"))}"><span class="h2d">${d}</span>${left}<span class="h2at">–</span>${right}<span class="h2tot">${x.hg+x.ag}</span></div>`;
   }).join("");
   return `<div class="h2h"><div class="h2s"><b>${t("h2h_title")}</b><span>${t("h2h_sum",{a:A, aw, hw, h:H, avg:fmt(h.avg_total,1), l:line, o:over, n:games.length})}</span></div>
     <div class="h2head"><span></span><span class="l">${t("h2h_away")}</span><span></span><span>${t("h2h_home")}</span><span class="h2tot">${t("h2h_total")}</span></div>${rows}</div>`;
@@ -1675,7 +1701,7 @@ function recentBox(g){
     const w = R.filter(x=>x.gf>x.ga).length, otl = R.filter(x=>x.gf<x.ga && x.x).length, l = R.length - w - otl;
     const gf = R.reduce((a,x)=>a+x.gf,0)/R.length, ga = R.reduce((a,x)=>a+x.ga,0)/R.length;
     const rows = R.map(x => { const k = x.gf>x.ga ? "W" : x.x ? "O" : "L";
-      return `<div class="r6row"><span class="r6d">${dayLabel(x.d)}</span><span class="r6o">${x.h?t("r6_vs"):"@"} ${logo(x.o,20)} <b>${x.o}</b></span>
+      return `<div class="r6row" data-rd="${x.d}" data-rt="${team}" role="button" tabindex="0" title="${esc(t("rc_open"))}"><span class="r6d">${dayLabel(x.d)}</span><span class="r6o">${x.h?t("r6_vs"):"@"} ${logo(x.o,20)} <b>${x.o}</b></span>
         <span class="r6x">${k==="W" && x.x ? (x.x==="OT"?t("r6_ot"):t("r6_so")) : ""}</span><span class="r6s num">${x.gf}–${x.ga}</span><span class="r6r r6-${k}">${t("r6_"+k)}</span></div>`; }).join("");
     return `<div class="box r6box"><h4><span class="r6h">${logo(team,20)} ${t("r6_title",{t:team})}</span><span class="meta">${w}-${l}-${otl} · ${t("r6_gfga",{f:fmt(gf,1), a:fmt(ga,1)})}</span></h4>${rows}</div>`; };
   const a = one(g.away), h = one(g.home);
@@ -2579,6 +2605,8 @@ function cmpTray(){
     if (e.target.closest("#cmpgo") && CMP.length >= 2) openCompare();
   };
 }
+document.addEventListener("click", e => { const r = e.target.closest("[data-rd][data-rt]"); if (r) openRecap(r.dataset.rd, r.dataset.rt); });
+document.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const r = e.target.closest?.("[data-rd][data-rt]"); if (r){ e.preventDefault(); openRecap(r.dataset.rd, r.dataset.rt); } });
 document.addEventListener("click", e => { const b = e.target.closest("[data-cmp]"); if (!b) return;
   e.stopPropagation(); e.preventDefault(); const [g,p] = b.dataset.cmp.split("|"); cmpToggle(g,p); }, true);
 
@@ -3195,6 +3223,49 @@ function picksTab(){
 if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null; setTimeout(async () => { await loadPicks(); header(); render(); }, 0); });
 
 // ------------------------------------------------------------ live scores (official NHL feed via our scores function)
+// ------------------------------------------------------------ game recap (a past game: goals and every player's line)
+const RECAP_URL = "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/recap";
+const RECAPS = new Map();
+function openRecap(date, team){
+  const el = $("#modal"); el.classList.add("cmpm");
+  el.innerHTML = `<div class="mbox cmpbox rcp" role="dialog" aria-modal="true" aria-label="${esc(t("rc_title"))}"><div class="cmtop"><h3>${t("rc_title")}</h3><button type="button" class="cmclose" data-close aria-label="${t("cmp_close")}">×</button></div><div class="cmscroll"><p class="meta">${t("sp_loading")}</p></div></div>`;
+  el.hidden = false; document.documentElement.style.overflow = "hidden";
+  const key = `${date}|${team}`;
+  const got = RECAPS.has(key) ? Promise.resolve(RECAPS.get(key)) :
+    fetch(`${RECAP_URL}?date=${date}&team=${team}`).then(r => r.ok ? r.json() : null).then(js => { if (js && !js.error) RECAPS.set(key, js); return js; });
+  got.then(R => { const box = document.querySelector("#modal .rcp .cmscroll"); if (!box) return;
+    if (!R || R.error){ box.innerHTML = `<p class="meta">${t("rc_none")}</p>`; return; }
+    box.innerHTML = recapHTML(R);
+    const tb = box.querySelector(".rcseg"); if (tb) tb.onclick = e => { const b = e.target.closest("[data-rs]"); if (!b) return;
+      box.querySelectorAll("[data-rs]").forEach(x => x.classList.toggle("on", x===b));
+      box.querySelectorAll(".rctab").forEach(x => x.hidden = x.dataset.side !== b.dataset.rs); };
+    const ab = box.querySelector("[data-arch]"); if (ab) ab.onclick = () => { const u = new URL(location.href); u.searchParams.set("d", ab.dataset.arch); u.hash = "g" + ab.dataset.gid; location.href = u.toString(); };
+  }).catch(() => { const box = document.querySelector("#modal .rcp .cmscroll"); if (box) box.innerHTML = `<p class="meta">${t("rc_none")}</p>`; });
+}
+function recapHTML(R){
+  const fin = ["OFF","FINAL"].includes(R.state);
+  const ot = R.last && R.last !== "REG" ? " " + R.last : "";
+  const aw = R.as > R.hs, d = new Date(R.date+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+  const head = `<div class="rchead"><div class="rct ${aw?"w":""}">${logo(R.away,40)}<b>${R.away}</b></div>
+    <div class="rcs"><div class="rcsc">${R.as} – ${R.hs}</div><span class="pill s-final">${fin ? t("st_final")+ot : t("st_live")}</span><div class="meta">${d} · ${esc(R.venue||"")}</div><div class="meta">${t("rc_sog",{a:R.asog??"–", h:R.hsog??"–"})}</div></div>
+    <div class="rct r ${!aw?"w":""}"><b>${R.home}</b>${logo(R.home,40)}</div></div>`;
+  const inArch = (DATA.archive_dates || []).includes(R.date) && !ARCH;
+  const arch = inArch ? `<button type="button" class="rcarch" data-arch="${R.date}" data-gid="${R.id}">◷ ${t("rc_arch")}</button>` : "";
+  const per = p => typeof p === "number" ? t("rc_p",{n:p}) : p === "OT" ? t("r6_ot") : p === "SO" ? t("r6_so") : p;
+  let lastP = null;
+  const goals = (R.goals || []).map(g => { const hd = g.p !== lastP ? `<div class="rcper">${per(g.p)}</div>` : ""; lastP = g.p;
+    const tag = g.strength && g.strength !== "ev" ? `<span class="pill rcst">${String(g.strength).toUpperCase()}</span>` : "";
+    return hd + `<div class="rcg"><span class="rctime">${g.time||""}</span>${logo(g.team,20)}<span class="rcwho"><b>${esc(g.scorer)}</b> ${tag}<small>${g.assists?.length ? esc(g.assists.join(", ")) : t("rc_unass")}</small></span><span class="rcscore num">${g.score}</span></div>`; }).join("")
+    || `<p class="meta">${t("rc_nogoals")}</p>`;
+  const table = (side, abbr) => { const P_ = R.players?.[side] || {}; const sk = (P_.skaters || []).slice().sort((a,b)=> (b.g+b.a)-(a.g+a.a) || b.g-a.g || String(b.toi).localeCompare(String(a.toi)));
+    const rows = sk.map(p => `<tr class="${p.g+p.a?"rcpts":""}"><td><b>${esc(p.name)}</b> <span class="meta">${p.pos}</span></td><td class="n">${p.g}</td><td class="n">${p.a}</td><td class="n">${p.s}</td><td class="n hide-xs">${p.h}</td><td class="n hide-xs">${p.b}</td><td class="n hide-xs">${p.pim}</td><td class="n">${p.toi}</td></tr>`).join("");
+    const gk = (P_.goalies || []).map(g => `<tr class="rcgk"><td><b>${esc(g.name)}</b> <span class="meta">G${g.dec?" · "+g.dec:""}</span></td><td class="n" colspan="3">${g.sv ?? "–"}/${g.sa ?? "–"} ${t("ar_sv")}</td><td class="n hide-xs" colspan="3">${g.ga ?? "–"} ${t("ar_ga")}</td><td class="n">${g.toi}</td></tr>`).join("");
+    return `<div class="rctab" data-side="${side}" ${side==="home"?"hidden":""}><div class="tablewrap"><table class="mini"><thead><tr><th>${abbr}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n hide-xs">${t("l10_h")}</th><th class="n hide-xs">${t("l10_b")}</th><th class="n hide-xs">PIM</th><th class="n">${t("toi")}</th></tr></thead><tbody>${rows}${gk}</tbody></table></div></div>`; };
+  return `${head}${arch}<h4 class="cmsec">${t("rc_goals")}</h4><div class="rcgoals">${goals}</div>
+    <h4 class="cmsec">${t("rc_players")} <span class="seg rcseg"><button data-rs="away" class="on">${R.away}</button><button data-rs="home">${R.home}</button></span></h4>
+    ${table("away", R.away)}${table("home", R.home)}`;
+}
+
 // ------------------------------------------------------------ archive: the last 7 days as they looked before puck drop
 let ARCH = null;
 const ARCH_PARAM = (() => { try { return new URLSearchParams(location.search).get("d"); } catch(e){ return null; } })();
@@ -3236,10 +3307,8 @@ function resLine(gid, pid){
 function archBar(){
   const el = $("#archbar"); if (!el) return;
   const ds = archDates();
-  if (!ARCH){
-    el.hidden = !ds.length || state.tab !== "games" || !!state.game;
-    if (!el.hidden) el.innerHTML = `<div class="abar live"><span>${t("ar_cta")}</span><select id="archsel" aria-label="${t("ar_pick")}"><option value="">${t("ar_pick")} ▾</option>${ds.map(d=>`<option value="${d}">${dayLabel(d)}</option>`).join("")}</select></div>`;
-  } else {
+  if (!ARCH){ el.hidden = true; el.innerHTML = ""; return; }
+  {
     el.hidden = false;
     const part = (ARCH.partial || []).length;
     el.innerHTML = `<div class="abar"><b>${t("ar_title",{d:dayLabel(ARCH.date)})}</b><span class="meta">${t("ar_sub")}${part ? " " + t("ar_partial") : ""}</span>
