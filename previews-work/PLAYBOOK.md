@@ -42,7 +42,7 @@ Never invent facts, numbers or quotes. If something cannot be verified, leave it
   `inputs[mode]=fetch`, then pull: photos land in `site-assets/previews/<slug>.jpg` with `credits.json`.
 - Convert each to WebP 2000px wide (Pillow, quality 82, method=6), delete the .jpg, and fill `photo` in the preview:
   `src: assets/previews/<slug>.webp`, `alt`, `author`, `license`, `license_url`, `page` from credits.json
-  (add `pos: "center 25%"` for portrait shots so faces are not cut).
+  (the hero is very wide, so a 4:3 photo shows only its middle band: add `pos: "center 20%"`–`"center 25%"` whenever faces are in the upper part of the photo, which is most action shots, so heads are not cut).
 
 ## 5. Publish
 - Validate the JSON (`python3 -c "import json;json.load(open(...))"`), commit `data/previews` and `site-assets/previews`,
