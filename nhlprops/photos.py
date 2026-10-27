@@ -106,7 +106,7 @@ def candidates(queries_file: str, out_dir: str, per_query: int = 4) -> None:
 
 
 def fetch(picks_file: str, out_dir: str) -> None:
-    """picks.json: {slug: "File:Name.jpg"} -> downloads 1400px versions + credits.json"""
+    """picks.json: {slug: "File:Name.jpg"} -> downloads 2000px versions (sharp on high-density screens) + credits.json"""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     picks = json.loads(Path(picks_file).read_text())
@@ -115,7 +115,7 @@ def fetch(picks_file: str, out_dir: str) -> None:
     for slug, title in picks.items():
         if (out / f"{slug}.jpg").exists() and credits.get(slug, {}).get("title") == title:
             continue
-        js = _get({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url|size|extmetadata", "iiurlwidth": 1400})
+        js = _get({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url|size|extmetadata", "iiurlwidth": 2000})
         p = next(iter(js["query"]["pages"].values()))
         ii = (p.get("imageinfo") or [{}])[0]
         md = ii.get("extmetadata") or {}
