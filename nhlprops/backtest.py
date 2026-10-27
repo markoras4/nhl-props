@@ -107,7 +107,7 @@ def shrink(x, n, prior, k):
 
 
 def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, season: int, cfg: dict,
-            weights=(5, 4, 3, 2, 1), kmult=1.0) -> pd.DataFrame:
+            weights=(5, 4, 3, 2, 1), kmult=1.0, prior_beta=0.0) -> pd.DataFrame:
     """Return sk with lambda_g / lambda_a / lambda_s columns, using info strictly before each game."""
     df = sk.sort_values(["pid", "date", "gid"]).copy()
     g = df.groupby("pid")
@@ -135,6 +135,15 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     col = lambda k: df.posg.map({pg: v[k] for pg, v in lg.items()})
 
     k = cfg
+    toi_season = np.where(df.c_gp >= 5, df.c_toi / df.c_gp.clip(lower=1),
+                          np.where(df.ls_gp > 0, df.ls_h * 60 / df.ls_gp.clip(lower=1), col("toi")))
+    toi_recent = df.toi10.fillna(pd.Series(toi_season, index=df.index))
+    toi_proj = k["toi_recent_weight"] * toi_recent + (1 - k["toi_recent_weight"]) * toi_season
+    # role-based prior: players with little history are pulled toward what players with his ice time produce,
+    # not the average player at his position (prior_beta = 0 is the plain position average)
+    tf = (pd.Series(toi_proj, index=df.index) / col("toi")).clip(0.4, 1.8) ** prior_beta
+    col0 = col
+    col = lambda kk: col0(kk) * tf if kk in ("s60", "xg60", "a60") else col0(kk)
     h_cur = df.c_toi / 60
     eh = w_cur * h_cur + df.wh
     s60 = shrink(w_cur * df.c_s + df.ws, eh, col("s60"), k["k_shots_hours"] * kmult)
@@ -146,10 +155,6 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     al = k["alpha_shots_vs_xg"]
     g60 = al * s60 * recent_sh + (1 - al) * xg60 * finish
 
-    toi_season = np.where(df.c_gp >= 5, df.c_toi / df.c_gp.clip(lower=1),
-                          np.where(df.ls_gp > 0, df.ls_h * 60 / df.ls_gp.clip(lower=1), col("toi")))
-    toi_recent = df.toi10.fillna(pd.Series(toi_season, index=df.index))
-    toi_proj = k["toi_recent_weight"] * toi_recent + (1 - k["toi_recent_weight"]) * toi_season
 
     # opponent defence: goals allowed so far (regressed 20 games) x last season's xGA rate
     tg = games.melt(id_vars=["id", "date"], value_vars=["home", "away"], value_name="team")
