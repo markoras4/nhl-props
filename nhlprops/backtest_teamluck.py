@@ -32,7 +32,7 @@ def team_luck(games: pd.DataFrame) -> pd.DataFrame:
     t["c_gf"] = g.gf.cumsum() - t.gf
     t["c_xg"] = g.xg_game.cumsum() - t.xg_game
     t["luck"] = np.where(t.c_gp >= 5, (t.c_gf - t.c_xg) / t.c_gp.clip(lower=1), np.nan)
-    return t[["gid", "team", "luck", "c_gp"]]
+    return t[["gid", "team", "luck", "c_gp"]].rename(columns={"c_gp": "t_gp"})
 
 
 def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
@@ -46,9 +46,9 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         df = predict(sk, pri, games, go, season, cfg, prior_beta=cfg.get("prior_toi_beta", 1.0))
         df = df.merge(team_luck(games), on=["gid", "team"], how="left")
         df["season"] = season
-        frames.append(df[["season", "pid", "team", "g", "a", "s", "lam_g", "lam_a", "luck", "c_gp"]])
+        frames.append(df[["season", "pid", "team", "g", "a", "s", "lam_g", "lam_a", "luck", "t_gp"]])
     d = pd.concat(frames)
-    d = d[d.luck.notna() & (d.c_gp >= 10)].copy()
+    d = d[d.luck.notna() & (d.t_gp >= 10)].copy()
     bins = [-9, -0.6, -0.3, -0.1, 0.1, 0.3, 0.6, 9]
     labels = ["very cold (< -0.6/g)", "cold", "a bit cold", "normal", "a bit hot", "hot", "very hot (> +0.6/g)"]
     d["grp"] = pd.cut(d.luck, bins, labels=labels)
