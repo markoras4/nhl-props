@@ -19,7 +19,7 @@ on:
         type: boolean
         default: false
       other:
-        description: "Other test by name: attempts, oppos, depth, season, hot (empty = none)"
+        description: "Other test by name: attempts, oppos, depth, season, teamluck, hot (empty = none)"
         required: false
         default: ""
       markets:

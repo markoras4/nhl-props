@@ -19,12 +19,12 @@ from .backtest import season_boxscores
 from .backtest_totals import team_prior
 from .season import outcome_probs, ratings, simulate, shrink
 
-SIGMAS = [0.15, 0.3]
-RATING = [(1.0, 20.0), (0.7, 20.0), (0.5, 20.0), (0.7, 40.0), (0.5, 40.0), (0.35, 40.0)]   # (prior_r, k)
+SIGMAS = [0.15]
+RATING = [(0.7, 20.0, 0.5), (0.7, 20.0, 0.3), (0.7, 20.0, 0.7), (0.7, 30.0, 0.3)]   # (prior_r, k, weight on goals vs chances)
 CHECKPOINTS = [(0, 11, 15), (0, 12, 15), (1, 1, 20), (1, 2, 25), (1, 3, 25)]
 
 
-def state_at(games: pd.DataFrame, cut: str, prior: dict, prev_lg: float, prior_r: float = 1.0, k: float = 20.0):
+def state_at(games: pd.DataFrame, cut: str, prior: dict, prev_lg: float, prior_r: float = 1.0, k: float = 20.0, w: float = 0.5):
     past = games[games.date < cut]
     gp, gf, ga, sf, sa = {}, {}, {}, {}, {}
     for r in past.itertuples():
@@ -35,7 +35,7 @@ def state_at(games: pd.DataFrame, cut: str, prior: dict, prev_lg: float, prior_r
     lg_sh = tg / ts if ts else 0.095
     lg = shrink(tg, sum(gp.values()), prev_lg, 400)
     stats = {t: (gp[t], gf[t], ga[t], sf[t] * lg_sh, sa[t] * lg_sh) for t in gp}
-    rat = ratings(stats, prior, lg, k=k, prior_r=prior_r)
+    rat = ratings(stats, prior, lg, k=k, prior_r=prior_r, w_goals=w)
     played = [(r.home, r.away, r.hs, r.as_, r.last) for r in past.itertuples()]
     return rat, played, lg
 
@@ -61,7 +61,7 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         for yo, m, d in CHECKPOINTS + [(0, 10, 31)]:
             cut = dt.date(season + yo, m, d).isoformat()
             for rc in RATING:
-                rat, played, lg = state_at(games, cut, prior, prev_lg, prior_r=rc[0], k=rc[1])
+                rat, played, lg = state_at(games, cut, prior, prev_lg, prior_r=rc[0], k=rc[1], w=rc[2])
                 rat = {t: rat.get(t, (prev_lg, prev_lg, 0)) for t in teams}
                 remdf = games[games.date >= cut]
                 rem = [(int(r.id), r.home, r.away) for r in remdf.itertuples()]
@@ -83,7 +83,7 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         best_guess = 0.15
         day = dt.date(season + 1, 1, 1)
         end = dt.date.fromisoformat(games.date.max())
-        while day < end:
+        while day < end and cfg.get("bt_importance", False):
             cut, nxt = day.isoformat(), (day + dt.timedelta(days=7)).isoformat()
             rat, played, lg = state_at(games, cut, prior, prev_lg)
             rat = {t: rat.get(t, (prev_lg, prev_lg, 0)) for t in teams}
@@ -108,12 +108,12 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     rep = {"seasons": seasons, "sigma": {}, "games": {}}
     for rc, rows in gl.items():
         a = np.array([(p, y) for p, y, _ in rows]); p = np.clip(a[:, 0], 1e-3, 1 - 1e-3); y = a[:, 1]
-        rep["games"][f"r{rc[0]}_k{rc[1]:.0f}"] = {"n": int(len(a)), "logloss": float(-(y * np.log(p) + (1 - y) * np.log(1 - p)).mean()),
+        rep["games"][f"r{rc[0]}_k{rc[1]:.0f}_wg{rc[2]}"] = {"n": int(len(a)), "logloss": float(-(y * np.log(p) + (1 - y) * np.log(1 - p)).mean()),
                                                   "brier": float(((p - y) ** 2).mean()), "spread": float(np.std(p)),
                                                   "fav_pred": float(p[p >= 0.6].mean()) if (p >= 0.6).any() else None, "fav_act": float(y[p >= 0.6].mean()) if (p >= 0.6).any() else None}
     for key, rows in cal.items():
         rc, sg = key
-        sg = f"r{rc[0]}_k{rc[1]:.0f}_s{sg}"
+        sg = f"r{rc[0]}_k{rc[1]:.0f}_wg{rc[2]}_s{sg}"
         d = pd.DataFrame(rows)
         p = d.p.clip(1e-3, 1 - 1e-3); y = d.y.astype(float)
         pdv = d.pd.clip(1e-3, 1 - 1e-3); yd = d.yd.astype(float)

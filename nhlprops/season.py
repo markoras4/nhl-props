@@ -46,7 +46,7 @@ def outcome_probs(mh: float, ma: float, tie_boost: float) -> tuple[float, float,
     return float(j[i > k].sum()), float(j[i == k].sum()), float(j[i < k].sum())
 
 
-def ratings(team_stats: dict, prior: dict, lg: float, k: float = 20.0, prior_r: float = 1.0) -> dict:
+def ratings(team_stats: dict, prior: dict, lg: float, k: float = 20.0, prior_r: float = 1.0, w_goals: float = 0.5) -> dict:
     """team -> (attack, defence) goals per game. team_stats: {t: (gp, gf, ga, xf, xa)} this season;
     prior: {t: (xgf_pg, xga_pg)} last season (scaled to this season's league level)."""
     out = {}
@@ -56,8 +56,8 @@ def ratings(team_stats: dict, prior: dict, lg: float, k: float = 20.0, prior_r: 
         p = prior.get(t, (plg, plg))
         p = (plg + prior_r * (p[0] - plg), plg + prior_r * (p[1] - plg))   # last season pulled toward average
         sc = lg / plg if plg else 1.0
-        att = shrink(0.5 * gf + 0.5 * xf, gp, p[0] * sc, k)
-        dfn = shrink(0.5 * ga + 0.5 * xa, gp, p[1] * sc, k)
+        att = shrink(w_goals * gf + (1 - w_goals) * xf, gp, p[0] * sc, k)
+        dfn = shrink(w_goals * ga + (1 - w_goals) * xa, gp, p[1] * sc, k)
         out[t] = (att, dfn, gp)
     return out
 
@@ -259,7 +259,7 @@ def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
     lg_prev = np.mean([v[0] for v in prior.values()]) if prior else 3.05
     tot_g = sum(gf.values()); tot_gp = sum(gp.values())
     lg = shrink(tot_g, tot_gp, lg_prev, 400)
-    rat = ratings(stats, prior, lg, k=cfg.get("season_k", 20.0), prior_r=cfg.get("season_prior_r", 1.0))
+    rat = ratings(stats, prior, lg, k=cfg.get("season_k", 20.0), prior_r=cfg.get("season_prior_r", 1.0), w_goals=cfg.get("season_w_goals", 0.5))
     rat = {t: rat[t] for t in teams if t in rat}
     remaining = [(int(r.id), r.home, r.away) for r in g[~g.final].sort_values("date").itertuples()]
     track = {int(x["id"]) for x in slate.get("games") or []}
@@ -269,6 +269,14 @@ def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
         v["div_name"], v["conf"] = DIV_OF.get(t), CONF_OF.get(DIV_OF.get(t))
         v["gp"], v["att"], v["def"] = gp.get(t, 0), round(rat[t][0], 3), round(rat[t][1], 3)
         v["name"] = TEAM_NAMES.get(t, t)
+        # points the team's play deserved: from its chances (expected goals) and from its actual goals, game by game
+        n_ = gp.get(t, 0)
+        if n_:
+            def xp(f, a):
+                pH, pT, pA = outcome_probs(max(f, 0.1), max(a, 0.1), cfg.get("tie_boost", 1.0))
+                return n_ * (2 * pH + 1.5 * pT)          # a regulation tie = 1 point each + 1 more for the OT winner (half)
+            v["xpts"] = round(xp(stats[t][3] / n_, stats[t][4] / n_), 1)
+            v["gpts"] = round(xp(gf[t] / n_, ga[t] / n_), 1)
     for gid, v in res["games"].items():
         for t, x in v.items():
             sw = (x["win"] - x["lose"]) if x["win"] is not None and x["lose"] is not None else None
