@@ -34,5 +34,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | My picks (tracking) | yes (free account) | yes (later: export, ROI by market) |
 | Alerts | no | yes |
 | Track record, How it works | yes | yes |
+| Game recaps (last 6, past meetings) | yes | yes |
+| Archive: last 7 days as before puck drop, with ✓/✗ results | games list, scores and results only | everything (player breakdowns, picks, compare) |
 
 Also planned for that release: 18+ check on the landing page again, Stripe checkout, prices (not decided yet).
