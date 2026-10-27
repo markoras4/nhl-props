@@ -689,7 +689,7 @@ const I18N = {
     r_model:"Model {a} vs market {b}", r_plays:"Plays {m} min", r_on:" on {l}", r_pp1:", first power play", r_due:"Scoring below his true talent this season (due)",
     r_dry:"{n} shots since his last goal", r_gk_weak:"Opposing goalie below average ({r})", r_gk_strong:"Opposing goalie above average ({r})",
     r_form:"Last {n} games: {g} G, {a} A, {s} shots", r_hot:"Scoring above his true talent, may cool off", r_listed:"Listed {s}",
-    r_gk_unconf:"{t} goalie not confirmed", r_lineup_est:"Lineup estimated", r_short:"Short NHL history",
+    r_gk_unconf:"{t} goalie not confirmed", r_lineup_est:"Lineup estimated", r_short:"Short NHL history ({n} games): the number is less certain, so it's ranked lower",
     lopsided:"{n1} of the {n} value bets in this game are on {t} players. That usually means the model and the market disagree about {t}'s scoring as a whole, so these bets tend to win or lose together. Treat them as one opinion.",
     bp_note:"A helper, not a tip: it lists the facts behind each option. Check the warnings and decide for yourself.",
     st_goalie:"Starting goalie", st_goalie_team:"{t} starting goalie", goalie_team:"{t} goalie", your_pick:"Your pick", expected_tag:" (expected)", no_goalie:"No goalie data.",
@@ -911,7 +911,7 @@ const I18N = {
     r_model:"Modell {a} mot marknad {b}", r_plays:"Spelar {m} min", r_on:" i {l}", r_pp1:", första powerplay", r_due:"Gör färre mål än sin verkliga nivå i år (bör lyfta)",
     r_dry:"{n} skott sedan senaste målet", r_gk_weak:"Motståndarmålvakten under snittet ({r})", r_gk_strong:"Motståndarmålvakten över snittet ({r})",
     r_form:"Senaste {n} matcherna: {g} mål, {a} assist, {s} skott", r_hot:"Gör fler mål än sin verkliga nivå, kan svalna", r_listed:"Listad som {s}",
-    r_gk_unconf:"{t}:s målvakt inte bekräftad", r_lineup_est:"Uppställningen är uppskattad", r_short:"Kort NHL-historik",
+    r_gk_unconf:"{t}:s målvakt inte bekräftad", r_lineup_est:"Uppställningen är uppskattad", r_short:"Kort NHL-historik ({n} matcher): siffran är osäkrare, så den rankas lägre",
     lopsided:"{n1} av {n} värdespel i matchen gäller {t}-spelare. Det betyder oftast att modellen och marknaden har olika syn på {t}:s målproduktion som helhet, så spelen brukar vinna eller förlora tillsammans. Se dem som en enda bedömning.",
     bp_note:"Ett hjälpmedel, inte ett tips: det visar fakta bakom varje alternativ. Kolla varningarna och bestäm själv.",
     st_goalie:"Startande målvakt", st_goalie_team:"{t} startmålvakt", goalie_team:"{t} målvakt", your_pick:"Ditt val", expected_tag:" (väntad)", no_goalie:"Ingen målvaktsdata.",
@@ -1607,12 +1607,15 @@ function bestPicks(g){
       let pick = ok[0];
       const pt = ok.find(o=>o.m==="pt");
       if (pick.m==="g" && pt && pt.ev >= pick.ev - 0.03) pick = pt;   // similar edge: take the safer point
-      cands.push({pr, p, ...pick});
+      // ranking trusts the edge less when he has a short NHL history (the biggest gaps vs the market show up
+      // exactly where the model knows least); the EV shown stays the real one
+      const trust = Math.min(1, ((p.windows?.career?.gp || 0) + 10) / 60);
+      cands.push({pr, p, ...pick, rank: pick.ev * trust});
     } else {
       const pt = opts.find(o=>o.m==="pt"); cands.push({pr, p, ...pt});
     }
   }
-  cands.sort((a,b)=> hasOdds ? b.ev-a.ev : b.v-a.v);
+  cands.sort((a,b)=> hasOdds ? (b.rank??b.ev)-(a.rank??a.ev) : b.v-a.v);
   const teamCount = {[g.home]:0, [g.away]:0}; cands.forEach(c=>{ if (c.ev!=null && c.ev>=VALUE) teamCount[c.pr.team]++; });
   return {picks: cands.slice(0,2), hasOdds, teamCount};
 }
@@ -1635,7 +1638,7 @@ function pickReasons(c, g){
   const st = (g.starter_status[opp]||"").toLowerCase();
   if (!st.includes("confirmed") || st.includes("unconfirmed")) warn.push(t("r_gk_unconf",{t:opp}));
   if (!["projected","gameday"].includes(DATA.teams[pr.team]?.lineup?.source)) warn.push(t("r_lineup_est"));
-  if ((p.windows?.career?.gp||0) < 40) warn.push(t("r_short"));
+  if ((p.windows?.career?.gp||0) < 50) warn.push(t("r_short",{n:p.windows?.career?.gp||0}));
   return {why, warn};
 }
 // last 6 games of each team: date, opponent, final score, result
@@ -2749,7 +2752,7 @@ en: `<h3>What the site does</h3>
 
   <h3>The game page</h3>
   <ul>
-    <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the biggest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Green lines are the facts behind the pick, orange lines are warnings. When most of the value sits on one team it says so: those bets tend to win or lose together.</li>
+    <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the biggest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Players with a short NHL history (under about 50 games) are ranked lower, because their numbers are the least certain and big gaps against the market are most often the model's own uncertainty. Green lines are the facts behind the pick, orange lines are warnings. When most of the value sits on one team it says so: those bets tend to win or lose together.</li>
     <li><b>Game preview:</b> a short read on the game when one is written: the news, the streaks and records, and where the model and the market disagree.</li>
     <li><b>Matchup:</b> the projected score, win and overtime chances, over/under for total goals, each team's last 6 games, shots on goal for each team and goalie saves, first goalscorer, and head-to-head.</li>
     <li><b>Team ranks:</b> both teams ranked 1–32 on attack, defence, shot share (CF%), expected-goals share (xGF%), high-danger chances (HDCF%), power play, penalty kill, goaltending (GSAx) and PDO. Green = top 8, red = bottom 8. PDO is shown as normal, running lucky or running unlucky, because it usually returns to normal.</li>
@@ -2853,7 +2856,7 @@ sv: `<h3>Vad sajten gör</h3>
 
   <h3>Matchsidan</h3>
   <ul>
-    <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Gröna rader är fakta bakom spelet, orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
+    <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Spelare med kort NHL-historik (under ungefär 50 matcher) rankas lägre, eftersom deras siffror är osäkrast och stora skillnader mot marknaden oftast är modellens egen osäkerhet. Gröna rader är fakta bakom spelet, orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
     <li><b>Förhandstitt:</b> en kort text om matchen när en är skriven: nyheterna, sviterna och rekorden, och var modellen och marknaden är oense.</li>
     <li><b>Matchup:</b> beräknat resultat, vinst- och förlängningschanser, över/under för totalmål, varje lags senaste 6 matcher, skott på mål för varje lag och målvaktsräddningar, första målskytt samt inbördes möten.</li>
     <li><b>Lagrankning:</b> båda lagen rankade 1–32 i anfall, försvar, skottandel (CF%), andel förväntade mål (xGF%), farliga chanser (HDCF%), powerplay, boxplay, målvaktsspel (GSAx) och PDO. Grönt = topp 8, rött = botten 8. PDO visas som normal, tur eller otur, eftersom den brukar återgå till det normala.</li>

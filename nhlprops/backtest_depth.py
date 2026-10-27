@@ -17,8 +17,8 @@ import pandas as pd
 from .backtest import season_boxscores, prior_frames, predict, p_over
 from .grade import summarize
 
-CONFIGS = [(0.0, 0.0), (1.0, 0.0), (1.0, 0.25), (1.0, 0.5), (1.0, 0.75), (1.0, 1.0)]   # (prior_beta, role_gamma); live = (1, 0)
-LIVE = (1.0, 0.0)
+CONFIGS = [(1.0, 0.0, 0.0), (1.0, 0.0, 0.1), (1.0, 0.0, 0.2), (1.0, 0.0, 0.3), (1.0, 0.0, 0.45)]   # (prior_beta, role_gamma, toi_delta); live = (1, 0, 0)
+LIVE = (1.0, 0.0, 0.0)
 EXP = [(-1, 20, "0-20 NHL games"), (20, 82, "21-82"), (82, 250, "83-250"), (250, 99999, "250+")]
 TOI_F = [(0, 12, "under 12 min"), (12, 14, "12-14"), (14, 16, "14-16"), (16, 18, "16-18"), (18, 99, "18+")]
 
@@ -31,7 +31,7 @@ def frames(src, seasons, cfg, conf, log, cache):
         (games, sk, go), pri = cache[season]
         if sk.empty:
             continue
-        df = predict(sk, pri, games, go, season, cfg, prior_beta=conf[0], role_gamma=conf[1])
+        df = predict(sk, pri, games, go, season, cfg, prior_beta=conf[0], role_gamma=conf[1], toi_delta=conf[2])
         P = pri["sk"]
         prev_gp = P.groupby("pid").gp.sum() if len(P) else pd.Series(dtype=float)
         df["exp_gp"] = df.pid.map(prev_gp).fillna(0) + df.c_gp
@@ -81,8 +81,8 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     for c in CONFIGS:
         d = frames(src, seasons, cfg, c, log, cache)
         runs[c] = d[d.c_gp >= 1].copy()        # from his 2nd game of the season (rookies included)
-    grid = [{"beta": c[0], "gamma": c[1], "brier_fit": brier(runs[c][runs[c].season.isin(half)])} for c in CONFIGS]
-    bg = min(grid, key=lambda r: r["brier_fit"]); best = (bg["beta"], bg["gamma"])
+    grid = [{"beta": c[0], "gamma": c[1], "delta": c[2], "brier_fit": brier(runs[c][runs[c].season.isin(half)])} for c in CONFIGS]
+    bg = min(grid, key=lambda r: r["brier_fit"]); best = (bg["beta"], bg["gamma"], bg["delta"])
     now, new = runs[LIVE], runs[best]
     tn, tb = now[~now.season.isin(half)], new[~new.season.isin(half)]
     lowF = lambda d: d[(d.posg == "F") & (d.exp_gp <= 82)]
@@ -100,7 +100,7 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
 def to_md(r):
     L = [f"# Depth players & rookies: fit on {r['fit_seasons']}, tested on the rest of {r['seasons']}", "",
          "Grid (fit seasons, mean Brier of goal / point / SOG 2+; beta = role-based prior, gamma = role change vs his history): " +
-         " · ".join(f"b{g['beta']}/g{g['gamma']}: {g['brier_fit']:.6f}" for g in r["grid"]) + f" → best {r['best_beta']}. 'Now' below = live model (beta 1, gamma 0).", ""]
+         " · ".join(f"delta {g['delta']}: {g['brier_fit']:.6f}" for g in r["grid"]) + f" → best {r['best_beta']}. 'Now' below = live model (beta 1, gamma 0).", ""]
     def tb(rows):
         out = ["| Group | n | Goal pred | Goal actual | t | Point pred | Point actual | t | SOG2+ pred | SOG2+ actual | t |", "|---|---|---|---|---|---|---|---|---|---|---|"]
         for x in rows:

@@ -107,7 +107,7 @@ def shrink(x, n, prior, k):
 
 
 def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, season: int, cfg: dict,
-            weights=(5, 4, 3, 2, 1), kmult=1.0, prior_beta=0.0, role_gamma=0.0) -> pd.DataFrame:
+            weights=(5, 4, 3, 2, 1), kmult=1.0, prior_beta=0.0, role_gamma=0.0, toi_delta=0.0) -> pd.DataFrame:
     """Return sk with lambda_g / lambda_a / lambda_s columns, using info strictly before each game."""
     df = sk.sort_values(["pid", "date", "gid"]).copy()
     g = df.groupby("pid")
@@ -195,6 +195,9 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     df["lam_g"] = g60 * base * df.opp_goalie
     df["lam_a"] = a60 * base * df.opp_goalie
     df["lam_s"] = s60 * hrs * venue
+    if toi_delta:      # direct ice-time calibration: small roles scaled down, big roles up
+        cal = (pd.Series(np.asarray(toi_proj, float), index=df.index) / col0("toi")).clip(0.4, 1.8) ** toi_delta
+        df["lam_g"], df["lam_a"], df["lam_s"] = df.lam_g * cal, df.lam_a * cal, df.lam_s * cal
     df["toi_proj"] = toi_proj
     df["due"] = (df.c_s >= 15) & (df.c_g < (df.c_s * recent_sh - 1.0 * np.sqrt(df.c_s * recent_sh)))
     return df
