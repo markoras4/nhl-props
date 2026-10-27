@@ -101,7 +101,9 @@ def simulate(teams: list[str], rat: dict, played: list[tuple], remaining: list[t
             ma = rat[a][0] * rat[h][1] / lg / ha
             base[key] = outcome_probs(mh, ma, tb)
         pH, pT, pA = base[key]
-        d = s[:, i] - s[:, j]
+        # tracked games (importance) are played with the average strengths, so "the team won" isn't mixed up with
+        # "the team was drawn stronger in this simulated season", which would exaggerate how much the game matters
+        d = np.zeros(n) if gid in track else s[:, i] - s[:, j]
         eh, ea = pH * np.exp(d), pA * np.exp(-d)
         sc = (1 - pT) / (eh + ea)
         ph, pa = eh * sc, ea * sc
@@ -212,7 +214,7 @@ def importance_level(swing: float | None) -> str:
     """playoff-chance swing between winning and losing this game"""
     if swing is None:
         return "low"
-    return "critical" if swing >= 0.12 else "high" if swing >= 0.07 else "medium" if swing >= 0.035 else "low"
+    return "critical" if swing >= 0.10 else "high" if swing >= 0.06 else "medium" if swing >= 0.03 else "low"
 
 
 def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
@@ -250,7 +252,7 @@ def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
     rat = {t: rat[t] for t in teams if t in rat}
     remaining = [(int(r.id), r.home, r.away) for r in g[~g.final].sort_values("date").itertuples()]
     track = {int(x["id"]) for x in slate.get("games") or []}
-    res = simulate(list(rat), rat, played, remaining, cfg, n=n, sigma0=cfg.get("season_sigma", 0.25),
+    res = simulate(list(rat), rat, played, remaining, cfg, n=n, sigma0=cfg.get("season_sigma", 0.15),
                    sigma_k=cfg.get("season_sigma_k", 30.0), track=track)
     for t, v in res["teams"].items():
         v["div_name"], v["conf"] = DIV_OF.get(t), CONF_OF.get(DIV_OF.get(t))

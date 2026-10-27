@@ -19,7 +19,7 @@ from .backtest import season_boxscores
 from .backtest_totals import team_prior
 from .season import outcome_probs, ratings, simulate, shrink
 
-SIGMAS = [0.0, 0.15, 0.25, 0.35, 0.5]
+SIGMAS = [0.1, 0.15, 0.2]
 CHECKPOINTS = [(0, 11, 15), (0, 12, 15), (1, 1, 20), (1, 2, 25), (1, 3, 25)]
 
 
@@ -67,7 +67,7 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
                     cal[sg].append({"season": season, "cut": cut, "team": t, "p": res["teams"][t]["playoffs"],
                                     "pd": res["teams"][t]["div"], "y": actual_po[t], "yd": actual_div[t]})
         # importance: weekly from 1 Jan, games in the following 7 days
-        best_guess = 0.25
+        best_guess = 0.15
         day = dt.date(season + 1, 1, 1)
         end = dt.date.fromisoformat(games.date.max())
         while day < end:
@@ -121,7 +121,9 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         diff = D.sh - D.sa
         grp = pd.cut(diff, [-1, -0.07, -0.03, 0.03, 0.07, 1], labels=["away much more", "away more", "even", "home more", "home much more"])
         rep["imp_bins"] = [{"group": str(k), "n": int(len(g)), "pred": float(g.p.mean()), "act": float(g.y.mean())} for k, g in D.groupby(grp, observed=True)]
-        rep["imp_levels"] = {lvl: int(((D.sh >= lo) | (D.sa >= lo)).sum()) for lvl, lo in (("medium", 0.035), ("high", 0.07), ("critical", 0.12))}
+        mx = np.maximum(D.sh, D.sa)
+        rep["imp_levels"] = {lvl: int((mx >= lo).sum()) for lvl, lo in (("medium", 0.03), ("high", 0.06), ("critical", 0.10))}
+        rep["imp_quantiles"] = {q: float(np.quantile(mx, q / 100)) for q in (25, 50, 75, 90, 97)}
     (out_dir / "season.json").write_text(json.dumps(rep, indent=1, default=float), encoding="utf-8")
     md = to_md(rep)
     (out_dir / "season.md").write_text(md, encoding="utf-8")
@@ -140,7 +142,7 @@ def to_md(r):
     if r.get("imp_n"):
         L += ["", f"## Game importance (games after 1 Jan, n={r['imp_n']:,})",
               f"Effect of (home swing - away swing) on home win, beyond the model: beta {r['imp_beta']:+.3f} (se {r['imp_se']:.3f}, t {r['imp_beta'] / r['imp_se']:+.1f})",
-              f"Games with at least one team at level: {r['imp_levels']}", "",
+              f"Games with at least one team at level: {r['imp_levels']} · biggest swing per game, quantiles: {r.get('imp_quantiles')}", "",
               "| Who it mattered more for | n | Model: home win | Actual home win |", "|---|---|---|---|"]
         L += [f"| {x['group']} | {x['n']} | {x['pred']:.1%} | {x['act']:.1%} |" for x in r["imp_bins"]]
     return "\n".join(L) + "\n"
