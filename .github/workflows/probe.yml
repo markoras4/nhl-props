@@ -7,18 +7,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: MoneyPuck line combinations
+      - name: Kambi NHL outrights
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import urllib.request, csv, io, collections
-          u="https://moneypuck.com/moneypuck/playerData/seasonSummary/2026/regular/lines.csv"
-          raw=urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=60).read().decode()
-          rows=list(csv.DictReader(io.StringIO(raw)))
-          print("rows", len(rows)); print("columns", list(rows[0].keys()))
-          print(collections.Counter((r.get("position"), r.get("situation")) for r in rows).most_common(10))
-          for r in [x for x in rows if x.get("team") in ("PHI","CBJ") and x.get("situation")=="5on5"][:6]:
-              print({k: r[k] for k in list(r.keys())[:14]})
+          import json, urllib.request
+          B="https://eu-offering-api.kambicdn.com/offering/v2018/ubse"
+          H={"User-Agent":"Mozilla/5.0"}
+          def get(u):
+              return json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=30).read())
+          for path in ["/listView/ice_hockey/nhl/all/all/competitions.json","/listView/ice_hockey/nhl/all/all/outrights.json","/listView/ice_hockey/nhl.json"]:
+              u=B+path+"?lang=en_GB&market=SE&useCombined=true"
+              try:
+                  js=get(u)
+              except Exception as e:
+                  print(path,"ERR",str(e)[:100]); continue
+              evs=js.get("events") or []
+              print(path, "events", len(evs))
+              for e in evs[:40]:
+                  ev=e.get("event") or {}
+                  print("  EV", ev.get("id"), ev.get("name"), ev.get("type"), "|", [ (b.get("criterion") or {}).get("label") for b in e.get("betOffers") or []][:3])
+              ids=[(e.get("event") or {}).get("id") for e in evs if (e.get("event") or {}).get("type")!="ET_MATCH"][:12]
+              for i in ids:
+                  try:
+                      bo=get(f"{B}/betoffer/event/{i}.json?lang=en_GB&market=SE")
+                  except Exception as ex:
+                      print("   betoffer ERR", i, str(ex)[:80]); continue
+                  for b in bo.get("betOffers") or []:
+                      oc=b.get("outcomes") or []
+                      print("   ", i, (b.get("criterion") or {}).get("label"), "| outcomes", len(oc), "|", [(o.get("label") or o.get("participant"), o.get("odds")) for o in oc[:4]])
+              break
           PY
       - name: Save
         run: |
