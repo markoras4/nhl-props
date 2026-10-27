@@ -330,6 +330,7 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
                      "logos": {k: v for k, v in (slate.get("logos") or {}).items() if k in teams}})
     js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = LANDING.read_text(encoding="utf-8").replace("/*__DATA__*/null", js).replace("APP_URL", app_url)
+    html = version_assets(html)
     out = out_dir / "landing.html"
     out.write_text(html, encoding="utf-8")
     return out
@@ -343,6 +344,17 @@ def game_summary(g: dict) -> dict:
     return {"id": g["id"], "home": g["home"], "away": g["away"], "start": g.get("start"), "venue": g.get("venue"),
             "mh": d.get("proj_h", 3.0), "ma": d.get("proj_a", 3.0), "ph": d["p_home"], "pa": d["p_away"],
             "exp": d["exp_total"]}
+
+
+def version_assets(html: str) -> str:
+    """add ?v=<content hash> to the landing page's screenshots so replaced images show up right away (assets are cached a week)"""
+    import hashlib
+    import re
+
+    def rep(m):
+        f = ROOT / "site-assets" / m.group(1)
+        return f'assets/{m.group(1)}?v={hashlib.md5(f.read_bytes()).hexdigest()[:8]}' if f.exists() else m.group(0)
+    return re.sub(r"assets/([a-z0-9-]+\.webp)(?!\?)", rep, html)
 
 
 def photo_version(p: dict) -> dict:
