@@ -31,15 +31,16 @@ Never invent facts, numbers or quotes. If something cannot be verified, leave it
 - Order previews by start time.
 
 ## 4. Photos (free licences only)
-- Put one search per game in `previews-work/queries.json` (`{"<slug>": "Player Name"}`; slug = `<DATE>-<away>-<home>`
+- Put searches per game in `previews-work/queries.json` (`{"<slug>": ["Player A Team", "Player B", ...]}`, 3–6 searches: key players of both teams; slug = `<DATE>-<away>-<home>`
   lowercase), commit, push, run `gh api -X POST repos/markoras4/nhl-props/actions/workflows/photos.yml/dispatches -f ref=main -f 'inputs[mode]=candidates'`,
   wait for it, then `git fetch origin photo-candidates` and look at the images (`git archive origin/photo-candidates | tar -x`)
   and `candidates.json`.
+- Quality first: only use originals at least 1600px wide and landscape (the candidates list prints the size; the script already drops smaller ones). Never pick portrait shots or small "(cropped)" files: cropping them to the wide hero makes them blurry. Prefer clear action shots (professional Flickr sets such as Jenn G / Jennthulhu are excellent).
 - Choose a sharp, relevant, landscape photo per game (player of that team, or the arena/teams). Avoid photos that
   show a player in a different team's uniform unless the story is about that (e.g. facing his old team).
 - Write `previews-work/picks.json` (`{"<slug>": "File:..."}`), commit, push, run the same workflow with
   `inputs[mode]=fetch`, then pull: photos land in `site-assets/previews/<slug>.jpg` with `credits.json`.
-- Convert each to WebP 1400px wide (Pillow, quality 80), delete the .jpg, and fill `photo` in the preview:
+- Convert each to WebP 2000px wide (Pillow, quality 82, method=6), delete the .jpg, and fill `photo` in the preview:
   `src: assets/previews/<slug>.webp`, `alt`, `author`, `license`, `license_url`, `page` from credits.json
   (add `pos: "center 25%"` for portrait shots so faces are not cut).
 
