@@ -7,47 +7,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Superbet NHL player props
+      - name: MoneyPuck line combinations
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import json, urllib.request, re, collections, datetime as dt
-          H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36","Accept":"application/json"}
-          def get(u):
-              return json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=25).read())
-          now=dt.datetime.utcnow(); a=(now-dt.timedelta(hours=6)).strftime("%Y-%m-%d+%H:%M:%S"); b=(now+dt.timedelta(hours=36)).strftime("%Y-%m-%d+%H:%M:%S")
-          KW=re.compile(r"lovitur|blocaj|blocat|uderz|zablok|hit|block|blok|udar|bloqu|chute|šut|suturi|șut|puncte|punkt|points|asist|gol", re.I)
-          for host, lang in (("ro","ro-RO"),("pl","pl-PL"),("rs","sr-Latn-RS"),("br","pt-BR")):
-              base=f"https://production-superbet-offer-{host}.freetls.fastly.net/v2/{lang}"
-              try:
-                  js=get(f"{base}/events/by-date?currentStatus=active&offerState=prematch&startDate={a}&endDate={b}")
-              except Exception as e:
-                  print(host, "by-date ERR", str(e)[:120]); continue
-              evs=js.get("data") or []
-              TEAMS=re.compile(r"Edmonton|Oilers|Detroit|Red Wings|Toronto|Maple|Calgary|Flames|Rangers|Los Angeles|Kings", re.I)
-              if host=="ro" and evs: print("  sample event keys:", sorted(evs[0].keys())); print("  sample:", json.dumps(evs[0])[:600])
-              nhl=[e for e in evs if TEAMS.search(str(e.get("matchName",""))) and "(" not in str(e.get("matchName",""))]
-              print("  sports of matches:", collections.Counter((e.get("sportId"), e.get("tournamentId")) for e in nhl).most_common(5))
-              print(host, "events", len(evs), "NHL-ish", len(nhl), [e.get("matchName") for e in nhl[:6]])
-              if not nhl:
-                  sp=collections.Counter((e.get("sportId"), str(e.get("tournamentName"))[:30]) for e in evs if "hok" in str(e).lower() or "hock" in str(e).lower())
-                  print("  hockey tournaments:", sp.most_common(8))
-              for e in nhl[:2]:
-                  try:
-                      d=get(f"{base}/events/{e.get('eventId')}")
-                  except Exception as ex:
-                      print("  event ERR", str(ex)[:100]); continue
-                  ev=(d.get("data") or [{}])[0] if isinstance(d.get("data"), list) else d.get("data") or {}
-                  odds=ev.get("odds") or []
-                  names=collections.Counter(o.get("marketName") for o in odds)
-                  print("  ", e.get("matchName"), "markets", len(names))
-                  print("     ALL:", list(names)[:80])
-                  print("     PLAYER/HB:", [n for n in names if KW.search(str(n))][:60])
-                  hb=[o for o in odds if re.search(r"lovitur|blocaj|blocat|uderz|zablok|hit|block|blok", str(o.get("marketName")), re.I)]
-                  if hb: print("     SAMPLE:", json.dumps(hb[:3])[:1500])
+          import urllib.request, csv, io, collections
+          u="https://moneypuck.com/moneypuck/playerData/seasonSummary/2026/regular/lines.csv"
+          raw=urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=60).read().decode()
+          rows=list(csv.DictReader(io.StringIO(raw)))
+          print("rows", len(rows)); print("columns", list(rows[0].keys()))
+          print(collections.Counter((r.get("position"), r.get("situation")) for r in rows).most_common(10))
+          for r in [x for x in rows if x.get("team") in ("PHI","CBJ") and x.get("situation")=="5on5"][:6]:
+              print({k: r[k] for k in list(r.keys())[:14]})
           PY
-      - name: Save output to the probe branch
+      - name: Save
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          mkdir -p /tmp/o; cp probe-out.txt /tmp/o/ 2>/dev/null || true
-          git checkout --orphan probe2; git rm -rfq . ; cp /tmp/o/* . ; git add -A; git commit -qm "probe"; git push -f origin probe2
+          git checkout --orphan probe2 && git rm -rfq --cached . && git add probe-out.txt && git commit -qm probe && git push -f origin HEAD:probe2
