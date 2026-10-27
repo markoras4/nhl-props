@@ -7,20 +7,59 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Kambi NHL outrights
+      - name: Free odds sources (NHL player props)
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import json, urllib.request
-          B="https://eu-offering-api.kambicdn.com/offering/v2018/ubse"
-          H={"User-Agent":"Mozilla/5.0"}
-          def get(u):
-              return json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=30).read())
-          for i in [1027873729, 1027873730]:
-              bo=get(f"{B}/betoffer/event/{i}.json?lang=en_GB&market=SE")
-              for b in bo.get("betOffers") or []:
-                  oc=b.get("outcomes") or []
-                  print(i, (b.get("criterion") or {}).get("label"), "|", [(o.get("label"), o.get("line"), o.get("odds")) for o in oc[:4]])
+          import json, re, urllib.request, collections
+          H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36","Accept":"application/json"}
+          def get(u, h=None):
+              try:
+                  r=urllib.request.urlopen(urllib.request.Request(u, headers={**H, **(h or {})}), timeout=30)
+                  b=r.read(); return r.status, b
+              except Exception as e:
+                  return getattr(e,"code",None) or str(e)[:120], b""
+          def words(b, pat=r'"(?:description|name|label|stat_type|englishLabel|title)"\s*:\s*"([^"]{3,80})"'):
+              c=collections.Counter(re.findall(pat, b.decode("utf-8","ignore")))
+              return [k for k,_ in c.most_common(400)]
+          KEY=re.compile(r"hit|block|power ?play|saves|shot|point|goal|assist", re.I)
+          def report(name, u, h=None):
+              st,b=get(u,h); print(f"\n=== {name}: {st} {len(b)} bytes  {u[:110]}")
+              if b:
+                  w=[x for x in words(b) if KEY.search(x)]
+                  print("  props-like labels:", w[:40])
+              return st,b
+          # Bovada
+          st,b=report("Bovada NHL", "https://www.bovada.lv/services/sports/event/v2/events/A/description/hockey/nhl?lang=en&marketFilterId=def&preMatchOnly=true")
+          try:
+              js=json.loads(b); evs=[e for grp in js for e in grp.get("events",[])]
+              print("  events:", len(evs), [e.get("link") for e in evs[:2]])
+              if evs:
+                  link=evs[0]["link"]
+                  report("Bovada event", "https://www.bovada.lv/services/sports/event/coupon/events/A/description"+link+"?lang=en")
+          except Exception as e: print("  parse", e)
+          # Kambi US (BetRivers) and other EU operators
+          for op in ["rsiuspa","rsiusny","rsiusil","pafse","888se","leose"]:
+              st,b=report(f"Kambi {op} list", f"https://eu-offering-api.kambicdn.com/offering/v2018/{op}/listView/ice_hockey/nhl/all/all/matches.json?lang=en_US&market=US&useCombined=true")
+              try:
+                  ev=json.loads(b)["events"][0]["event"]["id"]
+                  report(f"Kambi {op} event", f"https://eu-offering-api.kambicdn.com/offering/v2018/{op}/betoffer/event/{ev}.json?lang=en_US&market=US&includeParticipants=true", )
+              except Exception as e: print("  no event", e)
+          for op in ["rsiuspa"]:
+              try:
+                  st,b=get(f"https://us1.offering-api.kambicdn.com/offering/v2018/{op}/listView/ice_hockey/nhl/all/all/matches.json?lang=en_US&market=US")
+                  print(f"\n=== Kambi us1 {op}: {st} {len(b)}")
+              except Exception as e: print(e)
+          # PrizePicks / Underdog (lines, DFS)
+          st,b=report("PrizePicks NHL", "https://api.prizepicks.com/projections?league_id=8&per_page=250&single_stat=true")
+          report("Underdog lines", "https://api.underdogfantasy.com/beta/v5/over_under_lines")
+          # Pinnacle guest
+          report("Pinnacle matchups", "https://guest.api.arcadia.pinnacle.com/0.1/leagues/1456/matchups")
+          # DraftKings
+          report("DraftKings NHL", "https://sportsbook-nash.draftkings.com/api/sportscontent/dkusnj/v1/leagues/42133")
+          report("DraftKings NHL (v5)", "https://sportsbook-nash.draftkings.com/sites/US-NJ-SB/api/v5/eventgroups/42133?format=json")
+          # Svenska Spel / Betsson-OBG style (EU)
+          report("ESPN odds core", "https://sports.core.api.espn.com/v2/sports/hockey/leagues/nhl/events?limit=3")
           PY
       - name: Save
         run: |
