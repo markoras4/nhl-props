@@ -19,11 +19,12 @@ from .backtest import season_boxscores
 from .backtest_totals import team_prior
 from .season import outcome_probs, ratings, simulate, shrink
 
-SIGMAS = [0.1, 0.15, 0.2]
+SIGMAS = [0.15, 0.3]
+RATING = [(1.0, 20.0), (0.7, 20.0), (0.5, 20.0), (0.7, 40.0), (0.5, 40.0), (0.35, 40.0)]   # (prior_r, k)
 CHECKPOINTS = [(0, 11, 15), (0, 12, 15), (1, 1, 20), (1, 2, 25), (1, 3, 25)]
 
 
-def state_at(games: pd.DataFrame, cut: str, prior: dict, prev_lg: float):
+def state_at(games: pd.DataFrame, cut: str, prior: dict, prev_lg: float, prior_r: float = 1.0, k: float = 20.0):
     past = games[games.date < cut]
     gp, gf, ga, sf, sa = {}, {}, {}, {}, {}
     for r in past.itertuples():
@@ -34,14 +35,15 @@ def state_at(games: pd.DataFrame, cut: str, prior: dict, prev_lg: float):
     lg_sh = tg / ts if ts else 0.095
     lg = shrink(tg, sum(gp.values()), prev_lg, 400)
     stats = {t: (gp[t], gf[t], ga[t], sf[t] * lg_sh, sa[t] * lg_sh) for t in gp}
-    rat = ratings(stats, prior, lg)
+    rat = ratings(stats, prior, lg, k=k, prior_r=prior_r)
     played = [(r.home, r.away, r.hs, r.as_, r.last) for r in past.itertuples()]
     return rat, played, lg
 
 
 def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
-    cal = {s: [] for s in SIGMAS}
+    cal = {(r, s): [] for r in RATING for s in SIGMAS}
+    gl = {r: [] for r in RATING}
     imp_rows = []
     for season in sorted(seasons):
         games, _, _ = season_boxscores(src, season, cfg["workers"], log)
@@ -56,19 +58,32 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         fin = simulate(teams, {t: rat_all.get(t, (3, 3, 82)) for t in teams}, played_all, [], cfg, n=50, sigma0=0.0)
         actual_po = {t: fin["teams"][t]["playoffs"] >= 0.5 for t in teams}
         actual_div = {t: fin["teams"][t]["div"] >= 0.5 for t in teams}
-        for yo, m, d in CHECKPOINTS:
+        for yo, m, d in CHECKPOINTS + [(0, 10, 31)]:
             cut = dt.date(season + yo, m, d).isoformat()
-            rat, played, lg = state_at(games, cut, prior, prev_lg)
-            rat = {t: rat.get(t, (prev_lg, prev_lg, 0)) for t in teams}
-            rem = [(int(r.id), r.home, r.away) for r in games[games.date >= cut].itertuples()]
-            for sg in SIGMAS:
-                res = simulate(teams, rat, played, rem, cfg, n=3000, sigma0=sg, seed=season * 100 + m)
-                for t in teams:
-                    cal[sg].append({"season": season, "cut": cut, "team": t, "p": res["teams"][t]["playoffs"],
-                                    "pd": res["teams"][t]["div"], "y": actual_po[t], "yd": actual_div[t]})
+            for rc in RATING:
+                rat, played, lg = state_at(games, cut, prior, prev_lg, prior_r=rc[0], k=rc[1])
+                rat = {t: rat.get(t, (prev_lg, prev_lg, 0)) for t in teams}
+                remdf = games[games.date >= cut]
+                rem = [(int(r.id), r.home, r.away) for r in remdf.itertuples()]
+                # game level: home win chance for the next 30 days vs what happened
+                lgm = float(np.mean([rat[t][0] for t in teams]))
+                nxt = (dt.date.fromisoformat(cut) + dt.timedelta(days=30)).isoformat()
+                for r in remdf[remdf.date < nxt].itertuples():
+                    mh = rat[r.home][0] * rat[r.away][1] / lgm * cfg.get("home_adv", 1.05)
+                    ma = rat[r.away][0] * rat[r.home][1] / lgm / cfg.get("home_adv", 1.05)
+                    pH, pT, pA = outcome_probs(mh, ma, cfg.get("tie_boost", 1.0))
+                    gl[rc].append((pH + pT * pH / (pH + pA), float(r.hs > r.as_), cut[5:]))
+                for sg in SIGMAS:
+                    res = simulate(teams, rat, played, rem, cfg, n=2000, sigma0=sg, seed=season * 100 + m)
+                    for t in teams:
+                        cal[(rc, sg)].append({"season": season, "cut": cut, "team": t, "p": res["teams"][t]["playoffs"],
+                                              "pd": res["teams"][t]["div"], "y": actual_po[t], "yd": actual_div[t],
+                                              "cup": res["teams"][t]["cup"]})
         # importance: weekly from 1 Jan, games in the following 7 days
         best_guess = 0.15
         day = dt.date(season + 1, 1, 1)
+        if True:      # importance already tested; skip in this run
+            day = dt.date(season + 9, 1, 1)
         end = dt.date.fromisoformat(games.date.max())
         while day < end:
             cut, nxt = day.isoformat(), (day + dt.timedelta(days=7)).isoformat()
@@ -92,8 +107,15 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
                                  "sh": sw[r.home], "sa": sw[r.away]})
             day += dt.timedelta(days=7)
     # calibration summary
-    rep = {"seasons": seasons, "sigma": {}}
-    for sg, rows in cal.items():
+    rep = {"seasons": seasons, "sigma": {}, "games": {}}
+    for rc, rows in gl.items():
+        a = np.array([(p, y) for p, y, _ in rows]); p = np.clip(a[:, 0], 1e-3, 1 - 1e-3); y = a[:, 1]
+        rep["games"][f"r{rc[0]}_k{rc[1]:.0f}"] = {"n": int(len(a)), "logloss": float(-(y * np.log(p) + (1 - y) * np.log(1 - p)).mean()),
+                                                  "brier": float(((p - y) ** 2).mean()), "spread": float(np.std(p)),
+                                                  "fav_pred": float(p[p >= 0.6].mean()) if (p >= 0.6).any() else None, "fav_act": float(y[p >= 0.6].mean()) if (p >= 0.6).any() else None}
+    for key, rows in cal.items():
+        rc, sg = key
+        sg = f"r{rc[0]}_k{rc[1]:.0f}_s{sg}"
         d = pd.DataFrame(rows)
         p = d.p.clip(1e-3, 1 - 1e-3); y = d.y.astype(float)
         pdv = d.pd.clip(1e-3, 1 - 1e-3); yd = d.yd.astype(float)
@@ -101,7 +123,8 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
         rep["sigma"][str(sg)] = {"brier": float(((p - y) ** 2).mean()), "logloss": float(-(y * np.log(p) + (1 - y) * np.log(1 - p)).mean()),
                                  "brier_div": float(((pdv - yd) ** 2).mean()),
                                  "bins": [{"bin": str(k), "n": int(len(g)), "pred": float(g.p.mean()), "act": float(g.y.mean())} for k, g in d.groupby(bins, observed=True)],
-                                 "by_cut": {c: float(((g.p - g.y.astype(float)) ** 2).mean()) for c, g in d.assign(c=d.cut.str[5:]).groupby("c")}}
+                                 "by_cut": {c: float(((g.p - g.y.astype(float)) ** 2).mean()) for c, g in d.assign(c=d.cut.str[5:]).groupby("c")},
+                                 "top_cup": float(d.groupby(["season", "cut"]).cup.max().mean())}
     rep["best_sigma"] = min(rep["sigma"], key=lambda k: rep["sigma"][k]["logloss"])
     # importance test: logistic with the model as offset + beta x (home swing - away swing)
     D = pd.DataFrame(imp_rows)
@@ -132,10 +155,13 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
 
 
 def to_md(r):
-    L = [f"# Season simulation backtest: {r['seasons']}", "", "## Playoff chances: calibration by strength uncertainty (sigma)",
-         "| sigma | Brier playoffs | Log loss | Brier division | by date (Brier) |", "|---|---|---|---|---|"]
+    L = [f"# Season simulation backtest: {r['seasons']}", "", "## Game level (next 30 days after each date): home win chance vs result",
+         "| rating (prior pull r, k games) | n | Log loss | Brier | spread of chances | favourites 60%+: predicted / won |", "|---|---|---|---|---|---|"]
+    for k_, v in r["games"].items():
+        L.append(f"| {k_} | {v['n']:,} | {v['logloss']:.4f} | {v['brier']:.4f} | {v['spread']:.3f} | {(v['fav_pred'] or 0):.1%} / {(v['fav_act'] or 0):.1%} |")
+    L += ["", "## Playoff chances by rating and sigma", "| setting | Brier playoffs | Log loss | Brier division | avg top Cup chance | by date (Brier) |", "|---|---|---|---|---|---|"]
     for sg, v in r["sigma"].items():
-        L.append(f"| {sg} | {v['brier']:.4f} | {v['logloss']:.4f} | {v['brier_div']:.4f} | " + " · ".join(f"{c}: {b:.3f}" for c, b in v["by_cut"].items()) + " |")
+        L.append(f"| {sg} | {v['brier']:.4f} | {v['logloss']:.4f} | {v['brier_div']:.4f} | {v['top_cup']:.1%} | " + " · ".join(f"{c}: {b:.3f}" for c, b in v["by_cut"].items()) + " |")
     b = r["sigma"][r["best_sigma"]]
     L += ["", f"Best sigma: {r['best_sigma']}", "", "| Predicted | n | Avg predicted | Made playoffs |", "|---|---|---|---|"]
     L += [f"| {x['bin']} | {x['n']} | {x['pred']:.1%} | {x['act']:.1%} |" for x in b["bins"]]

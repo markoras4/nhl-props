@@ -46,7 +46,7 @@ def outcome_probs(mh: float, ma: float, tie_boost: float) -> tuple[float, float,
     return float(j[i > k].sum()), float(j[i == k].sum()), float(j[i < k].sum())
 
 
-def ratings(team_stats: dict, prior: dict, lg: float, k: float = 20.0) -> dict:
+def ratings(team_stats: dict, prior: dict, lg: float, k: float = 20.0, prior_r: float = 1.0) -> dict:
     """team -> (attack, defence) goals per game. team_stats: {t: (gp, gf, ga, xf, xa)} this season;
     prior: {t: (xgf_pg, xga_pg)} last season (scaled to this season's league level)."""
     out = {}
@@ -54,6 +54,7 @@ def ratings(team_stats: dict, prior: dict, lg: float, k: float = 20.0) -> dict:
     for t in set(team_stats) | set(prior):
         gp, gf, ga, xf, xa = team_stats.get(t, (0, 0, 0, 0, 0))
         p = prior.get(t, (plg, plg))
+        p = (plg + prior_r * (p[0] - plg), plg + prior_r * (p[1] - plg))   # last season pulled toward average
         sc = lg / plg if plg else 1.0
         att = shrink(0.5 * gf + 0.5 * xf, gp, p[0] * sc, k)
         dfn = shrink(0.5 * ga + 0.5 * xa, gp, p[1] * sc, k)
@@ -258,7 +259,7 @@ def live(raw: dict, slate: dict, cfg: dict, n: int = 10000, log=print) -> dict:
     lg_prev = np.mean([v[0] for v in prior.values()]) if prior else 3.05
     tot_g = sum(gf.values()); tot_gp = sum(gp.values())
     lg = shrink(tot_g, tot_gp, lg_prev, 400)
-    rat = ratings(stats, prior, lg)
+    rat = ratings(stats, prior, lg, k=cfg.get("season_k", 20.0), prior_r=cfg.get("season_prior_r", 1.0))
     rat = {t: rat[t] for t in teams if t in rat}
     remaining = [(int(r.id), r.home, r.away) for r in g[~g.final].sort_values("date").itertuples()]
     track = {int(x["id"]) for x in slate.get("games") or []}
