@@ -20,6 +20,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Shutout chance (goalie card, More markets) | yes | yes |
 | Role & usage box | PP minutes and unit only | everything, incl. tonight's chances |
 | Linemates tonight | yes | yes |
+| Lines tab (lines side by side, change flags, record together) | lines, change flags, record together | plus per-line projections (scores %, xG, shots, penalty) |
 | Compare players (2–4, any game) | only the open players (1 F + 1 D per team) | everyone, every market |
 | Compare: Quick read (rule-based) | with the open players | everyone |
 | Compare: Ask AI (planned with payments; API cost) | no | yes, daily limit |
