@@ -115,6 +115,8 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
             if df is not None:
                 mp[kind][y] = df
     log(f"  seasons loaded: skaters {sorted(mp['skaters'])}, teams {sorted(mp['teams'])}")
+    lines = src.moneypuck("lines", cur, current=True)     # this season's 5-on-5 line combinations
+    mp["lines"] = {cur: lines} if lines is not None else {}
 
     log("Fetching team schedules/results (all 32 teams, 4 seasons) ...")
     jobs = [(t, y) for y in club_years for t in teams_for_season(y)]

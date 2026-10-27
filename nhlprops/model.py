@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import datetime as dt
 import math
+import re
 
 import numpy as np
 import pandas as pd
@@ -1009,6 +1010,40 @@ def shot_tiers(sf: pd.DataFrame, pbp: dict, cur: int) -> dict:
     return out
 
 
+def line_stats(lines_df, team: str, groups: dict) -> dict:
+    """Tonight's forward lines and defence pairs matched to this season's 5-on-5 record together (MoneyPuck lines).
+    Exact combination if it exists, else the two-man core of it with the most ice time ("core")."""
+    if lines_df is None or not len(lines_df):
+        return {}
+    d = lines_df[lines_df.team == team]
+    combos = []
+    for r in d.itertuples(index=False):
+        lid = str(getattr(r, "lineId"))
+        if len(lid) % 7:
+            continue
+        ids = frozenset(int(lid[i:i + 7]) for i in range(0, len(lid), 7))
+        g = lambda c: float(getattr(r, c, 0) or 0)
+        combos.append((ids, {"gp": int(g("games_played")), "toi": round(g("icetime") / 60, 1), "gf": int(g("goalsFor")),
+                             "xgf": round(g("xGoalsFor"), 2), "ga": int(g("goalsAgainst")), "xga": round(g("xGoalsAgainst"), 2),
+                             "sf": int(g("shotsOnGoalFor")), "sa": int(g("shotsOnGoalAgainst")), "name": str(getattr(r, "name"))}))
+    out = {}
+    for k, ids in groups.items():
+        if not re.match(r"^[fd]\d$", k) or not ids:
+            continue
+        want = frozenset(int(i) for i in ids)
+        exact = [c for c in combos if c[0] == want]
+        if exact:
+            out[k] = {**exact[0][1], "exact": True}
+            continue
+        core = [c for c in combos if len(c[0]) == len(want) and len(c[0] & want) >= len(want) - 1]
+        if core:
+            best = max(core, key=lambda c: c[1]["toi"])
+            out[k] = {**best[1], "exact": False}
+        else:
+            out[k] = None
+    return out
+
+
 def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     GM_CFG.update(p1_share=cfg.get("p1_share", 0.29), en_q=cfg.get("en_q", 0.25))
     cur, date = raw["season"], raw["date"]
@@ -1274,6 +1309,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         ctx["pen_pg"] = round(team_pen_pg.get(t, lg_pen_pg), 3)
         ctx["fo_pct"] = round(team_fo_pct.get(t, 0.5), 4)
         ctx["lineup"] = lu
+        try:
+            ctx["lines5"] = line_stats((raw["mp"].get("lines") or {}).get(cur), t, lu.get("groups") or {})
+        except Exception:
+            ctx["lines5"] = {}
         ctx["injuries"] = team_injuries.get(t, [])
         ctx["news"] = ({"notes": nhl_day[t]["notes"], "updated": nhl.get("updated")} if t in nhl_day else None)
         dressed = set(lu["dressed"])
