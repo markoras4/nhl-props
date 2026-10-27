@@ -176,6 +176,21 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 .plan li.n{color:var(--mute)} .plan li.n svg{stroke:var(--mute)}
 
 /* steps */
+.about{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:start}
+.abeye{font:800 12px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+.abtxt h2{margin-bottom:18px}
+.abtxt p{color:var(--mute);font-size:16.5px;line-height:1.65;margin:0 0 14px;max-width:62ch}
+.abtxt p.abeye{color:var(--accent);font-size:12px;line-height:1.3}
+.abtxt .absign{color:var(--ink);font-weight:600;margin-top:20px}
+.abcard{padding:26px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+.abcard h3{font-family:var(--f-disp);font-size:18px;margin:0 0 12px}
+.abcard ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.abcard li{display:grid;grid-template-columns:20px 1fr;gap:10px;font-size:14.5px;line-height:1.5}
+.abcard li::before{content:"✓";display:grid;place-items:center;width:18px;height:18px;margin-top:1px;border-radius:50%;font:800 11px/1 var(--f-ui);color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.abnot{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.abnot h3{font-size:16px;margin-bottom:6px}
+.abnot p{margin:0;color:var(--mute);font-size:14.5px;line-height:1.55}
+@media (max-width:860px){.about{grid-template-columns:1fr;gap:24px}}
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:s}
 .step{padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
 .step::before{counter-increment:s;content:"0" counter(s);font-family:var(--f-disp);font-weight:800;font-size:28px;color:var(--accent);display:block;margin-bottom:6px}
@@ -246,6 +261,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
       <a href="#previews" data-t="nav_previews"></a>
       <a href="#features" data-t="nav_features"></a>
       <a href="#plans" data-t="nav_plans"></a>
+      <a href="#about" data-t="nav_about"></a>
       <a href="#faq" data-t="nav_faq"></a>
     </nav>
     <div class="hright">
@@ -355,7 +371,25 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
     </div>
   </section>
 
-  <section id="faq">
+  <section id="about">
+    <div class="wrap about">
+      <div class="abtxt">
+        <p class="abeye" data-t="ab_eye"></p>
+        <h2 data-t="ab_h"></h2>
+        <p data-t="ab_p1"></p>
+        <p data-t="ab_p2"></p>
+        <p data-t="ab_p3"></p>
+        <p class="absign" data-t="ab_sign"></p>
+      </div>
+      <div class="abcard">
+        <h3 data-t="ab_do_h"></h3>
+        <ul id="ab_do"></ul>
+        <div class="abnot"><h3 data-t="ab_not_h"></h3><p data-t="ab_not_p"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt">
     <div class="wrap faqwrap">
       <div class="sh" style="justify-content:center;text-align:center"><div><h2 data-t="faq_h"></h2><p class="sub" data-t="faq_sub" style="margin-inline:auto"></p></div></div>
       <div class="faq" id="faqlist"></div>
@@ -381,7 +415,15 @@ const LDATA = /*__DATA__*/null;
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const I18N = {
  en:{
-  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans", nav_faq:"FAQ",
+  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans", nav_about:"About", nav_faq:"FAQ",
+  ab_eye:"About us", ab_h:"Built by people who use it",
+  ab_p1:"We're a small team from the world of professional investing, not gambling. In our work we put money behind numbers every day, so we built the tool we wanted for ourselves: one that turns every NHL game into honest probabilities and shows exactly how each one is made.",
+  ab_p2:"We use it ourselves, the same version you see. Subscriptions pay for the data, the servers and the testing, but they aren't why we built it. We built it because good information should be easy to read, and because we'd rather show our work than ask you to trust us.",
+  ab_p3:"It's made for everyone: fans who want to understand a game better, fantasy players, people who bet now and then, sharp bettors, and people who never bet at all. Use it however suits you. It's a guide, not a crystal ball. It tells you how likely things are, not what will happen, and what you do with that is up to you.",
+  ab_sign:"— The team behind NHL Props Lab",
+  ab_do_h:"What we promise", ab_do:["Honest numbers: tested on past seasons and graded in public after every game, misses included.","Plain explanations of how every number is built. No black box.","No hype: no “locks”, no guaranteed wins, no pressure to bet.","We don't take bets or hold your money.","No ads and no tracking cookies. Your data stays yours."],
+  ab_not_h:"What it isn't", ab_not_p:"A promise of profit. Even a well-priced pick loses often, and nobody wins every night. If you bet, bet only what you can afford to lose. You must be 18 or older.",
+
   login:"Log in", start_free:"Start free",
   eyebrow:"Updated before every puck drop",
   h1:"Pick NHL props with <em>numbers</em>, not hunches.",
@@ -428,7 +470,15 @@ const I18N = {
   ]
  },
  sv:{
-  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer", nav_faq:"Frågor",
+  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer", nav_about:"Om oss", nav_faq:"Frågor",
+  ab_eye:"Om oss", ab_h:"Byggt av människor som använder det",
+  ab_p1:"Vi är ett litet team från professionell investering, inte spel. I vårt arbete satsar vi pengar bakom siffror varje dag, så vi byggde verktyget vi själva ville ha: ett som gör varje NHL-match till ärliga sannolikheter och visar exakt hur varje siffra tas fram.",
+  ab_p2:"Vi använder det själva, samma version som du ser. Prenumerationerna betalar data, servrar och tester, men de är inte skälet till att vi byggde det. Vi byggde det för att bra information ska vara lätt att läsa, och för att vi hellre visar hur vi räknar än ber dig lita på oss.",
+  ab_p3:"Det är gjort för alla: fans som vill förstå en match bättre, fantasyspelare, de som spelar ibland, skarpa spelare och de som aldrig spelar alls. Använd det som det passar dig. Det är en guide, inte en kristallkula. Det visar hur troligt något är, inte vad som kommer att hända, och vad du gör med det bestämmer du.",
+  ab_sign:"— Teamet bakom NHL Props Lab",
+  ab_do_h:"Det här lovar vi", ab_do:["Ärliga siffror: testade på tidigare säsonger och rättade öppet efter varje match, missarna också.","Enkla förklaringar av hur varje siffra byggs. Ingen svart låda.","Ingen hype: inga ”säkra spel”, inga garanterade vinster, ingen press att spela.","Vi tar inte emot spel och förvarar inga pengar.","Ingen reklam och inga spårningskakor. Dina uppgifter är dina."],
+  ab_not_h:"Det här är det inte", ab_not_p:"Ett löfte om vinst. Även ett välprissatt spel förlorar ofta, och ingen vinner varje kväll. Om du spelar, spela bara för pengar du har råd att förlora. Du måste vara 18 år eller äldre.",
+
   login:"Logga in", start_free:"Börja gratis",
   eyebrow:"Uppdateras före varje nedsläpp",
   h1:"Välj NHL-spel med <em>siffror</em>, inte magkänsla.",
@@ -525,6 +575,7 @@ function plans(){
   const li = ([k,txt]) => `<li class="${k}">${ico[k]}<span>${esc(txt)}</span></li>`;
   $("#free_list").innerHTML = t("free_items").map(li).join("");
   $("#pro_list").innerHTML = t("pro_items").map(li).join("");
+  $("#ab_do").innerHTML = t("ab_do").map(x => `<li><span>${x}</span></li>`).join("");
   $("#also").innerHTML = t("also").map(x => `<li>${x}</li>`).join("");
   const open = new Set([...document.querySelectorAll("#faqlist details[open]")].map(d => d.dataset.i));
   $("#faqlist").innerHTML = t("faq").map(([q,a],i) => `<details data-i="${i}"${open.has(String(i))?" open":""}><summary>${q}</summary><div class="a">${a}</div></details>`).join("");
