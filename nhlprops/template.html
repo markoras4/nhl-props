@@ -3403,7 +3403,7 @@ function luckOf(v){
 }
 const luckTag = (v, short) => { const L = luckOf(v); if (!L) return "";
   const cls = {hot:"s-hot", warm:"s-hot", cold:"s-dry", cool:"s-dry", fair:"", small:""}[L.k];
-  return `<span class="pill ${cls} tip" tabindex="0" data-tip="${esc(t("lk_tip",{p:fmt(v.pts_now,0), x:fmt(v.xpts,1), g:fmt(v.gpts,1), n:v.gp}))}">${short ? "" : t("lk_vs",{p:fmt(v.pts_now,0), x:fmt(v.xpts,0)})+" · "}${t("lk_"+L.k)}${L.k==="small"?"":` ${L.d>0?"+":""}${fmt(L.d,0)}`}</span>`; };
+  return `<span class="pill ${cls} tip" tabindex="0" data-tip="${esc(t("lk_tip",{p:fmt(v.pts_now,0), x:fmt(v.xpts,1), g:fmt(v.gpts,1), n:v.gp}))}">${short ? "" : t("lk_vs",{p:fmt(v.pts_now,0), x:fmt(v.xpts,0)})+" · "}${t("lk_"+L.k)}${L.k==="small"||L.k==="fair"?"":` ${Math.round(L.d)>0?"+":""}${Math.round(L.d)}`}</span>`; };
 function futuresTab(){
   const F = DATA.futures;
   if (!F || !F.teams){ $("#main").innerHTML = `<div class="card empty">${t("fu_none")}</div>`; return; }
