@@ -345,13 +345,25 @@ def game_summary(g: dict) -> dict:
             "exp": d["exp_total"]}
 
 
+def photo_version(p: dict) -> dict:
+    """add ?v=<content hash> to the photo so browsers don't keep showing an old image after it is replaced
+    (assets are cached for a week)"""
+    import hashlib
+    ph = p.get("photo") or {}
+    src = ph.get("src") or ""
+    f = ROOT / "site-assets" / src.replace("assets/", "", 1).split("?")[0]
+    if src.startswith("assets/") and f.exists():
+        ph["src"] = src.split("?")[0] + "?v=" + hashlib.md5(f.read_bytes()).hexdigest()[:8]
+    return p
+
+
 def pick_previews(day: str, slate: dict | None = None) -> tuple[str | None, list]:
     """Previews for the first date >= day that has a file (else the latest file)."""
     files = sorted((ROOT / "data" / "previews").glob("20*.json"))
     if not files:
         return None, []
     f = next((x for x in files if x.stem >= day), files[-1])
-    previews = json.loads(f.read_text(encoding="utf-8")).get("previews", [])
+    previews = [photo_version(p) for p in json.loads(f.read_text(encoding="utf-8")).get("previews", [])]
     if slate:
         by_id = {str(g["id"]): g for g in slate["games"]}
         for p in previews:
@@ -385,7 +397,7 @@ def app_previews(slate: dict) -> dict:
             continue
         try:
             for p in json.loads(f.read_text(encoding="utf-8")).get("previews", []):
-                out[str(p["id"])] = {k: p[k] for k in ("en", "sv", "photo", "slug") if k in p}
+                out[str(p["id"])] = {k: p[k] for k in ("en", "sv", "photo", "slug") if k in photo_version(p)}
         except Exception:
             pass
     return out
