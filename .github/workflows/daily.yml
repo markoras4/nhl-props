@@ -49,6 +49,13 @@ jobs:
           key: nhl-cache-${{ github.run_id }}
           restore-keys: nhl-cache-
 
+      - name: Restore the archive (last 7 days before puck drop)
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          mkdir -p data/archive
+          if git fetch -q origin archive 2>/dev/null; then git archive origin/archive | tar -x -C data/archive; fi
+          ls data/archive | tail -3 || true
+
       - name: Grade yesterday's predictions
         if: steps.gate.outputs.run == 'true'
         run: python -m nhlprops grade || true
@@ -69,6 +76,7 @@ jobs:
           mkdir -p site/data && if [ -f output/closing.json ]; then cp output/closing.json site/data/closing.json; fi
           if [ -f output/alerts.json ]; then cp output/alerts.json site/data/alerts.json; fi
           if [ -f output/shots.json ]; then cp output/shots.json site/data/shots.json; fi
+          if [ -d output/archive ]; then mkdir -p site/data/archive && cp output/archive/*.json site/data/archive/ 2>/dev/null || true; fi
           cp site-assets/sw.js site/sw.js 2>/dev/null || true
           cp site-assets/manifest.webmanifest site/manifest.webmanifest 2>/dev/null || true
           mkdir -p site/icons && cp site-assets/icons/*.png site/icons/ 2>/dev/null || true
@@ -85,6 +93,18 @@ jobs:
           git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/last-build.log || true
           [ -f data/pregame.json ] && git add data/pregame.json || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
+
+      - name: Save the archive on the "archive" branch (no history kept)
+        if: steps.gate.outputs.run == 'true'
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(ls data/archive 2>/dev/null)" ]; then exit 0; fi
+          rm -rf /tmp/ab && mkdir /tmp/ab && cp data/archive/*.json /tmp/ab/ && cd /tmp/ab
+          git init -q && git checkout -q -b archive
+          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          git add -A && git commit -qm "Archive $(date -u +%F-%H%M)"
+          git push -qf "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git" archive
 
       - name: Keep a copy of the site on the "site" branch
         if: steps.gate.outputs.run == 'true'

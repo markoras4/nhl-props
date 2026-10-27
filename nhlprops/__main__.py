@@ -567,6 +567,12 @@ def main(argv=None):
             player_file(raw["pbp"], ROOT / "output" / "shots.json")
         except Exception as e:  # shot maps are optional; never break the build
             print("Shot maps skipped:", e)
+    if not args.demo:
+        try:   # the last 7 days as they looked before puck drop, with results (opened from the Games tab)
+            from .archive import build as build_archive
+            slate["archive_dates"] = build_archive(slate, src, data_dir, ROOT / "output", raw.get("pbp"))
+        except Exception as e:  # the archive is optional; never break the build
+            print("Archive skipped:", e)
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))
