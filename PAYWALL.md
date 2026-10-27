@@ -35,6 +35,8 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | My picks (tracking) | yes (free account) | yes (later: export, ROI by market) |
 | Alerts | no | yes |
 | Track record, How it works | yes | yes |
+| Futures tab (playoffs, rounds, Cup, division, points) | chances | plus fair odds, sportsbook odds and value |
+| What's at stake (game importance) | level only | now / with a win / with a loss |
 | Game recaps (last 6, past meetings) | yes | yes |
 | Archive: last 7 days as before puck drop, with ✓/✗ results | games list, scores and results only | everything (player breakdowns, picks, compare) |
 
