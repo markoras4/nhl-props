@@ -107,7 +107,7 @@ def shrink(x, n, prior, k):
 
 
 def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, season: int, cfg: dict,
-            weights=(5, 4, 3, 2, 1), kmult=1.0, prior_beta=0.0) -> pd.DataFrame:
+            weights=(5, 4, 3, 2, 1), kmult=1.0, prior_beta=0.0, role_gamma=0.0) -> pd.DataFrame:
     """Return sk with lambda_g / lambda_a / lambda_s columns, using info strictly before each game."""
     df = sk.sort_values(["pid", "date", "gid"]).copy()
     g = df.groupby("pid")
@@ -121,12 +121,12 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     w_cur = W[season]
     prior_w = P[P.season.isin([y for y in W if y < season])].copy()
     prior_w["w"] = prior_w.season.map(W)
-    agg = prior_w.assign(**{f"w{c}": prior_w[c] * prior_w["w"] for c in ("h", "s", "g", "xg", "a")}) \
-                 .groupby("pid")[["wh", "ws", "wg", "wxg", "wa"]].sum()
+    agg = prior_w.assign(**{f"w{c}": prior_w[c] * prior_w["w"] for c in ("h", "s", "g", "xg", "a", "gp")}) \
+                 .groupby("pid")[["wh", "ws", "wg", "wxg", "wa", "wgp"]].sum()
     career = P.groupby("pid")[["s", "g"]].sum()
     last = P[P.season == season - 1].groupby("pid")[["h", "gp"]].sum()
     df = df.join(agg, on="pid").join(career.add_prefix("car_"), on="pid").join(last.add_prefix("ls_"), on="pid")
-    df = df.fillna({c: 0.0 for c in ("wh", "ws", "wg", "wxg", "wa", "car_s", "car_g", "ls_h", "ls_gp")})
+    df = df.fillna({c: 0.0 for c in ("wh", "ws", "wg", "wxg", "wa", "wgp", "car_s", "car_g", "ls_h", "ls_gp")})
 
     # league position averages from the 3 prior seasons
     L = P[P.season >= season - 3].groupby("posg")[["h", "s", "g", "xg", "a", "gp"]].sum()
@@ -154,6 +154,12 @@ def predict(sk: pd.DataFrame, pri: dict, games: pd.DataFrame, go: pd.DataFrame, 
     finish = shrink(df.wg, df.wxg, 1.0, k["k_finish_xg"] * kmult)
     al = k["alpha_shots_vs_xg"]
     g60 = al * s60 * recent_sh + (1 - al) * xg60 * finish
+    # role change: his rates come from the ice time he had then; scale them by tonight's ice time vs that history
+    if role_gamma:
+        gp_h = w_cur * df.c_gp + df.wgp
+        toi_hist = np.where(gp_h >= 10, (w_cur * df.c_toi + df.wh * 60) / gp_h.clip(lower=1), np.nan)
+        rf = pd.Series(np.clip(np.asarray(toi_proj, float) / toi_hist, 0.5, 1.5), index=df.index).fillna(1.0) ** role_gamma
+        s60, a60, g60 = s60 * rf, a60 * rf, g60 * rf
 
 
     # opponent defence: goals allowed so far (regressed 20 games) x last season's xGA rate
