@@ -239,7 +239,7 @@ render();
   new MutationObserver(apply).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
   try { matchMedia("(prefers-color-scheme: light)").addEventListener("change", apply); } catch(e){}
   const css = document.createElement("style");
-  css.textContent = `.accbtn{display:inline-grid;place-items:center}.accbtn i{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--panel,#111),0 0 0 3px color-mix(in srgb,var(--accent) 60%,transparent)}
+  css.textContent = `.accbtn{display:inline-grid;place-items:center}.accbtn i{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
 #accpop{position:absolute;z-index:200;background:var(--panel,#111821);border:1px solid var(--line,#22303f);border-radius:14px;padding:6px;box-shadow:0 18px 50px -12px rgba(0,0,0,.55);display:grid;gap:2px;min-width:170px;font:600 13.5px var(--f-ui,system-ui)}
 #accpop .ah{font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--mute,#8796a8);padding:6px 10px 4px}
 #accpop button{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--text,#e7eef6);padding:8px 10px;border-radius:9px;cursor:pointer;text-align:left;font:inherit}
