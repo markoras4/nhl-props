@@ -660,9 +660,25 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     ws = mw.season.map(weights).astype(float)
     W = {c: float((mw[c] * ws).sum()) for c in ("h", "s", "g", "xg", "a")}
 
-    s60 = shrink(W["s"], W["h"], L["s60"], cfg["k_shots_hours"])
-    xg60 = shrink(W["xg"], W["h"], L["xg60"], cfg["k_ixg_hours"])
-    a60 = shrink(W["a"], W["h"], L["a60"], cfg["k_assist_hours"])
+    # ---- game logs: TOI, form, shots since last goal
+    lc, lp = logs.get("cur", []), logs.get("prev", [])
+    recent_team = team_dates[-cfg["active_last_n_team_games"]:]
+    played_recent = (bool(lc) and lc[0]["date"] >= recent_team[0]) if recent_team else True
+    recent = (lc + lp)[: cfg["toi_recent_games"]]
+    toi_recent = float(np.mean([g["toi"] for g in recent])) if recent else None
+    if len(lc) >= 5:
+        toi_season = float(np.mean([g["toi"] for g in lc]))
+    else:
+        last = me[me.season == cur - 1]
+        toi_season = float(last.h.sum() * 60 / last.gp.sum()) if len(last) and last.gp.sum() else None
+    parts = [(v, w) for v, w in ((toi_recent, cfg["toi_recent_weight"]), (toi_season, 1 - cfg["toi_recent_weight"])) if v]
+    toi_proj = sum(v * w for v, w in parts) / sum(w for _, w in parts) if parts else L["toi"]
+    # role-based prior (backtest_depth): little history -> pulled toward what players with his ice time produce,
+    # not the average player at his position (fixes rookies and depth forwards being rated too high)
+    tf = min(1.8, max(0.4, toi_proj / L["toi"])) ** cfg.get("prior_toi_beta", 0.0) if L.get("toi") else 1.0
+    s60 = shrink(W["s"], W["h"], L["s60"] * tf, cfg["k_shots_hours"])
+    xg60 = shrink(W["xg"], W["h"], L["xg60"] * tf, cfg["k_ixg_hours"])
+    a60 = shrink(W["a"], W["h"], L["a60"] * tf, cfg["k_assist_hours"])
 
     seasons = _nhl_seasons(land)
     career_raw = ((land or {}).get("careerTotals") or {}).get("regularSeason") or {}
@@ -677,19 +693,6 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     al = cfg["alpha_shots_vs_xg"]
     g60 = al * s60 * recent_sh + (1 - al) * xg60 * finish
 
-    # ---- game logs: TOI, form, shots since last goal
-    lc, lp = logs.get("cur", []), logs.get("prev", [])
-    recent_team = team_dates[-cfg["active_last_n_team_games"]:]
-    played_recent = (bool(lc) and lc[0]["date"] >= recent_team[0]) if recent_team else True
-    recent = (lc + lp)[: cfg["toi_recent_games"]]
-    toi_recent = float(np.mean([g["toi"] for g in recent])) if recent else None
-    if len(lc) >= 5:
-        toi_season = float(np.mean([g["toi"] for g in lc]))
-    else:
-        last = me[me.season == cur - 1]
-        toi_season = float(last.h.sum() * 60 / last.gp.sum()) if len(last) and last.gp.sum() else None
-    parts = [(v, w) for v, w in ((toi_recent, cfg["toi_recent_weight"]), (toi_season, 1 - cfg["toi_recent_weight"])) if v]
-    toi_proj = sum(v * w for v, w in parts) / sum(w for _, w in parts) if parts else L["toi"]
 
     l5 = lc[:5]
     form = {"gp": len(l5), "g": sum(g["g"] for g in l5), "a": sum(g["a"] for g in l5),
