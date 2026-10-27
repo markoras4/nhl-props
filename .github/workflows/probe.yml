@@ -16,27 +16,11 @@ jobs:
           H={"User-Agent":"Mozilla/5.0"}
           def get(u):
               return json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=30).read())
-          for path in ["/listView/ice_hockey/nhl/all/all/competitions.json","/listView/ice_hockey/nhl/all/all/outrights.json","/listView/ice_hockey/nhl.json"]:
-              u=B+path+"?lang=en_GB&market=SE&useCombined=true"
-              try:
-                  js=get(u)
-              except Exception as e:
-                  print(path,"ERR",str(e)[:100]); continue
-              evs=js.get("events") or []
-              print(path, "events", len(evs))
-              for e in evs[:40]:
-                  ev=e.get("event") or {}
-                  print("  EV", ev.get("id"), ev.get("name"), ev.get("type"), "|", [ (b.get("criterion") or {}).get("label") for b in e.get("betOffers") or []][:3])
-              ids=[(e.get("event") or {}).get("id") for e in evs if (e.get("event") or {}).get("type")!="ET_MATCH"][:12]
-              for i in ids:
-                  try:
-                      bo=get(f"{B}/betoffer/event/{i}.json?lang=en_GB&market=SE")
-                  except Exception as ex:
-                      print("   betoffer ERR", i, str(ex)[:80]); continue
-                  for b in bo.get("betOffers") or []:
-                      oc=b.get("outcomes") or []
-                      print("   ", i, (b.get("criterion") or {}).get("label"), "| outcomes", len(oc), "|", [(o.get("label") or o.get("participant"), o.get("odds")) for o in oc[:4]])
-              break
+          for i in [1027873729, 1027873730]:
+              bo=get(f"{B}/betoffer/event/{i}.json?lang=en_GB&market=SE")
+              for b in bo.get("betOffers") or []:
+                  oc=b.get("outcomes") or []
+                  print(i, (b.get("criterion") or {}).get("label"), "|", [(o.get("label"), o.get("line"), o.get("odds")) for o in oc[:4]])
           PY
       - name: Save
         run: |
