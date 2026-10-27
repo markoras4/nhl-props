@@ -63,11 +63,13 @@ def search(query: str, limit: int = 20, width: int = 1400) -> list[dict]:
             "author": _plain((md.get("Artist") or {}).get("value"))[:80], "date": date,
             "desc": _plain((md.get("ImageDescription") or {}).get("value"))[:200],
         })
-    # landscape, big enough, recent first
+    # sharp enough for a 1400px-wide hero (originals under 1600px wide look soft once cropped), landscape, recent
+    big = [x for x in out if x["w"] >= 1600 and x["w"] > x["h"] * 1.1]
+    pool = big or [x for x in out if x["w"] >= 1200]
     def score(x):
         yr = int(x["date"][:4]) if x["date"][:4].isdigit() else 2000
-        return ((x["w"] >= 1000) * 2 + (x["w"] > x["h"] * 1.15) * 2 + min(max(yr - 2016, 0), 10) / 3)
-    return sorted(out, key=score, reverse=True)
+        return (min(x["w"], 4000) / 1000 + (x["w"] > x["h"] * 1.3) * 1.5 + min(max(yr - 2016, 0), 10) / 3)
+    return sorted(pool, key=score, reverse=True)
 
 
 def download(url: str, path: Path) -> bool:
@@ -80,12 +82,18 @@ def download(url: str, path: Path) -> bool:
 
 
 def candidates(queries_file: str, out_dir: str, per_query: int = 4) -> None:
+    """queries.json: {slug: "Player Name"} or {slug: ["query 1", "query 2", ...]} (up to 4 candidates per query)"""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     qs = json.loads(Path(queries_file).read_text())
     report = {}
     for key, query in qs.items():
-        res = search(query)[:per_query]
+        seen, res = set(), []
+        for q in (query if isinstance(query, list) else [query]):
+            for c in search(q, limit=30)[:per_query]:
+                if c["title"] not in seen:
+                    seen.add(c["title"]); res.append(c)
+            time.sleep(1.5)
         report[key] = []
         for i, c in enumerate(res):
             fn = f"{key}_{i}.jpg"
@@ -105,7 +113,7 @@ def fetch(picks_file: str, out_dir: str) -> None:
     credits_path = out / "credits.json"
     credits = json.loads(credits_path.read_text()) if credits_path.exists() else {}
     for slug, title in picks.items():
-        if (out / f"{slug}.jpg").exists() and slug in credits:
+        if (out / f"{slug}.jpg").exists() and credits.get(slug, {}).get("title") == title:
             continue
         js = _get({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url|size|extmetadata", "iiurlwidth": 1400})
         p = next(iter(js["query"]["pages"].values()))
@@ -118,7 +126,7 @@ def fetch(picks_file: str, out_dir: str) -> None:
         if download(ii.get("thumburl") or ii.get("url"), out / f"{slug}.jpg"):
             credits[slug] = {"title": title, "author": _plain((md.get("Artist") or {}).get("value"))[:80],
                              "license": lic, "license_url": _plain((md.get("LicenseUrl") or {}).get("value")),
-                             "page": ii.get("descriptionurl")}
+                             "page": ii.get("descriptionurl"), "w": ii.get("width"), "h": ii.get("height")}
         time.sleep(0.5)
     credits_path.write_text(json.dumps(credits, indent=1))
     print(json.dumps(credits, indent=1))
