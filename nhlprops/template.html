@@ -389,6 +389,14 @@ tr[data-spd]{cursor:pointer}tr[data-spd]:hover td{background:var(--panel2)}tr.sp
 @media (max-width:760px){.spgrid{grid-template-columns:1fr}}
 .spkpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .spk{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line)}
+.spk b{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
+.tier{font-family:var(--f-ui);font-size:10.5px;font-weight:700;letter-spacing:.2px;padding:2px 7px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.tier i{font-style:normal;font-weight:600;opacity:.85}
+.tier.t-elite{background:color-mix(in srgb,var(--good) 24%,transparent);color:var(--good);border-color:color-mix(in srgb,var(--good) 55%,transparent)}
+.tier.t-good{background:color-mix(in srgb,var(--good) 11%,transparent);color:color-mix(in srgb,var(--good) 80%,var(--text))}
+.tier.t-avg{background:color-mix(in srgb,var(--mute) 16%,transparent);color:var(--mute)}
+.tier.t-low{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.tier.t-small{background:none;border:1px dashed var(--line);color:var(--mute);font-weight:600}
 .spk small{font-size:11px;color:var(--mute);font-weight:600}.spk b{font-family:var(--f-disp);font-size:19px;font-variant-numeric:tabular-nums}.spk .meta{font-size:11.5px}
 .rink{width:100%;height:auto;display:block}
 .rk-board{fill:color-mix(in srgb,var(--panel2) 70%,transparent);stroke:var(--line);stroke-width:2}
@@ -534,6 +542,10 @@ body.has-cmp main{padding-bottom:110px}
 .cmscroll{overflow-y:auto;padding:14px 18px 20px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .cmsum{display:flex;flex-wrap:wrap;gap:8px 22px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:14px;font-size:14px}
 .cmsum small{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.cmquick{border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 6%,var(--panel));border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.cmquick h5{margin:0 0 6px;font-family:var(--f-disp);font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--accent)}
+.cmquick ul{margin:0;padding-left:18px;display:grid;gap:5px;font-size:14px;line-height:1.45}
+.cmquick .meta{margin:8px 0 0;font-size:12px}
 .cmsec{font-family:var(--f-disp);font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--mute);margin:20px 0 8px}
 .ctab{display:grid;grid-template-columns:minmax(150px,200px) repeat(var(--n),minmax(0,1fr));border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
 .ctab .cr{display:contents}
@@ -780,7 +792,7 @@ const I18N = {
     sp_g_note:"{d} {o}: every shot attempt in the game. One game is a tiny sample, so only counts are shown.", sp_row_tip:"Show this game's shots on the map",
     sp_title:"Shot profile", sp_season:"Season", sp_l10:"Last 10", sp_loading:"Loading shot map…", sp_none:"No shot attempts recorded yet this season.", sp_map:"Shot map",
     sp_att:"Shot attempts per game", sp_att_tip:"Every attempt: on goal, missed the net or blocked. Attempts are a steadier sign of volume than shots on goal.",
-    sp_sog:"Shots on goal per game", sp_of:"{n} in total", sp_sog_tip:"Saved shots plus goals.",
+    sp_sog:"Shots on goal per game", sp_of:"{n} in total", tier_elite:"Elite", tier_good:"Good", tier_avg:"Average", tier_low:"Below average", tier_small:"Small sample", tier_f:"forwards", tier_d:"defencemen", tier_top:"top {p}% of {pos}", tier_bottom:"bottom {p}% of {pos}", tier_tip:"Tier vs every NHL player at his position this season: Elite = top 10%, Good = top 10–35%, Average = the middle 30%, Below average = bottom 35%.", sp_sog_tip:"Saved shots plus goals.",
     sp_on:"Attempts that hit the net", sp_on_tip:"Share of his attempts that reach the goalie. Matters for shots-on-goal props: two players with the same attempts can differ a lot here.",
     sp_missblk:"Missed · blocked", sp_missblk_tip:"Share of his attempts that missed the net, and that were blocked by a skater.",
     sp_close:"From close range", sp_close_tip:"Share of his unblocked attempts from within about 20 feet of the net (inside the dashed arc). Close shots go in far more often.",
@@ -870,7 +882,7 @@ const I18N = {
     op_player:"{t} against {p}", op_shots_pg:"Shots allowed per game", op_goals_pg:"Goals allowed per game", op_pts_pg:"Points allowed per game", op_vs_lg:"(avg {v})",
     op_pnote:"What this opponent has given up this season to players in his position. Green rank = one of the 8 most generous defences. Tested: beyond the team's overall defence (already in the model), this didn't predict goals or points, so it's context, not an edge.",
     mv_from:"from", mv_opened:"opened {a} · {h}", mv_tip_to:"Opened at {a} today, now {b}: the market has moved toward the model's fair odds ({f}).", mv_tip_away:"Opened at {a} today, now {b}: the market has moved away from the model's fair odds ({f}).",
-    login:"Log in", logout:"Log out", cmp_add:"Add to compare", cmp_in:"In compare", cmp_remove:"Remove", cmp_clear:"Clear", cmp_open:"Compare {n}", cmp_close:"Close", cmp_need:"Add one more player to compare", cmp_more:"Add up to 4 players, from any game", cmp_max:"You can compare up to {n} players", cmp_title:"Compare players", cmp_tonight:"Tonight", cmp_chance:"Chance tonight", cmp_fair:"Fair odds", cmp_mkt:"Market odds", cmp_na:"Not offered", cmp_role:"Line · PP unit", cmp_opp_s:"Opponent allows (shots, his position)", cmp_opp_g:"Opponent allows (goals, his position)", cmp_opp_pt:"Opponent allows (points, his position)", cmp_x_g:"Expected goals", cmp_x_a:"Expected assists", cmp_x_p:"Expected points", cmp_x_s:"Expected shots", cmp_x_hit:"Expected hits", cmp_x_blk:"Expected blocks", cmp_x_pp:"Expected PP points", cmp_x_pm:"Expected penalties", cmp_x_fo:"Expected faceoffs won", cmp_l10:"Last 10 games (line {l})", cmp_over:"{h}/{n} over", cmp_nohist:"No game-by-game record for this market", cmp_hr:"Hit rates", cmp_vs:"vs tonight's opponent", cmp_season:"This season", cmp_gp:"Games", cmp_gpg:"Goals / game", cmp_apg:"Assists / game", cmp_ppg:"Points / game", cmp_spg:"Shots / game", cmp_sh:"Shooting %", cmp_gvx:"Goals vs expected", cmp_toi:"Ice time / game", cmp_ppmin:"PP minutes / game", cmp_ppp:"PP points", cmp_ppsh:"Share of points on the PP", cmp_hpg:"Hits / game (last 10)", cmp_bpg:"Blocks / game (last 10)", cmp_fo:"Faceoff %", cmp_pim:"Penalty minutes", cmp_streak:"Run", cmp_ps:"{n}-game point streak", cmp_gs:"{n}-game goal streak", cmp_pd:"No point in {n}", cmp_gd:"No goal in {n}", cmp_best_p:"Highest chance", cmp_best_ev:"Best value", cmp_best_hr:"Best last 10", cmp_note:"The best number in each row is highlighted in that player's colour. Goals vs expected above zero means he has finished better than his chances (often luck); below zero, worse. A higher chance isn't automatically the better bet: compare it with the odds.", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
+    login:"Log in", logout:"Log out", qr_title:"Quick read", qr_top:"Highest chance: {a} ({p}), then {b} ({q}).", qr_close:"Chances are almost level: {a} {p} and {b} {q}.", qr_short:"Only {n} NHL games behind that number, so it is less certain.", qr_value:"Best value at the current odds: {a} ({e} EV at {o}).", qr_novalue:"None of them is priced as value at the current odds.", qr_role:"Biggest role: {a}, about {m} min{r} tonight.", qr_inj:"{a} is listed as questionable: check that he plays.", qr_lucky:"{a} has scored {v} goals more than his chances suggest: expect that to cool, the chance shown already allows for it.", qr_unlucky:"{a} has scored {v} goals fewer than his chances suggest: the chances are there, the finishing has been unlucky.", qr_form:"{a} cleared this line in {h} of his last {n} games.", qr_gk:"{t}'s starting goalie isn't confirmed yet: numbers can move.", qr_bl:"On these numbers, {a} is the stronger option, ahead of {b}.", qr_bl_tight:"Too close to call between {a} and {b}: the difference is within the model's margin.", qr_bl_none:"On these numbers, none of them stands out at the current prices.", qr_reminder:"Even the top option at {p} misses about {n} times in {k}.", qr_note:"Built from the numbers below, not advice. Short NHL histories count for less in the bottom line.", cmp_add:"Add to compare", cmp_in:"In compare", cmp_remove:"Remove", cmp_clear:"Clear", cmp_open:"Compare {n}", cmp_close:"Close", cmp_need:"Add one more player to compare", cmp_more:"Add up to 4 players, from any game", cmp_max:"You can compare up to {n} players", cmp_title:"Compare players", cmp_tonight:"Tonight", cmp_chance:"Chance tonight", cmp_fair:"Fair odds", cmp_mkt:"Market odds", cmp_na:"Not offered", cmp_role:"Line · PP unit", cmp_opp_s:"Opponent allows (shots, his position)", cmp_opp_g:"Opponent allows (goals, his position)", cmp_opp_pt:"Opponent allows (points, his position)", cmp_x_g:"Expected goals", cmp_x_a:"Expected assists", cmp_x_p:"Expected points", cmp_x_s:"Expected shots", cmp_x_hit:"Expected hits", cmp_x_blk:"Expected blocks", cmp_x_pp:"Expected PP points", cmp_x_pm:"Expected penalties", cmp_x_fo:"Expected faceoffs won", cmp_l10:"Last 10 games (line {l})", cmp_over:"{h}/{n} over", cmp_nohist:"No game-by-game record for this market", cmp_hr:"Hit rates", cmp_vs:"vs tonight's opponent", cmp_season:"This season", cmp_gp:"Games", cmp_gpg:"Goals / game", cmp_apg:"Assists / game", cmp_ppg:"Points / game", cmp_spg:"Shots / game", cmp_sh:"Shooting %", cmp_gvx:"Goals vs expected", cmp_toi:"Ice time / game", cmp_ppmin:"PP minutes / game", cmp_ppp:"PP points", cmp_ppsh:"Share of points on the PP", cmp_hpg:"Hits / game (last 10)", cmp_bpg:"Blocks / game (last 10)", cmp_fo:"Faceoff %", cmp_pim:"Penalty minutes", cmp_streak:"Run", cmp_ps:"{n}-game point streak", cmp_gs:"{n}-game goal streak", cmp_pd:"No point in {n}", cmp_gd:"No goal in {n}", cmp_best_p:"Highest chance", cmp_best_ev:"Best value", cmp_best_hr:"Best last 10", cmp_note:"The best number in each row is highlighted in that player's colour. Goals vs expected above zero means he has finished better than his chances (often luck); below zero, worse. A higher chance isn't automatically the better bet: compare it with the odds.", save:"Save", saved:"Saved", cancel:"Cancel", nav_picks:"My picks", vs_short:"vs",
     au_in_h:"Log in", au_up_h:"Create a free account", au_sub:"Save picks and track how they do. Results are graded automatically after each game.",
     au_email:"Email", au_pass:"Password (8+ characters)", au_in_btn:"Log in", au_up_btn:"Create account", au_have:"I already have an account", au_new:"New here? Create an account",
     au_link:"Email me a login link", au_link_sent:"Check your email for the login link.", au_need_email:"Enter your email first.", au_need_pass:"Enter your password, or use a login link.",
@@ -1002,7 +1014,7 @@ const I18N = {
     sp_g_note:"{d} {o}: alla skottförsök i matchen. En match är ett mycket litet underlag, så bara antal visas.", sp_row_tip:"Visa matchens skott på kartan",
     sp_title:"Skottprofil", sp_season:"Säsong", sp_l10:"Senaste 10", sp_loading:"Laddar skottkarta…", sp_none:"Inga skottförsök registrerade än i år.", sp_map:"Skottkarta",
     sp_att:"Skottförsök per match", sp_att_tip:"Alla försök: på mål, utanför eller blockerade. Försök är ett stabilare mått på volym än skott på mål.",
-    sp_sog:"Skott på mål per match", sp_of:"{n} totalt", sp_sog_tip:"Räddade skott plus mål.",
+    sp_sog:"Skott på mål per match", sp_of:"{n} totalt", tier_elite:"Elit", tier_good:"Bra", tier_avg:"Medel", tier_low:"Under medel", tier_small:"Litet underlag", tier_f:"forwards", tier_d:"backar", tier_top:"topp {p} % av {pos}", tier_bottom:"botten {p} % av {pos}", tier_tip:"Nivå mot alla NHL-spelare på hans position i år: Elit = topp 10 %, Bra = topp 10–35 %, Medel = mittersta 30 %, Under medel = botten 35 %.", sp_sog_tip:"Räddade skott plus mål.",
     sp_on:"Försök som träffar mål", sp_on_tip:"Andelen av hans försök som når målvakten. Viktigt för spel på skott på mål: två spelare med lika många försök kan skilja mycket här.",
     sp_missblk:"Utanför · blockerade", sp_missblk_tip:"Andelen av hans försök som gick utanför och som blockerades av en utespelare.",
     sp_close:"Från nära håll", sp_close_tip:"Andelen av hans oblockerade försök inom ungefär 6 meter från målet (innanför den streckade bågen). Nära skott går in betydligt oftare.",
@@ -1092,7 +1104,7 @@ const I18N = {
     op_player:"{t} mot {p}", op_shots_pg:"Insläppta skott per match", op_goals_pg:"Insläppta mål per match", op_pts_pg:"Insläppta poäng per match", op_vs_lg:"(snitt {v})",
     op_pnote:"Vad motståndaren har släppt till i år mot spelare på hans position. Grön placering = ett av de 8 generösaste försvaren. Testat: utöver lagets totala försvar (redan i modellen) förutsade det inte mål eller poäng, så det är bakgrund, inte en edge.",
     mv_from:"från", mv_opened:"öppnade {a} · {h}", mv_tip_to:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig mot modellens rättvisa odds ({f}).", mv_tip_away:"Öppnade på {a} i dag, nu {b}: marknaden har rört sig bort från modellens rättvisa odds ({f}).",
-    login:"Logga in", logout:"Logga ut", cmp_add:"Lägg till i jämförelse", cmp_in:"I jämförelsen", cmp_remove:"Ta bort", cmp_clear:"Rensa", cmp_open:"Jämför {n}", cmp_close:"Stäng", cmp_need:"Lägg till en spelare till för att jämföra", cmp_more:"Lägg till upp till 4 spelare, från valfri match", cmp_max:"Du kan jämföra upp till {n} spelare", cmp_title:"Jämför spelare", cmp_tonight:"I kväll", cmp_chance:"Chans i kväll", cmp_fair:"Rättvisa odds", cmp_mkt:"Marknadsodds", cmp_na:"Erbjuds inte", cmp_role:"Kedja · PP-femma", cmp_opp_s:"Motståndaren släpper till (skott, hans position)", cmp_opp_g:"Motståndaren släpper till (mål, hans position)", cmp_opp_pt:"Motståndaren släpper till (poäng, hans position)", cmp_x_g:"Förväntade mål", cmp_x_a:"Förväntade assist", cmp_x_p:"Förväntade poäng", cmp_x_s:"Förväntade skott", cmp_x_hit:"Förväntade tacklingar", cmp_x_blk:"Förväntade blockeringar", cmp_x_pp:"Förväntade PP-poäng", cmp_x_pm:"Förväntade utvisningar", cmp_x_fo:"Förväntade vunna tekningar", cmp_l10:"Senaste 10 matcherna (linje {l})", cmp_over:"{h}/{n} över", cmp_nohist:"Ingen match-för-match-historik för det här spelet", cmp_hr:"Träffprocent", cmp_vs:"mot kvällens motståndare", cmp_season:"I år", cmp_gp:"Matcher", cmp_gpg:"Mål / match", cmp_apg:"Assist / match", cmp_ppg:"Poäng / match", cmp_spg:"Skott / match", cmp_sh:"Skottprocent", cmp_gvx:"Mål mot förväntat", cmp_toi:"Istid / match", cmp_ppmin:"PP-minuter / match", cmp_ppp:"PP-poäng", cmp_ppsh:"Andel poäng i PP", cmp_hpg:"Tacklingar / match (senaste 10)", cmp_bpg:"Blockeringar / match (senaste 10)", cmp_fo:"Tekningsprocent", cmp_pim:"Utvisningsminuter", cmp_streak:"Svit", cmp_ps:"Poäng i {n} raka", cmp_gs:"Mål i {n} raka", cmp_pd:"Ingen poäng på {n}", cmp_gd:"Inget mål på {n}", cmp_best_p:"Högst chans", cmp_best_ev:"Bäst värde", cmp_best_hr:"Bäst senaste 10", cmp_note:"Bästa siffran på varje rad markeras i spelarens färg. Mål mot förväntat över noll betyder att han avslutat bättre än sina chanser (ofta tur); under noll, sämre. Högre chans är inte automatiskt det bättre spelet: jämför med oddset.", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
+    login:"Logga in", logout:"Logga ut", qr_title:"Snabbläsning", qr_top:"Högst chans: {a} ({p}), sedan {b} ({q}).", qr_close:"Chanserna är nästan lika: {a} {p} och {b} {q}.", qr_short:"Bara {n} NHL-matcher bakom den siffran, så den är osäkrare.", qr_value:"Bäst värde till nuvarande odds: {a} ({e} EV till {o}).", qr_novalue:"Ingen av dem är prissatt som värde till nuvarande odds.", qr_role:"Störst roll: {a}, ungefär {m} min{r} i kväll.", qr_inj:"{a} är listad som osäker: kontrollera att han spelar.", qr_lucky:"{a} har gjort {v} mål fler än hans chanser antyder: räkna med att det svalnar, chansen som visas tar redan hänsyn till det.", qr_unlucky:"{a} har gjort {v} mål färre än hans chanser antyder: chanserna finns, avsluten har haft otur.", qr_form:"{a} gick över linjen i {h} av sina senaste {n} matcher.", qr_gk:"{t}s startmålvakt är inte bekräftad än: siffrorna kan ändras.", qr_bl:"Utifrån siffrorna är {a} det starkare alternativet, före {b}.", qr_bl_tight:"För jämnt för att skilja {a} och {b}: skillnaden ligger inom modellens marginal.", qr_bl_none:"Utifrån siffrorna sticker ingen av dem ut till nuvarande priser.", qr_reminder:"Även det bästa alternativet på {p} missar ungefär {n} gånger av {k}.", qr_note:"Byggt på siffrorna nedan, inga råd. Kort NHL-historik väger mindre i slutsatsen.", cmp_add:"Lägg till i jämförelse", cmp_in:"I jämförelsen", cmp_remove:"Ta bort", cmp_clear:"Rensa", cmp_open:"Jämför {n}", cmp_close:"Stäng", cmp_need:"Lägg till en spelare till för att jämföra", cmp_more:"Lägg till upp till 4 spelare, från valfri match", cmp_max:"Du kan jämföra upp till {n} spelare", cmp_title:"Jämför spelare", cmp_tonight:"I kväll", cmp_chance:"Chans i kväll", cmp_fair:"Rättvisa odds", cmp_mkt:"Marknadsodds", cmp_na:"Erbjuds inte", cmp_role:"Kedja · PP-femma", cmp_opp_s:"Motståndaren släpper till (skott, hans position)", cmp_opp_g:"Motståndaren släpper till (mål, hans position)", cmp_opp_pt:"Motståndaren släpper till (poäng, hans position)", cmp_x_g:"Förväntade mål", cmp_x_a:"Förväntade assist", cmp_x_p:"Förväntade poäng", cmp_x_s:"Förväntade skott", cmp_x_hit:"Förväntade tacklingar", cmp_x_blk:"Förväntade blockeringar", cmp_x_pp:"Förväntade PP-poäng", cmp_x_pm:"Förväntade utvisningar", cmp_x_fo:"Förväntade vunna tekningar", cmp_l10:"Senaste 10 matcherna (linje {l})", cmp_over:"{h}/{n} över", cmp_nohist:"Ingen match-för-match-historik för det här spelet", cmp_hr:"Träffprocent", cmp_vs:"mot kvällens motståndare", cmp_season:"I år", cmp_gp:"Matcher", cmp_gpg:"Mål / match", cmp_apg:"Assist / match", cmp_ppg:"Poäng / match", cmp_spg:"Skott / match", cmp_sh:"Skottprocent", cmp_gvx:"Mål mot förväntat", cmp_toi:"Istid / match", cmp_ppmin:"PP-minuter / match", cmp_ppp:"PP-poäng", cmp_ppsh:"Andel poäng i PP", cmp_hpg:"Tacklingar / match (senaste 10)", cmp_bpg:"Blockeringar / match (senaste 10)", cmp_fo:"Tekningsprocent", cmp_pim:"Utvisningsminuter", cmp_streak:"Svit", cmp_ps:"Poäng i {n} raka", cmp_gs:"Mål i {n} raka", cmp_pd:"Ingen poäng på {n}", cmp_gd:"Inget mål på {n}", cmp_best_p:"Högst chans", cmp_best_ev:"Bäst värde", cmp_best_hr:"Bäst senaste 10", cmp_note:"Bästa siffran på varje rad markeras i spelarens färg. Mål mot förväntat över noll betyder att han avslutat bättre än sina chanser (ofta tur); under noll, sämre. Högre chans är inte automatiskt det bättre spelet: jämför med oddset.", save:"Spara", saved:"Sparad", cancel:"Avbryt", nav_picks:"Mina spel", vs_short:"mot",
     au_in_h:"Logga in", au_up_h:"Skapa ett gratiskonto", au_sub:"Spara spel och följ hur de går. Resultaten rättas automatiskt efter varje match.",
     au_email:"E-post", au_pass:"Lösenord (minst 8 tecken)", au_in_btn:"Logga in", au_up_btn:"Skapa konto", au_have:"Jag har redan ett konto", au_new:"Ny här? Skapa ett konto",
     au_link:"Mejla mig en inloggningslänk", au_link_sent:"Kolla din e-post efter inloggningslänken.", au_need_email:"Skriv din e-post först.", au_need_pass:"Skriv ditt lösenord, eller använd en inloggningslänk.",
@@ -2113,6 +2125,20 @@ function rinkSVG(shots){
     <path d="M${X(-20)} ${Y(89)} A${20*W/85} ${20*W/85} 0 0 0 ${X(20)} ${Y(89)}" class="rk-slot"/>
     ${shots.slice().sort((a,b)=>order[a[2]]-order[b[2]]).map(dot).join("")}</svg>`;
 }
+// league tier for a shot-profile number: elite (top 10%), good (top 10-35%), average (middle 30%), below (bottom 35%)
+function shotTier(metric, v, posg, enough){
+  const Q = DATA.league?.shot_tiers?.[posg]?.[metric]; if (!Q || v==null || isNaN(v)) return null;
+  if (!enough) return {cls:"t-small", lab:t("tier_small")};
+  let pc = 0; for (let i=0;i<Q.length;i++){ if (v >= Q[i]) pc = (i+1)*5; }
+  if (pc > 5 && pc < 95) { const i = pc/5 - 1, lo = Q[i], hi = Q[i+1]; if (hi > lo) pc += Math.min(4.9, 5*(v-lo)/(hi-lo)); }
+  else if (pc === 0 && v < Q[0]) pc = 2; else if (pc >= 95) pc = 97;
+  pc = Math.round(pc);
+  const cls = pc>=90 ? "t-elite" : pc>=65 ? "t-good" : pc>=35 ? "t-avg" : "t-low";
+  const posTxt = t(posg==="D" ? "tier_d" : "tier_f");
+  const rank = pc>=50 ? t("tier_top",{p:Math.max(1,100-pc), pos:posTxt}) : t("tier_bottom",{p:Math.max(1,pc), pos:posTxt});
+  return {cls, lab:t(cls.replace("t-","tier_")), rank};
+}
+const tierPill = tr => tr ? `<span class="tier ${tr.cls}">${tr.lab}${tr.rank?` <i>· ${tr.rank}</i>`:""}</span>` : "";
 function shotProfile(p){
   const games10 = p.form.games.slice(0,10);
   if (state.spw && state.spw.startsWith("g:") && !games10.some(x=>x.d===state.spw.slice(2))) state.spw = "season";
@@ -2132,19 +2158,21 @@ function shotProfile(p){
   const G_ = n("G"), S_ = n("S"), M_ = n("M"), B_ = n("B"), att = shots.length, onNet = G_ + S_;
   const close = shots.filter(x=>x[2]!=="B" && x[0]<=89 && Math.hypot(89-x[0], x[1])<=20).length, unb = att - B_;
   const prev = p.shp?.[String(DATA.season-1)], cur = p.shp?.[String(DATA.season)];
-  const pv = prev && prev.gp ? {apg: prev.att/prev.gp, on: prev.att ? prev.s/prev.att : null, xg: prev.s ? prev.xg/prev.s : null} : null;
+  const pv = prev && prev.gp ? {apg: prev.att/prev.gp, sog: prev.s/prev.gp, on: prev.att ? prev.s/prev.att : null, xg: prev.s ? prev.xg/prev.s : null} : null;
+  const season = !l10, pg = p.posg === "D" ? "D" : "F";
+  const T = (m, v, ok) => season ? shotTier(m, v, pg, ok) : null;
   const xgps = cur && cur.s ? cur.xg/cur.s : null;
-  const kpi = (lbl, v, sub, tip) => `<div class="spk tip" tabindex="0" data-tip="${esc(tip)}"><small>${lbl}</small><b>${v}</b>${sub?`<span class="meta">${sub}</span>`:""}</div>`;
+  const kpi = (lbl, v, sub, tip, tr) => `<div class="spk tip" tabindex="0" data-tip="${esc(tip + (tr && tr.rank ? " " + t("tier_tip") : ""))}"><small>${lbl}</small><b>${v}${tierPill(tr)}</b>${sub?`<span class="meta">${sub}</span>`:""}</div>`;
   const lastY = pv ? (v, f) => t("sp_prev",{v:f(v)}) : () => "";
   return head + `<div class="spgrid">
     <div class="spkpis">
-      ${kpi(t("sp_att"), fmt(att/gp,1), pv ? lastY(pv.apg, x=>fmt(x,1)) : "", t("sp_att_tip"))}
-      ${kpi(t("sp_sog"), fmt(onNet/gp,1), t("sp_of",{n:onNet}), t("sp_sog_tip"))}
-      ${kpi(t("sp_on"), pct(onNet/att), pv && pv.on!=null ? lastY(pv.on, pct) : "", t("sp_on_tip"))}
+      ${kpi(t("sp_att"), fmt(att/gp,1), pv ? lastY(pv.apg, x=>fmt(x,1)) : "", t("sp_att_tip"), T("apg", att/gp, gp>=5))}
+      ${kpi(t("sp_sog"), fmt(onNet/gp,1), pv ? lastY(pv.sog, x=>fmt(x,1)) : t("sp_of",{n:onNet}), t("sp_sog_tip") + " " + t("sp_of",{n:onNet}) + ".", T("sog", onNet/gp, gp>=5))}
+      ${kpi(t("sp_on"), pct(onNet/att), pv && pv.on!=null ? lastY(pv.on, pct) : "", t("sp_on_tip"), T("on", onNet/att, att>=30))}
       ${kpi(t("sp_missblk"), `${pct(M_/att)} · ${pct(B_/att)}`, "", t("sp_missblk_tip"))}
-      ${kpi(t("sp_close"), pct(unb ? close/unb : 0), "", t("sp_close_tip"))}
+      ${kpi(t("sp_close"), pct(unb ? close/unb : 0), "", t("sp_close_tip"), T("close", unb ? close/unb : null, unb>=30))}
       ${kpi(t("sp_goals"), String(G_), onNet ? t("sp_shpct",{p:pct(G_/onNet)}) : "", t("sp_goals_tip"))}
-      ${!l10 && xgps!=null ? kpi(t("sp_xg"), fmt(xgps,3), pv && pv.xg!=null ? lastY(pv.xg, x=>fmt(x,3)) : "", t("sp_xg_tip")) : ""}
+      ${!l10 && xgps!=null ? kpi(t("sp_xg"), fmt(xgps,3), pv && pv.xg!=null ? lastY(pv.xg, x=>fmt(x,3)) : "", t("sp_xg_tip"), T("xg", xgps, (cur?.s||0)>=15 && att>=30)) : ""}
     </div>
     <div class="spmap">${rinkSVG(shots)}
       <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
@@ -2574,6 +2602,58 @@ function cmpMiniChart(x, m, ymax, i){
     <line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" class="cmax"/>${bars}
     <line x1="0" x2="${W-RM+2}" y1="${y(L)}" y2="${y(L)}" class="cml"/><text x="${W-1}" y="${y(L)+3.5}" text-anchor="end" class="cmlt">${L}</text></svg>`;
 }
+
+// plain-language read of the comparison, built from fixed rules on the same numbers (no AI, no invented facts)
+function cmpQuick(items, m, pv, ev, od, hits){
+  const nm = i => `<b style="color:${CMP_COL(i)}">${esc(shortName(items[i].p.name))}</b>`;
+  const gpC = i => items[i].p.windows?.career?.gp || 0;
+  const trust = i => Math.min(1, (gpC(i) + 10) / 60);
+  const idx = items.map((_, i) => i).filter(i => pv[i] != null);
+  if (idx.length < 2) return "";
+  const L = [];
+  // 1. chance
+  const iP = idx.reduce((a, b) => pv[b] > pv[a] ? b : a);
+  const second = idx.filter(i => i !== iP).reduce((a, b) => pv[b] > pv[a] ? b : a);
+  const close = pv[iP] - pv[second] < 0.015;
+  L.push(t(close ? "qr_close" : "qr_top", {a: nm(iP), p: pct(pv[iP], 1), b: nm(second), q: pct(pv[second], 1)})
+    + (gpC(iP) < 50 ? " " + t("qr_short", {n: gpC(iP)}) : ""));
+  // 2. value at the odds
+  const withOdds = idx.filter(i => ev[i] != null);
+  if (withOdds.length){
+    const iE = withOdds.reduce((a, b) => ev[b] > ev[a] ? b : a);
+    if (ev[iE] > 0.02) L.push(t("qr_value", {a: nm(iE), e: evTxt(ev[iE]), o: oddsTxt(od[iE])}));
+    else L.push(t("qr_novalue"));
+  }
+  // 3. role
+  const toi = i => items[i].p.toi_proj || 0;
+  const iR = idx.reduce((a, b) => toi(b) > toi(a) ? b : a);
+  if (idx.every(i => i === iR || toi(iR) - toi(i) >= 1)){
+    const M = items[iR].p.mates || {}; const role = [M.line?.toUpperCase(), M.pp?.toUpperCase()].filter(Boolean).join(", ");
+    L.push(t("qr_role", {a: nm(iR), m: fmt(toi(iR), 1), r: role ? ` (${role})` : ""}));
+  }
+  // 4. one flag per player that changes how to read his number
+  const flags = [];
+  idx.forEach(i => { const x = items[i], rg = x.p.regress || {}, gvx = rg.g != null ? rg.g - rg.exp : 0, h = hits[i]?.L10;
+    if (x.p.injury?.kind === "questionable") flags.push(t("qr_inj", {a: nm(i)}));
+    else if (gvx >= 2.5) flags.push(t("qr_lucky", {a: nm(i), v: fmt(gvx, 1)}));
+    else if (gvx <= -2.5) flags.push(t("qr_unlucky", {a: nm(i), v: fmt(-gvx, 1)}));
+    else if (h && h[1] >= 8 && h[0] / h[1] >= 0.7) flags.push(t("qr_form", {a: nm(i), h: h[0], n: h[1]}));
+    const st = (x.g.starter_status?.[x.pr.opp] || "").toLowerCase();
+    if (/^(g|a|pt|fg|g2|g3|a2|pt2|pt3|ppp)$/.test(m) && st && (!st.includes("confirmed") || st.includes("unconfirmed")) && !flags.some(f => f.includes(x.pr.opp)))
+      flags.push(t("qr_gk", {t: x.pr.opp}));
+  });
+  L.push(...flags.slice(0, 3));
+  // 5. bottom line: trust-adjusted edge with odds, trust-adjusted chance without
+  const sc = i => ev[i] != null ? ev[i] * trust(i) : pv[i] * (0.85 + 0.15 * trust(i));
+  const order = idx.slice().sort((a, b) => sc(b) - sc(a));
+  const a0 = order[0], a1 = order[1];
+  const tight = ev[a0] != null ? (sc(a0) - sc(a1) < 0.03) : (sc(a0) - sc(a1) < 0.012);
+  if (ev[a0] != null && ev[a0] * trust(a0) <= 0) L.push(t("qr_bl_none"));
+  else L.push(t(tight ? "qr_bl_tight" : "qr_bl", {a: nm(a0), b: nm(a1)}));
+  const miss = pv[a0] > 0 && pv[a0] < 0.5 ? Math.round((1 - pv[a0]) / pv[a0]) : 0;
+  return `<div class="cmquick"><h5>${t("qr_title")}</h5><ul>${L.map(x => `<li>${x}</li>`).join("")}</ul>
+    <p class="meta">${miss >= 2 ? t("qr_reminder", {p: pct(pv[a0], 0), n: miss, k: miss + 1}) + " " : ""}${t("qr_note")}</p></div>`;
+}
 function openCompare(){
   if (state.tab==="props" && state.psort!=="streaks" && state.market) state.cmpM = state.market;
   const el = $("#modal"); el.classList.add("cmpm");
@@ -2674,6 +2754,7 @@ function cmpRender(){
   box.innerHTML = `<div class="cmtop"><h3>${t("cmp_title")}</h3><span class="meta">${mName(m)}</span><button type="button" class="cmclose" data-close aria-label="${t("cmp_close")}">×</button></div>
     ${picker}
     <div class="cmscroll">
+      ${cmpQuick(items, m, pv, ev, od, hits)}
       ${sum ? `<div class="cmsum">${sum}</div>` : ""}
       <div class="ctab" style="${cols}">${head}</div>
       <h4 class="cmsec">${t("cmp_tonight")}</h4><div class="ctab" style="${cols}">${tonight}</div>

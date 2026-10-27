@@ -985,6 +985,30 @@ def opponent_by_position(raw: dict) -> dict:
 
 
 # ---------------------------------------------------------------- slate
+def shot_tiers(sf: pd.DataFrame, pbp: dict, cur: int) -> dict:
+    """League percentiles (5th..95th) of the shot-profile numbers this season, by position, for the tier labels
+    on the site. Rates need 30+ attempts, per-game numbers 5+ games."""
+    d = sf[sf.season == cur].groupby(["pid", "posg"], as_index=False)[["gp", "att", "s", "xg"]].sum()
+    close: dict[int, list] = {}
+    for g in (pbp or {}).values():
+        for pid, x, y, k, _t in g.get("s") or []:
+            if k == "B":
+                continue
+            c = close.setdefault(int(pid), [0, 0]); c[1] += 1
+            if x <= 89 and math.hypot(89 - x, y) <= 20:
+                c[0] += 1
+    d["close"] = d.pid.map(lambda i: close[i][0] / close[i][1] if i in close and close[i][1] else np.nan)
+    qs = list(range(5, 100, 5))
+    out = {}
+    for pg, x in d.groupby("posg"):
+        r = x[x.att >= 30]
+        g5 = x[x.gp >= 5]
+        m = {"apg": g5.att / g5.gp, "sog": g5.s / g5.gp, "on": r.s / r.att, "xg": (r.xg / r.s.where(r.s > 0)).dropna(),
+             "close": r.close.dropna()}
+        out[pg] = {k: [round(float(np.percentile(v, q)), 4) for q in qs] for k, v in m.items() if len(v) >= 20}
+    return out
+
+
 def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     GM_CFG.update(p1_share=cfg.get("p1_share", 0.29), en_q=cfg.get("en_q", 0.25))
     cur, date = raw["season"], raw["date"]
@@ -1154,6 +1178,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         prof_["x"] = x
     team_fo_pct = {t_: (v[0] + 200) / (v[1] + 400) for t_, v in pst["team_fo"].items()}
     league["pen_pg"] = round(lg_pen_pg, 3)
+    try:
+        league["shot_tiers"] = shot_tiers(sf, raw.get("pbp") or {}, cur)
+    except Exception as e:  # noqa: BLE001
+        log(f"  shot tiers skipped: {e}")
     team_pen_pg = {t_: shrink(pst["pens"].get(t_, 0), pst["tgp"].get(t_, 0), lg_pen_pg, 15) for t_ in pst["tgp"]}
     # hits / blocks: recent box scores (the NHL game logs don't carry them)
     for pid_, prof_ in profiles.items():
