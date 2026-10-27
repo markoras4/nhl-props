@@ -443,6 +443,7 @@ def main(argv=None):
     bt.add_argument("--extra", action="store_true", help="test multi-point, PIM, PP points and faceoff props")
     bt.add_argument("--oppos", action="store_true", help="test what the opponent allows by position")
     bt.add_argument("--depth", action="store_true", help="test depth players / rookies and a role-based prior")
+    bt.add_argument("--season", action="store_true", help="test the season simulation (playoff chances, game importance)")
     args = ap.parse_args(argv)
 
     data_dir = ROOT / "data"
@@ -469,6 +470,10 @@ def main(argv=None):
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())
         seasons = [int(x) for x in args.seasons.split(",") if x.strip()] or [cur - 2, cur - 1]
+        if args.season:
+            from .backtest_season import run as run_ss
+            run_ss(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
         if args.depth:
             from .backtest_depth import run as run_dp
             run_dp(src, seasons, CONFIG, ROOT / "backtest")
