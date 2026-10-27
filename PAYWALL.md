@@ -33,6 +33,8 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Streaks view & "Streaks to watch" | the list (who, what run, how rare) | chance tonight, fair odds, EV |
 | Milestones | yes | yes |
 | My picks (tracking) | yes (free account) | yes (later: export, ROI by market) |
+| Closing odds / CLV per pick (auto, or typed in for markets the feed lacks) | yes (free account) | yes |
+| Watchlist: follow players, next game, marker on game cards | up to 3 players (free account) | unlimited + game-day push alerts |
 | Alerts | no | yes |
 | Track record, How it works | yes | yes |
 | Futures tab (playoffs, rounds, Cup, division, points) | chances | plus fair odds, sportsbook odds and value |

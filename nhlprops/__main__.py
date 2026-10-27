@@ -221,8 +221,9 @@ def track_open(slate: dict, open_dir: Path) -> None:
             rec = book.setdefault(gid, {"players": {}, "winner": {}, "totals": {}, "at": now})
             for pid, mk in (o.get("players") or {}).items():
                 for m, v in mk.items():
-                    if v and v.get("o") and m not in rec["players"].setdefault(str(pid), {}):
-                        rec["players"][str(pid)][m] = v["o"]; changed = True
+                    k = m + "@p" if v and v.get("b") == "p" else m
+                    if v and v.get("o") and k not in rec["players"].setdefault(str(pid), {}):
+                        rec["players"][str(pid)][k] = v["o"]; changed = True
             for side, v in (o.get("winner") or {}).items():
                 if v and side not in rec["winner"]:
                     rec["winner"][side] = v; changed = True
@@ -242,7 +243,7 @@ def write_alerts(slate: dict, out: Path) -> None:
     """Small feed for push alerts: props with an edge against the market, and confirmed starting goalies."""
     now = dt.datetime.now(dt.timezone.utc)
     odds, players, goalies = slate.get("odds") or {}, slate["players"], slate.get("goalies") or {}
-    edges, starters = [], []
+    edges, starters, plays = [], [], []
     for g in slate["games"]:
         if g.get("state") not in PRE_STATES or not g.get("start"):
             continue
@@ -252,6 +253,16 @@ def write_alerts(slate: dict, out: Path) -> None:
             continue
         if not (now < start < now + dt.timedelta(hours=20)):
             continue
+        if start < now + dt.timedelta(hours=12):
+            # game-day alerts for players people follow: everyone projected to play, with goal chance and odds
+            po_ = ((odds.get(g["id"]) or odds.get(str(g["id"])) or {}).get("players") or {})
+            for pr in g["props"]:
+                pl = players.get(str(pr["id"])) or players.get(pr["id"])
+                if not pl or not pl.get("active") or "g" not in pr["p"]:
+                    continue
+                bo = (po_.get(pr["id"]) or po_.get(str(pr["id"])) or {}).get("g") or {}
+                plays.append({"gid": g["id"], "pid": pr["id"], "name": pl["name"], "team": pr["team"], "opp": pr["opp"],
+                              "home": pr["home"], "start": g["start"], "p": round(pr["p"]["g"], 4), "odds": bo.get("o")})
         po = ((odds.get(g["id"]) or odds.get(str(g["id"])) or {}).get("players") or {})
         for pr in g["props"]:
             pl = players.get(str(pr["id"])) or players.get(pr["id"])
@@ -273,7 +284,7 @@ def write_alerts(slate: dict, out: Path) -> None:
                 starters.append({"gid": g["id"], "team": t, "opp": g["away"] if t == g["home"] else g["home"],
                                  "name": gk.get("name", ""), "start": g["start"]})
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"built": now.isoformat(timespec="minutes"), "edges": edges, "goalies": starters},
+    out.write_text(json.dumps({"built": now.isoformat(timespec="minutes"), "edges": edges, "goalies": starters, "plays": plays},
                               separators=(",", ":")), encoding="utf-8")
 
 
@@ -568,12 +579,16 @@ def main(argv=None):
     if args.demo:
         slate["odds"] = demo_odds(slate)
     else:
-        from .odds import fetch_odds
+        from .odds import fetch_odds, fetch_pinnacle, merge_second
         try:
             slate["odds"] = fetch_odds(src, slate["games"], raw["skaters"])
         except Exception as e:  # odds are optional
             print("Odds unavailable:", e)
             slate["odds"] = {}
+        try:   # second, sharper price; also fills markets the main feed lacks
+            merge_second(slate["odds"], fetch_pinnacle(src, slate["games"], raw["skaters"]))
+        except Exception as e:
+            print("Sharp-book odds unavailable:", e)
     track_open(slate, data_dir / ("demo_odds_open" if args.demo else "odds_open"))
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
     lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
