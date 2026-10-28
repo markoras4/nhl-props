@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime as dt
 
+from .lock import too_late
 from .news import NameIndex, team_from_name
 
 BASE = "https://eu-offering-api.kambicdn.com/offering/v2018/ubse"
@@ -82,6 +83,8 @@ def fetch_odds(src, games: list[dict], players: list[dict], log=print) -> dict:
         home = team_from_name(ev.get("homeName", ""))
         away = team_from_name(ev.get("awayName", ""))
         start = ev.get("start") or ""
+        if str(ev.get("state") or "").upper() == "STARTED" or too_late(start):
+            continue      # live in-game prices or inside the lock window: never used
         try:  # Kambi gives UTC; NHL dates are North American
             d_et = (dt.datetime.fromisoformat(start.replace("Z", "+00:00")) - dt.timedelta(hours=5)).date().isoformat()
         except ValueError:
@@ -149,7 +152,7 @@ def fetch_pinnacle(src, games: list[dict], players: list[dict], log=print) -> di
             continue
         rx = re.match(r"^(.*?) total (goals|assists|points|shots on goal)\b", str(sp.get("description") or ""), re.I)
         par = m.get("parent") or {}
-        if not rx or not par:
+        if not rx or not par or m.get("isLive") or par.get("isLive") or too_late(par.get("startTime")):
             continue
         teams = {p.get("alignment"): team_from_name(p.get("name") or "") for p in par.get("participants") or []}
         try:

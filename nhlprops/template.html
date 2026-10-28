@@ -1031,7 +1031,7 @@ const I18N = {
     al_edge:"Alert me when a prop's edge is at least", al_off:"Off", al_goalies:"Alert me when a starting goalie is confirmed", al_saved:"Saved.",
     al_unsupported:"This browser can't receive notifications. Try Chrome, Edge, Firefox or Safari.", al_blocked:"Notifications are blocked for this site. Allow them in your browser settings, then reload.",
     al_ios:"On iPhone and iPad: tap Share, then “Add to Home Screen”, open Props Lab from your home screen and turn notifications on here.",
-    al_test_title:"Props Lab alerts work", al_test_body:"You'll get a notification like this when one of your alerts fires.", proj_short:"proj.", frozen_note:"Started: probabilities, odds and picks are kept as they were at puck drop.",
+    al_test_title:"Props Lab alerts work", al_test_body:"You'll get a notification like this when one of your alerts fires.", proj_short:"proj.", frozen_note:"Locked 5 minutes before puck drop: probabilities, odds, picks and player details stay exactly as they were then.",
     st_uncertain:"Not decided", or_g:"or {n}", alt_note:"Sources disagree on the starter. {n} may start instead – switch below to see his effect.",
     st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
@@ -1256,7 +1256,7 @@ const I18N = {
     al_edge:"Avisera mig när ett spels edge är minst", al_off:"Av", al_goalies:"Avisera mig när en startmålvakt bekräftas", al_saved:"Sparat.",
     al_unsupported:"Den här webbläsaren kan inte ta emot notiser. Prova Chrome, Edge, Firefox eller Safari.", al_blocked:"Notiser är blockerade för sidan. Tillåt dem i webbläsarens inställningar och ladda om.",
     al_ios:"På iPhone och iPad: tryck på Dela, sedan ”Lägg till på hemskärmen”, öppna Props Lab från hemskärmen och slå på notiser här.",
-    al_test_title:"Props Lab-aviseringar fungerar", al_test_body:"Du får en notis som den här när en av dina aviseringar slår till.", proj_short:"ber.", frozen_note:"Startad: sannolikheter, odds och spel visas som de var vid nedsläpp.",
+    al_test_title:"Props Lab-aviseringar fungerar", al_test_body:"Du får en notis som den här när en av dina aviseringar slår till.", proj_short:"ber.", frozen_note:"Låst 5 minuter före nedsläpp: sannolikheter, odds, spel och spelardetaljer står kvar precis som de var då.",
     st_uncertain:"Inte avgjort", or_g:"eller {n}", alt_note:"Källorna är oense om startmålvakten. {n} kan starta i stället – byt nedan för att se effekten.",
     st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
@@ -3225,7 +3225,7 @@ en: `<h3>What the site does</h3>
   <details><summary>Is this a betting site?</summary><p>No. NHL Props Lab is an analysis tool. We don't take bets or hold money; you place bets with your own licensed sportsbook, if you want to.</p></details>
   <details><summary>Does a high percentage mean I should bet?</summary><p>Not on its own. What matters is the chance compared with the odds: a 60% chance at 1.50 loses money over time, a 30% chance at 4.00 makes money. That's what value and EV show.</p></details>
   <details><summary>Why doesn't a hot player get a higher chance?</summary><p>Because streaks mostly don't continue. The model starts from his real level over a long stretch and gives recent form a little weight; in testing, that beat following the streak.</p></details>
-  <details><summary>Why did the numbers change during the day?</summary><p>New lineups, a confirmed goalie, an injury or new odds. Once the game starts, everything is locked.</p></details>
+  <details><summary>Why did the numbers change during the day?</summary><p>New lineups, a confirmed goalie, an injury or new odds. Five minutes before the scheduled puck drop, everything about the game is locked: probabilities, odds, picks, lineups and player details stay as they were.</p></details>
   <details><summary>My sportsbook has different odds. What do I do?</summary><p>Type your odds in the odds box (decimal, American or fractional). The EV updates for your price.</p></details>
   <details><summary>Can I look back at a game that's already been played?</summary><p>Yes, for the last 7 days: choose <i>Earlier</i> on the Games tab. Every game opens as it looked before puck drop, with ✓ / ✗ for what happened. Click any of a team's last 6 games or past meetings for a recap.</p></details>
   <details><summary>Can I follow a player for a later bet?</summary><p>Yes. Tap the bookmark next to any player (free account needed). He's listed under My picks with his next game, tonight's chance and odds, and a note if you want one; his game gets a marker on the Games tab, and you can get a push alert on game day.</p></details>
@@ -3348,7 +3348,7 @@ sv: `<h3>Vad sajten gör</h3>
   <details><summary>Är det här en spelsajt?</summary><p>Nej. NHL Props Lab är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar; du spelar hos ditt eget licensierade spelbolag, om du vill.</p></details>
   <details><summary>Betyder en hög procent att jag ska spela?</summary><p>Inte i sig. Det som räknas är chansen jämfört med oddset: en chans på 60 % till 1,50 förlorar pengar över tid, en chans på 30 % till 4,00 vinner. Det är det värde och EV visar.</p></details>
   <details><summary>Varför får inte en spelare i het form högre chans?</summary><p>För att sviter oftast inte håller i sig. Modellen utgår från hans verkliga nivå över en längre period och ger den senaste formen lite vikt; i testerna slog det att följa sviten.</p></details>
-  <details><summary>Varför ändrades siffrorna under dagen?</summary><p>Nya uppställningar, en bekräftad målvakt, en skada eller nya odds. När matchen startar låses allt.</p></details>
+  <details><summary>Varför ändrades siffrorna under dagen?</summary><p>Nya uppställningar, en bekräftad målvakt, en skada eller nya odds. Fem minuter före planerat nedsläpp låses allt om matchen: sannolikheter, odds, spel, uppställningar och spelardetaljer står kvar som de var.</p></details>
   <details><summary>Mitt spelbolag har andra odds. Vad gör jag?</summary><p>Skriv in ditt odds i oddsrutan (decimal, amerikanska eller bråk). EV uppdateras för ditt pris.</p></details>
   <details><summary>Kan jag titta tillbaka på en match som redan är spelad?</summary><p>Ja, för de senaste 7 dagarna: välj <i>Tidigare</i> under Matcher. Varje match öppnas som den såg ut före nedsläpp, med ✓ / ✗ för vad som hände. Klicka på någon av ett lags senaste 6 matcher eller tidigare möten för en sammanfattning.</p></details>
   <details><summary>Kan jag följa en spelare inför ett senare spel?</summary><p>Ja. Tryck på bokmärket bredvid valfri spelare (gratis konto krävs). Han listas under Mina spel med nästa match, kvällens chans och odds och en anteckning om du vill; matchen markeras under Matcher, och du kan få en pushnotis på matchdagen.</p></details>
@@ -3387,7 +3387,7 @@ function saveBtn(g, pr, m){
   if (!sb) return "";
   const k = pickKey(g.id, pr.id, m);
   if (SAVED.has(k)) return `<span class="savebtn saved">✓ ${t("saved")}</span>`;
-  if (!g.start || (g.state && !["FUT","PRE"].includes(g.state)) || new Date(g.start).getTime() <= Date.now()) return "";
+  if (!g.start || g.frozen || (g.state && !["FUT","PRE"].includes(g.state)) || new Date(g.start).getTime() - 5*60e3 <= Date.now()) return "";
   return `<button class="savebtn" data-save="${g.id}|${pr.id}|${m}" type="button">＋ ${t("save")}</button>`;
 }
 function modal(html){ const el = $("#modal"); el.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${html}</div>`; el.hidden = false; const f = el.querySelector("input"); if (f) f.focus(); }
@@ -3751,7 +3751,7 @@ function stakesBox(g){
   const lvl = x => x?.level || "low";
   const side = tm => { const x = S[tm]; if (!x) return ""; const sw = x.swing;
     return `<div class="stk"><div class="stkt">${logo(tm,22)}<b>${tm}</b><span class="pill imp-${lvl(x)}">${t("imp_"+lvl(x))}</span></div>
-      ${DATA.futures?.teams?.[tm] ? `<div class="stkl">${luckTag(DATA.futures.teams[tm])}</div>` : ""}${teamGoals(tm)}
+      ${DATA.futures?.teams?.[tm] ? `<div class="stkl">${luckTag(S._lk?.[tm] ? {...DATA.futures.teams[tm], ...S._lk[tm]} : DATA.futures.teams[tm])}</div>` : ""}${teamGoals(tm)}
       <div class="stkn"><span>${t("stk_now")} <b>${pct(x.now,0)}</b></span><span class="up">${t("stk_win")} <b>${pct(x.win,0)}</b></span><span class="down">${t("stk_lose")} <b>${pct(x.lose,0)}</b></span></div>
       ${sw!=null?`<div class="stkbar"><i style="left:${Math.max(0,Math.min(100,x.lose*100))}%;width:${Math.max(1,Math.min(100,(x.win-x.lose)*100))}%"></i><s style="left:${Math.min(99.5,x.now*100)}%"></s></div>`:""}</div>`; };
   return `<div class="box stakes"><h4><span>${t("stk_title")} ${HI("stk_tip")}</span></h4><div class="stkgrid">${side(g.away)}${side(g.home)}</div><p class="note">${t("stk_note")}</p></div>`;

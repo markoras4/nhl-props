@@ -12,6 +12,8 @@ import datetime as dt
 import json
 from pathlib import Path
 
+from .lock import is_locked
+
 DAYS = 7
 PRE = (None, "FUT", "PRE")
 
@@ -83,8 +85,8 @@ def build(slate: dict, src, data_dir: Path, out_dir: Path, pbp: dict | None = No
         for gid, fz in frozen.items():
             rec = arch["games"].get(gid) or {}
             g_live = live.get(gid)
-            if g_live is not None and g_live.get("state") in PRE:
-                # still to come: keep the player context in step with the frozen probabilities
+            if g_live is not None and not is_locked(g_live) and not g_live.get("frozen"):
+                # still to come (before the lock): keep the player context in step with the frozen probabilities
                 rec = {**snap_for(g_live), "at": fz.get("at"), "partial": False}
                 changed = True
             elif not rec.get("players"):
@@ -101,6 +103,13 @@ def build(slate: dict, src, data_dir: Path, out_dir: Path, pbp: dict | None = No
                     rec["result"] = res
                     changed = True
             arch["games"][gid] = rec
+            if g_live is not None and (is_locked(g_live) or g_live.get("frozen")) and rec.get("players") and not rec.get("partial"):
+                # a locked game still on the slate: its page shows players, goalies and teams as they were before the lock
+                for k in ("players", "goalies", "teams"):
+                    dst = slate.get(k) or {}
+                    for key, val in (rec.get(k) or {}).items():
+                        if key in dst:
+                            dst[key] = val
         if changed:
             af.write_text(json.dumps(arch, separators=(",", ":")), encoding="utf-8")
         if d < today:

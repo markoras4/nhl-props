@@ -79,7 +79,7 @@ def save_history(slate: dict, hist_dir: Path):
     players = slate["players"]
     by_date: dict[str, list] = {}
     for g in slate["games"]:
-        if g.get("state") not in (None, "FUT", "PRE"):
+        if is_locked(g):
             continue
         by_date.setdefault(g["date"], []).append(g)
     for d, games in by_date.items():
@@ -103,14 +103,16 @@ def save_history(slate: dict, hist_dir: Path):
         f.write_text(json.dumps(clean(rec)), encoding="utf-8")
 
 
-PRE_STATES = (None, "FUT", "PRE")
+from .lock import PRE_STATES, is_locked  # noqa: E402  (a game locks 5 minutes before its scheduled start)
 
 
 def freeze_started(slate: dict, frozen_dir: Path) -> None:
-    """Keep each game exactly as it was at its last pre-game refresh (probabilities, odds, picks).
-    Sportsbooks pull pre-game player odds at puck drop, so a started game would otherwise lose its picks."""
+    """Keep each game exactly as it was at its last refresh before the lock (5 minutes before the scheduled start):
+    probabilities, odds and picks; its stakes box in lock_stakes; player, goalie and team details in archive.build.
+    Sportsbooks switch to live odds at puck drop and the NHL feed can lag, so nothing after the lock is used."""
     frozen_dir.mkdir(parents=True, exist_ok=True)
     odds = slate.setdefault("odds", {})
+    now = dt.datetime.now(dt.timezone.utc)
     by_date: dict[str, list] = {}
     for g in slate["games"]:
         by_date.setdefault(g["date"], []).append(g)
@@ -120,22 +122,27 @@ def freeze_started(slate: dict, frozen_dir: Path) -> None:
         changed = False
         for i, g in enumerate(games):
             gid = str(g["id"])
-            if g.get("state") in PRE_STATES:
+            if not is_locked(g, now):
                 o = odds.get(g["id"]) or odds.get(gid)
                 prev = snap.get(gid)
                 # keep the last snapshot that still had player odds if the book has pulled them early
                 if o and not o.get("players") and prev and (prev.get("odds") or {}).get("players"):
-                    o = prev["odds"]
+                    o = {**o, "players": prev["odds"]["players"]}
                 snap[gid] = {"game": clean(g), "odds": clean(o) if o else None,
-                             "at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes")}
+                             "stakes": (prev or {}).get("stakes"), "at": now.isoformat(timespec="minutes")}
                 changed = True
             elif gid in snap:
                 live = {k: g.get(k) for k in ("state", "hs", "as", "period", "last_period")}
                 frozen = {**snap[gid]["game"], **live, "frozen": snap[gid]["at"]}
                 idx = slate["games"].index(g)
                 slate["games"][idx] = frozen
+                odds.pop(g["id"], None); odds.pop(gid, None)
                 if snap[gid].get("odds"):
                     odds[g["id"]] = snap[gid]["odds"]
+                # (the players, goalies and teams on its page are restored from the archive snapshot, see archive.build)
+            else:
+                # first seen after the lock (no earlier refresh): never show prices fetched after it
+                odds.pop(g["id"], None); odds.pop(gid, None)
         if changed:
             f.write_text(json.dumps(snap), encoding="utf-8")
     # drop snapshot files older than 10 days
@@ -143,6 +150,37 @@ def freeze_started(slate: dict, frozen_dir: Path) -> None:
     for f in frozen_dir.glob("20*.json"):
         if f.stem < cutoff:
             f.unlink()
+
+
+def lock_stakes(slate: dict, frozen_dir: Path) -> None:
+    """'What's at stake' and the teams' luck pills for a game, as they were before its lock."""
+    F = slate.get("futures") or {}
+    fg, ft = F.get("games") or {}, F.get("teams") or {}
+    now = dt.datetime.now(dt.timezone.utc)
+    by_date: dict[str, list] = {}
+    for g in slate["games"]:
+        by_date.setdefault(g["date"], []).append(g)
+    for d, games in by_date.items():
+        f = frozen_dir / f"{d}.json"
+        if not f.exists():
+            continue
+        snap = json.loads(f.read_text(encoding="utf-8"))
+        changed = False
+        for g in games:
+            gid = str(g["id"])
+            cur = fg.get(g["id"], fg.get(gid))
+            if gid not in snap:
+                continue
+            if not is_locked(g, now) and not g.get("frozen"):
+                if cur is not None:
+                    snap[gid]["stakes"] = {"game": cur, "teams": {t: ft[t] for t in (g["home"], g["away"]) if t in ft}}
+                    changed = True
+            elif snap[gid].get("stakes"):
+                st = snap[gid]["stakes"]
+                fg.pop(g["id"], None)
+                fg[gid] = {**st["game"], "_lk": {t: {k: v.get(k) for k in ("xpts", "gpts", "pts_now", "gp")} for t, v in (st.get("teams") or {}).items()}}
+        if changed:
+            f.write_text(json.dumps(snap), encoding="utf-8")
 
 
 def lineup_roles(slate: dict, lu_dir: Path) -> None:
@@ -214,7 +252,7 @@ def track_open(slate: dict, open_dir: Path) -> None:
         for g in games:
             gid = str(g["id"])
             o = odds.get(g["id"]) or odds.get(gid)
-            if not o or g.get("state") not in PRE_STATES:
+            if not o or is_locked(g):
                 if o and gid in book:
                     o["open"] = book[gid]
                 continue
@@ -245,7 +283,7 @@ def write_alerts(slate: dict, out: Path) -> None:
     odds, players, goalies = slate.get("odds") or {}, slate["players"], slate.get("goalies") or {}
     edges, starters, plays = [], [], []
     for g in slate["games"]:
-        if g.get("state") not in PRE_STATES or not g.get("start"):
+        if is_locked(g) or not g.get("start"):
             continue
         try:
             start = dt.datetime.fromisoformat(g["start"].replace("Z", "+00:00"))
@@ -618,6 +656,7 @@ def main(argv=None):
         try:   # playoff / round / Cup chances and how much each game matters (season simulation)
             from .season import live as season_live
             slate["futures"] = season_live(raw, slate, CONFIG)
+            lock_stakes(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
             try:
                 from .odds import fetch_futures
                 slate["futures"]["odds"] = fetch_futures(src)
