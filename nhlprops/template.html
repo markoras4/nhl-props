@@ -316,9 +316,9 @@ td.h{text-align:center;padding:4px}
 .l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui);opacity:.8}
 .l10o{fill:var(--text);font-size:12.5px;font-weight:700;font-family:var(--f-disp);letter-spacing:.3px}
 .l10v{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
-.pvtabs button.on,.l10seg button.on{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
-.pvtabs button,.l10seg button{transition:color .2s ease,box-shadow .2s ease,background .2s ease}
-.pvtabs button:not(.on):hover,.l10seg button:not(.on):hover{color:var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)}
+.pvtabs button.on,.l10seg button.on,.bpseg button.on{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.pvtabs button,.l10seg button,.bpseg button{transition:color .2s ease,box-shadow .2s ease,background .2s ease}
+.pvtabs button:not(.on):hover,.l10seg button:not(.on):hover,.bpseg button:not(.on):hover{color:var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)}
 .seg button.pop{animation:segpop .32s cubic-bezier(.2,.9,.25,1.25)}
 @keyframes segpop{0%{transform:scale(.88);box-shadow:inset 0 0 0 0 var(--accent),0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}60%{transform:scale(1.04);box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 5px color-mix(in srgb,var(--accent) 0%,transparent)}100%{transform:scale(1);box-shadow:inset 0 0 0 1.5px var(--accent)}}
 @media (prefers-reduced-motion:reduce){.seg button.pop{animation:none}}
@@ -1902,18 +1902,20 @@ function linesView(g){
 
 // ------------------------------------------------------------ best picks (helper, not a verdict)
 // markets best picks can choose from, by group (the filter on the box); hits and blocks only show when there are odds
+// best picks never pick 2+ / 3+ goals, assists or points (long shots), so the Multi-point group is left out
+const BP_ORDER = GROUP_ORDER.filter(k => k !== "multi");
 // best picks use the same market groups as a player's Prices & value tabs (Points, Multi-point, Power play, Shots, ...)
 const bpFamily = m => { const g = mGroup(m); return g === "pts" || g === "multi" ? "pts" : g; };
 // the groups worth a tab for this game: with odds, only groups that have a price; without, groups the players have
 function bpGroups(g){
   const hasOdds = !!DATA.odds?.[g.id];
-  return GROUP_ORDER.filter(gk => g.props.some(pr => MGROUPS[gk].some(m => hasM(pr, m) && (!hasOdds || getOdds(g.id, pr.id, m)))));
+  return BP_ORDER.filter(gk => g.props.some(pr => MGROUPS[gk].some(m => hasM(pr, m) && (!hasOdds || getOdds(g.id, pr.id, m)))));
 }
 function bpGrp(g){ const grp = state.bpg || "all"; return grp === "all" || bpGroups(g).includes(grp) ? grp : "all"; }
 function bestPicks(g){
   const hasOdds = !!DATA.odds?.[g.id];
   const grp = bpGrp(g);
-  const mk = grp === "all" ? GROUP_ORDER.flatMap(k => MGROUPS[k]) : MGROUPS[grp];
+  const mk = grp === "all" ? BP_ORDER.flatMap(k => MGROUPS[k]) : MGROUPS[grp];
   const cands = [];
   for (const pr of g.props){
     const p = P(pr.id); if (!p?.active) continue;
@@ -1988,11 +1990,11 @@ function statePill(g){
   const clk = g.intermission ? " · "+t("st_int") : (g.clock && g.clock!=="00:00" ? " "+g.clock : "");
   return fin ? `<span class="pill s-final">${t("st_final")}${ot}</span>` : `<span class="pill s-live"><i></i>${t("st_live")}${g.period?" · P"+g.period:""}${clk}</span>`;
 }
-document.addEventListener("click", e => { const b = e.target.closest?.("[data-bpg]"); if (!b) return; e.preventDefault(); e.stopPropagation(); state.bpg = b.dataset.bpg; render(); }, true);
+document.addEventListener("click", e => { const b = e.target.closest?.("[data-bpg]"); if (!b) return; e.preventDefault(); e.stopPropagation(); state.bpg = b.dataset.bpg; segPop("bp:" + b.dataset.bpg); render(); }, true);
 function bestPicksBox(g){
   const {picks, hasOdds, teamCount} = bestPicks(g);
   const grp = bpGrp(g);
-  const seg = `<span class="seg bpseg">${["all", ...bpGroups(g)].map(k=>`<button type="button" data-bpg="${k}" class="${grp===k?"on":""}">${k==="all"?t("bpg_all"):t("mg_"+k)}</button>`).join("")}</span>`;
+  const seg = `<span class="seg bpseg">${["all", ...bpGroups(g)].map(k=>`<button type="button" data-bpg="${k}" class="${grp===k?"on":""} ${grp===k && SEG_POP==="bp:"+k?"pop":""}">${k==="all"?t("bpg_all"):t("mg_"+k)}</button>`).join("")}</span>`;
   if (!picks.length) return `<div class="box picks"><h4>${t("bp_title")} ${seg}</h4><p class="meta">${hasOdds?t("bp_none_any"):t("bp_none")}</p></div>`;
   const cards = picks.map(c=>{ const {why, warn} = pickReasons(c, g);
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
