@@ -1902,12 +1902,18 @@ function linesView(g){
 
 // ------------------------------------------------------------ best picks (helper, not a verdict)
 // markets best picks can choose from, by group (the filter on the box); hits and blocks only show when there are odds
-const BP_GROUPS = {pts:["g","a","pt"], s:[...C.sog_lines.map(L=>"s"+L)], hb:[...HIT_LINES.map(L=>"h"+L), ...BLK_LINES.map(L=>"b"+L)]};
-const bpFamily = m => ["g","a","pt"].includes(m) ? "pts" : m[0];
+// best picks use the same market groups as a player's Prices & value tabs (Points, Multi-point, Power play, Shots, ...)
+const bpFamily = m => { const g = mGroup(m); return g === "pts" || g === "multi" ? "pts" : g; };
+// the groups worth a tab for this game: with odds, only groups that have a price; without, groups the players have
+function bpGroups(g){
+  const hasOdds = !!DATA.odds?.[g.id];
+  return GROUP_ORDER.filter(gk => g.props.some(pr => MGROUPS[gk].some(m => hasM(pr, m) && (!hasOdds || getOdds(g.id, pr.id, m)))));
+}
+function bpGrp(g){ const grp = state.bpg || "all"; return grp === "all" || bpGroups(g).includes(grp) ? grp : "all"; }
 function bestPicks(g){
   const hasOdds = !!DATA.odds?.[g.id];
-  const grp = state.bpg || "all";
-  const mk = grp === "all" ? [...BP_GROUPS.pts, ...BP_GROUPS.s, ...BP_GROUPS.hb] : BP_GROUPS[grp];
+  const grp = bpGrp(g);
+  const mk = grp === "all" ? GROUP_ORDER.flatMap(k => MGROUPS[k]) : MGROUPS[grp];
   const cands = [];
   for (const pr of g.props){
     const p = P(pr.id); if (!p?.active) continue;
@@ -1925,7 +1931,7 @@ function bestPicks(g){
       const trust = Math.min(1, ((p.windows?.career?.gp || 0) + 10) / 60);
       cands.push({pr, p, ...pick, rank: pick.ev * trust});
     } else {
-      const base = grp === "s" ? "s2.5" : grp === "hb" ? null : "pt";
+      const base = grp === "all" ? "pt" : grp === "s" ? "s2.5" : GROUP_DEFAULT[grp] || null;
       const o = base ? opts.find(o=>o.m===base) : null; if (o) cands.push({pr, p, ...o});
     }
   }
@@ -1985,9 +1991,9 @@ function statePill(g){
 document.addEventListener("click", e => { const b = e.target.closest?.("[data-bpg]"); if (!b) return; e.preventDefault(); e.stopPropagation(); state.bpg = b.dataset.bpg; render(); }, true);
 function bestPicksBox(g){
   const {picks, hasOdds, teamCount} = bestPicks(g);
-  const grp = state.bpg || "all";
-  const seg = `<span class="seg bpseg">${["all","pts","s","hb"].map(k=>`<button type="button" data-bpg="${k}" class="${grp===k?"on":""}">${t("bpg_"+k)}</button>`).join("")}</span>`;
-  if (!picks.length) return `<div class="box picks"><h4>${t("bp_title")} ${seg}</h4><p class="meta">${hasOdds?t(grp==="hb"?"bp_none_hb":"bp_none_any"):t(grp==="hb"?"bp_none_hb":"bp_none")}</p></div>`;
+  const grp = bpGrp(g);
+  const seg = `<span class="seg bpseg">${["all", ...bpGroups(g)].map(k=>`<button type="button" data-bpg="${k}" class="${grp===k?"on":""}">${k==="all"?t("bpg_all"):t("mg_"+k)}</button>`).join("")}</span>`;
+  if (!picks.length) return `<div class="box picks"><h4>${t("bp_title")} ${seg}</h4><p class="meta">${hasOdds?t("bp_none_any"):t("bp_none")}</p></div>`;
   const cards = picks.map(c=>{ const {why, warn} = pickReasons(c, g);
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
