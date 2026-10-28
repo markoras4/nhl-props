@@ -11,19 +11,18 @@ jobs:
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import urllib.request, io
+          import urllib.request, io, zipfile, csv
           H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"}
-          def get(u):
+          for u in ["https://peter-tanner.com/moneypuck/downloads/shots_2026.zip","https://peter-tanner.com/moneypuck/downloads/shots_2025.zip"]:
               try:
-                  r=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=60); return r.status, r.read()
+                  b=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=180).read()
+                  z=zipfile.ZipFile(io.BytesIO(b)); n=z.namelist(); print("==", u, len(b), n)
+                  with z.open(n[0]) as f:
+                      r=csv.reader(io.TextIOWrapper(f, encoding="utf-8")); hdr=next(r); print(" cols", len(hdr), [c for c in hdr if c in ("shotID","season","game_id","shooterPlayerId","shooterName","xGoal","isPlayoffGame","goal","teamCode","homeTeamCode","awayTeamCode","event")])
+                      row=next(r); print(" sample", {k:v for k,v in zip(hdr,row) if k in ("season","game_id","shooterPlayerId","shooterName","xGoal","isPlayoffGame","goal","event")})
+                      cnt=sum(1 for _ in r); print(" rows", cnt+1)
               except Exception as e:
-                  return getattr(e,"code",None) or str(e)[:120], b""
-          for u in ["https://moneypuck.com/moneypuck/playerData/careers/gameByGame/regular/skaters/8471214.csv",
-                    "https://moneypuck.com/moneypuck/playerData/careers/gameByGame/skaters/8471214.csv",
-                    "https://moneypuck.com/moneypuck/playerData/seasonSummary/2025/regular/skaters.csv"]:
-              st,b=get(u); print("==", st, len(b), u)
-              if b:
-                  lines=b.decode("utf-8","ignore").splitlines(); print(" header:", lines[0][:900]); print(" rows:", len(lines)); print(" last:", lines[-1][:300])
+                  print("==", u, "ERR", e)
           PY
       - name: Save
         run: |
