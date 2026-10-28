@@ -316,6 +316,12 @@ td.h{text-align:center;padding:4px}
 .l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui);opacity:.8}
 .l10o{fill:var(--text);font-size:12.5px;font-weight:700;font-family:var(--f-disp);letter-spacing:.3px}
 .l10v{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
+.pvtabs button.on,.l10seg button.on{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.pvtabs button,.l10seg button{transition:color .2s ease,box-shadow .2s ease,background .2s ease}
+.pvtabs button:not(.on):hover,.l10seg button:not(.on):hover{color:var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)}
+.seg button.pop{animation:segpop .32s cubic-bezier(.2,.9,.25,1.25)}
+@keyframes segpop{0%{transform:scale(.88);box-shadow:inset 0 0 0 0 var(--accent),0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}60%{transform:scale(1.04);box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 5px color-mix(in srgb,var(--accent) 0%,transparent)}100%{transform:scale(1);box-shadow:inset 0 0 0 1.5px var(--accent)}}
+@media (prefers-reduced-motion:reduce){.seg button.pop{animation:none}}
 .spavg{color:var(--mute);opacity:.85}
 .l10hd{display:inline-flex;align-items:center;gap:8px;position:relative;flex-wrap:wrap}
 .l10fbtn{display:inline-flex;align-items:center;gap:5px;font:700 12px var(--f-ui);padding:5px 10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
@@ -2280,7 +2286,7 @@ function detail(pr, g){
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span><span class="svsl">${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
-    <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${cmpBtn(g, pr, true)}${watchBtn(pr.id, true)} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
+    <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${cmpBtn(g, pr, true)}${watchBtn(pr.id, true)} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""} ${state.pvtab===k && SEG_POP==="pv:"+k?"pop":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
       <p class="note">${t("pv_note")}</p></div>
     <div class="box"><h4><span>${t("built")} ${HI("tt_built")}</span></h4>
       <div class="chips">
@@ -2368,6 +2374,9 @@ function loadHist(pid){
     .then(js => { if (js && js.length) HIST.set(pid, js); HIST_LOADING.delete(pid); return js; }));
   return HIST_LOADING.get(pid);
 }
+// the button just chosen in a segmented control gets a short "settle" animation (only on that click, not on every redraw)
+let SEG_POP = null;
+function segPop(k){ SEG_POP = k; setTimeout(() => { if (SEG_POP === k) SEG_POP = null; }, 400); }
 function l10Log(p){
   const gl = HIST.get(String(p.id)) || p.form?.gl;
   if (gl?.length) return gl.map(r => ({d:r[0], o:r[1], h:!!r[2], g:r[3], a:r[4], s:r[5], t:r[6], pp:r[7], pm:r[8], hit:r[9], blk:r[10], x:r[11]}));
@@ -2419,7 +2428,7 @@ function l10Chart(pr, g){
   for (let it=0; it<6; it++) for (let i=1;i<order.length;i++){ const gap = order[i].ly - order[i-1].ly; if (gap < 17){ const sh=(17-gap)/2; order[i-1].ly -= sh; order[i].ly += sh; } }
   const linesG = `<g class="l10lines">${refs.map(r=>`<line x1="${L}" x2="${W-R+4}" y1="${r.y}" y2="${r.y}" class="${r.cls}"/>`).join("")}${refs.map(r=>`<rect x="${W-R+8}" y="${r.ly-8}" width="${R-10}" height="16" rx="8" class="${r.cls}-tag"/><text x="${W-R+8+(R-10)/2}" y="${r.ly+3.5}" text-anchor="middle" class="${r.cls}-txt">${r.txt||fmt(r.v,2)}</text>`).join("")}</g>`;
   const TIP = {s:t("l10_tip_s"), g:t("l10_tip_g"), a:t("l10_tip_a"), p:t("l10_tip_p"), h:t("l10_tip_h"), b:t("l10_tip_b")};
-  const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}" data-tip="${TIP[k]}" aria-label="${TIP[k]}">${lbl}</button>`;
+  const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""} ${m===k && SEG_POP==="l10:"+k?"pop":""}" data-tip="${TIP[k]}" aria-label="${TIP[k]}">${lbl}</button>`;
   const pop = state.l10pop ? `<div class="l10pop" role="dialog" aria-label="${esc(t("l10_games"))}"><div class="l10pt">${t("l10_games")}</div>
       <div class="seg">${[5,10,20].filter(k => k < nMax).map(k => `<button type="button" data-l10n="${k}" class="${n===k?"on":""}">L${k}</button>`).join("")}${nSeason && nSeason < nMax ? `<button type="button" data-l10n="season" class="${n===nSeason?"on":""}">${t("l10_season")}</button>` : ""}<button type="button" data-l10n="all" class="${full && n>=nMax?"on":""}">${t("l10_all3")}</button></div>
       <div class="l10step"><button type="button" data-l10step="-1" ${n<=3?"disabled":""} aria-label="−">−</button><b>${n}</b><button type="button" data-l10step="1" ${n>=nMax && full?"disabled":""} aria-label="+">+</button><span class="meta">${full ? t("l10_of",{n:nMax}) : t("l10_more")}</span></div></div>` : "";
@@ -2428,7 +2437,7 @@ function l10Chart(pr, g){
   return `<h4>${t("l10_chart")} <span class="l10hd"><span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}${hbOk?btn("h",t("l10_h"))+btn("b",t("l10_b")):""}</span>
     <button type="button" class="l10fbtn ${state.l10pop?"on":""}" data-l10f aria-expanded="${!!state.l10pop}" title="${esc(t("l10_games"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>${nLab}</button>${pop}</span></h4>
     <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${linesG}</svg>
-    <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
+    <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""} ${line===v && SEG_POP==="ln:"+(v??"")?"pop":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
       ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b> · <b>${hitN}/${games.length}</b> ${t("l10_over_n")}</span>`:""}
       <span><i class="sw hi"></i>${line!=null?t("l10_over"):t("l10_hi")}</span><span><i class="sw lo"></i>${line!=null?t("l10_under"):t("l10_lo")}</span></div>
@@ -2478,10 +2487,10 @@ document.addEventListener("click", e => {
   if (state.l10pop && !e.target.closest(".l10pop")){ state.l10pop = false;   // a click anywhere else closes the games window
     if (!e.target.closest("[data-l10line],[data-l10]")){ const box = document.querySelector(".l10box");
       if (box){ const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); } return; } }
-  if (lb){ const box = lb.closest(".l10box"); state.l10line = state.l10line || {}; state.l10line[state.l10m||"s"] = lb.dataset.l10line==="" ? null : +lb.dataset.l10line; state.l10anim = true;
+  if (lb){ const box = lb.closest(".l10box"); state.l10line = state.l10line || {}; state.l10line[state.l10m||"s"] = lb.dataset.l10line==="" ? null : +lb.dataset.l10line; state.l10anim = true; segPop("ln:" + lb.dataset.l10line);
     const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); return; }
   const b = e.target.closest("[data-l10]"); if (!b) return;
-  const box = b.closest(".l10box"); state.l10m = b.dataset.l10; state.l10anim = true;
+  const box = b.closest(".l10box"); state.l10m = b.dataset.l10; state.l10anim = true; segPop("l10:" + b.dataset.l10);
   const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid);
   if (pr) box.innerHTML = l10Chart(pr, g);
 });
@@ -2683,7 +2692,7 @@ function shotsBox(g){
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-pvtab]"); if (!b) return;
-  state.pvtab = b.dataset.pvtab; const keep = state.open; render(); state.open = keep;
+  state.pvtab = b.dataset.pvtab; segPop("pv:" + b.dataset.pvtab); const keep = state.open; render(); state.open = keep;
   const row = document.querySelector(`tr.row[data-id="${keep}"]`); if (row && row.nextElementSibling) row.nextElementSibling.querySelector(".pvtabs")?.scrollIntoView({block:"nearest"});
 });
 // ------------------------------------------------------------ role & usage: power play, faceoffs, penalties
