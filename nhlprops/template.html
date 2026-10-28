@@ -254,6 +254,9 @@ td.h{text-align:center;padding:4px}
 .cell .bk.pos{color:var(--good)}
 .cell .bk.neg{color:var(--mute);font-weight:500}
 .cell.val{box-shadow:inset 0 0 0 1.5px var(--good)}
+.cell .evtag{position:absolute;top:-7px;right:-5px;z-index:1;font-style:normal;font-size:9px;font-weight:700;line-height:1;padding:2px 4px;border-radius:5px;color:var(--good);background:var(--bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--good) 55%,transparent);pointer-events:none}
+.legend .evtag{font-style:normal;font-size:9px;font-weight:700;padding:2px 3px;border-radius:4px;color:var(--good);background:var(--panel2);margin-right:4px}
+.cell .evtag.big,.legend .evtag.big{color:#06140d;background:var(--good)}
 .seg.sm{padding:2px}
 .seg.sm button{padding:4px 10px;font-size:12px}
 .box h4 .seg{text-transform:none;letter-spacing:0}
@@ -927,7 +930,7 @@ const I18N = {
     g_fw:"Forwards", g_d:"Defense", g_ofw:"Other forwards", g_od:"Other defense", g_out:"Not expected to play", g_in:"Expected to play",
     why_proj:"Not in projected lineup", why_recent:"Not in recent lineups",
     tip:"Model {p} · fair {f}", tip_odds:" · odds {o} · EV {e}",
-    lg_prob:"= model probability", lg_mkt:"small number = market odds (green when the model sees +5% value or more)", lg_fair:"small number = fair odds (no market odds for this game yet)", lg_val:"value bet",
+    lg_prob:"= model probability", lg_mkt:"small number = odds: yours if you typed them in a player's Prices & value, otherwise the market", lg_ev:"edge (EV) at those odds", lg_fair:"small number = fair odds (no market odds for this game yet)", lg_val:"value bet: +5% or more",
     grid_foot:"Click a column to sort, click it again for lineup order. Click a player for his breakdown, charts, and to enter your own odds.", odds_upd:" Odds updated {t}.",
     w_cur:"This season", w_p3:"Prev 3 seasons", w_p5:"Prev 5 seasons", w_car:"Career",
     t_games:"Games", t_gap:"G / A / P", t_shots:"Shots", t_gpg:"Goals per game", t_apg:"Assists per game", t_ppg:"Points per game", t_spg:"Shots per game",
@@ -1152,7 +1155,7 @@ const I18N = {
     g_fw:"Anfallare", g_d:"Backar", g_ofw:"Övriga anfallare", g_od:"Övriga backar", g_out:"Väntas inte spela", g_in:"Väntas spela",
     why_proj:"Inte med i förväntad uppställning", why_recent:"Inte med i de senaste matcherna",
     tip:"Modell {p} · rättvisa {f}", tip_odds:" · odds {o} · EV {e}",
-    lg_prob:"= modellens sannolikhet", lg_mkt:"litet tal = marknadsodds (grönt när modellen ser +5% värde eller mer)", lg_fair:"litet tal = rättvisa odds (inga marknadsodds för matchen än)", lg_val:"värdespel",
+    lg_prob:"= modellens sannolikhet", lg_mkt:"litet tal = odds: dina om du skrivit in dem under en spelares Priser & värde, annars marknadens", lg_ev:"edge (EV) till de oddsen", lg_fair:"litet tal = rättvisa odds (inga marknadsodds för matchen än)", lg_val:"värdespel: +5 % eller mer",
     grid_foot:"Klicka på en kolumn för att sortera, klicka igen för uppställningsordning. Klicka på en spelare för detaljer, diagram och för att skriva in egna odds.", odds_upd:" Oddsen uppdaterades {t}.",
     w_cur:"Denna säsong", w_p3:"Förra 3 säsongerna", w_p5:"Förra 5 säsongerna", w_car:"Karriär",
     t_games:"Matcher", t_gap:"M / A / P", t_shots:"Skott", t_gpg:"Mål per match", t_apg:"Assist per match", t_ppg:"Poäng per match", t_spg:"Skott per match",
@@ -2125,7 +2128,7 @@ function sidePanel(g, team){
         const tip = t("tip",{p:pct(v,1), f:oddsTxt(1/v)}) + (od ? t("tip_odds",{o:oddsTxt(od), e:evTxt(ev)}) : "");
         const hr_ = ARCH ? archHit(g.id, r.pr.id, m) : null;
         const slk = slipOK && r.p.active ? `${g.id}|${r.pr.id}|${m}` : "", insl = slk && inSlip(`p:${g.id}:${r.pr.id}:${m}`);
-        return `<td class="h"><div class="cell ${val?"val":""} ${hr_==null?"":hr_?"rhit":"rmiss"} ${slk?"slc":""} ${insl?"insl":""}" ${slk?`data-slipc="${slk}"`:""} title="${esc(tip + (slk ? (insl ? t("sl_cell_in") : t("sl_cell_add")) : ""))}" style="${r.p.active?heat(v,colMax[m]):""}">${resMark(hr_)}<b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>${moveArrow(g, r.pr, m)}`:oddsTxt(1/v)}</small></div></td>`; }).join("")}
+        return `<td class="h"><div class="cell ${val?"val":""} ${hr_==null?"":hr_?"rhit":"rmiss"} ${slk?"slc":""} ${insl?"insl":""}" ${slk?`data-slipc="${slk}"`:""} title="${esc(tip + (slk ? (insl ? t("sl_cell_in") : t("sl_cell_add")) : ""))}" style="${r.p.active?heat(v,colMax[m]):""}">${resMark(hr_)}${r.p.active && ev!=null && ev>0 ? `<i class="evtag ${val?"big":""}">+${ev<0.01?(ev*100).toFixed(1):Math.round(ev*100)}%</i>` : ""}<b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>${moveArrow(g, r.pr, m)}`:oddsTxt(1/v)}</small></div></td>`; }).join("")}
       <td>${regPills(r.p)}</td></tr>
       ${open?`<tr><td colspan="${GRID.length+3}">${detail(r.pr, g)}</td></tr>`:""}`;
   }
@@ -2140,7 +2143,8 @@ function sidePanel(g, team){
       <tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>38%</b> ${t("lg_prob")}</span>
       <span>${DATA.odds?.[g.id] ? t("lg_mkt") : t("lg_fair")}</span>
-      <span><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>${t("lg_val")}</span></div>
+      <span><em class="evtag">+3%</em> ${t("lg_ev")}</span>
+      <span><em class="evtag big">+8%</em><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>${t("lg_val")}</span></div>
     <p class="foot">${t("grid_foot")}${upd}</p>`;
   $("#sidebody").onclick = e => {
     if (e.target.closest("input,select")) return;
