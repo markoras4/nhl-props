@@ -364,6 +364,7 @@ td.h{text-align:center;padding:4px}
 .gtc div{display:flex;flex-direction:column;align-items:flex-start}
 .gtc small{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .gtc b{font-size:14px;font-variant-numeric:tabular-nums}
+.bpseg{margin-left:8px;vertical-align:middle}.bpseg button{font-size:11.5px;padding:4px 9px}
 .llnm{display:flex;align-items:center;gap:8px}
 .stkg{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:6px 0 8px;font-size:13px}
 .stkg .lld{display:inline;margin-left:2px}
@@ -826,7 +827,7 @@ const I18N = {
     meetings:"Last {n} meetings: {list} ({t} first), avg {a} goals.", no_meetings:"No meetings in the last 4 seasons.",
     total_goals:"Total goals", line:"Line", model:"Model", history:"History", over_fair:"Over · fair odds o/u", over_odds:"Over odds", over_ph:"over",
     roster:"{t} roster", matchup:"Matchup",
-    bp_title:"Best picks in this game", bp_sub_odds:"highest edge · one per player · point preferred when the edge is similar", bp_sub_noodds:"no odds yet · most likely points",
+    bp_title:"Best picks in this game", bpg_all:"All", bpg_pts:"Goals & points", bpg_s:"Shots", bpg_hb:"Hits & blocks", bp_none_any:"Nothing in this game has positive value at the current odds.", bp_none_hb:"No hits or blocks odds for this game yet. Type the odds from your sportsbook on a player to see his value here.", bp_sub_noodds_s:"no odds yet · most likely 3+ shots", r_sog:"Model expects {e} shots tonight; {l}+ shots in {h} of his last {n} games", r_hb:"Model expects {e} {w} tonight; {l}+ in {h} of his last {n} games", bp_sub_odds:"highest edge · one per player · the more likely option when the edge is similar", bp_sub_noodds:"no odds yet · most likely points",
     bp_none_odds:"No goal or point bet has positive value at the current odds.", bp_none:"No players available.",
     point1:"1+ point", goal:"Goal", edge:"edge {e}", likely:"{p} likely",
     r_model:"Model {a} vs market {b}", r_plays:"Plays {m} min", r_on:" on {l}", r_pp1:", first power play", r_due:"Scoring below his true talent this season (due)",
@@ -1051,7 +1052,7 @@ const I18N = {
     meetings:"Senaste {n} mötena: {list} ({t} först), i snitt {a} mål.", no_meetings:"Inga möten de senaste 4 säsongerna.",
     total_goals:"Totalt antal mål", line:"Linje", model:"Modell", history:"Historik", over_fair:"Över · rättvisa odds ö/u", over_odds:"Odds över", over_ph:"över",
     roster:"{t} trupp", matchup:"Jämförelse",
-    bp_title:"Bästa spelen i matchen", bp_sub_odds:"störst edge · ett per spelare · poäng föredras när edgen är likvärdig", bp_sub_noodds:"inga odds än · mest troliga poäng",
+    bpg_all:"Alla", bpg_pts:"Mål & poäng", bpg_s:"Skott", bpg_hb:"Tacklingar & blockeringar", bp_none_any:"Inget i den här matchen har positivt värde till nuvarande odds.", bp_none_hb:"Inga odds för tacklingar eller blockeringar i den här matchen än. Skriv in oddset från ditt spelbolag på en spelare för att se värdet här.", bp_sub_noodds_s:"inga odds än · troligast 3+ skott", r_sog:"Modellen väntar {e} skott i kväll; {l}+ skott i {h} av hans senaste {n} matcher", r_hb:"Modellen väntar {e} {w} i kväll; {l}+ i {h} av hans senaste {n} matcher", bp_title:"Bästa spelen i matchen", bp_sub_odds:"störst edge · ett per spelare · det troligare alternativet när edgen är likvärdig", bp_sub_noodds:"inga odds än · mest troliga poäng",
     bp_none_odds:"Inget mål- eller poängspel har positivt värde till nuvarande odds.", bp_none:"Inga spelare tillgängliga.",
     point1:"1+ poäng", goal:"Mål", edge:"edge {e}", likely:"{p} chans",
     r_model:"Modell {a} mot marknad {b}", r_plays:"Spelar {m} min", r_on:" i {l}", r_pp1:", första powerplay", r_due:"Gör färre mål än sin verkliga nivå i år (bör lyfta)",
@@ -1819,24 +1820,32 @@ function linesView(g){
 }
 
 // ------------------------------------------------------------ best picks (helper, not a verdict)
+// markets best picks can choose from, by group (the filter on the box); hits and blocks only show when there are odds
+const BP_GROUPS = {pts:["g","a","pt"], s:[...C.sog_lines.map(L=>"s"+L)], hb:[...HIT_LINES.map(L=>"h"+L), ...BLK_LINES.map(L=>"b"+L)]};
+const bpFamily = m => ["g","a","pt"].includes(m) ? "pts" : m[0];
 function bestPicks(g){
   const hasOdds = !!DATA.odds?.[g.id];
+  const grp = state.bpg || "all";
+  const mk = grp === "all" ? [...BP_GROUPS.pts, ...BP_GROUPS.s, ...BP_GROUPS.hb] : BP_GROUPS[grp];
   const cands = [];
   for (const pr of g.props){
     const p = P(pr.id); if (!p?.active) continue;
-    const opts = ["g","pt"].map(m=>{ const v = prob(pr,g,m), od = getOdds(g.id,pr.id,m); return {m, v, od, ev: od ? v*od-1 : null}; });
+    const opts = mk.filter(m => hasM(pr, m)).map(m=>{ const v = prob(pr,g,m), od = getOdds(g.id,pr.id,m); return {m, v, od, ev: od ? v*od-1 : null}; });
     if (hasOdds){
       const ok = opts.filter(o=>o.ev!=null && o.ev>0); if (!ok.length) continue;
       ok.sort((a,b)=>b.ev-a.ev);
       let pick = ok[0];
-      const pt = ok.find(o=>o.m==="pt");
-      if (pick.m==="g" && pt && pt.ev >= pick.ev - 0.03) pick = pt;   // similar edge: take the safer point
+      // similar edge (within 3 points) in the same family: take the more likely option
+      // (a point over a goal or an assist, a lower shots/hits/blocks line over a higher one)
+      const safer = ok.filter(o => bpFamily(o.m) === bpFamily(pick.m) && o.v > pick.v && o.ev >= pick.ev - 0.03).sort((a,b)=>b.v-a.v)[0];
+      if (safer) pick = safer;
       // ranking trusts the edge less when he has a short NHL history (the biggest gaps vs the market show up
       // exactly where the model knows least); the EV shown stays the real one
       const trust = Math.min(1, ((p.windows?.career?.gp || 0) + 10) / 60);
       cands.push({pr, p, ...pick, rank: pick.ev * trust});
     } else {
-      const pt = opts.find(o=>o.m==="pt"); cands.push({pr, p, ...pt});
+      const base = grp === "s" ? "s2.5" : grp === "hb" ? null : "pt";
+      const o = base ? opts.find(o=>o.m===base) : null; if (o) cands.push({pr, p, ...o});
     }
   }
   cands.sort((a,b)=> hasOdds ? (b.rank??b.ev)-(a.rank??a.ev) : b.v-a.v);
@@ -1853,14 +1862,21 @@ function pickReasons(c, g){
   why.push(t("r_plays",{m:fmt(p.toi_proj,1)}) + (line ? t("r_on",{l:line.toUpperCase()}) : "") + (pp1 ? t("r_pp1") : ""));
   if (p.regress.flag==="due") why.push(t("r_due"));
   if (p.drought.found && p.drought.p<0.15 && p.drought.shots>=8) why.push(t("r_dry",{n:p.drought.shots}));
+  const fam = bpFamily(c.m);
+  if (fam === "s"){ const l = lambdas(pr, g), gs = (p.form?.games||[]).slice(0,10), L = parseFloat(c.m.slice(1));
+    if (gs.length) why.push(t("r_sog",{e:fmt(l.s,1), h:gs.filter(x=>x.s>L).length, n:gs.length, l:Math.ceil(L)})); }
+  if (fam === "h" || fam === "b"){ const gs = (p.hb_games||[]).slice(0,10), L = parseFloat(c.m.slice(1)), k = fam==="h"?"hit":"blk";
+    if (gs.length) why.push(t("r_hb",{e:fmt(fam==="h"?pr.base.hit:pr.base.blk,1), h:gs.filter(x=>x[k]>L).length, n:gs.length, l:Math.ceil(L), w:t(fam==="h"?"h_hit":"h_blk")})); }
   const og = G(state.goalie[g.id][opp]);
-  if (og && og.ratio>1.02) why.push(t("r_gk_weak",{r:fmt(og.ratio,2)}));
-  if (og && og.ratio<0.98) warn.push(t("r_gk_strong",{r:fmt(og.ratio,2)}));
+  if (fam !== "h" && fam !== "b"){
+    if (og && og.ratio>1.02) why.push(t("r_gk_weak",{r:fmt(og.ratio,2)}));
+    if (og && og.ratio<0.98) warn.push(t("r_gk_strong",{r:fmt(og.ratio,2)}));
+  }
   const f = p.form; if (f.gp>=3) why.push(t("r_form",{n:f.gp, g:f.g, a:f.a, s:f.s}));
   if (p.regress.flag==="hot") warn.push(t("r_hot"));
   if (p.injury?.kind==="questionable") warn.push(t("r_listed",{s:trData(p.injury.status)}));
   const st = (g.starter_status[opp]||"").toLowerCase();
-  if (!st.includes("confirmed") || st.includes("unconfirmed")) warn.push(t("r_gk_unconf",{t:opp}));
+  if (fam !== "h" && fam !== "b" && (!st.includes("confirmed") || st.includes("unconfirmed"))) warn.push(t("r_gk_unconf",{t:opp}));
   if (!["projected","gameday"].includes(DATA.teams[pr.team]?.lineup?.source)) warn.push(t("r_lineup_est"));
   if ((p.windows?.career?.gp||0) < 50) warn.push(t("r_short",{n:p.windows?.career?.gp||0}));
   return {why, warn};
@@ -1885,18 +1901,21 @@ function statePill(g){
   const clk = g.intermission ? " · "+t("st_int") : (g.clock && g.clock!=="00:00" ? " "+g.clock : "");
   return fin ? `<span class="pill s-final">${t("st_final")}${ot}</span>` : `<span class="pill s-live"><i></i>${t("st_live")}${g.period?" · P"+g.period:""}${clk}</span>`;
 }
+document.addEventListener("click", e => { const b = e.target.closest?.("[data-bpg]"); if (!b) return; e.preventDefault(); e.stopPropagation(); state.bpg = b.dataset.bpg; render(); }, true);
 function bestPicksBox(g){
   const {picks, hasOdds, teamCount} = bestPicks(g);
-  if (!picks.length) return `<div class="box picks"><h4>${t("bp_title")}</h4><p class="meta">${hasOdds?t("bp_none_odds"):t("bp_none")}</p></div>`;
+  const grp = state.bpg || "all";
+  const seg = `<span class="seg bpseg">${["all","pts","s","hb"].map(k=>`<button type="button" data-bpg="${k}" class="${grp===k?"on":""}">${t("bpg_"+k)}</button>`).join("")}</span>`;
+  if (!picks.length) return `<div class="box picks"><h4>${t("bp_title")} ${seg}</h4><p class="meta">${hasOdds?t(grp==="hb"?"bp_none_hb":"bp_none_any"):t(grp==="hb"?"bp_none_hb":"bp_none")}</p></div>`;
   const cards = picks.map(c=>{ const {why, warn} = pickReasons(c, g);
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
-        <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":"s-dry"}">${c.m==="pt"?t("point1"):t("goal")}</span>
+        <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":c.m==="g"?"s-dry":"s-up"}">${c.m==="pt"?t("point1"):c.m==="g"?t("goal"):mName(c.m)}</span>
           <div class="po">${c.od?oddsTxt(c.od):"–"}</div>${moveTag(g,c.pr,c.m)}${(()=>{ const h = archHit(g.id, c.pr.id, c.m); return h==null ? "" : `<span class="pill ${h?"s-confirmed":"s-out"}">${t(h?"bp_won":"bp_lost")}</span>`; })()}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
       <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul>${saveBtn(g, c.pr, c.m)}</div>`; }).join("");
   const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
   const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
-  return `<div class="box picks"><h4>${t("bp_title")} <span class="meta">${hasOdds?t("bp_sub_odds"):t("bp_sub_noodds")}</span></h4>
+  return `<div class="box picks"><h4>${t("bp_title")} ${seg} <span class="meta">${hasOdds?t("bp_sub_odds"):t(grp==="s"?"bp_sub_noodds_s":"bp_sub_noodds")}</span></h4>
     <div class="pgrid">${cards}</div>${lopsided}
     <p class="note">${t("bp_note")}</p></div>`;
 }
@@ -3077,7 +3096,7 @@ function cmpRender(){
 }
 
 // ------------------------------------------------------------ track record
-const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1})).replace(/^Over (\d)\.5 hits$/, (_,n)=>t("m_hit",{n:+n+1})).replace(/^Over (\d)\.5 blocks$/, (_,n)=>t("m_blk",{n:+n+1}));
+const MKT_NAME = k => ({"Goal":t("m_g"),"Assist":t("m_a"),"Point":t("m_pt"),"2+ goals":t("m_g2"),"2+ assists":t("m_a2"),"2+ points":t("m_pt2")})[k] || k.replace(/^Over (\d)\.5 SOG$/, (_,n)=>t("m_sog",{n:+n+1})).replace(/^Over (\d)\.5 hits$/, (_,n)=>t("m_hit",{n:+n+1})).replace(/^Over (\d)\.5 blocks$/, (_,n)=>t("m_blk",{n:+n+1}));
 const MKT_NAME2 = k => ({"Team shots":t("tr_sh_team"),"Total shots":t("tr_sh_total"),"Goalie saves":t("tr_sh_saves")})[k] || MKT_NAME(k);
 function calibChart(s){
   if (!s || !s.bins?.length) return "";
@@ -3136,7 +3155,7 @@ en: `<h3>What the site does</h3>
 
   <h3>The game page</h3>
   <ul>
-    <li><b>Best picks in this game:</b> up to two bets, a goal or a point, with the biggest edge against the market odds. When the edge is similar it prefers the point, which wins more often. Players with a short NHL history (under about 50 games) are ranked lower, because their numbers are the least certain and big gaps against the market are most often the model's own uncertainty. Green lines are the facts behind the pick, orange lines are warnings. When most of the value sits on one team it says so: those bets tend to win or lose together.</li>
+    <li><b>Best picks in this game:</b> up to two bets with the biggest edge against the market odds: goals, assists and points, shots on goal, and hits and blocks when there are odds for them (typed in by you if the sportsbook feed doesn't have them). Filter by market with the buttons on the box. When two options for the same player have a similar edge it takes the more likely one: a point over a goal or an assist, a lower shots line over a higher one. Players with a short NHL history (under about 50 games) are ranked lower, because their numbers are the least certain and big gaps against the market are most often the model's own uncertainty. Green lines are the facts behind the pick, orange lines are warnings. When most of the value sits on one team it says so: those bets tend to win or lose together.</li>
     <li><b>Game preview:</b> a short read on the game when one is written: the news, the streaks and records, and where the model and the market disagree.</li>
     <li><b>Matchup:</b> the projected score, win and overtime chances, over/under for total goals, each team's last 6 games, shots on goal for each team and goalie saves, first goalscorer, and head-to-head.</li>
     <li><b>Team ranks:</b> both teams ranked 1–32 on attack, defence, shot share (CF%), expected-goals share (xGF%), high-danger chances (HDCF%), power play, penalty kill, goaltending (GSAx) and PDO. Green = top 8, red = bottom 8. PDO is shown as normal, running lucky or running unlucky, because it usually returns to normal.</li>
@@ -3259,7 +3278,7 @@ sv: `<h3>Vad sajten gör</h3>
 
   <h3>Matchsidan</h3>
   <ul>
-    <li><b>Bästa spelen i matchen:</b> upp till två spel, mål eller poäng, med störst edge mot marknadsoddsen. När edgen är likvärdig föredras poäng, som slår in oftare. Spelare med kort NHL-historik (under ungefär 50 matcher) rankas lägre, eftersom deras siffror är osäkrast och stora skillnader mot marknaden oftast är modellens egen osäkerhet. Gröna rader är fakta bakom spelet, orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
+    <li><b>Bästa spelen i matchen:</b> upp till två spel med störst edge mot marknadsoddsen: mål, assist och poäng, skott på mål samt tacklingar och blockeringar när det finns odds för dem (inskrivna av dig om spelbolagets flöde saknar dem). Filtrera på marknad med knapparna i rutan. När två alternativ för samma spelare har likvärdig edge väljs det troligare: poäng före mål eller assist, en lägre skottlinje före en högre. Spelare med kort NHL-historik (under ungefär 50 matcher) rankas lägre, eftersom deras siffror är osäkrast och stora skillnader mot marknaden oftast är modellens egen osäkerhet. Gröna rader är fakta bakom spelet, orange rader är varningar. När det mesta värdet ligger på ett lag sägs det: de spelen brukar vinna eller förlora tillsammans.</li>
     <li><b>Förhandstitt:</b> en kort text om matchen när en är skriven: nyheterna, sviterna och rekorden, och var modellen och marknaden är oense.</li>
     <li><b>Matchup:</b> beräknat resultat, vinst- och förlängningschanser, över/under för totalmål, varje lags senaste 6 matcher, skott på mål för varje lag och målvaktsräddningar, första målskytt samt inbördes möten.</li>
     <li><b>Lagrankning:</b> båda lagen rankade 1–32 i anfall, försvar, skottandel (CF%), andel förväntade mål (xGF%), farliga chanser (HDCF%), powerplay, boxplay, målvaktsspel (GSAx) och PDO. Grönt = topp 8, rött = botten 8. PDO visas som normal, tur eller otur, eftersom den brukar återgå till det normala.</li>
