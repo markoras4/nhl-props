@@ -365,6 +365,34 @@ td.h{text-align:center;padding:4px}
 .gtc small{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .gtc b{font-size:14px;font-variant-numeric:tabular-nums}
 .bpseg{margin-left:8px;vertical-align:middle}.bpseg button{font-size:11.5px;padding:4px 9px}
+.slipbtn{font:600 11.5px var(--f-ui);padding:3px 8px;border-radius:7px;border:1px dashed var(--line2, var(--line));background:transparent;color:var(--mute);cursor:pointer;white-space:nowrap;margin-left:4px}
+.slipbtn:hover{color:var(--text);border-color:var(--mute)}
+.slipbtn.on{border-style:solid;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 50%,transparent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.svsl{display:inline-flex;align-items:center;gap:2px;flex-wrap:wrap}
+.slipfab{position:fixed;left:16px;bottom:16px;z-index:40;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:0;background:var(--accent);color:var(--accent-ink, #04130b);font:700 13.5px var(--f-ui);box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer}
+.slipfab[hidden]{display:none}
+.slipfab svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+body.has-cmp .slipfab{bottom:84px}
+.slg{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.slgh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700;font-size:13px;margin-bottom:6px}
+.slgh .pill{margin-left:auto}
+.slr{display:grid;grid-template-columns:minmax(0,1fr) auto 86px 60px 28px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.slr:first-of-type{border-top:0}
+.sladd{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.slsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.slsum .kpi{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.slsum .kpi small{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.slsum .kpi b{font-size:20px}
+.slsum .kpi input{width:100%;margin-top:2px}
+.sladd .mbtn{flex:0 0 auto;width:auto}
+.slsum .kpi .meta{display:block;font-size:11.5px;margin-top:2px}
+.slplan{margin-top:14px}.slplan h5{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px;font-size:13px}
+.sltot{margin-left:auto;font-weight:500;font-size:12.5px;display:inline-flex;align-items:center;gap:6px}.slplan .sltot input{width:72px;display:inline-block;margin:0}
+.slplan .tablewrap{overflow-x:auto}
+.slsave{margin-top:14px;align-items:center}.slsave label input{width:70px;margin-left:6px}
+.pll{font-size:13px;line-height:1.5}
+.plh{margin:22px 0 10px}
+@media (max-width:640px){.slsum{grid-template-columns:repeat(2,minmax(0,1fr))}.slr{grid-template-columns:minmax(0,1fr) auto 64px 52px 24px;gap:6px}.slr small{display:none}.slipfab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}body.has-cmp .slipfab{bottom:calc(150px + env(safe-area-inset-bottom,0px))}}
 .llnm{display:flex;align-items:center;gap:8px}
 .stkg{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:6px 0 8px;font-size:13px}
 .stkg .lld{display:inline;margin-left:2px}
@@ -827,7 +855,7 @@ const I18N = {
     meetings:"Last {n} meetings: {list} ({t} first), avg {a} goals.", no_meetings:"No meetings in the last 4 seasons.",
     total_goals:"Total goals", line:"Line", model:"Model", history:"History", over_fair:"Over · fair odds o/u", over_odds:"Over odds", over_ph:"over",
     roster:"{t} roster", matchup:"Matchup",
-    bp_title:"Best picks in this game", bpg_all:"All", bpg_pts:"Goals & points", bpg_s:"Shots", bpg_hb:"Hits & blocks", bp_none_any:"Nothing in this game has positive value at the current odds.", bp_none_hb:"No hits or blocks odds for this game yet. Type the odds from your sportsbook on a player to see his value here.", bp_sub_noodds_s:"no odds yet · most likely 3+ shots", r_sog:"Model expects {e} shots tonight; {l}+ shots in {h} of his last {n} games", r_hb:"Model expects {e} {w} tonight; {l}+ in {h} of his last {n} games", bp_sub_odds:"highest edge · one per player · the more likely option when the edge is similar", bp_sub_noodds:"no odds yet · most likely points",
+    bp_title:"Best picks in this game", bpg_all:"All", under_short:"u{l}", sl_short:"Parlay", sl_add:"Add to parlay check", sl_in:"In parlay check (tap to remove)", sl_fab:"Parlay · {n}", sl_title:"Parlay check", sl_empty:"No legs yet. Use “＋ Parlay” on any prop, or add a game leg below.", sl_same:"same game: linked", sl_addgame:"Add game leg", sl_win:"to win (incl. OT)", sl_total:"Total goals", sl_chance:"Combined chance", sl_indep:"{p} if the legs were unrelated", sl_fair:"Fair odds", sl_book:"Your sportsbook price", sl_linked_note:"Legs from the same game are linked (a point and shots for one player, a player's point and his team's goals), so the combined chance isn't just the legs multiplied: it comes from simulating each game 20,000 times with the site's numbers. Sportsbooks price same-game combos with the link in mind, usually with a bigger margin, so type the price your sportsbook actually offers.", sl_indep_note:"All legs are from different games, so the combined chance is the legs multiplied and the parlay price is the leg odds multiplied.", sl_plan_h:"Ways to bet these legs", sl_plan_sub:"same total stake, from 20,000 simulated nights", sl_total_stake:"Total", sl_plan:"Plan", sl_bets:"Bets", sl_each:"Each", sl_pprofit:"Chance of profit", sl_pzero:"Chance to lose it all", sl_p_singles:"All singles", sl_p_doubles:"Every pair (doubles, different games)", sl_p_parlay:"One parlay of all legs", sl_p_mix:"Singles + the parlay", sl_plan_note:"Combining legs multiplies their edges, good or bad: a parlay is only as good as its weakest leg and its price (a same-game price below the fair odds turns good legs into a bad parlay). Beyond EV, what changes is the ride: singles win something most nights, a big parlay usually loses everything and occasionally pays a lot. Pick the plan whose swings you can live with.", sl_plan_need:"Add odds for every leg (and your sportsbook's price for same-game combos) to compare ways to bet them.", sl_save:"Save parlay", sl_saved:"Saved to My picks. It's graded automatically after the last game.", sl_my:"My parlays", sl_n:"Parlays", sl_legs:"Legs", bpg_pts:"Goals & points", bpg_s:"Shots", bpg_hb:"Hits & blocks", bp_none_any:"Nothing in this game has positive value at the current odds.", bp_none_hb:"No hits or blocks odds for this game yet. Type the odds from your sportsbook on a player to see his value here.", bp_sub_noodds_s:"no odds yet · most likely 3+ shots", r_sog:"Model expects {e} shots tonight; {l}+ shots in {h} of his last {n} games", r_hb:"Model expects {e} {w} tonight; {l}+ in {h} of his last {n} games", bp_sub_odds:"highest edge · one per player · the more likely option when the edge is similar", bp_sub_noodds:"no odds yet · most likely points",
     bp_none_odds:"No goal or point bet has positive value at the current odds.", bp_none:"No players available.",
     point1:"1+ point", goal:"Goal", edge:"edge {e}", likely:"{p} likely",
     r_model:"Model {a} vs market {b}", r_plays:"Plays {m} min", r_on:" on {l}", r_pp1:", first power play", r_due:"Scoring below his true talent this season (due)",
@@ -1052,7 +1080,7 @@ const I18N = {
     meetings:"Senaste {n} mötena: {list} ({t} först), i snitt {a} mål.", no_meetings:"Inga möten de senaste 4 säsongerna.",
     total_goals:"Totalt antal mål", line:"Linje", model:"Modell", history:"Historik", over_fair:"Över · rättvisa odds ö/u", over_odds:"Odds över", over_ph:"över",
     roster:"{t} trupp", matchup:"Jämförelse",
-    bpg_all:"Alla", bpg_pts:"Mål & poäng", bpg_s:"Skott", bpg_hb:"Tacklingar & blockeringar", bp_none_any:"Inget i den här matchen har positivt värde till nuvarande odds.", bp_none_hb:"Inga odds för tacklingar eller blockeringar i den här matchen än. Skriv in oddset från ditt spelbolag på en spelare för att se värdet här.", bp_sub_noodds_s:"inga odds än · troligast 3+ skott", r_sog:"Modellen väntar {e} skott i kväll; {l}+ skott i {h} av hans senaste {n} matcher", r_hb:"Modellen väntar {e} {w} i kväll; {l}+ i {h} av hans senaste {n} matcher", bp_title:"Bästa spelen i matchen", bp_sub_odds:"störst edge · ett per spelare · det troligare alternativet när edgen är likvärdig", bp_sub_noodds:"inga odds än · mest troliga poäng",
+    bpg_all:"Alla", under_short:"u{l}", sl_short:"Kombo", sl_add:"Lägg till i kombokollen", sl_in:"I kombokollen (tryck för att ta bort)", sl_fab:"Kombo · {n}", sl_title:"Kombokoll", sl_empty:"Inga spel än. Använd ”＋ Kombo” på valfritt spel, eller lägg till ett matchspel nedan.", sl_same:"samma match: kopplade", sl_addgame:"Lägg till matchspel", sl_win:"vinner (inkl. förl.)", sl_total:"Totalt antal mål", sl_chance:"Sammanlagd chans", sl_indep:"{p} om spelen vore oberoende", sl_fair:"Rättvist odds", sl_book:"Ditt spelbolags pris", sl_linked_note:"Spel från samma match hänger ihop (poäng och skott för en spelare, en spelares poäng och lagets mål), så den sammanlagda chansen är inte bara spelen multiplicerade: den kommer från att varje match simuleras 20 000 gånger med sajtens siffror. Spelbolagen prissätter kombinationer i samma match med kopplingen i åtanke, oftast med större marginal, så skriv in priset ditt spelbolag faktiskt erbjuder.", sl_indep_note:"Alla spel är från olika matcher, så den sammanlagda chansen är spelen multiplicerade och kombinationsoddset är oddsen multiplicerade.", sl_plan_h:"Sätt att spela de här spelen", sl_plan_sub:"samma totala insats, från 20 000 simulerade kvällar", sl_total_stake:"Totalt", sl_plan:"Upplägg", sl_bets:"Spel", sl_each:"Var", sl_pprofit:"Chans till vinst", sl_pzero:"Chans att förlora allt", sl_p_singles:"Bara singlar", sl_p_doubles:"Alla par (dubblar, olika matcher)", sl_p_parlay:"En kombination av alla", sl_p_mix:"Singlar + kombinationen", sl_plan_note:"Att kombinera multiplicerar spelens edge, bra eller dålig: en kombination är bara så bra som sitt sämsta spel och sitt pris (ett pris för samma match under det rättvisa oddset gör bra spel till en dålig kombination). Utöver EV ändras svängarna: singlar ger något de flesta kvällar, en stor kombination förlorar oftast allt och betalar ibland mycket. Välj upplägget vars svängar du klarar.", sl_plan_need:"Lägg till odds för varje spel (och spelbolagets pris för kombinationer i samma match) för att jämföra sätt att spela dem.", sl_save:"Spara kombinationen", sl_saved:"Sparad i Mina spel. Den rättas automatiskt efter sista matchen.", sl_my:"Mina kombinationer", sl_n:"Kombinationer", sl_legs:"Spel", bpg_pts:"Mål & poäng", bpg_s:"Skott", bpg_hb:"Tacklingar & blockeringar", bp_none_any:"Inget i den här matchen har positivt värde till nuvarande odds.", bp_none_hb:"Inga odds för tacklingar eller blockeringar i den här matchen än. Skriv in oddset från ditt spelbolag på en spelare för att se värdet här.", bp_sub_noodds_s:"inga odds än · troligast 3+ skott", r_sog:"Modellen väntar {e} skott i kväll; {l}+ skott i {h} av hans senaste {n} matcher", r_hb:"Modellen väntar {e} {w} i kväll; {l}+ i {h} av hans senaste {n} matcher", bp_title:"Bästa spelen i matchen", bp_sub_odds:"störst edge · ett per spelare · det troligare alternativet när edgen är likvärdig", bp_sub_noodds:"inga odds än · mest troliga poäng",
     bp_none_odds:"Inget mål- eller poängspel har positivt värde till nuvarande odds.", bp_none:"Inga spelare tillgängliga.",
     point1:"1+ poäng", goal:"Mål", edge:"edge {e}", likely:"{p} chans",
     r_model:"Modell {a} mot marknad {b}", r_plays:"Spelar {m} min", r_on:" i {l}", r_pp1:", första powerplay", r_due:"Gör färre mål än sin verkliga nivå i år (bör lyfta)",
@@ -1912,7 +1940,7 @@ function bestPicksBox(g){
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
         <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":c.m==="g"?"s-dry":"s-up"}">${c.m==="pt"?t("point1"):c.m==="g"?t("goal"):mName(c.m)}</span>
           <div class="po">${c.od?oddsTxt(c.od):"–"}</div>${moveTag(g,c.pr,c.m)}${(()=>{ const h = archHit(g.id, c.pr.id, c.m); return h==null ? "" : `<span class="pill ${h?"s-confirmed":"s-out"}">${t(h?"bp_won":"bp_lost")}</span>`; })()}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
-      <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul>${saveBtn(g, c.pr, c.m)}</div>`; }).join("");
+      <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul><div class="svsl">${saveBtn(g, c.pr, c.m)}${slipBtn(g, c.pr, c.m)}</div></div>`; }).join("");
   const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
   const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
   return `<div class="box picks"><h4>${t("bp_title")} ${seg} <span class="meta">${hasOdds?t("bp_sub_odds"):t(grp==="s"?"bp_sub_noodds_s":"bp_sub_noodds")}</span></h4>
@@ -2205,7 +2233,7 @@ function detail(pr, g){
     return `<span>${mName(m)} ${ARCH?resMark(archHit(g.id, pr.id, m)):""}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${oddsTxt(1/pv)}</span></span>
       <span class="num">${b?`<b>${oddsTxt(b.o)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}${b.b==="p"?` <span class="sharp tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span>`:""}${b.p?`<div class="meta"><span class="tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span> ${oddsTxt(b.p)}${b.pn?` · ${pct(noVig({o:b.p, n:b.pn}),0)}`:""}</div>`:""}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
-      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span><span>${saveBtn(g, pr, m)}</span>`; }).join("");
+      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span><span class="svsl">${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
     <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${cmpBtn(g, pr, true)}${watchBtn(pr.id, true)} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
       <p class="note">${t("pv_note")}</p></div>
@@ -2835,7 +2863,7 @@ function rowsTop(){
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)!=null?oddsTxt(userOdds(g.id,pr.id,m)):""}" placeholder="${book(g.id,pr.id,m)?.o!=null?oddsTxt(book(g.id,pr.id,m).o):"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm">${noHistory(m) ? `<span class="meta">–</span>` : `<div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""} gtg" data-gtp="${pr.id}" data-gtd="${x.d}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}`}</td>
-      <td><div class="ptact">${watchBtn(pr.id)}${cmpBtn(g, pr)}${regPills(p)} ${saveBtn(g, pr, m)}</div></td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
+      <td><div class="ptact">${watchBtn(pr.id)}${cmpBtn(g, pr)}${regPills(p)} ${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</div></td></tr>`; }).join("") || `<tr><td colspan="8" class="empty">${t("no_match")}</td></tr>`;
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
@@ -3221,6 +3249,7 @@ en: `<h3>What the site does</h3>
   <h3>Your account</h3>
   <ul>
     <li><b>My picks:</b> save any prop with the odds you got. Picks are graded automatically after each game, with hit rate, profit, ROI and whether you beat the closing odds, the best long-run sign of a good bettor. Closing odds come from the sportsbook feed; for markets it doesn't carry (hits, blocks), or a different sportsbook, add your own closing price.</li>
+    <li><b>Parlay check:</b> tap “＋ Parlay” on any prop (or add a game leg: a team to win, the game total, a team total) to build a parlay. It shows the combined chance, including the link between legs from the same game (a player's point and his shots, or his point and his team's goals), the fair odds, and your EV once you type your sportsbook's price. It also compares ways to bet the same legs with the same total stake: all singles, every pair, one parlay, or singles plus the parlay, with the chance of a profit and of losing it all. Save a parlay and it's graded automatically in My picks.</li>
     <li><b>Watchlist:</b> tap the bookmark next to a player to follow him. My picks lists his next game with tonight's chance and odds, his game is marked on the Games tab, and with alerts on you get a game-day notification.</li>
     <li><b>Alerts:</b> push notifications when a prop passes the edge level you choose, or when a starting goalie is confirmed.</li>
   </ul>
@@ -3344,6 +3373,7 @@ sv: `<h3>Vad sajten gör</h3>
   <h3>Ditt konto</h3>
   <ul>
     <li><b>Mina spel:</b> spara vilket spel som helst med oddset du fick. Spelen rättas automatiskt efter varje match, med träffprocent, vinst, ROI och om du slog stängningsoddset, det bästa långsiktiga tecknet på en bra spelare. Stängningsoddset kommer från spelbolagets flöde; för marknader som saknas där (tacklingar, blockeringar), eller ett annat spelbolag, lägger du in ditt eget.</li>
+    <li><b>Kombokoll:</b> tryck på ”＋ Kombo” på valfritt spel (eller lägg till ett matchspel: ett lag vinner, totalmål, ett lags mål) för att bygga en kombination. Den visar den sammanlagda chansen, inklusive kopplingen mellan spel i samma match (en spelares poäng och skott, eller hans poäng och lagets mål), det rättvisa oddset och din EV när du skriver in spelbolagets pris. Den jämför också sätt att spela samma spel med samma totala insats: bara singlar, alla par, en kombination eller singlar plus kombinationen, med chansen till vinst och att förlora allt. Spara kombinationen så rättas den automatiskt i Mina spel.</li>
     <li><b>Bevakning:</b> tryck på bokmärket bredvid en spelare för att följa honom. Mina spel visar hans nästa match med kvällens chans och odds, matchen markeras under Matcher, och med aviseringar på får du en notis på matchdagen.</li>
     <li><b>Aviseringar:</b> pushnotiser när ett spel når den edge-nivå du väljer, eller när en startmålvakt bekräftas.</li>
   </ul>
@@ -3389,8 +3419,206 @@ function render(){
   else if (state.tab==="track") trackTab();
   else if (state.tab==="picks") picksTab();
   else howTab();
-  cmpTray();
+  cmpTray(); slipFab();
 }
+// ------------------------------------------------------------ parlay check: combined chance with same-game links, staking plans
+let SLIP = (()=>{ try { return (JSON.parse(store.get("slip")||"[]")||[]).filter(x => gameById[String(x.g)]); } catch(e){ return []; } })();
+const SLIP_MAX = 8;
+const slipSave = () => store.set("slip", JSON.stringify(SLIP));
+const legKey = x => x.k === "p" ? `p:${x.g}:${x.pid}:${x.m}` : `t:${x.g}:${x.m}`;
+const inSlip = (k) => SLIP.some(x => legKey(x) === k);
+function slipBtn(g, pr, m){
+  if (g.frozen || (g.state && !["FUT","PRE"].includes(g.state))) return "";
+  const k = `p:${g.id}:${pr.id}:${m}`, on = inSlip(k);
+  return `<button type="button" class="slipbtn ${on?"on":""}" data-slip="${g.id}|${pr.id}|${m}" title="${esc(t(on?"sl_in":"sl_add"))}" aria-pressed="${on}">${on?"✓":"＋"} ${t("sl_short")}</button>`;
+}
+function slipToggle(leg){
+  const k = legKey(leg);
+  if (inSlip(k)) SLIP = SLIP.filter(x => legKey(x) !== k);
+  else { if (SLIP.length >= SLIP_MAX) return; SLIP.push(leg); }
+  slipSave(); slipSync();
+}
+function slipSync(){
+  document.querySelectorAll("[data-slip]").forEach(b => { const [g, pid, m] = b.dataset.slip.split("|"), on = inSlip(`p:${g}:${pid}:${m}`);
+    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.innerHTML = `${on?"✓":"＋"} ${t("sl_short")}`; b.title = t(on?"sl_in":"sl_add"); });
+  slipFab();
+  if (document.querySelector("#modal .slipbox")) slipRender();
+}
+document.addEventListener("click", e => { const b = e.target.closest?.("[data-slip]"); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const [g, pid, m] = b.dataset.slip.split("|"); slipToggle({k:"p", g:String(g), pid:String(pid), m}); }, true);
+function slipFab(){
+  let el = $("#slipfab");
+  if (!el){ el = document.body.appendChild(Object.assign(document.createElement("button"), {id:"slipfab", type:"button", className:"slipfab"})); el.onclick = openSlip; }
+  SLIP = SLIP.filter(x => gameById[String(x.g)]);
+  el.hidden = !SLIP.length;
+  el.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6"/></svg>${t("sl_fab",{n:SLIP.length})}`;
+}
+// one leg: label, model chance, odds
+function legInfo(x){
+  const g = gameById[String(x.g)]; if (!g) return null;
+  if (x.k === "p"){
+    const pr = g.props.find(p => String(p.id) === String(x.pid)); if (!pr) return null;
+    const p = P(pr.id), od = x.o ?? getOdds(g.id, pr.id, x.m);
+    return {g, pr, label: `${shortName(p.name)} · ${mName(x.m)}`, sub: `${pr.team} ${pr.home?"vs":"@"} ${pr.opp}`, p: prob(pr, g, x.m), od};
+  }
+  const mu = gameMu(g), d = gameDist(mu.h, mu.a), [kind, arg] = x.m.split(":");
+  let lab, pv, od = x.o ?? null;
+  if (kind === "win"){ const home = arg === "h"; lab = `${home?g.home:g.away} ${t("sl_win")}`; pv = home ? d.ph : d.pa; od = od ?? DATA.odds?.[g.id]?.winner?.[home?"home":"away"] ?? null; }
+  else if (kind === "to" || kind === "tu"){ const L = parseFloat(arg), po = blendOver(g, d, L); lab = `${t("sl_total")} ${kind==="to"?t("over_short",{l:arg}):t("under_short",{l:arg})}`; pv = kind==="to" ? po : 1 - po;
+    od = od ?? DATA.odds?.[g.id]?.totals?.[String(L)]?.[kind==="to"?"over":"under"] ?? null; }
+  else { const home = kind === "tth", L = arg, M = gameMarkets(g); lab = `${home?g.home:g.away} ${t("over_short",{l:L})}`; pv = M[`${home?"htt":"att"}${L}`]; }
+  return {g, pr:null, label: lab, sub: `${g.away} @ ${g.home}`, p: pv, od};
+}
+// Monte Carlo for one game: final scores (regulation from the site's score model, overtime/shootout winner +1), and
+// for the players in the slip, goals and assists drawn goal by goal from their share of the team's expected goals,
+// shots = his goals + other shots. Markets the simulation doesn't model are drawn on their own from the model chance.
+function simGame(g, legs, N){
+  const mu = gameMu(g), J = regJoint(mu.h, mu.a), n = J.length, share = (mu.h+mu.a) ? mu.h/(mu.h+mu.a) : 0.5, otGoal = 1 - (C.ot_no_goal ?? 0.4);
+  const cells = [], cum = []; let c = 0; for (let i=0;i<n;i++) for (let k=0;k<n;k++){ c += J[i][k]; cells.push([i,k]); cum.push(c); }
+  const pl = {};   // player id -> rates
+  for (const x of legs) if (x.k === "p" && !pl[x.pid]){ const pr = g.props.find(p => String(p.id) === String(x.pid)); if (!pr) continue;
+    const l = lambdas(pr, g), muT = pr.team === g.home ? mu.h : mu.a;
+    pl[x.pid] = {team: pr.team === g.home ? "h" : "a", pg: Math.min(0.9, l.g / Math.max(muT, 0.1)), qa: l.a / Math.max(muT, 0.1), xs: Math.max(0, l.s - l.g), pr}; }
+  const ids = Object.keys(pl), out = legs.map(() => new Uint8Array(N));
+  const pois = lam => { let L = Math.exp(-lam), k = 0, p = 1; do { k++; p *= Math.random(); } while (p > L); return k - 1; };
+  for (let s=0; s<N; s++){
+    const u = Math.random() * c; let lo = 0, hi = cum.length - 1; while (lo < hi){ const m = (lo + hi) >> 1; if (cum[m] < u) lo = m + 1; else hi = m; }
+    let [hs, as] = cells[lo], hg = hs, ag = as;
+    if (hs === as){ const homeWins = Math.random() < share; if (homeWins) hs++; else as++; if (Math.random() < otGoal){ if (homeWins) hg++; else ag++; } }
+    const st = {};
+    for (const id of ids) st[id] = {g:0, a:0};
+    for (const [side, goals] of [["h", hg], ["a", ag]]){
+      const mine = ids.filter(id => pl[id].team === side); if (!mine.length) continue;
+      for (let k=0; k<goals; k++){
+        let r = Math.random(), scorer = null;
+        for (const id of mine){ if (r < pl[id].pg){ scorer = id; break; } r -= pl[id].pg; }
+        if (scorer) st[scorer].g++;
+        for (const id of mine) if (id !== scorer && Math.random() < Math.min(0.95, pl[id].qa / Math.max(0.1, 1 - pl[id].pg))) st[id].a++;
+      }
+    }
+    legs.forEach((x, j) => {
+      let ok;
+      if (x.k === "p"){ const v = st[x.pid], m = x.m; if (!v){ out[j][s] = 0; return; }
+        if (m === "g") ok = v.g >= 1; else if (m === "a") ok = v.a >= 1; else if (m === "pt") ok = v.g + v.a >= 1;
+        else if (m === "g2" || m === "g3") ok = v.g >= +m[1]; else if (m === "a2") ok = v.a >= 2; else if (m === "pt2" || m === "pt3") ok = v.g + v.a >= +m[2];
+        else if (m[0] === "s" && /\d/.test(m[1])) ok = v.g + pois(pl[x.pid].xs) > parseFloat(m.slice(1));
+        else ok = Math.random() < prob(pl[x.pid].pr, g, m);
+      } else { const [kind, arg] = x.m.split(":"), L = parseFloat(arg);
+        if (kind === "win") ok = arg === "h" ? hs > as : as > hs;
+        else if (kind === "to") ok = hs + as > L; else if (kind === "tu") ok = hs + as < L;
+        else ok = (kind === "tth" ? hs : as) > L; }
+      out[j][s] = ok ? 1 : 0;
+    });
+  }
+  return out;
+}
+function slipCalc(){
+  const N = 20000, info = SLIP.map(legInfo), byGame = {};
+  SLIP.forEach((x, i) => { if (info[i]) (byGame[x.g] = byGame[x.g] || []).push(i); });
+  const vec = new Array(SLIP.length);
+  let joint = 1, indep = 1, linked = false;
+  for (const [gid, idx] of Object.entries(byGame)){
+    const g = gameById[gid], sim = simGame(g, idx.map(i => SLIP[i]), N);
+    idx.forEach((i, j) => vec[i] = sim[j]);
+    const prodModel = idx.reduce((a, i) => a * info[i].p, 1);
+    indep *= prodModel;
+    if (idx.length > 1){ linked = true;
+      let all = 0; for (let s=0; s<N; s++){ if (idx.every((i, j) => sim[j][s])) all++; }
+      const pAll = all / N, prodSim = idx.reduce((a, i, j) => a * (sim[j].reduce((x, y) => x + y, 0) / N), 1);
+      joint *= prodModel * (prodSim > 0 ? pAll / prodSim : 1);
+    } else joint *= prodModel;
+  }
+  return {info, vec, joint, indep, linked, byGame, N};
+}
+// staking plans for the same legs: singles, round-robin doubles (legs from different games), the full parlay, and a mix
+function slipPlans(R, comboOdds, total){
+  const n = SLIP.length, N = R.N, ok = R.info.every(x => x && x.od);
+  if (!ok || n < 2) return null;
+  const sameGame = (i, j) => String(SLIP[i].g) === String(SLIP[j].g);
+  const pairs = []; for (let i=0;i<n;i++) for (let j=i+1;j<n;j++) if (!sameGame(i,j)) pairs.push([i,j]);
+  const plans = [];
+  const run = (key, bets) => {   // bets: [[legs], odds, stakeShare]
+    if (!bets.length) return;
+    const st = total / bets.length; let sum = 0, prof = 0, zero = 0;
+    for (let s=0; s<N; s++){ let pay = 0; for (const [legs, od] of bets) if (legs.every(i => R.vec[i][s])) pay += st * od; sum += pay; if (pay > total + 1e-9) prof++; if (pay === 0) zero++; }
+    plans.push({key, n: bets.length, stake: st, ev: sum / N / total - 1, pProfit: prof / N, pZero: zero / N});
+  };
+  run("singles", SLIP.map((_, i) => [[i], R.info[i].od]));
+  if (pairs.length) run("doubles", pairs.map(([i, j]) => [[i, j], R.info[i].od * R.info[j].od]));
+  if (comboOdds) run("parlay", [[SLIP.map((_, i) => i), comboOdds]]);
+  if (comboOdds) {   // the NBA-style mix: every single plus the full parlay, equal stakes
+    const bets = [...SLIP.map((_, i) => [[i], R.info[i].od]), [SLIP.map((_, i) => i), comboOdds]];
+    run("mix", bets);
+  }
+  return plans;
+}
+function openSlip(){
+  const el = $("#modal"); el.classList.add("cmpm");
+  el.innerHTML = `<div class="mbox cmpbox slipbox" role="dialog" aria-modal="true" aria-label="${esc(t("sl_title"))}"><div class="cmtop"><h3>${t("sl_title")}</h3><button type="button" class="cmclose" data-close aria-label="${t("cmp_close")}">×</button></div><div class="cmscroll" id="slipbody"></div></div>`;
+  el.hidden = false; document.documentElement.style.overflow = "hidden";
+  slipRender();
+}
+let SLIP_STATE = {combo: null, total: 1, stake: 1};
+function slipRender(){
+  const box = $("#slipbody"); if (!box) return;
+  if (!SLIP.length){ box.innerHTML = `<p class="meta">${t("sl_empty")}</p>`; return; }
+  const R = slipCalc(), info = R.info;
+  const prodOdds = info.every(x => x && x.od) ? info.reduce((a, x) => a * x.od, 1) : null;
+  const combo = SLIP_STATE.combo ?? (R.linked ? null : prodOdds);
+  const fair = R.joint > 0 ? 1 / R.joint : null, ev = combo ? R.joint * combo - 1 : null;
+  const games = Object.keys(R.byGame);
+  const legsHtml = games.map(gid => { const g = gameById[gid], idx = R.byGame[gid];
+    return `<div class="slg"><div class="slgh">${logo(g.away,16)} ${g.away} @ ${logo(g.home,16)} ${g.home} <span class="meta">· ${dayLabel(g.date)} ${timeOf(g)}</span>${idx.length>1?`<span class="pill s-up">${t("sl_same")}</span>`:""}</div>
+      ${idx.map(i => { const x = info[i], s = SLIP[i];
+        return `<div class="slr"><div><b>${esc(x.label)}</b><div class="meta">${esc(x.sub)}</div></div><span class="num">${pct(x.p,1)}<small class="meta"> · ${oddsTxt(1/x.p)}</small></span>
+          <input class="odds slodds" data-i="${i}" value="${s.o!=null?oddsTxt(s.o):""}" placeholder="${x.od?oddsTxt(x.od):t("odds_ph")}" aria-label="${t("h_odds")}">
+          <span class="${x.od?(x.p*x.od-1>0?"ev-pos":"ev-neg"):""} num">${x.od?evTxt(x.p*x.od-1):"–"}</span><button type="button" class="delbtn" data-sldel="${i}" aria-label="${t("cmp_remove")}">✕</button></div>`; }).join("")}</div>`; }).join("");
+  // add a game leg (win, total, team total) for any game already in the slip or any game today
+  const opts = DATA.games.filter(g => !g.frozen && (!g.state || ["FUT","PRE"].includes(g.state)) && g.date === dates[0]).map(g => `<option value="${g.id}">${g.away} @ ${g.home}</option>`).join("");
+  const plans = slipPlans(R, combo, SLIP_STATE.total);
+  box.innerHTML = `${legsHtml}
+    <div class="sladd"><select id="sl_g" aria-label="${t("game")}">${opts}</select><select id="sl_m" aria-label="${t("pk_market")}"></select><button type="button" class="mbtn" id="sl_addt">＋ ${t("sl_addgame")}</button></div>
+    <div class="slsum">
+      <div class="kpi"><small>${t("sl_chance")}</small><b>${pct(R.joint,1)}</b>${R.linked?`<span class="meta">${t("sl_indep",{p:pct(R.indep,1)})}</span>`:""}</div>
+      <div class="kpi"><small>${t("sl_fair")}</small><b>${fair?oddsTxt(fair):"–"}</b></div>
+      <div class="kpi"><small>${t("sl_book")}</small><input class="odds" id="sl_combo" value="${SLIP_STATE.combo!=null?oddsTxt(SLIP_STATE.combo):""}" placeholder="${!R.linked && prodOdds?oddsTxt(prodOdds):t("odds_ph")}"></div>
+      <div class="kpi"><small>EV</small><b class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</b></div>
+    </div>
+    <p class="note">${R.linked ? t("sl_linked_note") : t("sl_indep_note")}</p>
+    ${plans ? `<div class="slplan"><h5>${t("sl_plan_h")} <span class="meta">${t("sl_plan_sub")}</span> <label class="sltot">${t("sl_total_stake")} <input type="number" id="sl_total" min="0.25" step="0.25" value="${SLIP_STATE.total}"> u</label></h5>
+      <div class="tablewrap"><table class="mini"><thead><tr><th>${t("sl_plan")}</th><th class="n">${t("sl_bets")}</th><th class="n hide-xs">${t("sl_each")}</th><th class="n">EV</th><th class="n">${t("sl_pprofit")}</th><th class="n">${t("sl_pzero")}</th></tr></thead>
+      <tbody>${plans.map(p => `<tr><td>${t("sl_p_"+p.key)}</td><td class="n num">${p.n}</td><td class="n num hide-xs">${fmt(p.stake,2)}u</td><td class="n num ${p.ev>0?"ev-pos":"ev-neg"}">${evTxt(p.ev)}</td><td class="n num">${pct(p.pProfit,0)}</td><td class="n num">${pct(p.pZero,0)}</td></tr>`).join("")}</tbody></table></div>
+      <p class="note">${t("sl_plan_note")}</p></div>` : `<p class="note">${t("sl_plan_need")}</p>`}
+    <div class="mrow slsave"><label>${t("pk_stake")} <input type="number" id="sl_stake" min="0.25" step="0.25" value="${SLIP_STATE.stake}"> u</label>
+      <button type="button" class="mbtn pri" id="sl_save" ${combo?"":"disabled"}>${t("sl_save")}</button><button type="button" class="mbtn" id="sl_clear">${t("cmp_clear")}</button></div>
+    <div class="mmsg" id="sl_msg"></div>`;
+  const fillM = () => { const g = gameById[$("#sl_g").value]; if (!g){ $("#sl_m").innerHTML = ""; return; }
+    const tl = Object.keys(DATA.odds?.[g.id]?.totals || {}).sort(); const lines = tl.length ? tl : C.ou_lines.map(String);
+    $("#sl_m").innerHTML = [["win:h", `${g.home} ${t("sl_win")}`], ["win:a", `${g.away} ${t("sl_win")}`],
+      ...lines.flatMap(L => [[`to:${L}`, `${t("sl_total")} ${t("over_short",{l:L})}`], [`tu:${L}`, `${t("sl_total")} ${t("under_short",{l:L})}`]]),
+      ...["2.5","3.5"].flatMap(L => [[`tth:${L}`, `${g.home} ${t("over_short",{l:L})}`], [`tta:${L}`, `${g.away} ${t("over_short",{l:L})}`]])]
+      .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join(""); };
+  if ($("#sl_g")){ const inSlipGame = SLIP.find(x => [...$("#sl_g").options].some(o => o.value === String(x.g))); if (inSlipGame) $("#sl_g").value = String(inSlipGame.g); fillM(); $("#sl_g").onchange = fillM; }
+  $("#sl_addt").onclick = () => { const gid = $("#sl_g").value, m = $("#sl_m").value; if (gid && m && !inSlip(`t:${gid}:${m}`)) slipToggle({k:"t", g:String(gid), m}); };
+  box.querySelectorAll("[data-sldel]").forEach(b => b.onclick = () => { SLIP.splice(+b.dataset.sldel, 1); SLIP_STATE.combo = null; slipSave(); slipSync(); if (!SLIP.length) closeModal(); });
+  box.querySelectorAll(".slodds").forEach(i => i.onchange = () => { const v = parseOdds(i.value); SLIP[+i.dataset.i].o = v || null; SLIP_STATE.combo = null; slipSave(); slipRender(); });
+  $("#sl_combo").onchange = e => { SLIP_STATE.combo = parseOdds(e.target.value) || null; slipRender(); };
+  const tot = $("#sl_total"); if (tot) tot.onchange = e => { SLIP_STATE.total = Math.max(0.25, +e.target.value || 1); slipRender(); };
+  $("#sl_stake").onchange = e => { SLIP_STATE.stake = Math.max(0.25, +e.target.value || 1); };
+  $("#sl_clear").onclick = () => { SLIP = []; SLIP_STATE.combo = null; slipSave(); slipSync(); closeModal(); };
+  $("#sl_save").onclick = async () => {
+    const msg = (m, ok) => { const el = $("#sl_msg"); el.textContent = m; el.className = "mmsg " + (ok?"ok":"err"); };
+    if (!sb) return msg(t("pk_unavail"));
+    if (!USER) return openAuth("in", () => openSlip());
+    const starts = SLIP.map(x => gameById[String(x.g)]?.start).filter(Boolean).sort();
+    const legs = SLIP.map((x, i) => ({...x, o: info[i]?.od ?? null, p: info[i] ? Math.round(info[i].p * 10000) / 10000 : null, label: info[i]?.label, pname: x.k === "p" ? P(x.pid)?.name : null,
+                                     team: x.k === "p" ? info[i]?.pr?.team : null, home: gameById[String(x.g)]?.home, away: gameById[String(x.g)]?.away}));
+    const row = {game_date: gameById[String(SLIP[0].g)].date, start_time: starts[0], legs, odds: Math.round(combo * 1000) / 1000, model_p: Math.round(R.joint * 10000) / 10000, stake: SLIP_STATE.stake};
+    const {error} = await sb.from("parlays").insert(row);
+    if (error) return msg(error.message);
+    msg(t("sl_saved"), true); await loadParlays(); };
+}
+
 // ------------------------------------------------------------ accounts & my picks (Supabase)
 const SB_URL = "https://evxnevqxykbfocqfqxid.supabase.co", SB_KEY = "sb_publishable_ZQQw6R--FoIe0CzNqEkeLg_O5qv4TQO";
 const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, detectSessionInUrl:true}}) : null;
@@ -3657,12 +3885,34 @@ function picksTab(){
     ${MYPICKS.length ? `<div class="card tablewrap"><table><thead><tr><th>${t("h_date")}</th><th>${t("h_player")}</th><th>${t("pk_market")}</th><th class="n">${t("h_odds")}</th><th class="n">${t("pk_close")}</th><th class="n hide-xs">${t("pk_model")}</th><th class="n hide-xs">${t("pk_stake")}</th><th>${t("pk_result")}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
       : `<div class="card empty prose"><p>${t("pk_none")}</p></div>`}
     <p class="note">${t("pk_note")}</p>
+    ${parlaysCard()}
     <div class="box" id="alertsbox" style="margin-top:14px"><h4>${t("al_title")}</h4><p class="meta">…</p></div></div>`;
   $("#main").querySelectorAll("[data-del]").forEach(b => b.onclick = async () => { await sb.from("picks").delete().eq("id", b.dataset.del); await loadPicks(); render(); });
   $("#main").querySelectorAll("[data-cl]").forEach(b => b.onclick = e => { e.stopPropagation(); openClose(b.dataset.cl); });
+  $("#main").querySelectorAll("[data-pdel]").forEach(b => b.onclick = async () => { await sb.from("parlays").delete().eq("id", b.dataset.pdel); await loadParlays(); render(); });
   watchCardWire(); alertsCard();
 }
-if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null; setTimeout(async () => { await Promise.all([loadPicks(), loadWatch()]); header(); render(); }, 0); });
+let MYPARLAYS = [];
+async function loadParlays(){
+  if (!sb || !USER){ MYPARLAYS = []; return; }
+  const {data} = await sb.from("parlays").select("*").order("game_date",{ascending:false}).order("created_at",{ascending:false}).limit(500);
+  MYPARLAYS = data || []; if (state.tab === "picks") render();
+}
+function parlaysCard(){
+  if (!MYPARLAYS.length) return "";
+  const done = MYPARLAYS.filter(x => x.result && x.result !== "void"), wins = done.filter(x => x.result === "win");
+  const staked = done.reduce((a,x)=>a + +x.stake, 0), ret = wins.reduce((a,x)=>a + x.stake * (x.settle_odds || x.odds), 0), profit = ret - staked;
+  const expHit = done.length ? done.reduce((a,x)=>a + (+x.model_p||0), 0) / done.length : null;
+  const rows = MYPARLAYS.map(x => { const r = x.result || "open", lr = x.legs_result || [];
+    return `<tr><td>${x.game_date.slice(5)}</td><td>${(x.legs||[]).map((l, i) => `<div class="pll">${lr[i]==null?"":lr[i]===1?`<i class="rmk y">✓</i>`:lr[i]===0?`<i class="rmk n">✗</i>`:`<i class="rmk">–</i>`} ${esc(l.label||l.m)} <span class="meta">${esc(l.away||"")}@${esc(l.home||"")}</span></div>`).join("")}</td>
+      <td class="n num">${oddsTxt(+x.odds)}</td><td class="n num hide-xs">${x.model_p!=null?pct(+x.model_p,1):"–"}</td><td class="n num hide-xs">${+x.stake}</td>
+      <td><span class="res ${r}">${t("res_"+r)}</span></td><td>${x.result?"":`<button class="delbtn" data-pdel="${x.id}" aria-label="${t("pk_del")}">✕</button>`}</td></tr>`; }).join("");
+  const kpi = (lbl, v, cls="") => `<div class="kpi"><small>${lbl}</small><b class="${cls}">${v}</b></div>`;
+  return `<h3 class="plh">${t("sl_my")}</h3><div class="sum">${kpi(t("sl_n"), MYPARLAYS.length)}${kpi(t("pk_settled"), done.length)}${kpi(t("pk_hit"), done.length?pct(wins.length/done.length,0):"–")}${kpi(t("pk_exp"), expHit!=null?pct(expHit,0):"–")}
+    ${kpi(t("pk_profit"), (profit>=0?"+":"")+profit.toFixed(2), profit>0?"ev-pos":profit<0?"ev-neg":"")}${kpi(t("pk_roi"), staked?((profit/staked*100>=0?"+":"")+(profit/staked*100).toFixed(1)+"%"):"–", profit>0?"ev-pos":profit<0?"ev-neg":"")}</div>
+    <div class="card tablewrap"><table><thead><tr><th>${t("h_date")}</th><th>${t("sl_legs")}</th><th class="n">${t("h_odds")}</th><th class="n hide-xs">${t("pk_model")}</th><th class="n hide-xs">${t("pk_stake")}</th><th>${t("pk_result")}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null; setTimeout(async () => { await Promise.all([loadPicks(), loadWatch(), loadParlays()]); header(); render(); }, 0); });
 
 // ------------------------------------------------------------ live scores (official NHL feed via our scores function)
 // ------------------------------------------------------------ game recap (a past game: goals and every player's line)

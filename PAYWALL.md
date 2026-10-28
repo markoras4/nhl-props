@@ -45,3 +45,4 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 
 Also planned for that release: 18+ check on the landing page again, Stripe checkout, prices (not decided yet).
 | Lines & pairs list: every line/pair in the league, sortable by xG%, chances/60, over/under-scoring, goaltending luck | no | yes |
+| Parlay check: combined chance with same-game links, fair odds, EV, staking plans, saved and graded parlays | 2-leg check (free account to save) | full |
