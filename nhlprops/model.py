@@ -1044,6 +1044,33 @@ def line_stats(lines_df, team: str, groups: dict) -> dict:
     return out
 
 
+def league_lines(lines_df, skaters: list[dict], min_toi: float = 25.0) -> dict:
+    """Every forward line and defence pair in the league with at least min_toi minutes together at 5-on-5 this season,
+    for the Lines & pairs list: {'min': minutes, 'rows': [[team, kind, ids, names, gp, toi, gf, xgf, ga, xga, sf, sa], ...]}."""
+    if lines_df is None or not len(lines_df):
+        return {"min": min_toi, "rows": []}
+    short = {}
+    for p in skaters:
+        parts = str(p.get("name") or "").split()
+        short[int(p["id"])] = (parts[0][:1] + ". " + " ".join(parts[1:])) if len(parts) > 1 else str(p.get("name") or "")
+    rows = []
+    for r in lines_df.itertuples(index=False):
+        lid = str(getattr(r, "lineId"))
+        if len(lid) % 7 or len(lid) // 7 not in (2, 3):
+            continue
+        g = lambda c: float(getattr(r, c, 0) or 0)
+        toi = g("icetime") / 60
+        if toi < min_toi:
+            continue
+        ids = [int(lid[i:i + 7]) for i in range(0, len(lid), 7)]
+        mp_names = str(getattr(r, "name", "") or "").split("-")
+        names = [short.get(i) or (mp_names[k] if k < len(mp_names) else str(i)) for k, i in enumerate(ids)]
+        rows.append([str(getattr(r, "team")), "f" if len(ids) == 3 else "d", ids, names, int(g("games_played")), round(toi, 1),
+                     int(g("goalsFor")), round(g("xGoalsFor"), 2), int(g("goalsAgainst")), round(g("xGoalsAgainst"), 2),
+                     int(g("shotsOnGoalFor")), int(g("shotsOnGoalAgainst"))])
+    return {"min": min_toi, "rows": rows}
+
+
 def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     GM_CFG.update(p1_share=cfg.get("p1_share", 0.29), en_q=cfg.get("en_q", 0.25))
     cur, date = raw["season"], raw["date"]
@@ -1541,4 +1568,5 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             "team_ranks": team_ranks(tf, cur),
             "players": {str(k): v for k, v in players_out.items()},
             "goalies": {str(k): v for k, v in goalies_out.items()},
-            "news_status": news.get("status", {})}
+            "news_status": news.get("status", {}),
+            "league_lines": league_lines((raw["mp"].get("lines") or {}).get(cur), raw["skaters"])}

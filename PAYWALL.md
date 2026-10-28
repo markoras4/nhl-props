@@ -44,3 +44,4 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Archive: last 7 days as before puck drop, with ✓/✗ results | games list, scores and results only | everything (player breakdowns, picks, compare) |
 
 Also planned for that release: 18+ check on the landing page again, Stripe checkout, prices (not decided yet).
+| Lines & pairs list: every line/pair in the league, sortable by xG%, chances/60, over/under-scoring, goaltending luck | no | yes |
