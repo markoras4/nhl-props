@@ -494,6 +494,10 @@ tr[data-spd]{cursor:pointer}tr[data-spd]:hover td{background:var(--panel2)}tr.sp
 .tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:260px;white-space:normal;text-align:left;background:var(--text);color:var(--bg);font:500 12px/1.4 var(--f-ui);letter-spacing:0;text-transform:none;padding:8px 10px;border-radius:8px;z-index:30;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .tip:hover::before,.tip:focus::before{content:"";position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--text);border-bottom:0;z-index:30}
 th.tip{text-decoration:underline dotted var(--mute);text-underline-offset:3px}
+/* tooltips in table headers open downward (inside the scrolling table) and right-aligned, so they're never cut off */
+thead .tip:hover::after,thead .tip:focus::after{bottom:auto;top:calc(100% + 8px);left:auto;right:0;transform:none;font-weight:500;text-transform:none;letter-spacing:0}
+thead .tip:hover::before,thead .tip:focus::before{bottom:auto;top:calc(100% + 3px);left:auto;right:10px;transform:none;border-top:0;border-bottom:5px solid var(--text)}
+thead th:first-child .tip:hover::after,thead th:first-child .tip:focus::after{right:auto;left:0}
 th.tip:hover::after,th.tip:focus::after{bottom:auto;top:calc(100% + 8px);left:auto;right:0;transform:none;font-weight:500}
 th.tip:hover::before,th.tip:focus::before{bottom:auto;top:calc(100% + 3px);border-top:0;border-bottom:5px solid var(--text)}
 .trhow{margin:0 0 14px}.trhow summary{cursor:pointer;font-weight:700;padding:12px 16px;list-style:none}.trhow summary::before{content:"ⓘ ";color:var(--accent)}
