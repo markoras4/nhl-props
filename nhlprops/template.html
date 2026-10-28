@@ -2403,7 +2403,7 @@ function l10Chart(pr, g){
   const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = line!=null ? v < line : (avg != null && v < avg - 1e-9);
     const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax), showLab = (games.length - 1 - i) % every === 0;
     return `<g class="gtg" data-gtp="${pr.id}" data-gtd="${x.d}" tabindex="0" role="button" aria-label="${esc(x.d+" "+(x.h?"vs ":"@ ")+x.o)}"><rect x="${L + cw*i}" y="${T}" width="${cw}" height="${H-T}" class="gthit"/>
-      <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="l10bar ${below?"l10lo":"l10hi"}" style="--i:${i}"/>
+      <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="l10bar ${below?"l10lo":"l10hi"}" style="--i:${(i * Math.min(1, 24 / games.length)).toFixed(2)}"/>
       ${v>0 && !crowd?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
       ${showLab?`<text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
       <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text>`:""}</g>`; }).join("");
