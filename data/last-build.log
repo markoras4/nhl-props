@@ -10,9 +10,9 @@ Fetching 168 recent box scores (hits, blocks) ...
 News: 132 injuries, likely starters for 28 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 22 teams (2026-10-27, updated 2026-10-28T07:04:31.304Z)
   shot maps: 198 games, 22676 attempts
 Model built: 48 games, 724 skaters (568 expected to play)
-Odds: bookmaker prices for 4 games, 140 players
+Odds: bookmaker prices for 4 games, 141 players
 Odds: sharp-book prices for 4 games, 106 player markets
   season simulation: 10000 seasons, 1146 games left, top Cup: CAR 27%, VGK 11%, MIN 11%
-Futures odds: Cup 32, conference 32, division 32, playoffs 11, points 10
+Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
   archive: 3 past dates published (2026-10-25, 2026-10-26, 2026-10-27)
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-28.html
