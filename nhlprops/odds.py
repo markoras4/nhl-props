@@ -243,3 +243,39 @@ def fetch_futures(src, log=print) -> dict:
     log(f"Futures odds: Cup {len(out['cup'])}, conference {len(out['final'])}, division {len(out['div'])}, "
         f"playoffs {len(out['playoffs'])}, points {len(out['points'])}")
     return out
+
+
+# ------------------------------------------------------------ public betting: share of tickets and money per side
+# Action Network's consensus (book 15) of the bets it tracks: moneyline, total and puck line, with the number of bets.
+AN = "https://api.actionnetwork.com/web/v2/scoreboard/nhl?bookIds=15&date={d}&periods=event"
+
+
+def fetch_public(src, games: list[dict], log=print) -> dict:
+    """-> {game_id: {'n': bets tracked, 'ml': {'home': [tickets%, money%], 'away': [...]},
+                     'tot': {'line': 6.5, 'over': [...], 'under': [...]}, 'pl': {'home': {'line', 't', 'm'}, 'away': {...}}}}"""
+    by_key = {(g["home"], g["away"], g["date"]): g for g in games}
+    out = {}
+    for d in sorted({g["date"] for g in games})[:3]:
+        js = src.json(AN.format(d=d.replace("-", "")), f"odds/an_{d}.json", 0.25) or {}
+        for ev in js.get("games") or []:
+            names = {t.get("id"): (t.get("full_name") or t.get("display_name") or "") for t in ev.get("teams") or []}
+            home, away = team_from_name(names.get(ev.get("home_team_id"), "")), team_from_name(names.get(ev.get("away_team_id"), ""))
+            g = by_key.get((home, away, d))
+            if not g or too_late(ev.get("start_time")) or str(ev.get("status") or "") not in ("scheduled", ""):
+                continue
+            mk = ((ev.get("markets") or {}).get("15") or {}).get("event") or {}
+            pct = lambda o: [int(((o.get("bet_info") or {}).get(k) or {}).get("percent") or 0) for k in ("tickets", "money")]
+            rec = {"n": ev.get("num_bets")}
+            ml = {o.get("side"): pct(o) for o in mk.get("moneyline") or [] if o.get("side") in ("home", "away")}
+            if sum(sum(v) for v in ml.values()):
+                rec["ml"] = ml
+            tot = {o.get("side"): o for o in mk.get("total") or [] if o.get("side") in ("over", "under")}
+            if tot and sum(sum(pct(o)) for o in tot.values()):
+                rec["tot"] = {"line": (tot.get("over") or tot.get("under")).get("value"), **{k: pct(o) for k, o in tot.items()}}
+            pl = {o.get("side"): o for o in mk.get("spread") or [] if o.get("side") in ("home", "away")}
+            if pl and sum(sum(pct(o)) for o in pl.values()):
+                rec["pl"] = {k: {"line": o.get("value"), "t": pct(o)[0], "m": pct(o)[1]} for k, o in pl.items()}
+            if len(rec) > 1:
+                out[g["id"]] = rec
+    log(f"Public betting: splits for {len(out)} games")
+    return out

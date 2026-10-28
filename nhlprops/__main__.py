@@ -637,6 +637,12 @@ def main(argv=None):
             merge_second(slate["odds"], fetch_pinnacle(src, slate["games"], raw["skaters"]))
         except Exception as e:
             print("Sharp-book odds unavailable:", e)
+        try:   # public betting splits (tickets and money per side), kept with the odds so they lock with them
+            from .odds import fetch_public
+            for gid, rec in fetch_public(src, slate["games"]).items():
+                slate["odds"].setdefault(gid, {"book": "Bookmaker", "players": {}, "totals": {}, "winner": {}, "fetched": None})["public"] = rec
+        except Exception as e:
+            print("Public betting unavailable:", e)
     track_open(slate, data_dir / ("demo_odds_open" if args.demo else "odds_open"))
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
     lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
