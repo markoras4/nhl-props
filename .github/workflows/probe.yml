@@ -13,34 +13,28 @@ jobs:
           python3 - <<'PY'
           import json, re, urllib.request, datetime as dt
           H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36","Accept":"application/json, text/html"}
-          def get(u, h=None):
+          def get(u):
               try:
-                  r=urllib.request.urlopen(urllib.request.Request(u, headers={**H, **(h or {})}), timeout=40); return r.status, r.read()
+                  r=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=40); return r.status, r.read()
               except Exception as e:
                   return getattr(e,"code",None) or str(e)[:120], b""
-          d=(dt.datetime.utcnow()-dt.timedelta(hours=5)).strftime("%Y%m%d")
-          for u in [f"https://api.actionnetwork.com/web/v2/scoreboard/nhl?bookIds=15,30,68,69,71,75,76,79&date={d}&periods=event",
-                    f"https://api.actionnetwork.com/web/v1/scoreboard/nhl?period=game&bookIds=15&date={d}",
-                    f"https://api.actionnetwork.com/web/v1/scoreboard/nhl?date={d}"]:
-              st,b=get(u); print("\n==", st, len(b), u)
-              if not b: continue
-              try: js=json.loads(b)
-              except Exception as e: print(" not json", b[:200]); continue
-              gs=js.get("games") or []
-              print(" games", len(gs))
-              if gs:
-                  g=gs[0]; print(" keys", list(g.keys())[:40])
-                  txt=json.dumps(g)
-                  for k in ("bet_info","tickets","money","public","num_bets"):
-                      i=txt.find(k); print(" ", k, txt[max(0,i-150):i+350] if i>=0 else "-")
+          for d in ("20261028","20261029","20261027"):
+              st,b=get(f"https://api.actionnetwork.com/web/v2/scoreboard/nhl?bookIds=15,30,68,69,71,75,76,79&date={d}&periods=event")
+              js=json.loads(b); print("\n### date", d, "games", len(js.get("games") or []))
+              for g in (js.get("games") or [])[:6]:
+                  tm={t["id"]:t.get("abbr") for t in g.get("teams",[])}
+                  print(" game", g.get("status"), tm.get(g["away_team_id"]), "@", tm.get(g["home_team_id"]), "num_bets", g.get("num_bets"))
+                  for bid, mk in (g.get("markets") or {}).items():
+                      ev=(mk or {}).get("event") or {}
+                      for kind in ("moneyline","total","spread"):
+                          for o in ev.get(kind) or []:
+                              bi=o.get("bet_info") or {}
+                              if any((bi.get(x) or {}).get("percent") for x in ("tickets","money")):
+                                  print("   book", bid, kind, o.get("side"), o.get("value"), o.get("odds"), "tickets", bi.get("tickets"), "money", bi.get("money"))
           st,b=get("https://dknetwork.draftkings.com/draftkings-sportsbook-betting-splits/?tb_eg=42133&tb_edate=today&tb_emt=0")
-          print("\n== DK splits", st, len(b))
-          t=b.decode("utf-8","ignore")
-          for m in re.finditer(r"(tb-se|tb_se|Handle|% Bets|% Handle)", t):
-              print("  ", t[max(0,m.start()-200):m.start()+300].replace("\n"," ")[:500]); break
-          print("  NHL teams present:", [x for x in ("Blackhawks","Rangers","Bruins","Oilers","Maple Leafs") if x in t])
-          st,b=get("https://www.covers.com/sport/hockey/nhl/consensus")
-          print("\n== Covers consensus", st, len(b))
+          t=b.decode("utf-8","ignore"); i=t.find("Maple Leafs")
+          print("\n== DK around team:", re.sub(r"\s+"," ",t[max(0,i-1500):i+1500]))
+          for m in re.findall(r'(https?://[^"\']*(?:ajax|wp-json|splits)[^"\']*)', t)[:20]: print("  url", m)
           PY
       - name: Save
         run: |
