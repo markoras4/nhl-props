@@ -316,9 +316,9 @@ td.h{text-align:center;padding:4px}
 .l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui);opacity:.8}
 .l10o{fill:var(--text);font-size:12.5px;font-weight:700;font-family:var(--f-disp);letter-spacing:.3px}
 .l10v{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
-.pvtabs button.on,.l10seg button.on,.bpseg button.on{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
-.pvtabs button,.l10seg button,.bpseg button{transition:color .2s ease,box-shadow .2s ease,background .2s ease}
-.pvtabs button:not(.on):hover,.l10seg button:not(.on):hover,.bpseg button:not(.on):hover{color:var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)}
+.pvtabs button.on,.l10seg button.on,.bpseg button.on,.olseg button.on{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.pvtabs button,.l10seg button,.bpseg button,.olseg button{transition:color .2s ease,box-shadow .2s ease,background .2s ease}
+.pvtabs button:not(.on):hover,.l10seg button:not(.on):hover,.bpseg button:not(.on):hover,.olseg button:not(.on):hover{color:var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)}
 .seg button.pop{animation:segpop .32s cubic-bezier(.2,.9,.25,1.25)}
 @keyframes segpop{0%{transform:scale(.88);box-shadow:inset 0 0 0 0 var(--accent),0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}60%{transform:scale(1.04);box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 5px color-mix(in srgb,var(--accent) 0%,transparent)}100%{transform:scale(1);box-shadow:inset 0 0 0 1.5px var(--accent)}}
 @media (prefers-reduced-motion:reduce){.seg button.pop{animation:none}}
@@ -2150,6 +2150,7 @@ function sidePanel(g, team){
     if (gmb){ state.gridm = gmb.dataset.gm; state.sort = null; sidePanel(g, team); return; }
     const cb = e.target.closest("[data-cv],[data-cs],[data-cm],[data-cu]");
     if (cb){ const d = cb.dataset;
+      if (!d.cv) segPop(d.cs ? "cs:"+d.cs : d.cm ? "cm:"+d.cm : "cu:"+d.cu);
       if (d.cv) state.chart.view = d.cv; if (d.cs) state.chart.stat = d.cs; if (d.cm) state.chart.mode = d.cm; if (d.cu) state.chart.unit = d.cu;
       store.set("set:chart", JSON.stringify(state.chart)); sidePanel(g, team); return; }
     const th = e.target.closest("th.s"); if (th){ state.sort = state.sort===th.dataset.m ? null : th.dataset.m; sidePanel(g, team); return; }
@@ -2253,7 +2254,7 @@ function barChart(rows, o){
 }
 function statsBox(p){
   const c = state.chart;
-  const seg = (attr, opts, cur) => `<div class="seg sm">${opts.map(([v,l])=>`<button data-${attr}="${v}" class="${cur===v?"on":""}">${l}</button>`).join("")}</div>`;
+  const seg = (attr, opts, cur) => `<div class="seg sm ${attr==="cv"?"":"olseg"}">${opts.map(([v,l])=>`<button data-${attr}="${v}" class="${cur===v?"on":""} ${cur===v && SEG_POP===attr+":"+v?"pop":""}">${l}</button>`).join("")}</div>`;
   const head = `<h4>${t("avg_head")} ${seg("cv",[["table",t("v_table")],["chart",t("v_chart")]],c.view)}</h4>`;
   if (c.view!=="chart") return `<div class="box" style="grid-column:1/-1">${head}<div class="tablewrap">${windowsTable(p)}</div></div>`;
   const rows = chartRows(p), k = c.stat, isPct = k==="sh";
