@@ -1902,20 +1902,20 @@ function linesView(g){
 
 // ------------------------------------------------------------ best picks (helper, not a verdict)
 // markets best picks can choose from, by group (the filter on the box); hits and blocks only show when there are odds
-// best picks never pick 2+ / 3+ goals, assists or points (long shots), so the Multi-point group is left out
-const BP_ORDER = GROUP_ORDER.filter(k => k !== "multi");
+// "All" never picks 2+ / 3+ goals, assists or points (long shots): they only show when the Multi-point tab is chosen
+const BP_ALL = GROUP_ORDER.filter(k => k !== "multi");
 // best picks use the same market groups as a player's Prices & value tabs (Points, Multi-point, Power play, Shots, ...)
 const bpFamily = m => { const g = mGroup(m); return g === "pts" || g === "multi" ? "pts" : g; };
 // the groups worth a tab for this game: with odds, only groups that have a price; without, groups the players have
 function bpGroups(g){
   const hasOdds = !!DATA.odds?.[g.id];
-  return BP_ORDER.filter(gk => g.props.some(pr => MGROUPS[gk].some(m => hasM(pr, m) && (!hasOdds || getOdds(g.id, pr.id, m)))));
+  return GROUP_ORDER.filter(gk => g.props.some(pr => MGROUPS[gk].some(m => hasM(pr, m) && (!hasOdds || getOdds(g.id, pr.id, m)))));
 }
 function bpGrp(g){ const grp = state.bpg || "all"; return grp === "all" || bpGroups(g).includes(grp) ? grp : "all"; }
 function bestPicks(g){
   const hasOdds = !!DATA.odds?.[g.id];
   const grp = bpGrp(g);
-  const mk = grp === "all" ? BP_ORDER.flatMap(k => MGROUPS[k]) : MGROUPS[grp];
+  const mk = grp === "all" ? BP_ALL.flatMap(k => MGROUPS[k]) : MGROUPS[grp];
   const cands = [];
   for (const pr of g.props){
     const p = P(pr.id); if (!p?.active) continue;
