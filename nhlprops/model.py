@@ -837,7 +837,10 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
                   "recent_sh": recent_sh, "finish": finish, "lg_sh": L["sh"]},
         "form": form, "hr": hr, "role": role, "streaks": streaks, "career": career,
         "shp": {str(y): {k: round(float(v), 2) for k, v in me[me.season == y][["gp", "att", "s", "miss", "blkd", "xg", "h"]].sum().items()}
-                for y in (cur, cur - 1) if len(me[me.season == y])},
+                for y in (cur, cur - 1) if len(me[me.season == y])} | (
+            {"avg": {**{k: round(float(v), 2) for k, v in me[me.season < cur][["gp", "att", "s", "miss", "blkd", "xg", "h"]].sum().items()},
+                     "n": int(me[(me.season < cur) & (me.gp > 0)].season.nunique())}}
+            if len(me[me.season < cur]) else {}),
         "drought": {"shots": shots_since, "games": games_since, "found": found,
                     "shots_per_goal": 1 / recent_sh if recent_sh else None,
                     # chance a shooter of his talent goes this many shots without scoring
