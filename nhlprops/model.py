@@ -257,6 +257,9 @@ class TeamModel:
             # current-season display numbers
             "gp": int(a.get("gp", 0)),
             "gf_pg": div(a.get("GF", 0), a.get("gp", 0)), "ga_pg": div(a.get("GA", 0), a.get("gp", 0)),
+            # season totals, all situations: goals vs expected goals for and against
+            "s_gf": int(a.get("GF", 0)), "s_ga": int(a.get("GA", 0)),
+            "s_xgf": round(float(a.get("xGF", 0)), 1), "s_xga": round(float(a.get("xGA", 0)), 1),
             "xgf_pct5": div(e.get("xGF", 0), e.get("xGF", 0) + e.get("xGA", 0)),
             "pdo": (sh + sv) if (sh is not None and sv is not None) else None,
             "sh5": sh, "sv5": sv,
