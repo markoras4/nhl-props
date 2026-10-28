@@ -1047,6 +1047,37 @@ def line_stats(lines_df, team: str, groups: dict) -> dict:
     return out
 
 
+def game_ixg(pbp: dict) -> dict:
+    """Each player's expected goals per game from his unblocked shot attempts (goals, shots on goal, misses), using a
+    small location model (distance and angle to the net) fitted on this season's attempts and scaled so that, league-wide,
+    expected goals = goals. -> {(player id, date): xG}"""
+    rows = []
+    for g in (pbp or {}).values():
+        d = g.get("d")
+        for pid, x, y, k, team in g.get("s") or []:
+            if k in ("G", "S", "M"):
+                dist = math.hypot(89 - x, y)
+                ang = math.degrees(math.atan2(abs(y), max(89 - x, 0.5))) if x < 89 else 90.0
+                rows.append((int(pid), d, dist, ang, 1.0 if k == "G" else 0.0))
+    if len(rows) < 2000:
+        return {}
+    A = np.array([[1.0, math.log1p(r[2]), r[3] / 90.0] for r in rows]); Y = np.array([r[4] for r in rows])
+    b = np.zeros(3)
+    for _ in range(25):   # logistic regression by Newton steps
+        q = 1 / (1 + np.exp(-A @ b))
+        H = (A * (q * (1 - q))[:, None]).T @ A + 1e-6 * np.eye(3)
+        step = np.linalg.solve(H, A.T @ (Y - q))
+        b += step
+        if np.abs(step).max() < 1e-8:
+            break
+    q = 1 / (1 + np.exp(-A @ b))
+    q *= Y.sum() / max(q.sum(), 1e-9)
+    out: dict = {}
+    for r, v in zip(rows, q):
+        out[(r[0], r[1])] = out.get((r[0], r[1]), 0.0) + float(v)
+    return out
+
+
 def league_lines(lines_df, skaters: list[dict], min_toi: float = 25.0) -> dict:
     """Every forward line and defence pair in the league with at least min_toi minutes together at 5-on-5 this season,
     for the Lines & pairs list: {'min': minutes, 'rows': [[team, kind, ids, names, gp, toi, gf, xgf, ga, xga, sf, sa], ...]}."""
@@ -1565,6 +1596,16 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                                                goalies_out[starters[A]]["ratio"] if starters.get(A) else 1.0),
                           "goalies": {t: [g["id"] for g in raw["goalies"] if g["team"] == t] for t in (H, A)}})
 
+    try:   # per-game expected goals for the game-by-game chart
+        ixg = game_ixg(raw.get("pbp") or {})
+        first = min((g.get("d") or "9999") for g in (raw.get("pbp") or {}).values()) if ixg else "9999"
+        if ixg:
+            for pid, pl in players_out.items():
+                for gm in (pl.get("form") or {}).get("games") or []:
+                    if (gm.get("d") or "") >= first:      # this season's games (play-by-play covers them); 0 = no attempts
+                        gm["x"] = round(ixg.get((int(pid), gm.get("d")), 0.0), 2)
+    except Exception as e:  # noqa: BLE001
+        log(f"  per-game xG skipped: {e}")
     log(f"Model built: {len(games_out)} games, {len(players_out)} skaters "
         f"({sum(p['active'] for p in players_out.values())} expected to play)")
     return {"date": date, "season": cur, "league": league, "teams": teams_out, "games": games_out, "opp_pos": opp_pos,
