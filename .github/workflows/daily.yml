@@ -76,6 +76,7 @@ jobs:
           mkdir -p site/data && if [ -f output/closing.json ]; then cp output/closing.json site/data/closing.json; fi
           if [ -f output/alerts.json ]; then cp output/alerts.json site/data/alerts.json; fi
           if [ -f output/shots.json ]; then cp output/shots.json site/data/shots.json; fi
+          if [ -d output/gl ]; then mkdir -p site/data/gl && cp output/gl/*.json site/data/gl/ 2>/dev/null || true; fi
           if [ -d output/archive ]; then mkdir -p site/data/archive && cp output/archive/*.json site/data/archive/ 2>/dev/null || true; fi
           cp site-assets/sw.js site/sw.js 2>/dev/null || true
           cp site-assets/manifest.webmanifest site/manifest.webmanifest 2>/dev/null || true

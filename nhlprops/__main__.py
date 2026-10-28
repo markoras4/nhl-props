@@ -700,6 +700,12 @@ def main(argv=None):
         except Exception as e:  # never break the build
             print("Season simulation skipped:", e)
     if not args.demo:
+        try:   # three seasons of game-by-game history per player (loaded by the site on demand)
+            from .history import build as build_history
+            build_history(raw, slate, src, ROOT / "output", data_dir / "cache" / "derived", CONFIG["workers"])
+        except Exception as e:  # never break the build
+            print("Game-by-game history skipped:", e)
+    if not args.demo:
         try:   # the last 7 days as they looked before puck drop, with results (opened from the Games tab)
             from .archive import build as build_archive
             slate["archive_dates"] = build_archive(slate, src, data_dir, ROOT / "output", raw.get("pbp"))

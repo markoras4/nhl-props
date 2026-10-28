@@ -150,7 +150,8 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
 
     def fetch_skater(p):
         pid = p["id"]
-        return pid, src.landing(pid), parse_log(src.game_log(pid, cur, True)), parse_log(src.game_log(pid, cur - 1, False))
+        return (pid, src.landing(pid), parse_log(src.game_log(pid, cur, True)), parse_log(src.game_log(pid, cur - 1, False)),
+                parse_log(src.game_log(pid, cur - 2, False)))   # two seasons back: only for the game-by-game history
 
     def fetch_goalie(p):
         pid = p["id"]
@@ -162,9 +163,9 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
         go = list(ex.map(fetch_goalie, goalies))
 
     landing, logs, glogs = {}, {}, {}
-    for pid, land, lc, lp in sk:
+    for pid, land, lc, lp, lp2 in sk:
         landing[pid] = land
-        logs[pid] = {"cur": lc, "prev": lp}
+        logs[pid] = {"cur": lc, "prev": lp, "prev2": lp2}
     for pid, land, gl in go:
         landing[pid] = land
         glogs[pid] = gl
