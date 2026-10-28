@@ -11,30 +11,19 @@ jobs:
         run: |
           exec >> probe-out.txt 2>&1
           python3 - <<'PY'
-          import json, re, urllib.request, datetime as dt
-          H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36","Accept":"application/json, text/html"}
+          import urllib.request, io
+          H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"}
           def get(u):
               try:
-                  r=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=40); return r.status, r.read()
+                  r=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=60); return r.status, r.read()
               except Exception as e:
                   return getattr(e,"code",None) or str(e)[:120], b""
-          for d in ("20261028","20261029","20261027"):
-              st,b=get(f"https://api.actionnetwork.com/web/v2/scoreboard/nhl?bookIds=15,30,68,69,71,75,76,79&date={d}&periods=event")
-              js=json.loads(b); print("\n### date", d, "games", len(js.get("games") or []))
-              for g in (js.get("games") or [])[:6]:
-                  tm={t["id"]:t.get("abbr") for t in g.get("teams",[])}
-                  print(" game", g.get("status"), tm.get(g["away_team_id"]), "@", tm.get(g["home_team_id"]), "num_bets", g.get("num_bets"))
-                  for bid, mk in (g.get("markets") or {}).items():
-                      ev=(mk or {}).get("event") or {}
-                      for kind in ("moneyline","total","spread"):
-                          for o in ev.get(kind) or []:
-                              bi=o.get("bet_info") or {}
-                              if any((bi.get(x) or {}).get("percent") for x in ("tickets","money")):
-                                  print("   book", bid, kind, o.get("side"), o.get("value"), o.get("odds"), "tickets", bi.get("tickets"), "money", bi.get("money"))
-          st,b=get("https://dknetwork.draftkings.com/draftkings-sportsbook-betting-splits/?tb_eg=42133&tb_edate=today&tb_emt=0")
-          t=b.decode("utf-8","ignore"); i=t.find("Maple Leafs")
-          print("\n== DK around team:", re.sub(r"\s+"," ",t[max(0,i-1500):i+1500]))
-          for m in re.findall(r'(https?://[^"\']*(?:ajax|wp-json|splits)[^"\']*)', t)[:20]: print("  url", m)
+          for u in ["https://moneypuck.com/moneypuck/playerData/careers/gameByGame/regular/skaters/8471214.csv",
+                    "https://moneypuck.com/moneypuck/playerData/careers/gameByGame/skaters/8471214.csv",
+                    "https://moneypuck.com/moneypuck/playerData/seasonSummary/2025/regular/skaters.csv"]:
+              st,b=get(u); print("==", st, len(b), u)
+              if b:
+                  lines=b.decode("utf-8","ignore").splitlines(); print(" header:", lines[0][:900]); print(" rows:", len(lines)); print(" last:", lines[-1][:300])
           PY
       - name: Save
         run: |
