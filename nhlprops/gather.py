@@ -173,10 +173,11 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
     hb_logs, venue_hits = {}, {}
     try:
         lgc = league_games[(league_games.season == cur) & (league_games.final)].sort_values("date")
-        ids = set()
+        ids, ids10 = set(), set()
         for t in teams:
-            tg = lgc[(lgc.home == t) | (lgc.away == t)].tail(10)
+            tg = lgc[(lgc.home == t) | (lgc.away == t)].tail(40)   # this season, for the game-by-game chart filter
             ids |= set(int(x) for x in tg.id)
+            ids10 |= set(int(x) for x in tg.tail(10).id)           # the rink hit factor keeps using the last 10 games
         log(f"Fetching {len(ids)} recent box scores (hits, blocks) ...")
         with ThreadPoolExecutor(cfg["workers"]) as ex:
             boxes = list(ex.map(lambda i: (i, src.boxscore(i)), sorted(ids)))
@@ -200,7 +201,8 @@ def gather(src: Source, date: str, cfg: dict, log=print) -> dict:
                             toi_ = 0.0
                         hb_logs.setdefault(int(pl["playerId"]), []).append(
                             {"gid": gid, "date": gdate, "team": team, "opp": opp, "home": is_home, "hit": h_, "blk": b_, "toi": toi_})
-            v = venue_hits.setdefault(home, [0, 0]); v[0] += tot_hits; v[1] += 1
+            if gid in ids10:
+                v = venue_hits.setdefault(home, [0, 0]); v[0] += tot_hits; v[1] += 1
         for k in hb_logs:
             hb_logs[k].sort(key=lambda r: r["date"] or "", reverse=True)
     except Exception as e:  # optional data

@@ -703,7 +703,11 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
             "p": sum(g["p"] for g in l5), "s": sum(g["s"] for g in l5),
             "toi": float(np.mean([g["toi"] for g in l5])) if l5 else None,
             "games": [{"d": g["date"], "o": g["opp"], "h": g["home"], "g": g["g"], "a": g["a"],
-                       "s": g["s"], "t": round(g["toi"], 1), "pp": g.get("ppp", 0), "pm": g.get("pim", 0)} for g in lc[:10]]}
+                       "s": g["s"], "t": round(g["toi"], 1), "pp": g.get("ppp", 0), "pm": g.get("pim", 0)} for g in lc[:10]],
+            # compact game log for the game-by-game chart filter (up to 40 games, this season then last):
+            # [date, opp, home, G, A, SOG, TOI, PPP, PIM, hits, blocks, xG]; hits/blocks and xG are filled in later
+            "gl": [[g["date"], g["opp"], 1 if g["home"] else 0, g["g"], g["a"], g["s"], round(g["toi"], 1),
+                    g.get("ppp", 0), g.get("pim", 0), None, None, None] for g in (lc + lp)[:40]]}
     # ---- hits and blocked shots per 60 (validated in backtest_hb): this season shrunk to last season, shrunk to position
     hb = {}
     for stat in ("hit", "blk"):
@@ -1282,9 +1286,15 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     # hits / blocks: recent box scores (the NHL game logs don't carry them)
     for pid_, prof_ in profiles.items():
         rows_ = (raw.get("hb_logs") or {}).get(pid_) or []
-        rows_ = [r_ for r_ in rows_ if r_.get("toi", 0) > 0][:10]
+        rows_all = [r_ for r_ in rows_ if r_.get("toi", 0) > 0]
+        rows_ = rows_all[:10]
         if not rows_:
             continue
+        hb_by = {r_["date"]: r_ for r_ in rows_all}
+        for row in (prof_.get("form") or {}).get("gl") or []:
+            r_ = hb_by.get(row[0])
+            if r_:
+                row[9], row[10] = r_["hit"], r_["blk"]
         prof_["hb_games"] = [{"d": r_["date"], "o": r_["opp"], "h": r_["home"], "hit": r_["hit"], "blk": r_["blk"]} for r_ in rows_]
         w5, w10 = rows_[:5], rows_
         prof_["hr"]["hbn"] = [len(w5), len(w10)]
@@ -1604,6 +1614,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 for gm in (pl.get("form") or {}).get("games") or []:
                     if (gm.get("d") or "") >= first:      # this season's games (play-by-play covers them); 0 = no attempts
                         gm["x"] = round(ixg.get((int(pid), gm.get("d")), 0.0), 2)
+                for row in (pl.get("form") or {}).get("gl") or []:
+                    if (row[0] or "") >= first:
+                        row[11] = round(ixg.get((int(pid), row[0]), 0.0), 2)
     except Exception as e:  # noqa: BLE001
         log(f"  per-game xG skipped: {e}")
     log(f"Model built: {len(games_out)} games, {len(players_out)} skaters "

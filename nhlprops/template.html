@@ -316,6 +316,27 @@ td.h{text-align:center;padding:4px}
 .l10d{fill:var(--mute);font-size:10px;font-family:var(--f-ui);opacity:.8}
 .l10o{fill:var(--text);font-size:12.5px;font-weight:700;font-family:var(--f-disp);letter-spacing:.3px}
 .l10v{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
+.l10hd{display:inline-flex;align-items:center;gap:8px;position:relative;flex-wrap:wrap}
+.l10fbtn{display:inline-flex;align-items:center;gap:5px;font:700 12px var(--f-ui);padding:5px 10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
+.l10fbtn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.l10fbtn.on,.l10fbtn:hover{border-color:var(--accent);color:var(--accent)}
+.l10pop{position:absolute;top:calc(100% + 8px);right:0;z-index:20;background:var(--panel);border:1px solid var(--line2, var(--line));border-radius:12px;padding:12px;box-shadow:0 14px 34px rgba(0,0,0,.45);min-width:240px;animation:l10in .16s ease-out;text-transform:none;letter-spacing:0}
+.l10pt{font:700 11px var(--f-ui);color:var(--mute);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.l10pop .seg button small{opacity:.7;font-weight:600}
+.l10step{display:flex;align-items:center;gap:10px;margin-top:10px}
+.l10step button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:700 18px/1 var(--f-ui);cursor:pointer}
+.l10step button:disabled{opacity:.35;cursor:default}
+.l10step b{min-width:28px;text-align:center;font-size:16px;font-variant-numeric:tabular-nums}
+@keyframes l10in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.l10sea rect{fill:color-mix(in srgb,var(--text) 3.5%,transparent);stroke:var(--line);stroke-width:1}
+.l10sea text{font:700 10px var(--f-ui);fill:var(--mute)}
+.l10lines-pick .seg button.on{background:transparent !important;color:var(--accent) !important;box-shadow:inset 0 0 0 1.5px var(--accent);transition:box-shadow .2s,color .2s}
+.l10lines-pick .seg button{transition:box-shadow .2s,color .2s,background .2s}
+.l10anim .l10bar{transform-box:fill-box;transform-origin:50% 100%;animation:l10pop .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 18ms)}
+@keyframes l10pop{0%{transform:scaleY(.15);opacity:.35}70%{transform:scaleY(1.04)}100%{transform:scaleY(1);opacity:1}}
+.l10anim .l10lines line{animation:l10fade .5s ease-out both}
+@keyframes l10fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.l10anim .l10bar,.l10anim .l10lines line,.l10pop{animation:none}}
 .l10hi{fill:var(--good)}
 .l10lo{fill:var(--bad);opacity:.85}
 .l10avg{stroke:var(--text);stroke-width:2;stroke-dasharray:1 6;stroke-linecap:round;opacity:.75}
@@ -920,7 +941,7 @@ const I18N = {
     reg:"Skill or luck?", k_shcur:"Shooting % this season", k_shtrue:"True-talent shooting %", k_shcar:"Career shooting % (regressed)", k_lgavg:"League average ({p})",
     k_gvx:"Goals vs expected this season", vs:"vs", k_ixg:"ixG this season / prev 3", k_gmx:"Goals − xG this season / prev 3", k_since:"Shots since last goal", gm:"gm",
     k_spg:"Typical shots per goal", k_drought:"How often a drought this long happens at his level",
-    last10:"Last 10 games", l10_chart:"Game by game", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", l10_h:"H", l10_b:"B", l10_tip_h:"Hits", l10_tip_b:"Blocked shots", l10_avg_last:"Average, last {n}",
+    last10:"Last 10 games", l10_chart:"Game by game", l10_games:"Games shown", l10_all:"All", l10_of:"of {n} available", l10_over_n:"over", l10_p:"P", l10_avg_season:"Season average", l10_avg_3y:"Last 3 seasons' average", l10_exp:"Model tonight", l10_hi:"At or above average", l10_lo:"Below average", l10_tip_s:"Shots on goal", l10_tip_g:"Goals", l10_tip_a:"Assists", l10_tip_p:"Points (goals + assists)", l10_h:"H", l10_b:"B", l10_tip_h:"Hits", l10_tip_b:"Blocked shots", l10_avg_last:"Average, last {n}",
     l10_colour:"Colour bars by", l10_by_avg:"Average", l10_1plus:"1+", l10_line:"Line", l10_over:"Over the line", l10_under:"Under the line",
     hr_over_s:"Over {l} shots: how often it happened", hr_g:"1+ goal: how often it happened", hr_a:"1+ assist: how often it happened", hr_p:"1+ point: how often it happened", hr_over_h:"Over {l} hits: how often it happened", hr_over_b:"Over {l} blocked shots: how often it happened",
     hr_season:"Season", hr_vs:"vs {t}", hr_model:"Model tonight", hr_market:"Market",
@@ -1145,7 +1166,7 @@ const I18N = {
     reg:"Skicklighet eller tur?", k_shcur:"Skottprocent i år", k_shtrue:"Verklig skottprocent", k_shcar:"Skottprocent i karriären (justerad)", k_lgavg:"Ligasnitt ({p})",
     k_gvx:"Mål mot förväntat i år", vs:"mot", k_ixg:"ixG i år / förra 3", k_gmx:"Mål − xG i år / förra 3", k_since:"Skott sedan senaste målet", gm:"m",
     k_spg:"Typiskt antal skott per mål", k_drought:"Hur ofta en så lång torka händer på hans nivå",
-    last10:"Senaste 10 matcherna", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", l10_h:"T", l10_b:"B", l10_tip_h:"Tacklingar", l10_tip_b:"Blockerade skott", l10_avg_last:"Snitt, senaste {n}",
+    last10:"Senaste 10 matcherna", l10_games:"Visade matcher", l10_all:"Alla", l10_of:"av {n} tillgängliga", l10_over_n:"över", l10_chart:"Match för match", l10_p:"P", l10_avg_season:"Säsongssnitt", l10_avg_3y:"Snitt senaste 3 säsongerna", l10_exp:"Modellen i kväll", l10_hi:"I nivå med eller över snittet", l10_lo:"Under snittet", l10_tip_s:"Skott på mål", l10_tip_g:"Mål", l10_tip_a:"Assist", l10_tip_p:"Poäng (mål + assist)", l10_h:"T", l10_b:"B", l10_tip_h:"Tacklingar", l10_tip_b:"Blockerade skott", l10_avg_last:"Snitt, senaste {n}",
     l10_colour:"Färga staplar efter", l10_by_avg:"Snitt", l10_1plus:"1+", l10_line:"Linje", l10_over:"Över linjen", l10_under:"Under linjen",
     hr_over_s:"Över {l} skott: hur ofta det hänt", hr_g:"1+ mål: hur ofta det hänt", hr_a:"1+ assist: hur ofta det hänt", hr_p:"1+ poäng: hur ofta det hänt", hr_over_h:"Över {l} tacklingar: hur ofta det hänt", hr_over_b:"Över {l} blockerade skott: hur ofta det hänt",
     hr_season:"Säsong", hr_vs:"mot {t}", hr_model:"Modellen i kväll", hr_market:"Marknaden",
@@ -2335,6 +2356,14 @@ function gameLine(pid, d){
   document.addEventListener("focusout", ev => { if (ev.target.closest?.(".gtg") && !pinned) hide(); });
   addEventListener("scroll", () => { if (tipEl && !tipEl.hidden) hide(); }, {passive: true});
 })();
+// the compact game log (up to 40 games, newest first) as objects; falls back to the last-10 lists
+function l10Log(p){
+  const gl = p.form?.gl;
+  if (gl?.length) return gl.map(r => ({d:r[0], o:r[1], h:!!r[2], g:r[3], a:r[4], s:r[5], t:r[6], pp:r[7], pm:r[8], hit:r[9], blk:r[10], x:r[11]}));
+  const hb = Object.fromEntries((p.hb_games||[]).map(x => [x.d, x]));
+  return (p.form?.games||[]).map(x => ({...x, hit: hb[x.d]?.hit ?? null, blk: hb[x.d]?.blk ?? null}));
+}
+const seasonOf = d => { const y = +d.slice(0,4), mo = +d.slice(5,7); return mo >= 8 ? y : y - 1; };
 function l10Chart(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), hbOk = hasHB(pr) && (p.hb_games||[]).length >= 3;
   let m = state.l10m || "s"; if ((m==="h"||m==="b") && !hbOk) m = "s";
@@ -2342,7 +2371,9 @@ function l10Chart(pr, g){
   const lines = m==="s" ? C.sog_lines : m==="h" ? HIT_LINES : m==="b" ? BLK_LINES : [0.5];
   state.l10line = state.l10line || {};
   const line = state.l10line[m] ?? null;
-  const games = (hb ? p.hb_games : p.form.games).slice(0,10).reverse();
+  const avail = l10Log(p).filter(x => hb ? x.hit != null : true), nMax = avail.length;
+  const n = Math.max(1, Math.min(state.l10n ?? 10, nMax || 1)), nLab = n >= nMax ? t("l10_all") : `L${n}`;
+  const games = avail.slice(0, n).reverse();
   const val = x => m==="g" ? x.g : m==="a" ? x.a : m==="p" ? x.g + x.a : m==="h" ? x.hit : m==="b" ? x.blk : x.s;
   const w = p.windows || {}, base = (w.cur && w.cur.gp >= 5) ? w.cur : (w.prev3 || w.cur || {});
   const avg = hb ? games.reduce((a,x)=>a+val(x),0)/Math.max(1,games.length) : m==="g" ? base.g_pg : m==="a" ? base.a_pg : m==="p" ? base.p_pg : base.s_pg;
@@ -2354,13 +2385,17 @@ function l10Chart(pr, g){
   const y = v => T + (H - T - B) * (1 - v / ymax);
   const ticks = []; const step = ymax <= 3 ? 1 : ymax <= 8 ? 2 : 3; for (let v = 0; v <= ymax; v += step) ticks.push(v);
   const grid = ticks.map(v => `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="l10g"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end" class="l10t">${v}</text>`).join("");
+  const every = Math.max(1, Math.ceil(games.length / (narrow ? 6 : 11))), crowd = cw < 15;
+  // one framed panel per season, starting at its first game: 25/26, 26/27
+  const seasons = []; games.forEach((x, i) => { const sn = seasonOf(x.d); if (!seasons.length || seasons[seasons.length-1].sn !== sn) seasons.push({sn, i0:i, i1:i}); else seasons[seasons.length-1].i1 = i; });
+  const panels = seasons.map(S => `<g class="l10sea"><rect x="${L + cw*S.i0 + 1}" y="${T - 2}" width="${cw*(S.i1 - S.i0 + 1) - 2}" height="${H - T - B + 4}" rx="6"/><text x="${L + cw*S.i0 + 6}" y="${T + 9}">${String(S.sn % 100).padStart(2,"0")}/${String((S.sn+1) % 100).padStart(2,"0")}</text></g>`).join("");
   const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = line!=null ? v < line : (avg != null && v < avg - 1e-9);
-    const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax);
+    const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax), showLab = (games.length - 1 - i) % every === 0;
     return `<g class="gtg" data-gtp="${pr.id}" data-gtd="${x.d}" tabindex="0" role="button" aria-label="${esc(x.d+" "+(x.h?"vs ":"@ ")+x.o)}"><rect x="${L + cw*i}" y="${T}" width="${cw}" height="${H-T}" class="gthit"/>
-      <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="${below?"l10lo":"l10hi"}"/>
-      ${v>0?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
-      <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
-      <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text></g>`; }).join("");
+      <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="l10bar ${below?"l10lo":"l10hi"}" style="--i:${i}"/>
+      ${v>0 && !crowd?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
+      ${showLab?`<text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
+      <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text>`:""}</g>`; }).join("");
   // reference lines (model, average, chosen line), each with a value tag at the right edge; tags never overlap
   const refs = [];
   if (exp!=null) refs.push({v:exp, y:y(exp), cls:"l10exp"});
@@ -2373,11 +2408,17 @@ function l10Chart(pr, g){
   const linesG = `<g class="l10lines">${refs.map(r=>`<line x1="${L}" x2="${W-R+4}" y1="${r.y}" y2="${r.y}" class="${r.cls}"/>`).join("")}${refs.map(r=>`<rect x="${W-R+8}" y="${r.ly-8}" width="${R-10}" height="16" rx="8" class="${r.cls}-tag"/><text x="${W-R+8+(R-10)/2}" y="${r.ly+3.5}" text-anchor="middle" class="${r.cls}-txt">${r.txt||fmt(r.v,2)}</text>`).join("")}</g>`;
   const TIP = {s:t("l10_tip_s"), g:t("l10_tip_g"), a:t("l10_tip_a"), p:t("l10_tip_p"), h:t("l10_tip_h"), b:t("l10_tip_b")};
   const btn = (k, lbl) => `<button data-l10="${k}" class="${m===k?"on":""}" data-tip="${TIP[k]}" aria-label="${TIP[k]}">${lbl}</button>`;
-  return `<h4>${t("l10_chart")} <span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}${hbOk?btn("h",t("l10_h"))+btn("b",t("l10_b")):""}</span></h4>
-    <svg viewBox="0 0 ${W} ${H}" class="l10svg" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${grid}${bars}${linesG}</svg>
+  const pop = state.l10pop ? `<div class="l10pop" role="dialog" aria-label="${esc(t("l10_games"))}"><div class="l10pt">${t("l10_games")}</div>
+      <div class="seg">${[5,10,20].filter(k => k < nMax).map(k => `<button type="button" data-l10n="${k}" class="${n===k?"on":""}">L${k}</button>`).join("")}<button type="button" data-l10n="all" class="${n>=nMax?"on":""}">${t("l10_all")} <small>${nMax}</small></button></div>
+      <div class="l10step"><button type="button" data-l10step="-1" ${n<=3?"disabled":""} aria-label="−">−</button><b>${n}</b><button type="button" data-l10step="1" ${n>=nMax?"disabled":""} aria-label="+">+</button><span class="meta">${t("l10_of",{n:nMax})}</span></div></div>` : "";
+  const hitN = line!=null ? games.filter((x,i) => vals[i] > line).length : null;
+  const anim = state.l10anim ? " l10anim" : ""; state.l10anim = false;
+  return `<h4>${t("l10_chart")} <span class="l10hd"><span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}${hbOk?btn("h",t("l10_h"))+btn("b",t("l10_b")):""}</span>
+    <button type="button" class="l10fbtn ${state.l10pop?"on":""}" data-l10f aria-expanded="${!!state.l10pop}" title="${esc(t("l10_games"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>${nLab}</button>${pop}</span></h4>
+    <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${linesG}</svg>
     <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
-      ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b></span>`:""}
+      ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b> · <b>${hitN}/${games.length}</b> ${t("l10_over_n")}</span>`:""}
       <span><i class="sw hi"></i>${line!=null?t("l10_over"):t("l10_hi")}</span><span><i class="sw lo"></i>${line!=null?t("l10_under"):t("l10_lo")}</span></div>
     ${hitStrip(pr, g, m, line)}`;
 }
@@ -2408,10 +2449,20 @@ function hitStrip(pr, g, m, line){
 }
 document.addEventListener("click", e => {
   const lb = e.target.closest("[data-l10line]");
-  if (lb){ const box = lb.closest(".l10box"); state.l10line = state.l10line || {}; state.l10line[state.l10m||"s"] = lb.dataset.l10line==="" ? null : +lb.dataset.l10line;
+  const fb = e.target.closest("[data-l10f],[data-l10n],[data-l10step]");
+  if (fb){ const box = fb.closest(".l10box"); const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (!pr) return;
+    if (fb.dataset.l10f !== undefined) state.l10pop = !state.l10pop;
+    else { const p = P(pr.id), max = l10Log(p).length, cur = Math.min(state.l10n ?? 10, max);
+      state.l10n = fb.dataset.l10n ? (fb.dataset.l10n === "all" ? 999 : +fb.dataset.l10n) : Math.max(3, Math.min(max, cur + (+fb.dataset.l10step)));
+      if (state.l10n > max) state.l10n = 999; state.l10anim = true; }
+    box.innerHTML = l10Chart(pr, g); return; }
+  if (state.l10pop && !e.target.closest(".l10pop")){ state.l10pop = false;   // a click anywhere else closes the games window
+    if (!e.target.closest("[data-l10line],[data-l10]")){ const box = document.querySelector(".l10box");
+      if (box){ const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); } return; } }
+  if (lb){ const box = lb.closest(".l10box"); state.l10line = state.l10line || {}; state.l10line[state.l10m||"s"] = lb.dataset.l10line==="" ? null : +lb.dataset.l10line; state.l10anim = true;
     const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); return; }
   const b = e.target.closest("[data-l10]"); if (!b) return;
-  const box = b.closest(".l10box"); state.l10m = b.dataset.l10;
+  const box = b.closest(".l10box"); state.l10m = b.dataset.l10; state.l10anim = true;
   const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid);
   if (pr) box.innerHTML = l10Chart(pr, g);
 });
