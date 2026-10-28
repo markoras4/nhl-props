@@ -152,6 +152,30 @@ def freeze_started(slate: dict, frozen_dir: Path) -> None:
             f.unlink()
 
 
+def save_public(slate: dict, pub_dir: Path) -> None:
+    """Keep every game's public betting split as it was at the lock, with the model's numbers and the odds then,
+    for a later test of whether money vs tickets gaps say anything the model doesn't. One file per season."""
+    pub_dir.mkdir(parents=True, exist_ok=True)
+    odds = slate.get("odds") or {}
+    f = pub_dir / f"{slate.get('season', 'cur')}.json"
+    store = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+    added = 0
+    for g in slate["games"]:
+        gid = str(g["id"])
+        o = odds.get(g["id"]) or odds.get(gid) or {}
+        if gid in store or not o.get("public") or not is_locked(g):
+            continue
+        d = g.get("default") or {}
+        store[gid] = {"d": g["date"], "h": g["home"], "a": g["away"], "pub": o["public"], "at": g.get("frozen"),
+                      "p_home": d.get("p_home"), "p_away": d.get("p_away"),
+                      "p_over": {k[5:]: v for k, v in d.items() if k.startswith("over_")},
+                      "odds": {"winner": o.get("winner"), "totals": o.get("totals")}}
+        added += 1
+    if added:
+        f.write_text(json.dumps(store, separators=(",", ":")), encoding="utf-8")
+        print(f"Public betting: saved {added} locked splits ({len(store)} this season)")
+
+
 def lock_stakes(slate: dict, frozen_dir: Path) -> None:
     """'What's at stake' and the teams' luck pills for a game, as they were before its lock."""
     F = slate.get("futures") or {}
@@ -645,6 +669,11 @@ def main(argv=None):
             print("Public betting unavailable:", e)
     track_open(slate, data_dir / ("demo_odds_open" if args.demo else "odds_open"))
     freeze_started(slate, data_dir / ("demo_frozen" if args.demo else "frozen"))
+    if not args.demo:
+        try:
+            save_public(slate, data_dir / "public")
+        except Exception as e:  # never break the build
+            print("Public betting archive skipped:", e)
     lineup_roles(slate, data_dir / ("demo_lineups" if args.demo else "lineups"))
     write_closing(data_dir / ("demo_frozen" if args.demo else "frozen"), ROOT / "output" / "closing.json")
     try:
