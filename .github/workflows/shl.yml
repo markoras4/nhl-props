@@ -1,0 +1,35 @@
+name: SHL (private local build)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 6,12,15 * * *"
+permissions:
+  contents: write
+jobs:
+  shl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Restore SHL data (private branch)
+        run: |
+          mkdir -p data/shl
+          if git fetch -q origin shl-data 2>/dev/null; then git archive origin/shl-data | tar -x -C data/shl; fi
+          du -sh data/shl || true
+      - name: Collect
+        run: python -m shl.collect
+      - name: Build (model + page)
+        run: |
+          if [ -f shl/build.py ]; then python -m shl.build || echo "build failed"; fi
+      - name: Save data and page to private branches
+        run: |
+          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          rm -rf /tmp/sd && cp -r data/shl /tmp/sd && cd /tmp/sd && git init -q && git checkout -q -b shl-data
+          git add -A && git commit -qm "SHL data $(date -u +%F-%H%M)" && git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:shl-data
+          cd "$GITHUB_WORKSPACE"
+          if [ -d output/shl ]; then rm -rf /tmp/sp && cp -r output/shl /tmp/sp && cd /tmp/sp && git init -q && git checkout -q -b shl-page && git add -A && git commit -qm "SHL page $(date -u +%F-%H%M)" && git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:shl-page; fi
