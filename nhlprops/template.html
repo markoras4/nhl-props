@@ -1096,7 +1096,7 @@ const I18N = {
     tt_gk:"Tonight's opposing goalie compared with an average goalie. Below 1 = a better goalie, so a little harder to score. Changes when you switch goalies.",
     tt_home:"Players score slightly more at home.", tt_away:"Players score slightly less on the road.",
     tt_b2b:"Back-to-back: a team playing its second game in two nights is a little weaker (more so on the road). 1.000 = neither team played yesterday.",
-    tt_env:"League scoring this season compared with normal. Above 1 = goals are a bit easier to come by this year.",
+    tt_env:"League scoring this season compared with normal. Above 1 = goals are a bit easier to come by this year.", c_role:"Depth role", tt_role:"Forwards in small roles score a little less than their per-minute rates suggest: tested on past seasons, the model overrated them by 6–16% without this. The fewer minutes he's projected, the bigger the cut; a bit more for veterans in depth roles.",
     tt_streak:"Team streak adjustment: long winning or losing runs are pulled back toward normal.",
     tt_xga:"Tonight's expected goals and assists: rate × minutes × all the factors. A goal chance is 1 − e^(−expected goals).",
     tt_xs:"Tonight's expected shots on goal, the basis for the shots lines.",
@@ -1321,7 +1321,7 @@ const I18N = {
     tt_gk:"Kvällens motståndarmålvakt jämfört med en genomsnittlig målvakt. Under 1 = bättre målvakt, lite svårare att göra mål. Ändras när du byter målvakt.",
     tt_home:"Spelare gör något fler mål hemma.", tt_away:"Spelare gör något färre mål borta.",
     tt_b2b:"Back-to-back: ett lag som spelar andra matchen på två kvällar är lite svagare (mer på bortaplan). 1,000 = inget av lagen spelade i går.",
-    tt_env:"Ligans målproduktion i år jämfört med normalt. Över 1 = målen kommer lite lättare i år.",
+    tt_env:"Ligans målproduktion i år jämfört med normalt. Över 1 = målen kommer lite lättare i år.", c_role:"Djuproll", tt_role:"Forwards i små roller gör lite färre mål och poäng än deras takt per minut antyder: i tester på tidigare säsonger överskattade modellen dem med 6–16 % utan detta. Ju färre minuter han väntas spela, desto större avdrag; lite mer för rutinerade spelare i djuproller.",
     tt_streak:"Justering för lagets svit: långa vinst- eller förlustsviter dras tillbaka mot det normala.",
     tt_xga:"Kvällens förväntade mål och assist: takt × minuter × alla faktorer. Målchansen är 1 − e^(−förväntade mål).",
     tt_xs:"Kvällens förväntade skott på mål, grunden för skottlinjerna.",
@@ -2376,7 +2376,7 @@ function detail(pr, g){
         <span class="chip${TT("tt_s60")}">${t("c_s60")} <b>${fmt(r.s60,2)}</b></span><span class="chip${TT("tt_toi")}">${t("toi")} <b>${fmt(p.toi_proj,1)}</b></span>
         <span class="chip${TT("tt_def")}">${t("c_def")} ${x(f.opp_def)}</span><span class="chip${TT("tt_gk")}">${t("c_gk")} ${x(l.gr)}</span>
         <span class="chip${TT(pr.home?"tt_home":"tt_away")}">${pr.home?t("c_home"):t("c_away")} ${x(f.venue)}</span><span class="chip${TT("tt_b2b")}">${t("c_b2b")} ${x(f.b2b)}</span>${r.fm_g!=null?`<span class="chip tip" tabindex="0" data-tip="${esc(t("c_form_tip",{g:r.fm_g.toFixed(3), a:r.fm_a.toFixed(3), s:r.fm_s.toFixed(3)}))}">${t("c_form")} ${x(r.fm_g)}</span>`:""}
-        <span class="chip${TT("tt_env")}">${t("c_env")} ${x(f.env)}</span>${l.sm!==1?`<span class="chip${TT("tt_streak")}">${t("c_streak")} ${x(l.sm)}</span>`:""}
+        <span class="chip${TT("tt_env")}">${t("c_env")} ${x(f.env)}</span>${f.role!=null && f.role<0.9995?`<span class="chip${TT("tt_role")}">${t("c_role")} ${x(f.role)}</span>`:""}${l.sm!==1?`<span class="chip${TT("tt_streak")}">${t("c_streak")} ${x(l.sm)}</span>`:""}
         ${p.toi_boost?`<span class="chip tip" tabindex="0" data-tip="${esc(t("ms_boost_tip",{n:p.toi_boost.from.join(", ")}))}">${t("ms_boost")} <b class="up">+${fmt(p.toi_boost.min,1)}</b></span>`:""}
       </div>
       <div class="kv" style="margin-top:10px">

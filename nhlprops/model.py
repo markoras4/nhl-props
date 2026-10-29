@@ -1555,8 +1555,13 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 vs = [g for g in (lg_.get("cur", []) + lg_.get("prev", [])) if g.get("opp") == opp]
                 hv = {"n": len(vs), **{mk: sum(1 for g in vs if fn(g)) for mk, fn in hit_fns.items()}}
                 hrs = prof["toi_proj"] / 60
-                base = {"g": r["g60"] * hrs * d_xg * venue * bb * env * r.get("fm_g", 1.0),
-                        "a": r["a60"] * hrs * d_xg * venue * bb * env * r.get("fm_a", 1.0),
+                dc = cfg.get("depth_cal") or {}
+                role = 1.0
+                if dc and prof.get("posg") == "F" and prof["toi_proj"] < dc["t0"]:
+                    vet = 1.0 if (((prof.get("windows") or {}).get("career") or {}).get("gp") or 0) > 82 else 0.0
+                    role = max(dc["floor"], 1 - dc["k"] * (dc["t0"] - prof["toi_proj"]) * (1 + dc["vet"] * vet))
+                base = {"g": r["g60"] * hrs * d_xg * venue * bb * env * r.get("fm_g", 1.0) * role,
+                        "a": r["a60"] * hrs * d_xg * venue * bb * env * r.get("fm_a", 1.0) * role,
                         "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0) * r.get("fm_s", 1.0)}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
                 if r.get("hit60") is not None:
@@ -1587,7 +1592,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                         hbp.update({f"fo{L}": p_over_nb(base["fow"], L, cfg["fo_r"]) for L in cfg["fo_lines"]})
                 props.append({
                     "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base, "hv": hv,
-                    "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr},
+                    "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr, "role": role},
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
                           **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}, **hbp},
                 })

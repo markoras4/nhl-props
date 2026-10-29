@@ -89,7 +89,10 @@ CONFIG = {
     "season_sigma_k": 30.0,
     "season_prior_r": 0.7,   # backtest_season: last season's team level pulled 30% toward average (best game-level fit)
     "season_k": 20.0,
-    "prior_toi_beta": 1.0,   # backtest_depth: rookies / depth players pulled toward players with their ice time (0 = position average)
+    "prior_toi_beta": 1.0,
+    # backtest_depthcal: forwards projected under T0 minutes score less than their rates suggest (fitted 2022-23,
+    # confirmed on 2024-25 and 2025-26): expected goals and assists x (1 - k * (T0 - TOI) * (1 + vet for 83+ NHL games))
+    "depth_cal": {"k": 0.01, "t0": 17.0, "vet": 0.5, "floor": 0.6},   # backtest_depth: rookies / depth players pulled toward players with their ice time (0 = position average)
     "form_k": {"g": 40.0, "a": 40.0, "s": 80.0},   # backtest_form: recent-form cushion per market (bigger = less weight on the last 10 games)
     "btts2_cal": 0.963,            # backtest_markets: both teams 2+ goals ran 64.7% vs 62.3%
     # backtest_extra (85,709 player-games): PP points K=20 games + opponent penalties^0.5; penalties NB r=4, rate x0.9,
