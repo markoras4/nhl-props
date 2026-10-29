@@ -508,7 +508,17 @@ body.has-cmp .slipfab{bottom:84px}
 .pvlink{color:var(--accent);text-decoration:none;font-weight:600}.pvlink:hover{text-decoration:underline}
 .kvl.tip{cursor:help;text-decoration:underline dotted color-mix(in srgb,var(--mute) 60%,transparent);text-underline-offset:3px}
 .kvl.tip:hover::after,.kvl.tip:focus::after{left:0;transform:none}.kvl.tip:hover::before,.kvl.tip:focus::before{left:14px;transform:none}
-.chip.tip{cursor:help}.hinfo{color:var(--accent);font-size:13px;margin-left:4px;text-transform:none}
+.chip.tip{cursor:help}.hinfo{display:inline-flex;align-items:center;justify-content:center;color:var(--accent);margin-left:5px;text-transform:none;vertical-align:-2px;width:16px;height:16px;border-radius:50%;cursor:help;transition:color .2s,background .2s}
+.hinfo:hover,.hinfo:focus-visible{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.isvg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.isvg .dot{fill:currentColor;stroke:none}
+.clp{margin:14px 0}.clp .clph{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;padding:2px 0}
+.clp .clph:focus-visible{outline:2px solid var(--accent2);outline-offset:4px;border-radius:6px}
+.clpc{width:18px;height:18px;margin-left:auto;flex:0 0 auto;fill:none;stroke:var(--mute);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s cubic-bezier(.2,.8,.2,1),stroke .2s}
+.clp .clph:hover .clpc{stroke:var(--accent)}.clp.open .clpc{transform:rotate(180deg)}
+.clpb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1)}
+.clp.open .clpb{grid-template-rows:1fr}.clpi{overflow:hidden;min-height:0;opacity:0;transform:translateY(-6px);transition:opacity .3s ease,transform .38s cubic-bezier(.2,.8,.2,1)}
+.clp.open .clpi{opacity:1;transform:none}.clp.open .clpi{padding-top:12px}
+@media (prefers-reduced-motion:reduce){.clpb,.clpi,.clpc{transition:none}}
 .hinfo.tip:hover::after,.hinfo.tip:focus::after{left:0;transform:none;width:280px;max-width:80vw;top:calc(100% + 8px);bottom:auto}
 .hinfo.tip:hover::before,.hinfo.tip:focus::before{display:none}
 .gmbox{margin:14px 0}.gmgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px 22px}
@@ -584,7 +594,7 @@ thead .tip:hover::before,thead .tip:focus::before{bottom:auto;top:calc(100% + 3p
 thead th:first-child .tip:hover::after,thead th:first-child .tip:focus::after{right:auto;left:0}
 th.tip:hover::after,th.tip:focus::after{bottom:auto;top:calc(100% + 8px);left:auto;right:0;transform:none;font-weight:500}
 th.tip:hover::before,th.tip:focus::before{bottom:auto;top:calc(100% + 3px);border-top:0;border-bottom:5px solid var(--text)}
-.trhow{margin:0 0 14px}.trhow summary{cursor:pointer;font-weight:700;padding:12px 16px;list-style:none}.trhow summary::before{content:"ⓘ ";color:var(--accent)}
+.trhow{margin:0 0 14px}.trhow .clph{padding:12px 16px;font-weight:700}.trhow.open .clpi{padding-top:0}.trhh{display:inline-flex;align-items:center;gap:8px}.trhh .isvg{color:var(--accent);width:16px;height:16px}
 .trhow .prose{padding:0 16px 14px}.trhow dl{display:grid;grid-template-columns:max-content 1fr;gap:8px 14px;margin:0}.trhow dt{font-weight:700}.trhow dd{margin:0;color:var(--mute)}
 @media (max-width:600px){.trhow dl{grid-template-columns:1fr}.trhow dd{margin-bottom:6px}}
 .gmid .stp{margin-bottom:4px}
@@ -2436,7 +2446,12 @@ function statsBox(p){
 
 const TT = k => ` tip" tabindex="0" data-tip="${esc(t(k))}`;          // adds a hover/tap explanation to a class list
 const KL = (k, label) => `<span class="kvl tip" tabindex="0" data-tip="${esc(t(k))}">${label}</span>`;
-const HI = k => `<span class="hinfo tip" tabindex="0" data-tip="${esc(t(k))}">ⓘ</span>`;
+const I_SVG = `<svg class="isvg" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6"/><path d="M8 7.3v3.9"/><circle class="dot" cx="8" cy="4.85" r=".95"/></svg>`;
+const HI = k => `<span class="hinfo tip" tabindex="0" role="button" aria-label="${esc(t(k))}" data-tip="${esc(t(k))}">${I_SVG}</span>`;
+// collapsible section with a smooth open/close; remembers the choice per section
+const CL_OPEN = k => { try { return localStorage.getItem("cl:"+k) === "1"; } catch(e){ return false; } };
+document.addEventListener("click", e => { const h = e.target.closest(".clph"); if (!h || e.target.closest(".hinfo")) return; const c = h.parentElement, on = !c.classList.contains("open");
+  c.classList.toggle("open", on); h.setAttribute("aria-expanded", on); try { localStorage.setItem("cl:"+c.dataset.clk, on ? "1" : "0"); } catch(e){} });
 function detail(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
@@ -2949,7 +2964,7 @@ function marketsBox(g){
     return `<div class="gmr"><span>${lbl}</span><b>${pct(p,1)}</b><span class="meta">${oddsTxt(1/p)}</span>
       <input class="odds gmodds" data-k="${key}" placeholder="${t("odds_ph")}" value="${od?oddsTxt(od):""}"><span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span></div>`; };
   const sec = (title, rows, note) => `<div class="gms"><h5>${title}${note?` <span class="meta">${note}</span>`:""}</h5><div class="gmh"><span></span><span>${t("model")}</span><span>${t("h_fair")}</span><span>${t("h_odds")}</span><span>EV</span></div>${rows.join("")}</div>`;
-  return `<div class="box gmbox"><h4>${t("gm_title")} <span class="meta">${t("gm_sub")}</span></h4><div class="gmgrid">
+  return `<div class="box gmbox clp ${CL_OPEN("gm")?"open":""}" data-clk="gm"><button type="button" class="clph" aria-expanded="${CL_OPEN("gm")}"><h4 style="margin:0">${t("gm_title")} <span class="meta">${t("gm_sub")}</span></h4><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="gmgrid">
     ${sec(t("gm_1x2"), [row("1", g.home, M["1"]), row("X", t("gm_draw"), M.X), row("2", g.away, M["2"])], t("gm_60"))}
     ${sec(t("gm_pl"), [row("hpl", `${g.home} −1.5`, M.hpl), row("apl_n", `${g.away} +1.5`, M.apl_n), row("apl", `${g.away} −1.5`, M.apl), row("hpl_n", `${g.home} +1.5`, M.hpl_n)])}
     ${sec(t("gm_tt"), [row("htt2.5", `${g.home} ${t("over_short",{l:"2.5"})}`, M["htt2.5"]), row("htt3.5", `${g.home} ${t("over_short",{l:"3.5"})}`, M["htt3.5"]),
@@ -2957,7 +2972,7 @@ function marketsBox(g){
     ${sec(t("gm_p1"), [row("p1o0.5", t("over_short",{l:"0.5"}), M["p1o0.5"]), row("p1o1.5", t("over_short",{l:"1.5"}), M["p1o1.5"]), row("p1o2.5", t("over_short",{l:"2.5"}), M["p1o2.5"]), row("p1x", t("gm_p1x"), M.p1x)])}
     ${sec(t("gm_sh"), [row("sh_h", t("gm_shx",{t:g.home}), M.sh_h), row("sh_a", t("gm_shx",{t:g.away}), M.sh_a)])}
     ${sec(t("gm_btts"), [row("b60", t("gm_b1y"), M.b60), row("b60_n", t("gm_b1n"), M.b60_n), row("b2", t("gm_b2y"), M.b2), row("b2_n", t("gm_b2n"), M.b2_n)], t("gm_60"))}
-  </div><p class="note">${t("gm_note")}</p></div>`;
+  </div><p class="note">${t("gm_note")}</p></div></div></div>`;
 }
 document.addEventListener("change", e => {
   const i = e.target.closest("input.gmodds"); if (!i) return;
@@ -3415,7 +3430,7 @@ function trackModel(){
   const blends = Object.entries(T.ou_blends||{}).map(([L,arr])=>{ const best = arr.reduce((a,b)=>b.brier<a.brier?b:a);
     return `<div class="box"><h4>${t("tr_blend",{l:L})}</h4><table class="mini"><thead><tr><th>${t("tr_weight")}</th><th class="n">Brier</th></tr></thead><tbody>${arr.map(r=>`<tr><td>${(r.w*100).toFixed(0)}%</td><td class="n ${r===best?"ev-pos":""}">${r.brier.toFixed(4)}</td></tr>`).join("")}</tbody></table><p class="note">${t("tr_lowest",{w:(best.w*100).toFixed(0)})} ${t("tr_blend_note")}</p></div>`; }).join("");
   const ouName = (k, key) => t(key,{k:k.replace("Over ", t("over",{l:""}).trim()+" ")});
-  $("#main").innerHTML = `<details class="card trhow"><summary>${t("tr_how_h")}</summary><div class="prose">${t("tr_how")}</div></details><p class="meta">${t("tr_meta",{d:T.days.filter(d=>d.games_final>0).length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
+  $("#main").innerHTML = `<div class="card trhow clp ${CL_OPEN("trhow")?"open":""}" data-clk="trhow"><button type="button" class="clph" aria-expanded="${CL_OPEN("trhow")}"><span class="trhh">${I_SVG}${t("tr_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${t("tr_how")}</div></div></div></div><p class="meta">${t("tr_meta",{d:T.days.filter(d=>d.games_final>0).length, g:T.days.reduce((a,d)=>a+d.games_final,0), p:T.days.reduce((a,d)=>a+d.props,0)})}</p>
     <div class="card tablewrap"><table><thead><tr><th>${t("tr_market")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_n_tip"))}">${t("tr_n")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_pred_tip"))}">${t("tr_pred")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_happ_tip"))}">${t("tr_happ")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_brier_tip"))}">Brier</th><th class="n tip" tabindex="0" data-tip="${esc(t("tr_skill_tip"))}">${t("tr_skill")}</th></tr></thead>
     <tbody>${rows(rename(T.props))}${rows(rename(T.sog))}${rows(rename(T.hb))}${rows(Object.fromEntries(Object.entries(T.shots||{}).map(([k,v])=>[MKT_NAME2(k),v])))}${rows(Object.fromEntries(Object.entries(T.more||{}).map(([k,v])=>[t("trm_"+k.replace(/[^a-z0-9]/gi,"_"))||k,v])))}${rows(Object.fromEntries(Object.entries(T.gm||{}).map(([k,v])=>[t("trg_"+k.replace(/[^a-z0-9]/gi,"_")),v])))}${rows(Object.fromEntries(Object.entries(T.ou_model||{}).map(([k,v])=>[ouName(k,"tr_game_model"),v])))}${rows(Object.fromEntries(Object.entries(T.ou_hist||{}).map(([k,v])=>[ouName(k,"tr_game_hist"),v])))}</tbody></table></div>
     ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>${t("tr_val")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_won")}</th><th class="n">${t("tr_profit")}</th><th class="n">ROI</th></tr></thead><tbody>
