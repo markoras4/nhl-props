@@ -1,4 +1,4 @@
-Season 2026-2027. Fetching schedule from 2026-10-28 ...
+Season 2026-2027. Fetching schedule from 2026-10-29 ...
   48 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
@@ -6,17 +6,18 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 723 skaters and 78 goalies (careers + game logs) ...
-Fetching 198 recent box scores (hits, blocks) ...
-News: 129 injuries, likely starters for 24 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-10-28, updated 2026-10-28T23:19:59.866Z)
-  shot maps: 198 games, 22676 attempts
-Model built: 48 games, 723 skaters (568 expected to play)
-Odds: bookmaker prices for 12 games, 426 players
-Odds: sharp-book prices for 1 games, 53 player markets
-Public betting: splits for 12 games
-Public betting: saved 2 locked splits (3 this season)
-  season simulation: 10000 seasons, 1146 games left, top Cup: CAR 28%, VGK 12%, MIN 11%
-Futures odds: Cup 32, conference 32, division 32, playoffs 31, points 31
-  history: MoneyPuck xG for 2026: 6,021 player-games
+Fetching 202 recent box scores (hits, blocks) ...
+News: 132 injuries, likely starters for 24 games (+28 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-10-28, updated 2026-10-28T23:19:59.866Z)
+Shot maps: downloading play-by-play for 4 new games ...
+  shot maps: 202 games, 23133 attempts
+Model built: 48 games, 723 skaters (567 expected to play)
+Odds: bookmaker prices for 11 games, 391 players
+Odds: sharp-book prices for 0 games, 0 player markets
+Public betting: splits for 11 games
+  season simulation: 10000 seasons, 1142 games left, top Cup: CAR 28%, VGK 11%, MIN 11%
+Futures odds: Cup 32, conference 32, division 32, playoffs 24, points 25
+  history: MoneyPuck xG for 2026: 6,055 player-games
+  history: 4 box scores for hits/blocks (2026)
   history: game-by-game files for 718 players (3 seasons)
-  archive: 3 past dates published (2026-10-25, 2026-10-26, 2026-10-27)
-Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-28.html
+  archive: 4 past dates published (2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28)
+Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-29.html
