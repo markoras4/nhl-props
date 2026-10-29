@@ -147,12 +147,12 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 /* features */
 .lrec{margin-top:22px;border:1px solid var(--line);border-radius:18px;padding:20px 22px;background:radial-gradient(120% 140% at 0% 0%,rgba(var(--glow),.10),transparent 55%),linear-gradient(180deg,var(--panel2),var(--panel));display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) auto;gap:18px 26px;align-items:center}
 .lrec h3{margin:0;font-family:var(--f-disp);font-size:19px}.lrec p{margin:4px 0 0;color:var(--mute);font-size:13.5px}
-.lrec .lrk{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.lrec .lrk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .lrec .lrk div{border-left:1px solid var(--line);padding-left:12px}.lrec .lrk small{display:block;font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .lrec .lrk b{display:block;font-family:var(--f-disp);font-size:24px;font-variant-numeric:tabular-nums}.lrec .up{color:var(--accent)}.lrec .dn{color:#ff6b6b}
 .lrec a.btn2{white-space:nowrap;border:1.5px solid var(--accent);color:var(--accent);border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;font-size:14px;transition:background .2s}
 .lrec a.btn2:hover{background:rgba(var(--glow),.12)}.lrec .lrn{grid-column:1/-1;font-size:12px;color:var(--mute);margin:0}
-@media (max-width:900px){.lrec{grid-template-columns:1fr}.lrec .lrk{grid-template-columns:repeat(3,minmax(0,1fr))}.lrec .lrk div:nth-child(n+4){margin-top:6px}}
+@media (max-width:900px){.lrec{grid-template-columns:1fr}.lrec .lrk{grid-template-columns:repeat(2,minmax(0,1fr))}.lrec .lrk div:nth-child(n+3){margin-top:6px}}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .fcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
 .fshot{background:#0a0e13;border-bottom:1px solid var(--line);aspect-ratio:16/9.5;overflow:hidden}
@@ -447,8 +447,8 @@ const I18N = {
   prev_soon:"Preview publishes on game day", read_prev:"Read preview →", all_prev:"All previews →", open_match:"Open matchup →", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
   feat_h:"Everything you need, nothing you don't", feat_sub:"Three views do most of the work.",
   f1h:"Every skater, every market", f1p:"Goals, assists, points, shots, hits, blocks, multi-point, power-play points, faceoffs and penalties for the whole lineup, with prices from two sportsbooks, one of them a sharp book, next to the model's.",
-  f2h:"Two picks per game, ranked by edge", f2p:"The two strongest edges against the sportsbook in each game, from goals and points to shots, hits and blocks, with the facts behind them. They follow the odds through the day, lock 5 minutes before puck drop, and every one is graded in a public record.",
-  lr_h:"Best picks record", lr_sub:"Every pick since {d}, as it stood at the lock, 1 unit each. Wins, losses and voids: nothing removed.", lr_picks:"Picks", lr_rec:"Record", lr_units:"Units", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"How much the price moved toward the pick between when it appeared and the lock.", lr_cta:"See every pick", lr_note:"Under about 300 picks the result is mostly luck. CLV shows sooner whether the edge is real.",
+  f2h:"Two picks per game, ranked by edge", f2p:"The two strongest edges against the sportsbook in each game, on goals, assists, points and shots on goal, with the facts behind them. They follow the odds through the day, lock 5 minutes before puck drop, and every one is graded in a public record.",
+  lr_h:"Best picks record", lr_sub:"Every pick since {d}, as it stood at the lock, 1 unit each. Wins, losses and voids: nothing removed.", lr_picks:"Picks", lr_rec:"Record", lr_units:"Units", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"How much the price moved toward the pick between when it appeared and the lock.", lr_cta:"See every pick", lr_note:"Goals, assists, points and shots on goal. Under about 300 picks the result is mostly luck.",
   f3h:"The whole game in one view", f3p:"Win chance, total goals, puck line, 1st period, team shots and goalie saves, plus each team's last 6 games. Everything updates when the starting goalie changes.",
   scr_h:"Phone, tablet or desktop", scr_sub:"Built for every screen. Add it to your home screen and it opens like an app.",
   s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
@@ -504,8 +504,8 @@ const I18N = {
   prev_soon:"Förhandstitten publiceras på matchdagen", read_prev:"Läs förhandstitten →", all_prev:"Alla förhandstittar →", open_match:"Öppna matchen →", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
   feat_h:"Allt du behöver, inget du inte behöver", feat_sub:"Tre vyer gör det mesta av jobbet.",
   f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng, skott, tacklingar, blockeringar, flera poäng, PP-poäng, tekningar och utvisningar för hela uppställningen, med odds från två spelbolag, varav ett skarpt, bredvid modellens.",
-  f2h:"Två spel per match, rankade efter edge", f2p:"De två största edgarna mot spelbolaget i varje match, från mål och poäng till skott, tacklingar och blockeringar, med fakta bakom dem. De följer oddsen under dagen, låses 5 minuter före nedsläpp, och varje spel rättas i ett öppet facit.",
-  lr_h:"Bästa spelen – facit", lr_sub:"Varje spel sedan {d}, som det stod vid låsningen, 1 enhet styck. Vinster, förluster och ogiltiga: inget borttaget.", lr_picks:"Spel", lr_rec:"Facit", lr_units:"Enheter", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"Hur mycket oddset rörde sig mot spelet mellan när det dök upp och låsningen.", lr_cta:"Se alla spel", lr_note:"Under ungefär 300 spel är resultatet mest tur. CLV visar tidigare om edgen är verklig.",
+  f2h:"Två spel per match, rankade efter edge", f2p:"De två största edgarna mot spelbolaget i varje match, på mål, assist, poäng och skott på mål, med fakta bakom dem. De följer oddsen under dagen, låses 5 minuter före nedsläpp, och varje spel rättas i ett öppet facit.",
+  lr_h:"Bästa spelen – facit", lr_sub:"Varje spel sedan {d}, som det stod vid låsningen, 1 enhet styck. Vinster, förluster och ogiltiga: inget borttaget.", lr_picks:"Spel", lr_rec:"Facit", lr_units:"Enheter", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"Hur mycket oddset rörde sig mot spelet mellan när det dök upp och låsningen.", lr_cta:"Se alla spel", lr_note:"Mål, assist, poäng och skott på mål. Under ungefär 300 spel är resultatet mest tur.",
   f3h:"Hela matchen i en vy", f3p:"Vinstchans, totalmål, puck line, första perioden, lagens skott och målvaktsräddningar, plus varje lags senaste 6 matcher. Allt uppdateras när startmålvakten ändras.",
   scr_h:"Mobil, surfplatta eller dator", scr_sub:"Byggd för alla skärmar. Lägg den på hemskärmen så öppnas den som en app.",
   s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
@@ -598,8 +598,7 @@ function plans(){
     const since = new Date(R.since+"T12:00:00").toLocaleDateString(LANG==="sv"?"sv-SE":"en-GB",{day:"numeric",month:"short"});
     lr.innerHTML = `<div><h3>${t("lr_h")}</h3><p>${t("lr_sub").replace("{d}", since)}</p></div>
       <div class="lrk"><div><small>${t("lr_picks")}</small><b>${R.n}</b></div><div><small>${t("lr_rec")}</small><b>${R.w}–${R.n-R.w}</b></div>
-        <div><small>${t("lr_units")}</small><b class="${cl(R.u)}">${sg(R.u,2)}</b></div><div><small>${t("lr_roi")}</small><b class="${cl(R.roi)}">${sg(R.roi*100,1)}%</b></div>
-        <div title="${t("lr_clv_tip")}"><small>${t("lr_clv")}</small><b class="${cl(R.clv)}">${sg(R.clv*100,1)}%</b></div></div>
+        <div><small>${t("lr_units")}</small><b class="${cl(R.u)}">${sg(R.u,2)}</b></div><div><small>${t("lr_roi")}</small><b class="${cl(R.roi)}">${sg(R.roi*100,1)}%</b></div></div>
       <a class="btn2" href="APP_URL#record">${t("lr_cta")} →</a><p class="lrn">${t("lr_note")}</p>`;
     lr.hidden = false; }
   const open = new Set([...document.querySelectorAll("#faqlist details[open]")].map(d => d.dataset.i));

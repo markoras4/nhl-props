@@ -877,7 +877,7 @@ body.has-cmp main{padding-bottom:110px}
 .rkstep b{font-size:13px;min-width:120px;text-align:center;font-weight:600}
 .rkstep button{background:none;border:0;color:var(--text);width:28px;height:28px;border-radius:7px;font-size:17px;cursor:pointer}
 .rkstep button:hover:not(:disabled){background:var(--panel2)}.rkstep button:disabled{opacity:.3;cursor:default}
-.rkkpis{display:grid;grid-template-columns:1.5fr repeat(6,1fr);gap:10px;margin-bottom:14px}
+.rkkpis{display:grid;grid-template-columns:1.5fr repeat(5,1fr);gap:10px;margin-bottom:8px}.rkmove{margin:0 0 14px;font-size:12.5px;color:var(--mute)}.rkmove .tip{border-bottom:1px dotted var(--mute)}.rkmove .up{color:var(--good)}.rkmove .dn{color:var(--bad)}
 .rkk{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:12px 14px;animation:rkin .5s cubic-bezier(.2,.8,.2,1) both}
 .rkk:nth-child(2){animation-delay:.04s}.rkk:nth-child(3){animation-delay:.08s}.rkk:nth-child(4){animation-delay:.12s}.rkk:nth-child(5){animation-delay:.16s}.rkk:nth-child(6){animation-delay:.2s}.rkk:nth-child(7){animation-delay:.24s}
 .rkk small{display:inline-block;font-size:10.5px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
@@ -1968,8 +1968,9 @@ function linesView(g){
 
 // ------------------------------------------------------------ best picks (helper, not a verdict)
 // markets best picks can choose from, by group (the filter on the box); hits and blocks only show when there are odds
-// "All" never picks 2+ / 3+ goals, assists or points (long shots): they only show when the Multi-point tab is chosen
-const BP_ALL = GROUP_ORDER.filter(k => k !== "multi");
+// "All" (the official, tracked picks) uses goals, assists, points and shots on goal only. Multi-point, first goal,
+// power play, hits, blocks, faceoffs and penalties show only when their own tab is chosen.
+const BP_ALL_M = ["g","a","pt", ...MGROUPS.s];
 // best picks use the same market groups as a player's Prices & value tabs (Points, Multi-point, Power play, Shots, ...)
 const bpFamily = m => { const g = mGroup(m); return g === "pts" || g === "multi" ? "pts" : g; };
 // the groups worth a tab for this game: with odds, only groups that have a price; without, groups the players have
@@ -1981,7 +1982,7 @@ function bpGrp(g){ const grp = state.bpg || "all"; return grp === "all" || bpGro
 function bestPicks(g){
   const hasOdds = !!DATA.odds?.[g.id];
   const grp = bpGrp(g);
-  const mk = grp === "all" ? BP_ALL.flatMap(k => MGROUPS[k]) : MGROUPS[grp];
+  const mk = grp === "all" ? BP_ALL_M : MGROUPS[grp];
   const cands = [];
   for (const pr of g.props){
     const p = P(pr.id); if (!p?.active) continue;
@@ -3344,32 +3345,32 @@ Object.assign(I18N.en, {
   trk_bp:"Best picks record", trk_model:"Model accuracy",
   rk_main:"Best picks", rk_multi:"Long shots", rk_multi_tip:"The Multi-point tab's picks (2+ goals, 2+ points…), kept apart so a few big prices don't swing the main record.",
   rk_all:"All time", rk_month:"Month", rk_week:"Week", rk_day:"Day", rk_allm:"All markets",
-  rk_picks:"Picks", rk_record:"Record", rk_hit:"Hit rate", rk_units:"Units", rk_roi:"ROI", rk_avgodds:"Avg odds", rk_ev:"Avg EV at lock", rk_clv:"CLV",
+  rk_picks:"Picks", rk_record:"Record", rk_hit:"Hit rate", rk_units:"Units", rk_roi:"ROI", rk_avgodds:"Avg odds", rk_ev:"Avg EV at lock", rk_clv:"Price move", rk_move_avg:"on average", rk_move_h:"Move",
   rk_units_tip:"Profit in units, staking 1 unit on every pick at the locked price.", rk_roi_tip:"Units won per unit staked.",
-  rk_ev_tip:"The edge the model saw at the locked price, on average.", rk_clv_tip:"How the price moved from when the pick first appeared to the lock. Positive = it shortened, i.e. the market moved toward the pick. The earliest sign that an edge is real, long before profit can show it. Share = picks whose price shortened.",
-  rk_clv_share:"{p} shortened", rk_record_v:"{v} void",
+  rk_ev_tip:"The edge the model saw at the locked price, on average.", rk_clv_tip:"How the price moved from when the pick first appeared to the lock (closing line value). Positive = the price shortened: the market moved toward the pick, an early sign the edge is real. Negative = it lengthened: waiting would have got a better price. The picks of 25–28 Oct were rebuilt afterwards, so their first price is the day's opening price, which for goal scorers often carries a bigger margin.",
+  rk_clv_share:"{p} of prices shortened", rk_record_v:"{v} void",
   rk_chart:"Profit over time", rk_chart_sub:"daily units (bars) · running total (line)", rk_cum:"Running total", rk_day_u:"Day",
   rk_mkt:"By market", rk_teams:"By team", rk_players:"By player", rk_best:"Most profitable", rk_worst:"Least profitable",
   rk_list:"Every pick", rk_list_sub:"{n} picks · newest first", rk_game:"Game", rk_player:"Player", rk_market:"Market", rk_odds:"Odds", rk_model:"Model", rk_res:"Result", rk_u:"Units",
   rk_w:"Won", rk_l:"Lost", rk_v:"Void", rk_p:"In play",
   rk_none:"No graded picks in this period yet.", rk_loading:"Loading the record…", rk_err:"The record couldn't be loaded right now.",
-  rk_note:"The two best picks of every game exactly as they stood at the lock, 5 minutes before puck drop, at the sportsbook price shown then, 1 unit each. Nothing is removed: every win, loss and void is listed. A player who doesn't play is void. Under about 300 picks results are mostly luck, so watch CLV and the hit rate against the model's chances first. Picks of the first nights (25–28 Oct) were rebuilt from the lock snapshots; their CLV uses the day's opening price.",
+  rk_note:"The two best picks of every game exactly as they stood at the lock, 5 minutes before puck drop, at the sportsbook price shown then, 1 unit each. Nothing is removed: every win, loss and void is listed. A player who doesn't play is void. Under about 300 picks results are mostly luck, so compare the hit rate with the wins the model expected first. Only goals, assists, points and shots on goal are tracked. Picks of the first nights (25–28 Oct) were rebuilt from the lock snapshots.",
   rk_exp:"Model expected {e} wins", rk_since:"since {d}",
 });
 Object.assign(I18N.sv, {
   trk_bp:"Bästa spelen – resultat", trk_model:"Modellens träffsäkerhet",
   rk_main:"Bästa spelen", rk_multi:"Långskott", rk_multi_tip:"Spelen från fliken Flera poäng (2+ mål, 2+ poäng …), hålls isär så att några höga odds inte svänger huvudresultatet.",
   rk_all:"Hela tiden", rk_month:"Månad", rk_week:"Vecka", rk_day:"Dag", rk_allm:"Alla spel",
-  rk_picks:"Spel", rk_record:"Facit", rk_hit:"Träffprocent", rk_units:"Enheter", rk_roi:"ROI", rk_avgodds:"Snittodds", rk_ev:"Snitt-EV vid låsning", rk_clv:"CLV",
+  rk_picks:"Spel", rk_record:"Facit", rk_hit:"Träffprocent", rk_units:"Enheter", rk_roi:"ROI", rk_avgodds:"Snittodds", rk_ev:"Snitt-EV vid låsning", rk_clv:"Oddsrörelse", rk_move_avg:"i snitt", rk_move_h:"Rörelse",
   rk_units_tip:"Vinst i enheter, med 1 enhet på varje spel till det låsta oddset.", rk_roi_tip:"Vunna enheter per insatt enhet.",
-  rk_ev_tip:"Edgen modellen såg till det låsta oddset, i snitt.", rk_clv_tip:"Hur oddset rörde sig från när spelet först dök upp till låsningen. Positivt = oddset sjönk, alltså rörde sig marknaden mot spelet. Det tidigaste tecknet på att en edge är verklig, långt innan vinsten kan visa det. Andel = spel vars odds sjönk.",
-  rk_clv_share:"{p} sjönk", rk_record_v:"{v} ogiltiga",
+  rk_ev_tip:"Edgen modellen såg till det låsta oddset, i snitt.", rk_clv_tip:"Hur oddset rörde sig från när spelet först dök upp till låsningen (closing line value). Positivt = oddset sjönk: marknaden rörde sig mot spelet, ett tidigt tecken på att edgen är verklig. Negativt = oddset steg: att vänta hade gett ett bättre pris. Spelen från 25–28 okt återskapades i efterhand, så deras första pris är dagens öppningsodds, som för målskyttar ofta har större marginal.",
+  rk_clv_share:"{p} av oddsen sjönk", rk_record_v:"{v} ogiltiga",
   rk_chart:"Resultat över tid", rk_chart_sub:"enheter per dag (staplar) · löpande summa (linje)", rk_cum:"Löpande summa", rk_day_u:"Dag",
   rk_mkt:"Per spel", rk_teams:"Per lag", rk_players:"Per spelare", rk_best:"Mest lönsamma", rk_worst:"Minst lönsamma",
   rk_list:"Alla spel", rk_list_sub:"{n} spel · nyast först", rk_game:"Match", rk_player:"Spelare", rk_market:"Spel", rk_odds:"Odds", rk_model:"Modell", rk_res:"Utfall", rk_u:"Enheter",
   rk_w:"Vann", rk_l:"Förlorade", rk_v:"Ogiltigt", rk_p:"Pågår",
   rk_none:"Inga rättade spel under perioden än.", rk_loading:"Laddar resultaten …", rk_err:"Resultaten kunde inte laddas just nu.",
-  rk_note:"De två bästa spelen i varje match exakt som de stod vid låsningen, 5 minuter före nedsläpp, till spelbolagets odds då, 1 enhet styck. Inget tas bort: varje vinst, förlust och ogiltigt spel visas. En spelare som inte spelar blir ogiltig. Under ungefär 300 spel är resultatet mest tur, så titta först på CLV och träffprocenten mot modellens chanser. Spelen från de första kvällarna (25–28 okt) återskapades från låsningsögonblicken; deras CLV använder dagens öppningsodds.",
+  rk_note:"De två bästa spelen i varje match exakt som de stod vid låsningen, 5 minuter före nedsläpp, till spelbolagets odds då, 1 enhet styck. Inget tas bort: varje vinst, förlust och ogiltigt spel visas. En spelare som inte spelar blir ogiltig. Under ungefär 300 spel är resultatet mest tur, så jämför först träffprocenten med de vinster modellen väntade sig. Bara mål, assist, poäng och skott på mål räknas. Spelen från de första kvällarna (25–28 okt) återskapades från låsningsögonblicken.",
   rk_exp:"Modellen väntade {e} vinster", rk_since:"sedan {d}",
 });
 
@@ -3478,7 +3479,7 @@ function recordView(){
     ${kpi(t("rk_hit"), st.n?pct(st.w/st.n,1):"–", "", st.n?t("rk_exp",{e:fmt(st.exp,1)}):"")}
     ${kpi(t("rk_avgodds"), st.odds?oddsTxt(st.odds):"–")}
     ${kpi(t("rk_ev"), sgnP(st.ev), "", "", t("rk_ev_tip"))}
-    ${kpi(t("rk_clv"), sgnP(st.clv), uCls(st.clv||0), st.clvUp!=null?t("rk_clv_share",{p:pct(st.clvUp,0)}):"", t("rk_clv_tip"))}</div>`;
+    </div>${st.clv!=null ? `<p class="rkmove"><span class="tip" tabindex="0" data-tip="${esc(t("rk_clv_tip"))}">${t("rk_clv")}</span>: <b class="${uCls(st.clv)}">${sgnP(st.clv)}</b> ${t("rk_move_avg")} · ${t("rk_clv_share",{p:pct(st.clvUp,0)})}</p>` : ""}`;
   if (!rows.length){ box.innerHTML = controls + `<div class="card empty"><p>${t("rk_none")}</p></div><p class="note">${t("rk_note")}</p>`; return; }
   const mk = rkGroup(rows, r => rkCat(r.m)).sort((a,b)=>b.s.u-a.s.u);
   const tm = rkGroup(rows, r => r.t).sort((a,b)=> S_.tb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
@@ -3501,7 +3502,7 @@ function recordView(){
       <div class="box rkcard"><h4>${t("rk_players")} ${bw("rkpb", S_.pb)}</h4><div class="rkrows rkscroll">${rkBarRows(pl, x=>`${logo(x.rs[0].t,16)} ${esc(x.rs[0].n)}`, mx(pl))}</div></div>
     </div>
     <div class="box rkcard"><h4>${t("rk_list")} <span class="meta">${t("rk_list_sub",{n:list.length})}</span></h4>
-      <div class="rklist"><table><thead><tr><th>${t("rk_game")}</th><th>${t("rk_player")}</th><th>${t("rk_market")}</th><th class="n">${t("rk_odds")}</th><th class="n">${t("rk_model")}</th><th class="n">EV</th><th class="n">CLV</th><th>${t("rk_res")}</th><th class="n">${t("rk_u")}</th></tr></thead><tbody>${lrows}</tbody></table></div></div>
+      <div class="rklist"><table><thead><tr><th>${t("rk_game")}</th><th>${t("rk_player")}</th><th>${t("rk_market")}</th><th class="n">${t("rk_odds")}</th><th class="n">${t("rk_model")}</th><th class="n">EV</th><th class="n">${t("rk_move_h")}</th><th>${t("rk_res")}</th><th class="n">${t("rk_u")}</th></tr></thead><tbody>${lrows}</tbody></table></div></div>
     <p class="note">${t("rk_note")}</p>`;
   rkCountUp(box);
 }
