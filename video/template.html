@@ -1,0 +1,292 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Anton;src:url(fonts/anton.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:500;src:url(fonts/exo2-500.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:700;src:url(fonts/exo2-700.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:800;src:url(fonts/exo2-800.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:600;src:url(fonts/oxanium-600.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:800;src:url(fonts/oxanium-800.woff2) format("woff2")}
+:root{--bg:#07090d;--mint:#3ddc97;--blue:#5aa9ff;--text:#f2f6fb;--mute:#93a3b6;--warn:#ffb547}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif}
+.scene{position:absolute;inset:0;display:none}
+.abs{position:absolute}
+.bgimg{position:absolute;inset:-80px;background-size:cover;background-position:center;will-change:transform,filter}
+.shade{position:absolute;inset:0}
+.anton{font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.5px;line-height:.92}
+.ox{font-family:Oxanium,sans-serif}
+.chip{display:inline-flex;align-items:center;gap:14px;padding:12px 24px;border-radius:999px;background:rgba(10,14,19,.72);
+  border:2px solid rgba(255,255,255,.14);font:600 30px Oxanium;letter-spacing:3px;text-transform:uppercase;}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--mint);box-shadow:0 0 18px var(--mint)}
+.card{position:absolute;left:40px;top:330px;width:1000px;height:640px;border-radius:36px;overflow:hidden;
+  box-shadow:0 40px 90px rgba(0,0,0,.65),0 0 0 2px rgba(255,255,255,.12) inset;background:#111}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;will-change:transform}
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.55))}
+.matchup{position:absolute;left:0;right:0;top:860px;text-align:center;font-size:250px;white-space:nowrap;text-shadow:0 18px 50px rgba(0,0,0,.7)}
+.matchup .at{font-size:110px;color:var(--mint);margin:0 26px;vertical-align:58px;display:inline-block}
+.matchup span{display:inline-block}
+.bars{position:absolute;left:150px;right:150px;top:1112px;height:12px;display:flex;gap:14px}
+.bars i{flex:1;border-radius:6px;transform-origin:center}
+.kick{position:absolute;left:0;right:0;top:1140px;text-align:center;font:700 34px Oxanium;letter-spacing:4px;text-transform:uppercase;color:var(--mute)}
+.headline{position:absolute;left:60px;right:60px;top:1200px;text-align:center;font:800 62px/1.13 "Exo 2";text-wrap:balance}
+.headline span{display:inline-block;margin:0 .13em;will-change:transform,opacity,filter}
+.headline .hl{color:var(--mint)}
+.credit{position:absolute;left:40px;right:40px;top:1462px;font:500 22px "Exo 2";color:rgba(242,246,251,.62);text-align:left}
+.stat{position:absolute;left:40px;width:1000px;border-radius:32px;background:linear-gradient(160deg,rgba(23,32,43,.86),rgba(10,14,19,.86));
+  border:2px solid rgba(255,255,255,.10);box-shadow:0 30px 80px rgba(0,0,0,.5);padding:34px 40px;}
+.lab{font:600 28px Oxanium;letter-spacing:5px;text-transform:uppercase;color:var(--mute)}
+.pill{position:absolute;right:36px;top:28px;padding:8px 18px;border-radius:999px;font:700 24px Oxanium;letter-spacing:2px;text-transform:uppercase;
+  background:rgba(61,220,151,.14);color:var(--mint);border:2px solid rgba(61,220,151,.45)}
+.row{display:flex;align-items:center;gap:22px;margin-top:22px}
+.row .who{width:170px;font:700 26px Oxanium;letter-spacing:3px;color:var(--mute)}
+.track{position:relative;flex:1;height:74px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.06);display:flex}
+.track b{display:flex;align-items:center;height:100%;font:800 34px "Exo 2";padding:0 20px;white-space:nowrap;overflow:hidden}
+.track b.r{justify-content:flex-end}
+.big{font:400 170px/0.9 Anton;letter-spacing:1px}
+.ring{position:absolute;right:46px;top:34px;width:190px;height:190px}
+.ring text{font:800 52px "Exo 2";fill:#fff}
+#grain{display:none}
+.leak{position:absolute;width:1400px;height:1400px;border-radius:50%;pointer-events:none}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#wipe{position:absolute;left:-400px;top:-300px;width:900px;height:2600px;background:linear-gradient(90deg,var(--mint),var(--blue));transform:rotate(14deg);pointer-events:none;display:none;box-shadow:0 0 120px rgba(61,220,151,.8)}
+#prog{position:absolute;left:40px;right:40px;top:150px;height:8px;display:flex;gap:10px}
+#prog i{flex:1;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
+#prog i u{position:absolute;left:0;top:0;bottom:0;background:#fff;width:0}
+#brand{position:absolute;left:40px;top:182px;display:flex;align-items:center;gap:14px;font:800 30px Oxanium;letter-spacing:3px}
+#brand img{width:46px;height:46px;border-radius:12px}
+#bdate{position:absolute;right:40px;top:188px;font:600 28px Oxanium;letter-spacing:3px;color:var(--mute)}
+.glitch{text-shadow:-7px 0 rgba(255,45,85,.85),7px 0 rgba(0,229,255,.85)}
+.brow{display:flex;align-items:center;gap:20px;padding:20px 26px;margin-top:16px;border-radius:22px;background:rgba(255,255,255,.05);font:800 46px "Exo 2"}
+.brow .m{margin-left:auto;font:700 30px Oxanium;color:var(--mint);letter-spacing:2px}
+</style></head>
+<body><div id="stage"></div>
+<script>
+const SPEC = /*SPEC*/null;
+const T = SPEC.timing, G = SPEC.games, NG = G.length;
+const stage = document.getElementById('stage');
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const eOut=x=>1-Math.pow(1-x,3), eExpo=x=>x>=1?1:1-Math.pow(2,-10*x), eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const lerp=(a,b,x)=>a+(b-a)*x;
+const pct=x=>Math.round(x*100)+'%';
+function el(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;(parent||stage).appendChild(e);return e}
+function hash(n){const x=Math.sin(n*127.1)*43758.5453;return x-Math.floor(x)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+// ---------- timeline ----------
+const S0 = T.intro, gStart = i => S0 + i*T.game, boardStart = S0 + NG*T.game, outroStart = boardStart + T.board;
+const TOTAL = outroStart + T.outro;
+
+// ---------- global layers (order matters) ----------
+const scenes = [];
+// intro
+const intro = el('div','scene'); scenes.push({el:intro,a:0,b:S0});
+const introBgs = G.map(g=>{const d=el('div','bgimg',null,intro); d.style.backgroundImage=g.src?`url(${g.src})`:'none'; return d});
+el('div','shade',null,intro).style.background='linear-gradient(180deg,rgba(7,9,13,.55),rgba(7,9,13,.35) 40%,rgba(7,9,13,.92))';
+const tint = el('div','shade',null,intro); tint.style.background='linear-gradient(140deg,rgba(61,220,151,.35),rgba(90,169,255,.25))'; tint.style.mixBlendMode='color';
+const n1 = el('div','abs anton',`${SPEC.n} GAME${SPEC.n==1?'':'S'}`,intro); Object.assign(n1.style,{left:'0',right:'0',top:'330px',textAlign:'center',fontSize:'250px'});
+const n2 = el('div','abs anton','TONIGHT',intro); Object.assign(n2.style,{left:'0',right:'0',top:'560px',textAlign:'center',fontSize:'250px',color:'var(--mint)'});
+const dchip = el('div','abs',`<span class="chip"><span class="dot"></span>${esc(SPEC.day)}</span>`,intro); Object.assign(dchip.style,{left:'0',right:'0',top:'840px',textAlign:'center'});
+const hookWords = SPEC.hook.split(' ');
+const hook = el('div','abs anton',hookWords.map((w,i)=>`<span style="display:inline-block;margin:0 14px">${/^\d+$/.test(w)?`<b style="color:var(--mint);font-size:1.6em;vertical-align:-.12em">${w}</b>`:esc(w)}</span>`).join(' '),intro);
+Object.assign(hook.style,{left:'70px',right:'70px',top:'990px',textAlign:'center',fontSize:'118px',lineHeight:'1.02'});
+const hookSpans=[...hook.children];
+const vs = el('div','abs ox',`<span style="color:var(--mint)">MODEL</span> &nbsp;VS&nbsp; <span style="color:var(--blue)">MARKET</span>`,intro);
+Object.assign(vs.style,{left:'0',right:'0',top:'1400px',textAlign:'center',font:'800 44px Oxanium',letterSpacing:'8px'});
+
+// games
+const GS = G.map((g,i)=>{
+  const root = el('div','scene'); scenes.push({el:root,a:gStart(i),b:gStart(i)+T.game});
+  const bg = el('div','bgimg',null,root); if(g.bsrc) bg.style.backgroundImage=`url(${g.bsrc})`; const dim = el('div','shade',null,root); dim.style.background='#07090d';
+  const sh = el('div','shade',null,root);
+  sh.style.background=`radial-gradient(1200px 900px at 50% 30%, ${g.hc}55, transparent 70%), linear-gradient(180deg,rgba(7,9,13,.62),rgba(7,9,13,.5) 35%,rgba(7,9,13,.94) 72%)`;
+  const chip = el('div','abs',`<span class="chip"><span class="dot"></span>GAME ${i+1}/${NG} · ${esc(g.time)}</span>`,root); Object.assign(chip.style,{left:'40px',top:'245px'});
+  const card = el('div','card',g.src?`<img src="${g.src}">`:'',root);
+  const cimg = card.querySelector('img');
+  const mu = el('div','matchup anton',`<span class="a">${g.away}</span><span class="at">@</span><span class="h">${g.home}</span>`,root);
+  const [ma,mat,mh] = mu.children;
+  const bars = el('div','bars',`<i style="background:${g.ac}"></i><i style="background:${g.hc}"></i>`,root);
+  const kick = el('div','kick',esc(g.away_name+'  at  '+g.home_name),root);
+  const names = new Set(g.names);
+  const words = g.title.split(/\s+/);
+  const hl = el('div','headline',words.map(w=>{const core=w.replace(/[^A-Za-zÀ-ÿ'’-]/g,'').replace(/['’]s$/,'');return `<span class="${names.has(core)?'hl':''}">${esc(w)}</span>`}).join(' '),root);
+  const hws=[...hl.children];
+  const credit = el('div','credit',esc(g.credit),root);
+  // stats
+  const mkH = g.mk_home, pH = g.p_home;
+  let call = 'MODEL ≈ MARKET';
+  if(mkH!=null){ const d=pH-mkH; if(Math.abs(d)>=0.035) call = 'MODEL LIKES '+(d>0?g.home:g.away)+' MORE'; }
+  const s1 = el('div','stat',`<div class="lab">Win chance</div><div class="pill">${call}</div>
+     <div class="row"><div class="who">MODEL</div><div class="track"><b style="background:${g.ac}"></b><b class="r" style="background:${g.hc}"></b></div></div>
+     ${mkH!=null?`<div class="row"><div class="who">MARKET</div><div class="track"><b style="background:${g.ac}"></b><b class="r" style="background:${g.hc}"></b></div></div>`:''}`,root);
+  s1.style.top='455px';
+  const tracks=[...s1.querySelectorAll('.track')];
+  const s2 = el('div','stat',`<div class="lab">Projected goals</div>
+     <div style="display:flex;align-items:flex-end;gap:40px;margin-top:10px">
+       <div class="big" style="color:var(--mint)">0.0</div>
+       <div style="flex:1;padding-bottom:16px">
+         <div style="font:700 30px Oxanium;letter-spacing:3px;color:var(--mute)">OVER 5.5</div>
+         <div style="font:800 46px 'Exo 2';margin-top:6px">Model <span class="om">0%</span>${g.mk_over!=null?` <span style="color:var(--mute);font-weight:500">·</span> Market <span class="ok">0%</span>`:''}</div>
+       </div></div>`,root);
+  s2.style.top='850px';
+  const big=s2.querySelector('.big'), om=s2.querySelector('.om'), ok=s2.querySelector('.ok');
+  let s3=null, ring=null, rtxt=null;
+  if(g.player){
+    s3 = el('div','stat',`<div class="lab">Top model chance</div>
+      <div style="font:800 60px/1.05 'Exo 2';margin-top:18px;max-width:700px">${esc(g.player.name)}</div>
+      <div style="font:700 32px Oxanium;letter-spacing:3px;color:var(--mute);margin-top:12px">1+ POINT · ${g.player.team}</div>
+      <svg class="ring" viewBox="0 0 190 190"><circle cx="95" cy="95" r="80" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="16"/>
+      <circle class="arc" cx="95" cy="95" r="80" fill="none" stroke="#3ddc97" stroke-width="16" stroke-linecap="round" transform="rotate(-90 95 95)" stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
+      <text x="95" y="113" text-anchor="middle">0%</text></svg>`,root);
+    s3.style.top='1160px'; s3.style.height='260px';
+    ring=s3.querySelector('.arc'); rtxt=s3.querySelector('text');
+  }
+  return {g,root,bg,dim,chip,card,cimg,mu,ma,mat,mh,bars,kick,hl,hws,credit,s1,tracks,s2,big,om,ok,s3,ring,rtxt};
+});
+
+// board (other games)
+let board=null;
+if(T.board){
+  board = el('div','scene'); scenes.push({el:board,a:boardStart,b:outroStart});
+  el('div','shade',null,board).style.background='radial-gradient(1200px 1000px at 50% 20%,rgba(90,169,255,.25),transparent 70%),#07090d';
+  const h = el('div','abs anton','ALSO TONIGHT',board); Object.assign(h.style,{left:'0',right:'0',top:'260px',textAlign:'center',fontSize:'150px'});
+  const list = el('div','abs',SPEC.rest.map(g=>{const fav=g.p_home>=.5?g.home:g.away, p=Math.max(g.p_home,1-g.p_home);
+    return `<div class="brow"><span style="color:${g.ac}">■</span>${g.away} <span style="color:var(--mute);font-size:.7em">@</span> ${g.home}<span class="m">MODEL ${fav} ${pct(p)}</span></div>`}).join(''),board);
+  Object.assign(list.style,{left:'60px',right:'60px',top:'470px'});
+  board.rows=[...list.children]; board.h=h;
+}
+
+// outro
+const outro = el('div','scene'); scenes.push({el:outro,a:outroStart,b:TOTAL+1});
+const obg = el('div','bgimg',null,outro); if(G[0]&&G[0].bsrc) obg.style.backgroundImage=`url(${G[0].bsrc})`;
+el('div','shade',null,outro).style.background='linear-gradient(180deg,rgba(7,9,13,.82),rgba(7,9,13,.92))';
+const oicon = el('img','abs',null,outro); oicon.src='img/icon.png'; Object.assign(oicon.style,{left:'412px',top:'330px',width:'256px',height:'256px',borderRadius:'56px',boxShadow:'0 0 120px rgba(61,220,151,.45)'});
+const oname = el('div','abs ox','NHL PROPS LAB',outro); Object.assign(oname.style,{left:'0',right:'0',top:'640px',textAlign:'center',font:'800 104px Oxanium',letterSpacing:'4px'});
+const otag = el('div','abs','The model vs the market, every game.',outro); Object.assign(otag.style,{left:'0',right:'0',top:'780px',textAlign:'center',font:'700 44px "Exo 2"',color:'var(--mute)'});
+const ourl = el('div','abs',`<span class="chip" style="font-size:36px;letter-spacing:1px;text-transform:none;border-color:rgba(61,220,151,.6)"><span class="dot"></span>${esc(SPEC.site)}</span>`,outro); Object.assign(ourl.style,{left:'0',right:'0',top:'880px',textAlign:'center'});
+const ofol = el('div','abs anton','FOLLOW FOR<br>TOMORROW’S SLATE',outro); Object.assign(ofol.style,{left:'0',right:'0',top:'1030px',textAlign:'center',fontSize:'130px'});
+const odis = el('div','abs','Model numbers, not betting advice · 18+ · Play responsibly',outro); Object.assign(odis.style,{left:'40px',right:'40px',top:'1400px',textAlign:'center',font:'500 28px "Exo 2"',color:'var(--mute)'});
+
+// overlays
+const leak1 = el('div','leak'); leak1.style.background='radial-gradient(circle,rgba(61,220,151,.55),transparent 60%)';
+const leak2 = el('div','leak'); leak2.style.background='radial-gradient(circle,rgba(90,169,255,.5),transparent 60%)';
+const vig = el('div',null); vig.id='vig';
+const prog = el('div',null,G.map(()=>'<i><u></u></i>').join('')); prog.id='prog'; const progU=[...prog.querySelectorAll('u')];
+const brand = el('div',null,`<img src="img/icon.png">NHL PROPS LAB`); brand.id='brand';
+const bdate = el('div',null,esc(SPEC.day)); bdate.id='bdate';
+const grain = el('div',null); grain.id='grain';
+const wipe = el('div',null); wipe.id='wipe';
+const flash = el('div',null); flash.id='flash';
+{ const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d'); const im=x.createImageData(256,256);
+  for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255}
+  x.putImageData(im,0,0); grain.style.backgroundImage=`url(${c.toDataURL()})`; }
+
+// ---------- render ----------
+function slam(e,t,at,from=1.5){ // big text slam-in
+  const p=seg(t,at,at+.32), q=eExpo(p);
+  e.style.opacity=p<=0?0:clamp(p*3);
+  e.style.transform=`scale(${lerp(from,1,q)})`;
+  e.style.filter=`blur(${(1-q)*14}px)`;
+  e.classList.toggle('glitch', t>=at && t<at+.12);
+}
+function words(spans,t,at,step,dy=50){
+  spans.forEach((s,i)=>{const p=eOut(seg(t,at+i*step,at+i*step+.35)); s.style.opacity=p; s.style.transform=`translateY(${(1-p)*dy}px)`; s.style.filter=`blur(${(1-p)*8}px)`});
+}
+function beatPulse(t){ const b=T.beat, ph=(t%b)/b; return Math.exp(-ph*6); }
+
+window.render = function(t){
+  for(const s of scenes) s.el.style.display=(t>=s.a&&t<s.b)?'block':'none';
+  // shake after cuts
+  let sx=0, sy=0;
+  const cutsAt=[...G.map((_,i)=>gStart(i)), ...(T.board?[boardStart]:[]), outroStart];
+  for(const c of cutsAt){ const d=t-c; if(d>=0&&d<.25){ const k=(1-d/.25)*14; sx+=(hash(t*90)-.5)*k; sy+=(hash(t*77+3)-.5)*k; } }
+  stage.style.transform=`translate(${sx}px,${sy}px)`;
+
+  // ---- intro
+  if(t<S0){
+    const k=Math.min(NG-1,Math.floor(t/T.beat)%Math.max(1,NG));
+    introBgs.forEach((b,i)=>{const on=i===k; b.style.display=on?'block':'none'; if(on){const lt=(t%T.beat)/T.beat; b.style.transform=`scale(${1.25-0.08*lt}) rotate(${(i%2?1:-1)*1.2}deg)`; }});
+    slam(n1,t,0.0,1.8); slam(n2,t,T.beat,1.8);
+    const dp=eBack(seg(t,2*T.beat,2*T.beat+.4)); dchip.style.opacity=clamp(dp); dchip.style.transform=`translateY(${(1-dp)*40}px)`;
+    words(hookSpans,t,3*T.beat,0.11,60);
+    const vp=eOut(seg(t,6*T.beat,6*T.beat+.4)); vs.style.opacity=vp; vs.style.letterSpacing=`${lerp(30,8,vp)}px`;
+    intro.style.opacity=1-seg(t,S0-.18,S0);
+  }
+
+  // ---- games
+  GS.forEach((s,i)=>{
+    const a=gStart(i); if(t<a||t>=a+T.game) return;
+    const u=t-a, g=s.g, B=4.0; // phase B starts at 4.0 s
+    const pulse=beatPulse(u)*0.012;
+    const toB=eInOut(seg(u,B,B+.55));
+    s.bg.style.transform=`scale(${1.15+u*0.01+pulse})`;
+    s.dim.style.opacity=lerp(.30,.52,toB);
+    const cin=eExpo(seg(u,0.0,0.55));
+    s.chip.style.opacity=eOut(seg(u,.1,.4))*(1-toB); s.chip.style.transform=`translateX(${(1-eOut(seg(u,.1,.5)))*-60}px)`;
+    // photo card: rises in, Ken Burns, leaves in phase B
+    s.card.style.opacity=clamp(cin*1.4)*(1-toB);
+    s.card.style.transform=`translateY(${(1-cin)*140 - toB*160}px) scale(${lerp(.92,1,cin)*lerp(1,.9,toB)}) rotate(${(1-cin)*-3}deg)`;
+    if(s.cimg){ const kb=u/T.game; s.cimg.style.transform=`scale(${1.06+kb*0.16+pulse}) translate(${(i%2?-1:1)*kb*22}px,${-kb*14}px)`; }
+    // matchup slam, then moves to header in phase B
+    [s.ma,s.mat,s.mh].forEach((e,k)=>{const at=.28+k*.12, p=eExpo(seg(u,at,at+.35)); e.style.opacity=clamp(p*2); e.style.transform=`translateY(${(1-p)*(k==1?0:-120)}px) scale(${lerp(k==1?0.2:1.6,1,p)})`; e.classList.toggle('glitch',u>=at&&u<at+.1)});
+    s.mu.style.transform=`translateY(${toB*-660}px) scale(${lerp(1,.6,toB)})`;
+    const bp=eOut(seg(u,.65,1.05)); s.bars.style.opacity=(1-toB); [...s.bars.children].forEach(b=>b.style.transform=`scaleX(${bp})`);
+    s.kick.style.opacity=eOut(seg(u,.8,1.1))*(1-toB);
+    words(s.hws,t-a,1.0,0.07); s.hl.style.opacity=1-toB; s.hl.style.transform=`translateY(${toB*-40}px)`;
+    s.credit.style.opacity=.9*eOut(seg(u,.6,1));
+    // stat cards
+    const cardIn=(e,at)=>{const p=eBack(seg(u,at,at+.5)); e.style.opacity=clamp(seg(u,at,at+.25)); e.style.transform=`translateY(${(1-p)*120}px) scale(${lerp(.94,1,p)})`; return eOut(seg(u,at+.15,at+1.1));};
+    const p1=cardIn(s.s1,B+.25);
+    const rows=[g.p_home, g.mk_home].filter(x=>x!=null);
+    s.tracks.forEach((tr,k)=>{const ph=lerp(.5,rows[k],p1); const [ba,bh]=tr.children; ba.style.width=(1-ph)*100+'%'; bh.style.width=ph*100+'%';
+      ba.textContent=g.away+' '+pct(1-ph); bh.textContent=pct(ph)+' '+g.home;});
+    const p2=cardIn(s.s2,B+.85);
+    s.big.textContent=(g.exp_total*p2).toFixed(1); s.om.textContent=pct(g.over*p2); if(s.ok) s.ok.textContent=pct(g.mk_over*p2);
+    if(s.s3){ const p3=cardIn(s.s3,B+1.45); s.ring.setAttribute('stroke-dashoffset',502.65*(1-g.player.p*p3)); s.rtxt.textContent=pct(g.player.p*p3); }
+    // exit
+    const ex=seg(u,T.game-.18,T.game); if(ex>0) s.root.style.opacity=1-ex*.6; else s.root.style.opacity=1;
+  });
+
+  // ---- board
+  if(board && t>=boardStart && t<outroStart){
+    const u=t-boardStart; slam(board.h,u,0.05,1.6);
+    board.rows.forEach((r,i)=>{const p=eBack(seg(u,.4+i*.12,.9+i*.12)); r.style.opacity=clamp(seg(u,.4+i*.12,.6+i*.12)); r.style.transform=`translateX(${(1-p)*-200}px)`});
+  }
+
+  // ---- outro
+  if(t>=outroStart){
+    const u=t-outroStart;
+    obg.style.transform=`scale(${1.2+u*.02})`;
+    const ip=eBack(seg(u,.05,.6)); oicon.style.opacity=clamp(ip); oicon.style.transform=`scale(${lerp(.3,1,ip)}) rotate(${(1-ip)*-25}deg)`;
+    slam(oname,u,.35,1.4);
+    const tp=eOut(seg(u,.75,1.15)); otag.style.opacity=tp; otag.style.transform=`translateY(${(1-tp)*30}px)`;
+    const up=eBack(seg(u,1.0,1.5)); ourl.style.opacity=clamp(up); ourl.style.transform=`scale(${lerp(.6,1,up)})`;
+    slam(ofol,u,1.5,1.6);
+    odis.style.opacity=eOut(seg(u,1.9,2.3));
+    const fade=seg(u,T.outro-.5,T.outro); stage.style.opacity=1-fade;
+  } else stage.style.opacity=1;
+
+  // ---- global overlays
+  const inGames=t>=S0&&t<boardStart;
+  prog.style.opacity=inGames?1:0; brand.style.opacity=inGames?.95:0; bdate.style.opacity=inGames?.9:0;
+  progU.forEach((e,i)=>{e.style.width=clamp((t-gStart(i))/T.game)*100+'%'});
+  leak1.style.transform=`translate(${-500+Math.sin(t*.45)*380}px,${-300+Math.cos(t*.3)*300}px)`; leak1.style.opacity=.22+beatPulse(t)*.08;
+  leak2.style.transform=`translate(${300+Math.cos(t*.38)*360}px,${900+Math.sin(t*.27)*420}px)`; leak2.style.opacity=.18;
+  const f=Math.floor(t*30); grain.style.backgroundPosition=`${Math.floor(hash(f)*256)}px ${Math.floor(hash(f+.5)*256)}px`;
+  // transitions: wipe sweeps across just before each cut, flash right after
+  let fl=0, wp=-1;
+  for(const c of cutsAt){ const d=t-c; if(d>=0&&d<.3) fl=Math.max(fl,(1-d/.3)*.55); if(d>-.32&&d<.08) wp=(d+.32)/.4; }
+  if(t<.25) fl=Math.max(fl,(1-t/.25)*.6);
+  flash.style.opacity=fl;
+  if(wp>=0){ wipe.style.display='block'; wipe.style.transform=`translateX(${lerp(-1000,2400,eInOut(wp))}px) rotate(14deg)`; } else wipe.style.display='none';
+};
+Promise.all([document.fonts.ready, ...['400 20px Anton','500 20px "Exo 2"','700 20px "Exo 2"','800 20px "Exo 2"','600 20px Oxanium','800 20px Oxanium'].map(f=>document.fonts.load(f)),...[...document.images].map(i=>i.decode().catch(()=>0))]).then(()=>{
+  // preload background images
+  const urls=G.flatMap(g=>[g.src,g.bsrc]).filter(Boolean);
+  return Promise.all(urls.map(u=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=u})));
+}).then(()=>{ render(0); window.READY=true; });
+</script></body></html>
