@@ -62,8 +62,9 @@ Never invent facts, numbers or quotes. If something cannot be verified, leave it
   to yesterday in New York; `--date YYYY-MM-DD` for another night). It needs origin/site:data/bestpicks.json (the
   Track record) and origin/site:data/archive/<DATE>.json; if the night has no graded picks it stops without output.
 - It goes through every Track record pick of that exact date (main picks; the multi-point long shots only on a night one of them won at 5.00 or more), with the
-  result, the running profit and a summary, then opens the real site profile (archive of that date) of the biggest
-  winners and highlights the numbers behind the pick. Its music is a different song (music.review_track).
+  result, the running profit and a summary, then opens the real site profile (archive of that date) of up to 4
+  winners: Prices & value first, then a different section per player chosen for his market (averages chart, game by
+  game, how the number is built, skill or luck, shot profile). Its music is a different song (music.review_track).
 - Check a few stills with `--preview 4,8,30,36` if anything looks off.
 - Send `video/out/<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg` and `<DATE>-review-captions.txt` to the user
   (SendUserFile). Do not commit the video files.

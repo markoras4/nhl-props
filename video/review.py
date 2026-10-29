@@ -14,6 +14,7 @@ import argparse
 import base64
 import datetime as dt
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -34,11 +35,22 @@ INTRO = 8 * BEAT          # 5 s
 SUMMARY = 6 * BEAT        # 3.75 s
 MULTI = 6 * BEAT
 BIG_HIT = 5.0             # the long shots (multi-point picks) only get a card when one of them won at odds this big or more
-SPOT = 16 * BEAT          # 10 s per profit spotlight
+SPOT = 12 * BEAT          # 7.5 s per profit spotlight: Prices & value, then one more section of his profile
 OUTRO = 10 * BEAT         # 6.25 s
-MAX_SPOTS = 2
-PROF_VW, PROF_DPR, PROF_MAX = 430, 2.5, 2400
+MAX_SPOTS = 4             # profit spotlights per video (each shows a different section of the site)
+CAND_SPOTS = 6            # winners captured to choose from
+PROF_VW, PROF_DPR, PROF_MAX = 430, 2.5, 4200
 PVTAB = {"g": "sc", "a": "sc", "pt": "sc", "fg": "sc", "ppp": "mu", "pt2": "mu", "pt3": "mu", "g2": "mu", "g3": "mu", "a2": "mu"}
+
+
+def stat_of(m):
+    return "s" if m[0] == "s" else {"g": "g", "a": "a", "g2": "g", "g3": "g", "a2": "a"}.get(m, "p")
+
+
+def line_of(m):
+    if m[0] == "s" and m[1:].replace(".", "").isdigit():
+        return float(m[1:])
+    return {"g2": 1.5, "g3": 2.5, "a2": 1.5, "pt2": 1.5, "pt3": 2.5}.get(m, 0.5)
 
 
 def git_show(path):
@@ -50,63 +62,190 @@ def pick_beats(n):
     return 4 if n <= 8 else 3 if n <= 12 else 2
 
 
-def site_pass(html, archive, rows, spots, work):
-    """One headless session on the built site in archive mode for DATE: market names for every pick, and a tall
-    phone-width screenshot of each spotlight player's profile with the boxes we highlight."""
+def site_pass(html, archive, rows, spots, work, date=None):
+    """One headless session on the built site, served from the origin/site tree, in archive mode for DATE (the
+    site's own ?d=DATE view, as the night looked before puck drop): market names for every pick, and a tall
+    phone-width screenshot of each spotlight player's profile with the sections we highlight."""
     from playwright.sync_api import sync_playwright
-    p = Path(work) / "site.html"
-    p.write_text(html)
+    import mimetypes
+    root = Path(work) / "site"
+    root.mkdir(exist_ok=True)
+    tar = subprocess.run(["git", "archive", "origin/site"], cwd=ROOT, capture_output=True, check=True).stdout
+    subprocess.run(["tar", "-x", "-C", str(root)], input=tar, check=True)
+    if html:
+        (root / "app" / "index.html").write_text(html)
+    HOST = "http://site.local/"
+
+    def serve(route):
+        u = route.request.url
+        if not u.startswith(HOST):
+            return route.abort()
+        rel = u[len(HOST):].split("?")[0].split("#")[0] or "index.html"
+        f = (root / rel).resolve()
+        if root.resolve() not in f.parents or not f.is_file():
+            return route.fulfill(status=404, body="")
+        route.fulfill(status=200, body=f.read_bytes(), content_type=mimetypes.guess_type(str(f))[0] or "application/octet-stream")
+
     with sync_playwright() as pw:
         br = pw.chromium.launch()
         pg = br.new_page(viewport={"width": PROF_VW, "height": 932}, device_scale_factor=PROF_DPR,
                          locale="en-US", color_scheme="dark", reduced_motion="reduce")
         pg.add_init_script("try{localStorage.setItem('age18','1')}catch(e){}")
-        pg.route(lambda u: not u.startswith("file:"), lambda r: r.abort())
-        pg.goto(p.as_uri())
-        pg.wait_for_function("typeof bestPicks === 'function' && typeof DATA !== 'undefined'", timeout=60000)
-        pg.evaluate("(A) => { applyArchive(A); document.documentElement.setAttribute('data-theme', 'dark'); }", archive)
+        pg.route("**/*", serve)
+        pg.goto(HOST + f"app/index.html?d={date or archive['date']}")
+        pg.wait_for_function("typeof bestPicks === 'function' && typeof ARCH !== 'undefined' && ARCH && ARCH.date", timeout=60000)
+        pg.evaluate("() => { document.documentElement.setAttribute('data-theme', 'dark'); }")
         names = pg.evaluate("(ms) => Object.fromEntries(ms.map(m => [m, mName(m)]))", sorted({r["m"] for r in rows}))
         for r in rows:
             r["mn"] = names.get(r["m"], r["m"])
         for sp in spots:
-            box = pg.evaluate("""([gid, pid, m, tab]) => {
-                const pr = P(pid); state.pvtab = tab;
-                go({tab: 'games', game: String(gid), side: pr.team}); state.open = String(pid); render();
-                const r = document.querySelector(`tr.row[data-id="${pid}"]`);
-                if (!r || !r.nextElementSibling) return null;
-                const d = r.nextElementSibling, a = r.getBoundingClientRect();
-                const rel = b => [b.left, b.top - a.top + 8, b.width, b.height];
-                const boxes = {};
-                for (const b of d.querySelectorAll('.box')) {
-                  const h = (b.textContent || '').trim().toLowerCase();
-                  if (h.startsWith('prices')) boxes.prices = rel(b.getBoundingClientRect());
-                  else if (h.startsWith('how the number')) boxes.built = rel(b.getBoundingClientRect());
-                  else if (h.startsWith('skill or luck')) boxes.luck = rel(b.getBoundingClientRect());
-                  else if (h.startsWith('game by game')) boxes.chart = rel(b.getBoundingClientRect());
-                  else if (h.startsWith('last 10')) boxes.l10 = rel(b.getBoundingClientRect());
-                }
-                // the pick's own market row inside Prices & value (label span + the cells on the same line)
-                const lab = [...d.querySelectorAll('span')].find(s => s.textContent.trim().replace(/[✓✗]/g, '').trim() === mName(m));
-                if (lab) {
-                  const lt = lab.getBoundingClientRect().top;
-                  const cells = [...lab.parentElement.children].filter(e => Math.abs(e.getBoundingClientRect().top - lt) < 14 ||
-                    (e.getBoundingClientRect().top < lt + 30 && e.getBoundingClientRect().bottom > lt + 4));
-                  const rs = cells.map(e => e.getBoundingClientRect());
-                  const L = Math.min(...rs.map(x => x.left)), T = Math.min(...rs.map(x => x.top)),
-                        R = Math.max(...rs.map(x => x.right)), B = Math.max(...rs.map(x => x.bottom));
-                  boxes.row = [L - 6, T - a.top + 8 - 6, R - L + 12, B - T + 12];
-                }
-                return {top: a.top + scrollY, bottom: d.getBoundingClientRect().bottom + scrollY, row: a.height, boxes};
-            }""", [sp["g"], sp["pid"], sp["m"], PVTAB.get(sp["m"], "sh" if sp["m"][0] == "s" else "sc")])
+            st = stat_of(sp["m"])
+            def measure():
+                    return pg.evaluate("""([gid, pid, m, tab, st, line]) => {
+                    const pr = P(pid); state.pvtab = tab;
+                    // show every section in the view that fits this pick: his market in "game by game" with the pick's
+                    // line, the season-by-season averages chart for the same stat (82-game pace, per game for shots)
+                    state.l10m = st; state.l10line = state.l10line || {}; state.l10line[st] = line; state.l10n = 10; state.l10pop = false;
+                    state.chart = Object.assign(state.chart || {}, {view: 'chart', stat: st, mode: 'seasons', unit: st === 's' ? 'pg' : 'pace'});
+                    state.spw = 'season';
+                    go({tab: 'games', game: String(gid), side: pr.team}); state.open = String(pid); render();
+                    const r = document.querySelector(`tr.row[data-id="${pid}"]`);
+                    if (!r || !r.nextElementSibling) return null;
+                    const d = r.nextElementSibling, a = r.getBoundingClientRect();
+                    const rel = b => [b.left, b.top - a.top + 8, b.width, b.height];
+                    const boxes = {}, text = {};
+                    const KEYS = [['prices', 'prices'], ['built', 'how the number'], ['luck', 'skill or luck'], ['chart', 'game by game'],
+                                  ['l10', 'last 10'], ['shots', 'shot profile'], ['avg', 'averages']];
+                    for (const b of d.querySelectorAll('.box')) {
+                      const h = (b.textContent || '').trim().toLowerCase();
+                      const k = KEYS.find(([, w]) => h.startsWith(w));
+                      if (k && !boxes[k[0]]) { boxes[k[0]] = rel(b.getBoundingClientRect()); text[k[0]] = b.innerText; }
+                    }
+                    const lab = [...d.querySelectorAll('span')].find(s => s.textContent.trim().replace(/[✓✗]/g, '').trim() === mName(m));
+                    if (lab) {
+                      const lt = lab.getBoundingClientRect().top;
+                      const cells = [...lab.parentElement.children].filter(e => Math.abs(e.getBoundingClientRect().top - lt) < 14 ||
+                        (e.getBoundingClientRect().top < lt + 30 && e.getBoundingClientRect().bottom > lt + 4));
+                      const rs = cells.map(e => e.getBoundingClientRect());
+                      const L = Math.min(...rs.map(x => x.left)), T = Math.min(...rs.map(x => x.top)),
+                            R = Math.max(...rs.map(x => x.right)), B = Math.max(...rs.map(x => x.bottom));
+                      boxes.row = [L - 6, T - a.top + 8 - 6, R - L + 12, B - T + 12];
+                    }
+                    const p = P(pid), w = p.windows || {}, cur = w.cur || {}, prev = w.prev3 || {};
+                    const k = {g: 'g', a: 'a', p: 'p', s: 's'}[st];
+                    const facts = {gp: cur.gp, cur_pg: cur[k + '_pg'], prev_pg: prev[k + '_pg'], prev_seasons: prev.seasons,
+                                   sh: p.rates?.recent_sh, sh_cur: cur.sh, lg_sh: p.rates?.lg_sh, g: cur.g, xg: p.xg_windows?.cur?.xg, s: cur.s};
+                    return {top: a.top + scrollY, bottom: d.getBoundingClientRect().bottom + scrollY, row: a.height, boxes, text, facts};
+                }""", [sp["g"], sp["pid"], sp["m"], PVTAB.get(sp["m"], "sh" if sp["m"][0] == "s" else "sc"), st, line_of(sp["m"])])
+            box = measure()
+            if box:   # the shot map and charts load after the first render: let them settle, then measure again
+                pg.wait_for_timeout(1400)
+                try:
+                    pg.wait_for_function("!(document.querySelector('.spbox')?.innerText || '').includes('Loading')", timeout=8000)
+                except Exception:
+                    pass
+                box = measure()
             if not box:
                 continue
-            pg.wait_for_timeout(1200)
+            pg.wait_for_timeout(1400)
+            try:
+                pg.wait_for_function("!(document.querySelector('.spbox')?.innerText || '').includes('Loading')", timeout=8000)
+            except Exception:
+                pass
+            pg.wait_for_timeout(300)
+            box["text"]["shots"] = pg.evaluate("() => document.querySelector('.spbox')?.innerText || ''")
             h = min(box["bottom"] - box["top"] + 8, PROF_MAX)
             out = Path(work) / "img" / f"prof-{sp['pid']}.jpg"
             pg.screenshot(path=str(out), type="jpeg", quality=90, full_page=True,
                           clip={"x": 0, "y": max(0, box["top"] - 8), "width": PROF_VW, "height": h})
-            sp["prof"] = {"src": "img/" + out.name, "w": PROF_VW, "h": h, "boxes": box["boxes"]}
+            bx = {k: v for k, v in box["boxes"].items() if v[1] + v[3] <= h}
+            sp["prof"] = {"src": "img/" + out.name, "w": PROF_VW, "h": h, "boxes": bx}
+            sp["text"], sp["facts"] = box["text"], box["facts"]
         br.close()
+
+
+SECTIONS = {
+    "built": "How the number is built", "luck": "Skill or luck?", "chart": "Game by game",
+    "shots": "Shot profile", "avg": "Averages · season by season",
+}
+
+
+def _after(text, label):
+    """the value line that follows `label` in a box's innerText"""
+    ls = [x.strip() for x in (text or "").splitlines() if x.strip()]
+    for i, x in enumerate(ls):
+        if x.lower().startswith(label.lower()) and i + 1 < len(ls):
+            return ls[i + 1]
+    return None
+
+
+def _num(x):
+    m = re.search(r"-?\d+(?:\.\d+)?", x or "")
+    return float(m.group()) if m else None
+
+
+def section_call(sp, sec):
+    """callout for the second stop: what this part of the site shows, with his own numbers from it"""
+    tx, f = sp.get("text") or {}, sp.get("facts") or {}
+    st = stat_of(sp["m"])
+    stat_name = {"g": "goals", "a": "assists", "p": "points", "s": "shots"}[st]
+    if sec == "built":
+        bits = [b for b in (re.search(r"TOI [\d.]+", tx["built"] or ""), re.search(r"Opp defence ×[\d.]+", tx["built"] or ""),
+                            re.search(r"Opp goalie ×[\d.]+", tx["built"] or "")) if b]
+        xg = _after(tx["built"], "Expected goals / assists")
+        return {"big": "His rates × matchup × goalie", "sm": " · ".join(b.group() for b in bits) +
+                (f" → expected {xg.replace(' / ', ' G / ')} A" if xg and st in ("g", "a", "p") else "")}
+    if sec == "luck":
+        cur, tal = _after(tx["luck"], "Shooting % this season"), _after(tx["luck"], "True-talent shooting %")
+        gx = _after(tx["luck"], "Goals vs expected this season")
+        c, t_ = _num(cur), _num(tal)
+        hot = c is not None and t_ is not None and c > t_
+        return {"big": f"Shooting <em>{cur.split(' ')[0]}</em> vs <u>{tal}</u> true talent" if cur and tal else "Finishing vs true talent",
+                "sm": (f"{gx.replace(' vs ', ' goals vs ')} expected. " if gx else "") +
+                      ("Hot finishing is regressed, the model prices his real level." if hot else "The chances are there; the model doesn't punish cold luck.")}
+    if sec == "chart":
+        t = tx["chart"] or ""
+        head = next((x for x in t.splitlines() if "HOW OFTEN IT HAPPENED" in x), "")
+        tail = t[t.find("HOW OFTEN IT HAPPENED"):] if "HOW OFTEN IT HAPPENED" in t else t
+        l10, mt, mk = _after(tail, "L10"), _after(tail, "Model tonight"), _after(tail, "Market")
+        what = head.split(":")[0].strip().capitalize() if head else stat_name
+        return {"big": f"{what} in <em>{l10}</em> of his last 10" if l10 else f"Every game, bar by bar",
+                "sm": f"Each bar is one game against the line. Model tonight {mt} vs market {mk}." if mt and mk else "Each bar is one game against the line."}
+    if sec == "shots":
+        return {"big": "Where his shots come from", "sm": f"Every attempt this season on the rink map: {f.get('s', 0)} shots in {f.get('gp', 0)} games, season or last 10."}
+    if sec == "avg":
+        cur, prev = f.get("cur_pg"), f.get("prev_pg")
+        if st == "s":
+            big = f"{cur:.2f} shots a game this season" if cur is not None else "Shots per game, season by season"
+            sm = (f"Previous 3 seasons: {prev:.2f}. " if prev else "") + "Per game, 82-game pace or per season, next to every past season."
+        else:
+            big = f"<em>{cur * 82:.0f}</em>-{stat_name[:-1]} pace per 82 games" if cur is not None else f"{stat_name.capitalize()} season by season"
+            sm = (f"Previous 3 seasons: {prev * 82:.0f}. " if prev else "") + (f"Only {f.get('gp')} games so far, so the model leans on his history too." if (f.get("gp") or 0) < 20 else "The model weighs this season against his history.")
+        return {"big": big, "sm": sm}
+    return {"big": "", "sm": ""}
+
+
+def assign_sections(spots, date):
+    """Every spotlight opens on Prices & value; its second stop is a different section each time, picked for the
+    pick's market (points -> averages chart / game by game, goals -> skill or luck, shots -> shot profile); the
+    most fitting section that no earlier spotlight in the video has used yet."""
+    REL = {"g": ["luck", "chart", "avg", "built", "shots"], "s": ["shots", "chart", "avg", "built", "luck"],
+           "p": ["avg", "chart", "built", "luck", "shots"], "a": ["avg", "chart", "built", "luck", "shots"]}
+    used, out = set(), []
+    for i, sp in enumerate(spots):
+        bx, tx = sp["prof"]["boxes"], sp.get("text") or {}
+        ok = lambda k: k in bx and (k != "shots" or ("No shot attempts" not in tx.get("shots", "") and "Loading" not in tx.get("shots", "")))
+        order = REL[stat_of(sp["m"])]
+        sec = next((k for k in order if ok(k) and k not in used), None) or next((k for k in order if ok(k)), None)
+        if not sec:
+            continue
+        used.add(sec)
+        sp["sec"], sp["sec_lab"] = sec, SECTIONS[sec]
+        sp["call2"] = section_call(sp, sec)
+        out.append(sp)
+        if len(out) >= MAX_SPOTS:
+            break
+    return out
 
 
 def build(date, bp, archive, previews):
@@ -147,7 +286,7 @@ def build(date, bp, archive, previews):
             continue
         seen.add(r["pid"])
         spots.append(dict(r))
-        if len(spots) >= MAX_SPOTS:
+        if len(spots) >= CAND_SPOTS:
             break
     day = dt.date.fromisoformat(date)
     return {"date": date, "day": day.strftime("%a · %b %-d").upper(), "dlong": day.strftime("%A, %B %-d"),
@@ -295,8 +434,8 @@ def main():
     with tempfile.TemporaryDirectory() as td:
         work = Path(td)
         (work / "img").mkdir()
-        site_pass(html, arch, spec["picks"] + spec["multi"] + spec["spots"], spec["spots"], work)
-        spec["spots"] = [s for s in spec["spots"] if s.get("prof")]
+        site_pass(html, arch, spec["picks"] + spec["multi"] + spec["spots"], spec["spots"], work, a.date)
+        spec["spots"] = assign_sections([s for s in spec["spots"] if s.get("prof")], a.date)
         (out / f"{a.date}-review-captions.txt").write_text(captions(spec))
         s = spec["sum"]
         print(f"{a.date}: {s['w']}-{s['l']} {s['u']:+.2f}u, {len(spec['picks'])} picks, {len(spec['multi'])} long shots, "

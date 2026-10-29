@@ -96,6 +96,7 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .call{position:absolute;left:70px;right:70px;top:1222px;min-height:200px;padding:30px 36px 30px 44px;border-radius:30px;overflow:hidden;background:linear-gradient(160deg,rgba(26,34,46,.985),rgba(9,12,17,.985))!important}
 .call::after{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(180deg,var(--gold),var(--mint))}
 .call .lab{font-size:22px;color:var(--gold)}
+.call{transform-origin:50% 100%}
 .call .big{margin-top:10px;font:800 46px/1.15 "Exo 2"}
 .call .big em{font-style:normal;color:var(--mint)}
 .call .big u{text-decoration:none;color:var(--blue)}
@@ -214,28 +215,32 @@ const tcells=[...tiles.children];
 const snote=css(el('div','abs',`${SUM.v?SUM.v+' void (did not play) · ':''}every pick, wins and losses, on the Track record page`,summ),{left:'60px',right:'60px',top:'1200px',textAlign:'center',font:'600 30px "Exo 2"',color:'var(--mute)'});
 
 // ---------------- profit spotlights ----------------
+// each one opens on Prices & value (his pick's row), then flicks to a different section of his profile
 const SPS=SP.map((p,i)=>{
   const root=el('div','scene'); const a=tSp0+i*T.spot; scenes.push({el:root,a,b:a+T.spot});
+  root.style.perspective='2000px';
   const bg=bgLayer(p.bsrc,root);
   css(el('div','shade',null,root),{background:'radial-gradient(900px 700px at 50% 30%,rgba(242,198,109,.16),transparent 70%),linear-gradient(180deg,rgba(6,8,12,.72),rgba(6,8,12,.9))'});
-  const chip=css(el('div','abs',`<span class="chip gold"><span class="dot" style="background:var(--gold);box-shadow:0 0 18px var(--gold)"></span>Profit spotlight · ${esc(p.n)} · <b style="color:var(--mint)">${un(p.u)}</b></span>`,root),{left:0,right:0,top:'238px',textAlign:'center'});
+  const chip=css(el('div','abs',`<span class="chip gold"><span class="dot" style="background:var(--gold);box-shadow:0 0 18px var(--gold)"></span>Profit spotlight ${SP.length>1?(i+1)+'/'+SP.length+' · ':''}${esc(p.n)} · <b style="color:var(--mint)">${un(p.u)}</b></span>`,root),{left:0,right:0,top:'238px',textAlign:'center',zIndex:6});
   const pf=p.prof, bx=pf.boxes||{};
   const ph=el('div','phone',`<div class="scr"><div class="cont"><img src="${pf.src}" style="width:${pf.w}px"></div>
     <div class="top"><div class="tm">${esc(p.time||'')}</div><div class="ic"><i style="height:10px"></i><i style="height:15px"></i><i style="height:20px"></i><i style="height:25px"></i></div><div class="url"><b></b>${esc(SPEC.site)}</div></div><div class="fade"></div></div><div class="isl"></div>`,root);
   const cont=ph.querySelector('.cont');
   const hl=k=>{const r=bx[k]; if(!r) return null; const d=el('div','hl',null,cont); css(d,{left:r[0]+'px',top:r[1]+'px',width:r[2]+'px',height:r[3]+'px'}); return d};
-  const H={row:hl('row')||hl('prices'), built:hl('built'), chart:hl('chart')||hl('l10')};
+  const H1=hl('row')||hl('prices'), H2=hl(p.sec);
   const sc=(820-28)/pf.w, vis=(1158-28-146)/sc, maxY=Math.max(0,pf.h-vis);
-  const at=k=>{const r=bx[k]; return r?clamp(r[1]-24,0,maxY):null};
-  const stops=[0, at('built') ?? Math.min(maxY,460), at('chart') ?? at('l10') ?? maxY];
+  const r2=bx[p.sec]||[0,0,0,0];
+  // second stop: the section's top near the top of the screen (or centred when it is short)
+  const y2=clamp(r2[3]<vis*.8 ? r2[1]-(vis-r2[3])*.32 : r2[1]-24, 0, maxY);
+  const y1=clamp((bx.row?bx.row[1]:0)-vis*.25,0,maxY);
   const imp=1/p.od, edge=p.p*p.od-1;
   const calls=[
-    ['At the lock', `Model <em>${pct1(p.p)}</em> vs odds <u>${odd(p.od)}</u> (${pct(imp)})`, `The model saw ${edge>=0?'+':''}${Math.round(edge*100)}% value in the ${esc(p.mn.toLowerCase())} price before puck drop.`],
-    ['How the number is built', `Rates, ice time, matchup & goalie`, `Every factor behind the chance is shown on his profile, nothing hidden.`],
+    ['Prices & value · at the lock', `Model <em>${pct1(p.p)}</em> vs odds <u>${odd(p.od)}</u> (${pct(imp)})`, `The model saw ${edge>=0?'+':''}${Math.round(edge*100)}% value in the ${esc(p.mn.toLowerCase())} price before puck drop.`],
+    [p.sec_lab, p.call2.big, p.call2.sm],
     ['What happened', `${esc(statLine(p.st))} → <em>WON ${un(p.u)}</em>`, `${esc(p.a)} ${p.as??''} – ${p.hs??''} ${esc(p.h)} · final`],
-  ].map(([l,b,s])=>el('div','call glass',`<div class="lab">${l}</div><div class="big">${b}</div><div class="sm">${s}</div>`,root));
+  ].map(([l,b,s])=>el('div','call glass',`<div class="lab">${l}</div><div class="big">${b}</div><div class="sm">${s}</div><div class="sheen"><i></i></div>`,root));
   const cred=el('div','credit',esc(p.credit||''),root); cred.style.top='1490px';
-  return {p,root,bg,chip,ph,cont,H,sc,stops,calls,cred};
+  return {p,i,root,bg,chip,ph,cont,H1,H2,sc,vis,y1,y2,r2,calls,cred};
 });
 
 // ---------------- outro ----------------
@@ -346,22 +351,36 @@ window.render=function(t){
   }
 
   // spotlights
-  SPS.forEach((s,i)=>{
-    const a=tSp0+i*T.spot; if(t<a||t>=a+T.spot) return;
-    const u=t-a, D=T.spot;
+  SPS.forEach(s=>{
+    const a=tSp0+s.i*T.spot; if(t<a||t>=a+T.spot) return;
+    const u=t-a, D=T.spot, i=s.i;
     s.bg.style.transform=`scale(${1.15+u*.012})`;
     popIn(s.chip,u,.1,40);
-    const ip=eOut(seg(u,0,.7)); s.ph.style.opacity=clamp(seg(u,0,.3)); s.ph.style.transform=`translateY(${(1-ip)*120}px) scale(${lerp(1.12,1,ip)}) rotateX(${(1-ip)*12}deg)`; s.ph.style.filter=ip<1?`blur(${(1-ip)*10}px)`:'none';
-    // three stops: prices (his pick's row) -> how the number is built -> the game-by-game chart + what happened
-    const K=[[.9,3.4],[3.4,6.2],[6.2,D]], mv=.95;
-    let y=s.stops[0];
-    K.forEach(([k0,k1],k)=>{ if(u>=k0){ y=lerp(k?s.stops[k-1]:s.stops[0],s.stops[k],eInOut(seg(u,k0,k0+(k?mv:0.01)))); }});
+    // entrance varies: flip in, rise and tilt, or zoom from depth
+    const ip=eOut(seg(u,0,.75)), kind=i%3;
+    let ent=kind===0?`rotateY(${(1-ip)*-78}deg) translateX(${(1-ip)*-160}px)`:kind===1?`translateY(${(1-ip)*260}px) rotateX(${(1-ip)*28}deg)`:`translateZ(${(1-ip)*-900}px)`;
+    // phases: 0.75-2.9 prices row, 2.9-3.75 flick to the section, 3.75-5.7 section, 5.7-end result
+    const F0=2.9, F1=3.75, R0=5.7;
+    const fl=eInOut(seg(u,F0,F1));
+    const y=lerp(s.y1*eInOut(seg(u,.75,1.35)),s.y2,fl);
+    const vel=Math.sin(Math.PI*seg(u,F0,F1));
     s.cont.style.transform=`translateY(${-y*s.sc}px) scale(${s.sc})`;
-    const hk=['row','built','chart'];
-    hk.forEach((h,k)=>{const e=s.H[h]; if(!e) return; const [k0,k1]=K[k], st=k0+(k?mv:.2), q=eOut(seg(u,st,st+.4)), o=1-seg(u,k1-.25,k1);
-      e.style.opacity=q*o*(.75+beatPulse(u)*.25); e.style.transform=`scale(${lerp(1.08,1,q)})`;});
-    s.calls.forEach((c,k)=>{const [k0,k1]=K[k], st=k0+(k?mv:.2)+.15; const p=eBack(seg(u,st,st+.5)); const o=k===2?1:1-seg(u,k1-.3,k1);
-      c.style.opacity=clamp(seg(u,st,st+.2))*o; c.style.transform=`translateY(${(1-p)*90}px)`; c.style.display=(u>=st-.05&&(k===2||u<k1))?'block':'none';});
+    s.cont.style.filter=vel>.05?`blur(${vel*5}px)`:'none';
+    // camera: push in on the section, pull back and tilt for the result
+    const zin=eInOut(seg(u,F1,F1+.6))*(1-eInOut(seg(u,R0,R0+.7))), zout=eInOut(seg(u,R0,R0+.7));
+    const zy=((s.r2[1]-y)*s.sc+146+14+s.r2[3]*s.sc/2);   // section centre in phone px
+    s.ph.style.transformOrigin=`50% ${clamp(zy,200,1000)}px`;
+    s.ph.style.transform=`${ent} scale(${1+zin*.09}) rotateY(${zout*-9}deg) rotateZ(${zout*-1.2}deg) translateX(${zout*-30}px)`;
+    s.ph.style.opacity=clamp(seg(u,0,.3)); s.ph.style.filter=ip<1?`blur(${(1-ip)*8}px)`:'none';
+    // highlights: spotlight mask + gold frame drawing in
+    const hshow=(e,st,en)=>{ if(!e) return; const q=eOut(seg(u,st,st+.45)), o=1-seg(u,en-.25,en);
+      e.style.opacity=q*o; e.style.clipPath=`inset(0 ${(1-q)*100}% 0 0 round 12px)`;
+      e.style.boxShadow=`0 0 0 2px rgba(242,198,109,.25),0 0 ${26+beatPulse(u)*16}px rgba(242,198,109,.55),inset 0 0 18px rgba(242,198,109,.18),0 0 0 2400px rgba(4,6,9,${.5*q*o})`;};
+    hshow(s.H1,.95,F0); hshow(s.H2,F1+.1,R0+.2);
+    const cshow=(c,st,en,last)=>{const p=eBack(seg(u,st,st+.5)); const o=last?1:1-seg(u,en-.25,en);
+      c.style.display=(u>=st-.05&&(last||u<en))?'block':'none'; c.style.opacity=clamp(seg(u,st,st+.2))*o;
+      c.style.transform=`translateY(${(1-p)*90}px) rotateX(${(1-p)*-18}deg)`; shimmer(c.querySelector('.sheen i'),u,st+.35,.8);};
+    cshow(s.calls[0],1.15,F0); cshow(s.calls[1],F1+.3,R0); cshow(s.calls[2],R0+.15,D,true);
     s.cred.style.opacity=.7;
     s.root.style.opacity=1-seg(u,D-.25,D);
   });
