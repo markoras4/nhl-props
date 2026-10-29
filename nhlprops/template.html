@@ -138,7 +138,7 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .gmid{text-align:center}
 .gmid .sc{font-family:var(--f-disp);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .gmid .wpb{display:flex;height:5px;border-radius:3px;overflow:hidden;margin-top:6px;background:var(--chip)}
-.wpb i:first-child{background:var(--accent2)}.wpb i:last-child{background:var(--accent)}
+.wpb i{transition:background .3s}.wpb i:first-child{background:var(--ca,var(--accent2))}.wpb i:last-child{background:var(--ch,var(--accent))}.wpb i+i{box-shadow:-1px 0 0 var(--panel)}
 .gou{display:grid;grid-template-columns:auto auto auto;gap:2px 10px;font-size:12px;justify-content:end;align-items:baseline}
 .gou .go{font-family:var(--f-disp);font-weight:600;color:var(--mute);font-variant-numeric:tabular-nums;min-width:30px;text-align:right}
 .gou .go.val,.godds .val{color:var(--good);font-weight:700}
@@ -406,12 +406,12 @@ td.h{text-align:center;padding:4px}
 .pbm{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .pbh{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;font-size:13px}
 .pbs{margin-left:auto;display:flex;gap:10px;font-size:12px;color:var(--mute);font-weight:600}
-.pbs span:first-child{color:#5b9dff}.pbs span:last-child{color:var(--accent)}
+.pbs span:first-child{color:var(--ca,#5b9dff)}.pbs span:last-child{color:var(--ch,var(--accent))}
 .pbrow{display:grid;grid-template-columns:52px 36px minmax(0,1fr) 36px;gap:6px;align-items:center;font-size:12px;margin:4px 0}
 .pbk{color:var(--mute)}.pbv{font-weight:700;font-variant-numeric:tabular-nums;text-align:center}
-.pbbar{position:relative;height:8px;border-radius:99px;background:var(--accent);overflow:hidden;display:flex}
-.pbbar i{display:block;height:100%;background:#5b9dff}
-.pbv.pa{color:#5b9dff}.pbv.pb{color:var(--accent)}
+.pbbar{position:relative;height:8px;border-radius:99px;background:var(--ch,var(--accent));overflow:hidden;display:flex}
+.pbbar i{display:block;height:100%;background:var(--ca,#5b9dff);box-shadow:1px 0 0 var(--panel)}
+.pbv.pa{color:var(--ca,#5b9dff)}.pbv.pb{color:var(--ch,var(--accent))}
 .pbsharp{margin:6px 0 0;font-size:12px;color:var(--good);font-weight:600}
 @media (max-width:800px){.pbgrid{grid-template-columns:1fr}}
 .slipbtn{display:inline-grid;place-items:center;width:26px;height:26px;padding:0;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;flex:0 0 auto;transition:color .2s,border-color .2s,background .2s}
@@ -1806,7 +1806,7 @@ function gamesList(){
       <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"}${altTxt(g,g.away)} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
       <div class="gmid">${statePill(g)?`<div class="stp">${statePill(g)}</div>`:""}${liveScore(g)?`<div class="sc live">${liveScore(g)}</div><div class="meta">${t("proj_short")} ${fmt(mu.a,1)} – ${fmt(mu.h,1)} · ${pct(d.pa)} · ${pct(d.ph)}</div>`:`<div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>`}
-        <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
+        <div class="wpb" style="${tcVars(g.away,g.home)}"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
       <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"}${altTxt(g,g.home)} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
       <div class="gou">${C.ou_lines.map(Lx=>{ const p = blendOver(g,d,Lx), o = DATA.odds?.[g.id]?.totals?.[String(Lx)]?.over;
@@ -1874,7 +1874,7 @@ function gamePage(){
   <div class="gsum">
     <div class="box"><h4>${t("win_prob")}</h4>
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
-      <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
+      <div class="wpb" style="${tcVars(g.away,g.home)}display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
       ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away!=null?oddsTxt(DATA.odds[g.id].winner.away):"–", th:g.home, h:DATA.odds[g.id].winner.home!=null?oddsTxt(DATA.odds[g.id].winner.home):"–", fa:oddsTxt(1/d.pa), fh:oddsTxt(1/d.ph)})}${(()=>{ const w=DATA.odds[g.id].winner, o=DATA.odds[g.id].open?.winner; if(!o||(Math.abs((o.home||0)-(w.home||0))<0.01&&Math.abs((o.away||0)-(w.away||0))<0.01)) return ""; return ` · ${t("mv_opened",{a:(o.away!=null?oddsTxt(o.away):"–"), h:(o.home!=null?oddsTxt(o.home):"–")})}`; })()}</p>` : ""}
       ${h2hBlock(g)}</div>
     <div class="box"><h4>${t("total_goals")}</h4>
@@ -2167,6 +2167,57 @@ const GRID_STD = ["g","a","pt",...C.sog_lines.slice(0,3).map(L=>"s"+L)];
 const GRID_HB = [...HIT_LINES.slice(0,2).map(L=>"h"+L), ...BLK_LINES.slice(0,2).map(L=>"b"+L), "pim0.5", "fo6.5"];
 const GRID_MULTI = ["pt2","pt3","g2","a2","ppp","fg"];
 let GRID = GRID_STD;
+
+// ------------------------------------------------------------ team colours (two-team bars only: win chance, public betting)
+// [primary, secondary]; black / very dark primaries use their brighter colour first. Values are adjusted for contrast
+// with the page background, and if both teams end up too alike the away team switches to its secondary colour.
+const TEAM_COL = {ANA:["#F47A38","#B9975B"], BOS:["#FFB81C","#C8C8C8"], BUF:["#003087","#FFB81C"], CGY:["#C8102E","#F1BE48"],
+  CAR:["#CE1126","#A2AAAD"], CHI:["#CF0A2C","#E8E8E8"], COL:["#6F263D","#236192"], CBJ:["#002654","#CE1126"], DAL:["#006847","#8F8F8C"],
+  DET:["#CE1126","#E8E8E8"], EDM:["#FF4C00","#041E42"], FLA:["#C8102E","#B9975B"], LAK:["#A2AAAD","#E8E8E8"], MIN:["#154734","#EAAA00"],
+  MTL:["#AF1E2D","#192168"], NSH:["#FFB81C","#041E42"], NJD:["#CE1126","#E8E8E8"], NYI:["#00539B","#F47D30"], NYR:["#0038A8","#CE1126"],
+  OTT:["#C52032","#C2912C"], PHI:["#F74902","#E8E8E8"], PIT:["#FCB514","#E8E8E8"], SJS:["#006D75","#EA7200"], SEA:["#99D9D9","#E9072B"],
+  STL:["#002F87","#FCB514"], TBL:["#002868","#E8E8E8"], TOR:["#00205B","#E8E8E8"], UTA:["#6CACE4","#E8E8E8"], VAN:["#00205B","#00843D"],
+  VGK:["#B4975A","#C8102E"], WSH:["#C8102E","#041E42"], WPG:["#004C97","#A2AAAD"]};
+const hexRgb = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
+const rgbHex = c => "#" + c.map(v => Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
+const relLum = c => { const f = v => { v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }; const [r,g,b] = c.map(f); return 0.2126*r + 0.7152*g + 0.0722*b; };
+const mixC = (c, to, k) => c.map((v,i) => v + (to[i]-v)*k);
+function pageIsDark(){ try { const bg = getComputedStyle(document.body).backgroundColor.match(/\d+/g).map(Number); return relLum(bg.slice(0,3)) < 0.2; } catch(e){ return true; } }
+// lift dark colours on a dark page (or deepen light ones on a light page) along their own hue, keeping them saturated
+const rgbHsl = ([r,g,b]) => { r/=255; g/=255; b/=255; const mx = Math.max(r,g,b), mn = Math.min(r,g,b), l = (mx+mn)/2; let h = 0, s_ = 0;
+  if (mx !== mn){ const d = mx-mn; s_ = l > 0.5 ? d/(2-mx-mn) : d/(mx+mn); h = mx===r ? (g-b)/d + (g<b?6:0) : mx===g ? (b-r)/d + 2 : (r-g)/d + 4; h /= 6; } return [h, s_, l]; };
+const hslRgb = ([h,s_,l]) => { if (!s_) return [l*255,l*255,l*255]; const q = l < 0.5 ? l*(1+s_) : l+s_-l*s_, p_ = 2*l-q;
+  const f = t_ => { t_ = (t_+1)%1; return t_ < 1/6 ? p_+(q-p_)*6*t_ : t_ < 1/2 ? q : t_ < 2/3 ? p_+(q-p_)*(2/3-t_)*6 : p_; };
+  return [f(h+1/3)*255, f(h)*255, f(h-1/3)*255]; };
+function readable(hex, dark){
+  let c = hexRgb(hex), [h, s_, l] = rgbHsl(c);
+  for (let i = 0; i < 30; i++){
+    const L = relLum(c);
+    if (dark ? L >= 0.14 : L <= 0.42) break;
+    l = dark ? Math.min(0.95, l + 0.025) : Math.max(0.05, l - 0.025);
+    if (dark && s_ > 0.25) s_ = Math.max(s_, 0.62);
+    c = hslRgb([h, s_, l]);
+  }
+  return c;
+}
+// rough perceptual distance (weighted RGB, "redmean")
+const colDist = (a, b) => { const r = (a[0]+b[0])/2, d = a.map((v,i)=>v-b[i]); return Math.sqrt((2+r/256)*d[0]*d[0] + 4*d[1]*d[1] + (2+(255-r)/256)*d[2]*d[2]); };
+const TC_MEMO = new Map();
+function teamCols(away, home){
+  const dark = pageIsDark(), key = `${away}|${home}|${dark}`;
+  if (TC_MEMO.has(key)) return TC_MEMO.get(key);
+  const A = TEAM_COL[away], H = TEAM_COL[home];
+  let out = null;
+  if (A && H){
+    const h = readable(H[0], dark);
+    let a = readable(A[0], dark);
+    if (colDist(a, h) < 150){ const a2 = readable(A[1], dark); if (colDist(a2, h) > colDist(a, h)) a = a2; }
+    if (colDist(a, h) < 150){ const h2 = readable(H[1], dark); if (colDist(a, h2) > colDist(a, h)) return (TC_MEMO.set(key, [rgbHex(a), rgbHex(h2)]), TC_MEMO.get(key)); }
+    out = [rgbHex(a), rgbHex(h)];
+  }
+  TC_MEMO.set(key, out); return out;
+}
+const tcVars = (away, home) => { const c = teamCols(away, home); return c ? `--ca:${c[0]};--ch:${c[1]};` : ""; };
 function heat(p, colMax){ const a = Math.min(1, p/Math.max(colMax,0.05)); return `background:rgba(var(--heat),${(0.06+0.42*a*a).toFixed(3)})`; }
 
 function sidePanel(g, team){
@@ -4420,13 +4471,13 @@ function teamGoals(tm){
 // public betting: share of tickets (number of bets) and of money on each side; money well above tickets = bigger bets
 function publicBox(g){
   const P_ = DATA.odds?.[g.id]?.public; if (!P_) return "";
-  const pair = (lab, a, b, la, lb) => { if (!a || !b) return "";
+  const pair = (lab, a, b, la, lb, cv) => { if (!a || !b) return "";
     const bar = (k, i) => `<div class="pbrow"><span class="pbk">${t(k)}</span><span class="pbv pa">${a[i]}%</span><div class="pbbar"><i style="width:${a[i]}%"></i></div><span class="pbv pb">${b[i]}%</span></div>`;
     const gapA = a[1] - a[0], gapB = b[1] - b[0], big = gapA >= 10 ? la : gapB >= 10 ? lb : null;
-    return `<div class="pbm"><div class="pbh"><b>${lab}</b><span class="pbs"><span>${la}</span><span>${lb}</span></span></div>${bar("pb_t",0)}${bar("pb_m",1)}${big?`<p class="pbsharp">${t("pb_big",{s:esc(big)})}</p>`:""}</div>`; };
-  const ml = P_.ml ? pair(t("pb_ml"), P_.ml.away, P_.ml.home, g.away, g.home) : "";
+    return `<div class="pbm" style="${cv||""}"><div class="pbh"><b>${lab}</b><span class="pbs"><span>${la}</span><span>${lb}</span></span></div>${bar("pb_t",0)}${bar("pb_m",1)}${big?`<p class="pbsharp">${t("pb_big",{s:esc(big)})}</p>`:""}</div>`; };
+  const ml = P_.ml ? pair(t("pb_ml"), P_.ml.away, P_.ml.home, g.away, g.home, tcVars(g.away,g.home)) : "";
   const tl = P_.tot ? pair(t("pb_tot",{l:P_.tot.line}), P_.tot.over, P_.tot.under, t("over_short",{l:P_.tot.line}), t("under_short",{l:P_.tot.line})) : "";
-  const pl = P_.pl?.away && P_.pl?.home ? pair(t("pb_pl"), [P_.pl.away.t, P_.pl.away.m], [P_.pl.home.t, P_.pl.home.m], `${g.away} ${P_.pl.away.line>0?"+":""}${P_.pl.away.line}`, `${g.home} ${P_.pl.home.line>0?"+":""}${P_.pl.home.line}`) : "";
+  const pl = P_.pl?.away && P_.pl?.home ? pair(t("pb_pl"), [P_.pl.away.t, P_.pl.away.m], [P_.pl.home.t, P_.pl.home.m], `${g.away} ${P_.pl.away.line>0?"+":""}${P_.pl.away.line}`, `${g.home} ${P_.pl.home.line>0?"+":""}${P_.pl.home.line}`, tcVars(g.away,g.home)) : "";
   if (!ml && !tl && !pl) return "";
   return `<div class="box pubbox"><h4><span>${t("pb_title")} ${HI("pb_tip")}</span>${P_.n?`<span class="meta">${t("pb_n",{n:Number(P_.n).toLocaleString(LOCALE())})}</span>`:""}</h4>
     <div class="pbgrid">${ml}${tl}${pl}</div><p class="note">${t("pb_note")}</p></div>`;
