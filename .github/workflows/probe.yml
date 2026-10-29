@@ -7,24 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Free odds sources (NHL player props)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: SHL stats pages (browser)
         run: |
-          exec >> probe-out.txt 2>&1
-          python3 - <<'PY'
-          import urllib.request, io, zipfile, csv
-          H={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"}
-          for u in ["https://peter-tanner.com/moneypuck/downloads/shots_2026.zip","https://peter-tanner.com/moneypuck/downloads/shots_2025.zip"]:
-              try:
-                  b=urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=180).read()
-                  z=zipfile.ZipFile(io.BytesIO(b)); n=z.namelist(); print("==", u, len(b), n)
-                  with z.open(n[0]) as f:
-                      r=csv.reader(io.TextIOWrapper(f, encoding="utf-8")); hdr=next(r); print(" cols", len(hdr), [c for c in hdr if c in ("shotID","season","game_id","shooterPlayerId","shooterName","xGoal","isPlayoffGame","goal","teamCode","homeTeamCode","awayTeamCode","event")])
-                      row=next(r); print(" sample", {k:v for k,v in zip(hdr,row) if k in ("season","game_id","shooterPlayerId","shooterName","xGoal","isPlayoffGame","goal","event")})
-                      cnt=sum(1 for _ in r); print(" rows", cnt+1)
-              except Exception as e:
-                  print("==", u, "ERR", e)
-          PY
+          npm i playwright@1.47.2 >/dev/null 2>&1 && npx playwright install --with-deps chromium >/dev/null 2>&1
+          node tools/probe/shl.js || echo "probe failed"
+          ls probe-shl | head -80
       - name: Save
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          git checkout --orphan probe2 && git rm -rfq --cached . && git add probe-out.txt && git commit -qm probe && git push -f origin HEAD:probe2
+          mkdir -p /tmp/pr && cp -r probe-shl /tmp/pr/
+          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-shl . && git add probe-shl && git commit -qm probe && git push -f origin HEAD:probe2
