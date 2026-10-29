@@ -1,6 +1,13 @@
 {
- "2026-10-28-phi-wsh": ["Alex Tuch", "Dylan Strome Capitals", "Tom Wilson Capitals", "Matvei Michkov", "Trevor Zegras", "Capital One Arena hockey"],
- "2026-10-28-cgy-edm": ["Connor McDavid", "Leon Draisaitl", "Mikael Backlund", "Evan Bouchard", "Rogers Place hockey"],
- "2026-10-28-njd-col": ["Nathan MacKinnon", "Cale Makar", "Artturi Lehkonen", "Nico Hischier", "Jack Hughes Devils"],
- "2026-10-28-tor-sea": ["Auston Matthews", "William Nylander", "Jordan Eberle Kraken", "Matty Beniers", "Climate Pledge Arena hockey"]
+ "2026-10-29-wpg-tbl": ["Nikita Kucherov Lightning", "Brayden Point", "Jake Guentzel Lightning", "Kyle Connor Jets", "Mark Scheifele", "Andrei Vasilevskiy"],
+ "2026-10-29-uta-pit": ["Sidney Crosby", "Evgeni Malkin", "Clayton Keller Utah", "Erik Karlsson Penguins", "PPG Paints Arena hockey"],
+ "2026-10-29-cbj-car": ["Sebastian Aho Hurricanes", "Seth Jarvis", "Andrei Svechnikov", "Zach Werenski", "Adam Fantilli", "Lenovo Center hockey Hurricanes"],
+ "2026-10-29-chi-det": ["Connor Bedard", "Dylan Larkin", "Lucas Raymond", "Alex DeBrincat Red Wings", "Moritz Seider", "Little Caesars Arena hockey"],
+ "2026-10-29-bos-stl": ["David Pastrnak", "Charlie McAvoy", "Robert Thomas Blues", "Jordan Binnington", "Enterprise Center Blues hockey"],
+ "2026-10-29-wsh-nsh": ["Filip Forsberg", "Roman Josi", "Steven Stamkos Predators", "Tom Wilson Capitals", "Dylan Strome Capitals", "Bridgestone Arena Predators"],
+ "2026-10-29-mtl-dal": ["Cole Caufield", "Lane Hutson", "Jason Robertson Stars", "Mikko Rantanen Stars", "Wyatt Johnston", "Nick Suzuki"],
+ "2026-10-29-nyi-min": ["Kirill Kaprizov", "Matt Boldy", "Joel Eriksson Ek", "Bo Horvat Islanders", "Ilya Sorokin", "Minnesota Wild Xcel Energy Center"],
+ "2026-10-29-buf-ana": ["Tage Thompson", "Rasmus Dahlin", "Leo Carlsson", "Cutter Gauthier", "Anaheim Ducks Honda Center", "Troy Terry"],
+ "2026-10-29-ott-lak": ["Tim Stutzle", "Brady Tkachuk", "Adrian Kempe", "Artemi Panarin", "Drake Batherson", "Los Angeles Kings Crypto.com Arena"],
+ "2026-10-29-van-sjs": ["Macklin Celebrini", "Will Smith Sharks", "Brock Boeser", "Quinn Hughes Canucks", "Elias Pettersson Canucks", "San Jose Sharks SAP Center"]
 }
