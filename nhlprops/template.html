@@ -138,7 +138,7 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .gmid{text-align:center}
 .gmid .sc{font-family:var(--f-disp);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .gmid .wpb{display:flex;height:5px;border-radius:3px;overflow:hidden;margin-top:6px;background:var(--chip)}
-.wpb i{transition:background .3s}.wpb i:first-child{background:var(--ca,var(--accent2))}.wpb i:last-child{background:var(--ch,var(--accent))}.wpb i+i{box-shadow:-1px 0 0 var(--panel)}
+.wpb i:first-child{background:var(--accent2)}.wpb i:last-child{background:var(--accent)}
 .gou{display:grid;grid-template-columns:auto auto auto;gap:2px 10px;font-size:12px;justify-content:end;align-items:baseline}
 .gou .go{font-family:var(--f-disp);font-weight:600;color:var(--mute);font-variant-numeric:tabular-nums;min-width:30px;text-align:right}
 .gou .go.val,.godds .val{color:var(--good);font-weight:700}
@@ -1806,7 +1806,7 @@ function gamesList(){
       <div class="gteam"><div class="tm">${logo(g.away)}<span class="abbr">${g.away}</span></div><span class="sub">${rec(A)} · ${ga?esc(ga.name):"?"}${altTxt(g,g.away)} ${statusPill(g.starter_status[g.away])}</span>
         <span class="tags">${g.b2b[g.away]?`<span class="pill s-b2b">B2B</span>`:""}${outA?`<span class="pill s-out">${t("n_out",{n:outA})}</span>`:""}</span></div>
       <div class="gmid">${statePill(g)?`<div class="stp">${statePill(g)}</div>`:""}${liveScore(g)?`<div class="sc live">${liveScore(g)}</div><div class="meta">${t("proj_short")} ${fmt(mu.a,1)} – ${fmt(mu.h,1)} · ${pct(d.pa)} · ${pct(d.ph)}</div>`:`<div class="sc">${fmt(mu.a,1)} – ${fmt(mu.h,1)}</div><div class="meta">${pct(d.pa)} · ${pct(d.ph)}</div>`}
-        <div class="wpb" style="${tcVars(g.away,g.home)}"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
+        <div class="wpb"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>${winOdds(g,d)}</div>
       <div class="gteam r"><div class="tm">${logo(g.home)}<span class="abbr">${g.home}</span></div><span class="sub">${statusPill(g.starter_status[g.home])} ${gh?esc(gh.name):"?"}${altTxt(g,g.home)} · ${rec(H)}</span>
         <span class="tags">${outH?`<span class="pill s-out">${t("n_out",{n:outH})}</span>`:""}${g.b2b[g.home]?`<span class="pill s-b2b">B2B</span>`:""}</span></div>
       <div class="gou">${C.ou_lines.map(Lx=>{ const p = blendOver(g,d,Lx), o = DATA.odds?.[g.id]?.totals?.[String(Lx)]?.over;
@@ -1874,7 +1874,7 @@ function gamePage(){
   <div class="gsum">
     <div class="box"><h4>${t("win_prob")}</h4>
       <div style="display:flex;justify-content:space-between;font-weight:700" class="num"><span>${g.away} ${pct(d.pa)}</span><span class="meta">${t("tied60",{p:pct(d.tie)})}</span><span>${pct(d.ph)} ${g.home}</span></div>
-      <div class="wpb" style="${tcVars(g.away,g.home)}display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
+      <div class="wpb" style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:8px"><i style="width:${d.pa*100}%"></i><i style="width:${d.ph*100}%"></i></div>
       ${DATA.odds?.[g.id]?.winner?.home ? `<p class="note">${t("win_odds",{ta:g.away, a:DATA.odds[g.id].winner.away!=null?oddsTxt(DATA.odds[g.id].winner.away):"–", th:g.home, h:DATA.odds[g.id].winner.home!=null?oddsTxt(DATA.odds[g.id].winner.home):"–", fa:oddsTxt(1/d.pa), fh:oddsTxt(1/d.ph)})}${(()=>{ const w=DATA.odds[g.id].winner, o=DATA.odds[g.id].open?.winner; if(!o||(Math.abs((o.home||0)-(w.home||0))<0.01&&Math.abs((o.away||0)-(w.away||0))<0.01)) return ""; return ` · ${t("mv_opened",{a:(o.away!=null?oddsTxt(o.away):"–"), h:(o.home!=null?oddsTxt(o.home):"–")})}`; })()}</p>` : ""}
       ${h2hBlock(g)}</div>
     <div class="box"><h4>${t("total_goals")}</h4>
