@@ -364,13 +364,14 @@ window.render=function(t){
     const fl=eInOut(seg(u,F0,F1));
     const y=lerp(s.y1*eInOut(seg(u,.75,1.35)),s.y2,fl);
     const vel=Math.sin(Math.PI*seg(u,F0,F1));
-    s.cont.style.transform=`translateY(${-y*s.sc}px) scale(${s.sc})`;
+    const zin=eInOut(seg(u,F1,F1+.6))*(1-eInOut(seg(u,R0,R0+.7))), zout=eInOut(seg(u,R0,R0+.7));
+    // on the section: the phone steps back a little so the callout never covers it, while the screen pushes in
+    const cs=s.sc*(1+zin*.07), cx=-(s.p.prof.w*s.sc*.07*zin)/2, cy=-s.r2[1]*s.sc*.07*zin;
+    s.cont.style.transform=`translate(${cx}px,${-y*s.sc+cy}px) scale(${cs})`;
     s.cont.style.filter=vel>.05?`blur(${vel*5}px)`:'none';
     // camera: push in on the section, pull back and tilt for the result
-    const zin=eInOut(seg(u,F1,F1+.6))*(1-eInOut(seg(u,R0,R0+.7))), zout=eInOut(seg(u,R0,R0+.7));
-    const zy=((s.r2[1]-y)*s.sc+146+14+s.r2[3]*s.sc/2);   // section centre in phone px
-    s.ph.style.transformOrigin=`50% ${clamp(zy,200,1000)}px`;
-    s.ph.style.transform=`${ent} scale(${1+zin*.09}) rotateY(${zout*-9}deg) rotateZ(${zout*-1.2}deg) translateX(${zout*-30}px)`;
+    s.ph.style.transformOrigin='50% 0';
+    s.ph.style.transform=`${ent} scale(${1-zin*.15}) rotateY(${zout*-9}deg) rotateZ(${zout*-1.2}deg) translateX(${zout*-30}px)`;
     s.ph.style.opacity=clamp(seg(u,0,.3)); s.ph.style.filter=ip<1?`blur(${(1-ip)*8}px)`:'none';
     // highlights: spotlight mask + gold frame drawing in
     const hshow=(e,st,en)=>{ if(!e) return; const q=eOut(seg(u,st,st+.45)), o=1-seg(u,en-.25,en);
@@ -381,7 +382,8 @@ window.render=function(t){
       c.style.display=(u>=st-.05&&(last||u<en))?'block':'none'; c.style.opacity=clamp(seg(u,st,st+.2))*o;
       c.style.transform=`translateY(${(1-p)*90}px) rotateX(${(1-p)*-18}deg)`; shimmer(c.querySelector('.sheen i'),u,st+.35,.8);};
     cshow(s.calls[0],1.15,F0); cshow(s.calls[1],F1+.3,R0); cshow(s.calls[2],R0+.15,D,true);
-    s.cred.style.opacity=.7;
+    s.calls[1].style.top='1290px';
+    s.cred.style.opacity=.7*(1-clamp(seg(u,F1+.2,F1+.4)-seg(u,R0-.2,R0)));
     s.root.style.opacity=1-seg(u,D-.25,D);
   });
 
