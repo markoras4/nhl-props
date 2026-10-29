@@ -70,6 +70,7 @@ jobs:
           if [ -f output/index.html ]; then cp output/index.html site/app/index.html; fi
           if [ -f output/landing.html ]; then cp output/landing.html site/index.html; cp output/landing.html site/landing.html; fi
           cp site-assets/*.webp site/assets/
+          cp site-assets/*.mp4 site-assets/*.jpg site/assets/ 2>/dev/null || true
           mkdir -p site/assets/previews && cp site-assets/previews/*.webp site/assets/previews/ 2>/dev/null || true
           if [ -f output/previews.html ]; then cp output/previews.html site/previews.html; fi
           cp nhlprops/legal.html site/legal.html

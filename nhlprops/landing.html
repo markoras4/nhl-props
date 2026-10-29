@@ -38,6 +38,11 @@ main{overflow-x:clip}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 button{font:inherit;color:inherit;cursor:pointer}
+.tour{padding-top:24px}#tour{scroll-margin-top:64px}
+.tourbox{position:relative;max-width:1040px;margin:0 auto;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0a0e13;
+  box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.02) inset,0 0 60px rgba(var(--glow),.08)}
+.tourbox video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#0a0e13}
+.tourbtn{display:inline-flex;align-items:center;gap:8px}.tourbtn svg{width:15px;height:15px;fill:currentColor}
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .lg-l{display:none}
 .show-m{display:none!important}
@@ -294,6 +299,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
         <div class="ctas">
           <a class="btn pri" href="APP_URL" data-t="cta_free"></a>
           <a class="btn ghost" href="#tonight" data-t="cta_tonight"></a>
+          <a class="btn ghost tourbtn" href="#tour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span data-t="tour_cta"></span></a>
         </div>
         <div class="proof">
           <div><b>200k+</b><span data-t="p1"></span></div>
@@ -308,6 +314,15 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
     </div>
   </div>
 
+
+  <section id="tour" class="tour">
+    <div class="wrap">
+      <div class="sh" style="justify-content:center;text-align:center"><div><h2 data-t="tour_h"></h2><p class="sub" data-t="tour_sub" style="margin-inline:auto"></p></div></div>
+      <div class="tourbox">
+        <video id="tourvid" muted loop playsinline controls preload="none" poster="assets/tour-poster.jpg" data-src720="assets/tour-720.mp4" data-src1080="assets/tour-1080.mp4" aria-label="A one-minute tour of NHL Props Lab"></video>
+      </div>
+    </div>
+  </section>
   <section id="tonight" style="padding-top:24px">
     <div class="wrap">
       <div class="sh"><div><h2 data-t="tonight_h"></h2><p class="sub" id="tonight_sub"></p></div><a class="more" href="APP_URL" data-t="all_games"></a></div>
@@ -441,7 +456,7 @@ const I18N = {
   lead:"The chance of a goal, point, shots, hits and blocks for every skater, plus the score, puck line and totals for every game. Tested on thousands of real games, so the percentages mean what they say.",
   cta_free:"Create free account", cta_tonight:"See tonight's games", cta_pro:"Go Pro",
   p1:"player-games tested", p2:"games replayed", p3n:"2×", p3:"lineup checks per game",
-  tonight_h:"Tonight", all_games:"All games →",
+  tonight_h:"Tonight", all_games:"All games →", tour_h:"See it in 60 seconds", tour_sub:"A quick tour: tonight's games, best picks and the reasons, a player's breakdown, the parlay check and the public record.", tour_cta:"Watch the tour",
   tonight_sub:"{n} games · projected score and win chance from the model",
   prev_h:"Game previews", prev_sub:"A two-minute read on every game: the news, the streaks and records, and where the model and the market disagree.",
   prev_soon:"Preview publishes on game day", read_prev:"Read preview →", all_prev:"All previews →", open_match:"Open matchup →", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
@@ -498,7 +513,7 @@ const I18N = {
   lead:"Chansen till mål, poäng, skott, tacklingar och blockeringar för varje spelare, plus resultat, puck line och totalmål för varje match. Testat på tusentals riktiga matcher, så att procenten betyder det de säger.",
   cta_free:"Skapa gratiskonto", cta_tonight:"Se kvällens matcher", cta_pro:"Uppgradera till Pro",
   p1:"testade spelarmatcher", p2:"matcher omspelade", p3n:"2×", p3:"uppställningskontroller per match",
-  tonight_h:"I kväll", all_games:"Alla matcher →",
+  tonight_h:"I kväll", all_games:"Alla matcher →", tour_h:"Se det på 60 sekunder", tour_sub:"En snabb rundtur: kvällens matcher, bästa spelen och skälen, en spelares genomgång, kombokollen och det öppna facit. (Videon är på engelska.)", tour_cta:"Se rundturen",
   tonight_sub:"{n} matcher · beräknat resultat och vinstchans från modellen",
   prev_h:"Förhandstittar", prev_sub:"Två minuters läsning om varje match: nyheterna, sviterna och rekorden, och var modellen och marknaden är oense.",
   prev_soon:"Förhandstitten publiceras på matchdagen", read_prev:"Läs förhandstitten →", all_prev:"Alla förhandstittar →", open_match:"Öppna matchen →", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
@@ -673,6 +688,22 @@ render();
   }, true);
   addEventListener("keydown", e => { if (e.key === "Escape") close(); });
   addEventListener("resize", close);
+})();
+
+// tour video: load the right size only when it comes into view, play muted while visible, pause when it isn't
+(function(){
+  const v = document.getElementById("tourvid"); if (!v) return;
+  let loaded = false;
+  const load = () => { if (loaded) return; loaded = true;
+    const big = (window.innerWidth * (window.devicePixelRatio || 1)) > 1500;
+    v.src = big ? v.dataset.src1080 : v.dataset.src720; };
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!("IntersectionObserver" in window)) { load(); return; }
+  new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ load(); if (!reduce) v.play().catch(() => {}); }
+    else if (!v.paused) v.pause();
+  }), { threshold: 0.35 }).observe(v);
+  document.querySelectorAll('a[href="#tour"]').forEach(a => a.addEventListener("click", () => { load(); setTimeout(() => { v.currentTime = 0; v.play().catch(() => {}); }, 450); }));
 })();
 </script>
 </body>

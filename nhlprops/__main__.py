@@ -439,7 +439,7 @@ def version_assets(html: str) -> str:
     def rep(m):
         f = ROOT / "site-assets" / m.group(1)
         return f'assets/{m.group(1)}?v={hashlib.md5(f.read_bytes()).hexdigest()[:8]}' if f.exists() else m.group(0)
-    return re.sub(r"assets/([a-z0-9-]+\.webp)(?!\?)", rep, html)
+    return re.sub(r"assets/([a-z0-9-]+\.(?:webp|mp4|jpg))(?!\?)", rep, html)
 
 
 def photo_version(p: dict) -> dict:
