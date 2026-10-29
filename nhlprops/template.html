@@ -2557,6 +2557,8 @@ function loadHist(pid){
 }
 // the button just chosen in a segmented control gets a short "settle" animation (only on that click, not on every redraw)
 let SEG_POP = null;
+// replay the "settle" animation on a segmented button after a redraw
+function popBtn(sel){ const b = document.querySelector(sel); if (!b) return; b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); }
 function segPop(k){ SEG_POP = k; setTimeout(() => { if (SEG_POP === k) SEG_POP = null; }, 400); }
 function l10Log(p){
   const gl = HIST.get(String(p.id)) || p.form?.gl;
@@ -3048,26 +3050,26 @@ function propsTab(){
   const hbOn = true;
   const gameOpts = DATA.games.filter(g=>state.pday==="all"||g.date===state.pday).map(g=>`<option value="${g.id}" ${state.pfilter==g.id?"selected":""}>${dayLabel(g.date)} · ${g.away} @ ${g.home}</option>`).join("");
   $("#main").innerHTML = `<div class="controls">
-    <div class="seg mgrp" id="mgrp">${groups.map(k=>`<button data-g="${k}" class="${mGroup(state.market)===k?"on":""}">${t("mg_"+k)}</button>`).join("")}</div>
-    <div class="seg" id="mkt">${(hbOn ? MGROUPS[mGroup(state.market)] : MKEYS).map(k=>`<button data-m="${k}" class="${state.market===k?"on":""}">${mName(k)}</button>`).join("")}</div>
+    <div class="seg olseg mgrp" id="mgrp">${groups.map(k=>`<button data-g="${k}" class="${mGroup(state.market)===k?"on":""}">${t("mg_"+k)}</button>`).join("")}</div>
+    <div class="seg olseg" id="mkt">${(hbOn ? MGROUPS[mGroup(state.market)] : MKEYS).map(k=>`<button data-m="${k}" class="${state.market===k?"on":""}">${mName(k)}</button>`).join("")}</div>
     <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${state.pday===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
     <select id="fgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${gameOpts}</select>
     <input type="search" id="fq" placeholder="${t("search")}" value="${esc(state.q)}">
     <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> ${t("reg_only")}</label>
-    <div class="seg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button><button data-s="streaks" class="${state.psort==="streaks"?"on":""}">${t("st_tab")}</button><button data-s="lines" class="${state.psort==="lines"?"on":""}">${t("ll_tab")}</button></div></div>
-  ${state.psort==="streaks" ? `<div class="controls"><div class="seg" id="stf">${["all","gd","pd","ps","ms"].map(k=>`<button data-f="${k}" class="${(state.stf||"all")===k?"on":""}">${t("stf_"+k)}</button>`).join("")}</div></div>
+    <div class="seg olseg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button><button data-s="streaks" class="${state.psort==="streaks"?"on":""}">${t("st_tab")}</button><button data-s="lines" class="${state.psort==="lines"?"on":""}">${t("ll_tab")}</button></div></div>
+  ${state.psort==="streaks" ? `<div class="controls"><div class="seg olseg" id="stf">${["all","gd","pd","ps","ms"].map(k=>`<button data-f="${k}" class="${(state.stf||"all")===k?"on":""}">${t("stf_"+k)}</button>`).join("")}</div></div>
   <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th>${t("st_h")}</th><th class="n hide-xs">${t("st_h_rare")}</th><th>${t("st_h_tonight")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th></tr></thead><tbody id="ptb"></tbody></table></div>
   <p class="foot">${t("st_note")} ${t("st_foot")}</p>` : `<div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n hide-xs">${t("toi")}</th><th>${t("h_prob")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th><th class="n"></th></tr></thead><tbody id="ptb"></tbody></table></div>
   <p class="foot">${t("props_foot")}</p>`}`;
-  if ($("#stf")) $("#stf").onclick = e => { const b=e.target.closest("button"); if(b){ state.stf=b.dataset.f; propsTab(); } };
+  if ($("#stf")) $("#stf").onclick = e => { const b=e.target.closest("button"); if(b){ state.stf=b.dataset.f; propsTab(); popBtn(`#stf [data-f="${b.dataset.f}"]`); } };
   document.querySelector("#main .controls").classList.toggle("stmode", state.psort==="streaks");
-  $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); } };
-  if ($("#mgrp")) $("#mgrp").onclick = e => { const b=e.target.closest("button"); if(b){ const G_=MGROUPS[b.dataset.g]; state.market = GROUP_DEFAULT[b.dataset.g] || G_[Math.min(1, G_.length-1)]; propsTab(); } };
+  $("#mkt").onclick = e => { const b=e.target.closest("button"); if(b){ state.market=b.dataset.m; propsTab(); popBtn(`#mkt [data-m="${b.dataset.m}"]`); } };
+  if ($("#mgrp")) $("#mgrp").onclick = e => { const b=e.target.closest("button"); if(b){ const G_=MGROUPS[b.dataset.g]; state.market = GROUP_DEFAULT[b.dataset.g] || G_[Math.min(1, G_.length-1)]; propsTab(); popBtn(`#mgrp [data-g="${b.dataset.g}"]`); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.pfilter="all"; propsTab(); };
   $("#fgame").onchange = e => { state.pfilter=e.target.value; rowsTop(); };
   $("#fq").oninput = e => { state.q=e.target.value.toLowerCase(); rowsTop(); };
   $("#freg").onchange = e => { state.onlyReg=e.target.checked; rowsTop(); };
-  $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); } };
+  $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); popBtn(`#psort [data-s="${b.dataset.s}"]`); } };
   rowsTop();
 }
 // ------------------------------------------------------------ Lines & pairs: every line and pair in the league this season
@@ -3113,7 +3115,7 @@ function linesList(){
     <p class="meta llsub">${t("ll_sub_"+S)}</p>
     <div class="card tablewrap"><table class="lltab"><thead><tr><th class="n hide-xs">#</th><th>${t(state.llk==="f"?"ll_line":"ll_pair")}</th><th class="n">${t("ln_gf")} <span class="meta">/ ${t("ln_exp")}</span></th><th class="n">${t("ln_ga")} <span class="meta">/ ${t("ln_exp")}</span></th><th class="n hide-xs">${t("ln_sh")}</th><th class="n">xG%</th><th class="n hide-xs"><span class="tip" tabindex="0" data-tip="${esc(t("ll_xg60_tip"))}">xGF/60</span></th><th class="hide-sm">${t("ll_flags")}</th><th class="hide-xs">${t("ll_next")}</th></tr></thead><tbody>${body}</tbody></table></div>
     <p class="foot">${t("ll_foot",{n:LL.rows.length, m:fmt(LL.min||25,0)})}</p>`;
-  $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); } };
+  $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); popBtn(`#psort [data-s="${b.dataset.s}"]`); } };
   $("#llk").onclick = e => { const b=e.target.closest("button"); if(b){ state.llk=b.dataset.k; linesList(); } };
   $("#lls").onchange = e => { state.lls=e.target.value; linesList(); };
   $("#llteam").onchange = e => { state.llteam=e.target.value; linesList(); };
