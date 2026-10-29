@@ -29,7 +29,7 @@ import music  # noqa: E402
 W, H, FPS, BPM = 1080, 1920, 30, 120
 BEAT = 60 / BPM
 INTRO = 8 * BEAT          # 4 s
-GAME = 24 * BEAT          # 12 s: story 3 s, player table 3 s, best-bet profile 3.5 s, game numbers 2.5 s
+GAME = 32 * BEAT          # 16 s: story 3 s, team table + zoom 3.5 s, site profile scroll 6.5 s, bet + game numbers 3 s
 OUTRO = 16 * BEAT         # 8 s: features, then brand
 MAX_GAMES = 4
 MIN_PHOTO_W = 3000        # originals at least this wide count as "very high quality"
@@ -73,6 +73,45 @@ def extract(date, html, work):
         out = pg.evaluate((HERE / "extract.js").read_text(), date)
         br.close()
     return out
+
+
+PROF_VW, PROF_DPR, PROF_MAX = 430, 2.5, 2600   # phone-sized site viewport (CSS px), pixel ratio, max capture height
+
+
+def capture_profiles(spec, html, work):
+    """Open each chosen best-pick player's profile on the real site (dark theme, phone width) and save a tall
+    screenshot of it, from his table row down. The video scrolls through it inside a phone frame."""
+    from playwright.sync_api import sync_playwright
+    p = Path(work) / "site.html"
+    p.write_text(html)
+    with sync_playwright() as pw:
+        br = pw.chromium.launch()
+        pg = br.new_page(viewport={"width": PROF_VW, "height": 932}, device_scale_factor=PROF_DPR,
+                         locale="en-US", color_scheme="dark", reduced_motion="reduce")
+        pg.route(lambda u: not u.startswith("file:"), lambda r: r.abort())
+        pg.goto(p.as_uri())
+        pg.wait_for_function("typeof bestPicks === 'function' && typeof DATA !== 'undefined'", timeout=60000)
+        for x in spec["games"]:
+            pid, team = x["pick"]["id"], x["pick"]["team"]
+            box = pg.evaluate("""([gid, team, pid]) => {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                go({tab: 'games', game: String(gid), side: team}); state.open = String(pid); render();
+                const r = document.querySelector(`tr.row[data-id="${pid}"]`);
+                if (!r || !r.nextElementSibling) return null;
+                const a = r.getBoundingClientRect(), b = r.nextElementSibling.getBoundingClientRect();
+                const c = r.nextElementSibling.querySelector('.l10box')?.getBoundingClientRect();
+                return {top: a.top + scrollY, bottom: b.bottom + scrollY, row: a.height,
+                        chart: c ? [c.top - a.top + 8, c.bottom - a.top + 8] : null};
+            }""", [x["id"], team, pid])
+            if not box:
+                continue
+            pg.wait_for_timeout(1200)  # charts settle
+            h = min(box["bottom"] - box["top"] + 8, PROF_MAX)
+            out = Path(work) / "img" / (x["slug"] + "-prof.jpg")
+            pg.screenshot(path=str(out), type="jpeg", quality=90, full_page=True,
+                          clip={"x": 0, "y": max(0, box["top"] - 8), "width": PROF_VW, "height": h})
+            x["prof"] = {"src": "img/" + out.name, "w": PROF_VW, "h": h, "row": box["row"], "chart": box["chart"]}
+        br.close()
 
 
 def build_spec(date, ext, previews):
@@ -232,10 +271,13 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as td:
         work = Path(td)
-        ext = extract(a.date, site_html(a.site), work)
+        html = site_html(a.site)
+        ext = extract(a.date, html, work)
         spec = build_spec(a.date, ext, json.load(open(pv_path)))
         if not spec["games"]:
             raise SystemExit("no game has both a preview photo and a best pick")
+        (work / "img").mkdir(parents=True, exist_ok=True)
+        capture_profiles(spec, html, work)
         (out / f"{a.date}-captions.txt").write_text(captions(spec))
         print("games:", ", ".join(f"{g['away']}@{g['home']} ({g['pick']['name']} {g['pick']['market']})" for g in spec["games"]))
         render(spec, out, work, preview_frames=[float(x) for x in a.preview.split(",")] if a.preview else None)

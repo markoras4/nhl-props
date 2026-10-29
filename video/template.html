@@ -50,6 +50,42 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .tbl tr.best td:last-child{box-shadow:inset -2px 2px 0 rgba(61,220,151,.5),inset 0 -2px 0 rgba(61,220,151,.5)}
 .tbl td.on{color:var(--mint)}
 .tbl td.on b{display:inline-block;padding:4px 14px;border-radius:14px;background:rgba(61,220,151,.18);border:2px solid var(--mint)}
+/* team table */
+.ttl{display:flex;align-items:center;gap:18px}
+.ttl .tb{width:14px;height:54px;border-radius:7px}
+.ttl .tn{font:400 60px/1 Anton;text-transform:uppercase;letter-spacing:1px}
+.tt{position:relative;margin-top:14px}
+.tt .h,.tt .r{display:grid;grid-template-columns:1fr 210px 130px 130px 130px;align-items:center;column-gap:8px}
+.tt .h{font:700 22px Oxanium;letter-spacing:3px;color:var(--mute);padding:0 16px 8px}
+.tt .h span{text-align:right}
+.tt .r{height:52px;margin-bottom:4px;padding:0 16px;border-radius:14px;background:rgba(255,255,255,.04);font:800 30px "Exo 2";position:relative}
+.tt .r>span{text-align:right;position:relative;z-index:1}
+.tt .r .nm{text-align:left;font:800 29px "Exo 2";white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tt .r .nm small{font:600 20px Oxanium;color:var(--mute);letter-spacing:1px;margin-left:10px}
+.tt .r .gb{position:absolute;left:0;top:9px;bottom:9px;border-radius:9px;background:linear-gradient(90deg,rgba(61,220,151,.08),rgba(61,220,151,.38));transform-origin:left}
+.tt .r .gc{position:relative}
+.tt .r .od{font:400 30px/1 Anton;letter-spacing:1px;color:#fff}
+.tt .r .od.na{color:var(--mute);font:600 24px Oxanium}
+.tt .r.best{background:rgba(61,220,151,.16);box-shadow:inset 0 0 0 3px var(--mint),0 0 40px rgba(61,220,151,.35)}
+.tt .r.best .nm{color:var(--mint)}
+.tt .r .bt{position:absolute;right:-6px;top:-24px;padding:3px 12px;border-radius:999px;background:var(--mint);color:#06210f;font:800 18px Oxanium;letter-spacing:2px;z-index:3;white-space:nowrap}
+.tt .scan{position:absolute;left:0;right:0;height:52px;border-radius:14px;background:linear-gradient(90deg,rgba(61,220,151,0),rgba(61,220,151,.35),rgba(61,220,151,0));pointer-events:none}
+.tt .r span.on b{display:inline-block;padding:0 10px;border-radius:10px;border:2px solid var(--mint);color:var(--mint)}
+/* phone with the site's player profile */
+.phone{position:absolute;left:130px;top:322px;width:820px;height:1158px;border-radius:72px;background:#0b0e13;
+  box-shadow:0 0 0 3px #2a313b,0 0 0 9px #151a21,0 50px 120px rgba(0,0,0,.75),0 0 90px rgba(61,220,151,.18)}
+.phone .scr{position:absolute;left:14px;top:14px;right:14px;bottom:14px;border-radius:58px;overflow:hidden;background:#0d1117}
+.phone .scr img{position:absolute;left:0;top:146px;width:100%;transform-origin:0 0}
+.phone .top{position:absolute;left:0;right:0;top:0;height:146px;background:#0d1117;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.phone .tm{position:absolute;left:62px;top:30px;font:700 30px 'Exo 2';color:#fff}
+.phone .ic{position:absolute;right:58px;top:34px;display:flex;gap:8px;align-items:flex-end}
+.phone .ic i{width:7px;border-radius:2px;background:#fff}
+.phone .url{position:absolute;left:26px;right:26px;top:82px;height:52px;border-radius:26px;background:#1b222c;display:flex;align-items:center;justify-content:center;gap:10px;font:600 26px 'Exo 2';color:#cfd8e3}
+.phone .url b{width:16px;height:16px;border-radius:4px;border:3px solid #8fa0b3;border-bottom-width:6px}
+.phone .isl{position:absolute;left:50%;top:22px;width:200px;height:52px;margin-left:-100px;border-radius:26px;background:#000;z-index:3}
+.phone .sb{position:absolute;right:8px;top:90px;width:8px;border-radius:4px;background:rgba(255,255,255,.45);z-index:3}
+.phone .fade{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,rgba(13,17,23,0),rgba(13,17,23,.85));z-index:2}
+.plab{position:absolute;left:0;right:0;top:238px;text-align:center}
 /* profile */
 .av{position:absolute;left:36px;top:30px;width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   font:400 88px Anton;color:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 20px 50px rgba(0,0,0,.5)}
@@ -123,7 +159,7 @@ const colOf = m => m==='g'?'g':m==='pt'?'pt':m==='s2.5'?'s':null;
 
 const S0=T.intro, gStart=i=>S0+i*T.game, outroStart=S0+NG*T.game, TOTAL=outroStart+T.outro;
 // phases inside a game
-const PA=0, PB=3.0, PC=6.0, PD=9.5;
+const PA=0, PB=3.0, PZ=5.7, PC=6.5, PD=13.0;
 const scenes=[];
 
 // ---------------- intro ----------------
@@ -155,28 +191,36 @@ const GS=G.map((g,i)=>{
   const credit=el('div','credit',esc(g.credit),root);
   const pk=g.pick, col=colOf(pk.m);
 
-  // B: player table
-  const tb=el('div','card',`<div style="display:flex;justify-content:space-between;align-items:center"><div class="lab">Player chances · model</div><span class="tag">Best bet ↓</span></div>
-    <table class="tbl"><tr><th>PLAYER</th><th>GOAL</th><th>POINT</th><th>SOG 3+</th></tr>
-    ${g.table.map(r=>{const best=r.id===pk.id; const c=k=>{const on=best&&col===k; return `<td class="${on?'on':''}">${on?'<b>':''}${pct(r[k].v)}${on?'</b>':''}</td>`};
-      return `<tr class="${best?'best':''}"><td><span class="tm" style="background:${r.team===g.home?g.hc:g.ac}"></span>${esc(r.name.split(' ').slice(-1)[0])}<small style="display:inline;margin-left:12px">${r.team}</small></td>${c('g')}${c('pt')}${c('s')}</tr>`}).join('')}
-    </table>`,root);
-  css(tb,{top:'420px'});
-  const trows=[...tb.querySelectorAll('tr')].slice(1);
-  if(!col){ /* best bet is another market (assist, hits ...): mark it in the tag */ tb.querySelector('.tag').textContent='Best bet: '+pk.market; }
+  // B: every player of the best pick's team, model chances vs book odds
+  const pt=pk.team, ptc=pt===g.home?g.hc:g.ac, rows=(g.team_rows&&g.team_rows.length?g.team_rows:g.table.filter(r=>r.team===pt));
+  const gmax=Math.max(.05,...rows.map(r=>r.g.v||0));
+  const tname=pt===g.home?g.home_short:g.away_short;
+  const tb=el('div','card',`<div class="ttl"><i class="tb" style="background:${ptc}"></i><div class="tn">${esc(tname)}</div>
+      <div class="lab" style="margin-left:auto;text-align:right;font-size:22px;line-height:1.35">Every player<br>model vs odds</div></div>
+    <div class="tt"><div class="h"><span style="text-align:left">PLAYER</span><span>GOAL</span><span>ODDS</span><span>POINT</span><span>SOG 3+</span></div>
+    ${rows.map(r=>{const best=r.id===pk.id; const on=k=>best&&col===k;
+      return `<div class="r ${best?'best':''}" data-best="${best?1:0}"><span class="nm">${esc(r.name.split(' ').slice(-1)[0])}<small>${esc(r.name.split(' ')[0][0])}.</small></span>
+        <span class="gc"><i class="gb" style="width:${(r.g.v/gmax)*100}%"></i><span class="${on('g')?'on':''}"><b data-v="${r.g.v}">0%</b></span></span>
+        <span>${r.g.od?`<span class="od">${odd(r.g.od)}</span>`:'<span class="od na">–</span>'}</span>
+        <span class="${on('pt')?'on':''}"><b data-v="${r.pt.v}">0%</b></span><span class="${on('s')?'on':''}"><b data-v="${r.s.v}">0%</b></span>
+        ${best?`<span class="bt">BEST BET · ${esc(pk.market.toUpperCase())}</span>`:''}</div>`}).join('')}
+    <div class="scan"></div></div>`,root);
+  css(tb,{top:'318px',transformOrigin:'50% 0'});
+  const trows=[...tb.querySelectorAll('.tt .r')], tnums=trows.map(r=>[...r.querySelectorAll('b[data-v]')]), tgb=trows.map(r=>r.querySelector('.gb'));
+  const bi=Math.max(0,trows.findIndex(r=>r.dataset.best==='1')), tscan=tb.querySelector('.scan'), tbt=tb.querySelector('.bt');
+  const RH=56, ROW0=118; // row pitch and first-row offset inside the card (px)
 
-  // C: profile + bet
-  const tc=g.home===pk.team?g.hc:g.ac;
-  const sea=pk.season||{}, form=pk.form||[];
-  const smax=Math.max(4,...form.map(x=>x.s||0));
-  const metaBits=[pk.team+(pk.home?' vs ':' @ ')+pk.opp, pk.pos, pk.toi?pk.toi.toFixed(1)+' MIN':null, pk.line?pk.line.toUpperCase():null, pk.pp1?'PP1':null].filter(Boolean);
-  const prof=el('div','card',`<div class="av" style="background:radial-gradient(circle at 30% 25%,${tc},${tc}88 60%,#0a0e13)">${pk.num??''}</div>
-    <div class="pname">${esc(pk.name)}</div><div class="pmeta">${esc(metaBits.join(' · '))}</div>
-    <div class="tiles"><div><b>${sea.gp??'–'}</b><span>GP</span></div><div><b>${sea.g??'–'}</b><span>G</span></div><div><b>${sea.a??'–'}</b><span>A</span></div><div><b>${sea.p??'–'}</b><span>PTS</span></div></div>
-    <div class="lab" style="position:absolute;left:36px;top:360px;font-size:22px">LAST ${form.length} GAMES · SHOTS <span style="color:var(--mint)">● GOAL</span> <span style="color:var(--warn)">● ASSIST</span></div>
-    <div class="chart">${form.map(x=>`<div class="c"><em style="color:${x.g?'var(--mint)':x.a?'var(--warn)':'transparent'}">${x.g?'G'.repeat(Math.min(x.g,3)):x.a?'A':'·'}</em><i style="height:${Math.max(6,(x.s||0)/smax*110)}px"></i><u>${x.s??0}</u></div>`).join('')}</div>`,root);
-  css(prof,{top:'395px',height:'580px'});
-  const pbars=[...prof.querySelectorAll('.chart i')], ptiles=[...prof.querySelectorAll('.tiles div')];
+  // C: the real player profile from the site, in a phone, scrolling
+  const pf=g.prof;
+  let phone=null, pimg=null, psb=null, plab=null, pstop=0, pscale=1, pvis=0;
+  if(pf){
+    phone=el('div','phone',`<div class="scr"><img src="${pf.src}"><div class="top"><div class="tm">${esc(g.time.split(' ')[0])}</div><div class="ic"><i style="height:10px"></i><i style="height:15px"></i><i style="height:20px"></i><i style="height:25px"></i></div><div class="url"><b></b>${esc(SPEC.site)}</div></div><div class="fade"></div></div><div class="isl"></div><div class="sb"></div>`,root);
+    pimg=phone.querySelector('img'); pimg.style.width=pf.w+'px'; psb=phone.querySelector('.sb');
+    pscale=(820-28)/pf.w; pvis=(1158-28-146)/pscale;
+    const want=pf.chart?pf.chart[1]-pvis+24:pf.h-pvis;
+    pstop=clamp(want,Math.min(500,pf.h-pvis),pf.h-pvis);
+    plab=css(el('div','plab',`<span class="chip"><span class="dot"></span>${esc(pk.name)} · player profile</span>`,root),{});
+  }
   const mkp = pk.nv ?? (pk.od?1/pk.od:null);
   const reasons=(pk.why||[]).filter(x=>!/^Model \d/.test(x)).slice(0,2);
   const bet=el('div','card bet',`<div class="lab">Best bet · ${esc(pk.team)} ${pk.home?'vs':'@'} ${esc(pk.opp)}</div>
@@ -185,7 +229,7 @@ const GS=G.map((g,i)=>{
     <div class="vrow"><div class="who">MODEL</div><div class="vtrack"><i class="m" style="background:linear-gradient(90deg,#1f9e68,var(--mint))"></i><b class="mv">0%</b></div></div>
     ${mkp!=null?`<div class="vrow"><div class="who">${pk.nv!=null?'MARKET':'ODDS SAY'}</div><div class="vtrack"><i class="k" style="background:linear-gradient(90deg,#2b5f9a,var(--blue))"></i><b class="kv">0%</b></div></div>`:''}
     <div class="why">${reasons.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`,root);
-  css(bet,{top:'995px',height:'455px'});
+  css(bet,{top:'330px',height:'455px'});
   const bm=bet.querySelector('i.m'), bmv=bet.querySelector('.mv'), bk=bet.querySelector('i.k'), bkv=bet.querySelector('.kv');
 
   // D: game numbers
@@ -198,11 +242,11 @@ const GS=G.map((g,i)=>{
     <div style="display:flex;align-items:flex-end;gap:30px;margin-top:30px"><div style="font:400 120px/0.9 Anton;color:var(--mint)" class="gt">0.0</div>
     <div style="padding-bottom:12px"><div class="lab" style="font-size:24px">PROJECTED GOALS</div><div style="font:800 38px 'Exo 2';margin-top:4px">Over 5.5: model ${pct(g.over)}${g.mk_over!=null?` · market ${pct(g.mk_over)}`:''}</div></div></div>
     ${stake?`<div class="stake">${stake}</div>`:''}`,root);
-  css(gn,{top:'470px'});
+  css(gn,{top:'810px'});
   const gtracks=[...gn.querySelectorAll('.track')], gt=gn.querySelector('.gt');
   const gvals=[g.p_home, g.mk_home, pub?pub.home[0]/100:null].filter(x=>x!=null);
   const glabs=[null,null,pub?'tickets':null];
-  return {g,root,bg,dim,chip,card,cimg,mu,mparts,bars,kick,hl,hws,credit,tb,trows,prof,pbars,ptiles,bet,bm,bmv,bk,bkv,mkp,gn,gtracks,gt,gvals};
+  return {g,root,bg,dim,chip,card,cimg,mu,mparts,bars,kick,hl,hws,credit,tb,trows,tnums,tgb,bi,tscan,tbt,RH,ROW0,phone,pimg,psb,plab,pstop,pscale,pvis,pf,bet,bm,bmv,bk,bkv,mkp,gn,gtracks,gt,gvals};
 });
 
 // ---------------- outro ----------------
@@ -242,7 +286,7 @@ const beatPulse=t=>Math.exp(-((t%T.beat)/T.beat)*6);
 window.render=function(t){
   for(const s of scenes) s.el.style.display=(t>=s.a&&t<s.b)?'block':'none';
   const cutsAt=[...G.map((_,i)=>gStart(i)), outroStart];
-  const subCuts=G.flatMap((_,i)=>[gStart(i)+PB,gStart(i)+PC,gStart(i)+PD]);
+  const subCuts=G.flatMap((_,i)=>[gStart(i)+PB,gStart(i)+PD]);
   let sx=0,sy=0;
   for(const c of cutsAt){const d=t-c; if(d>=0&&d<.25){const k=(1-d/.25)*14; sx+=(hash(t*90)-.5)*k; sy+=(hash(t*77+3)-.5)*k;}}
   stage.style.transform=`translate(${sx}px,${sy}px)`;
@@ -270,28 +314,54 @@ window.render=function(t){
     s.card.style.transform=`translateY(${(1-cin)*140-toB*160}px) scale(${lerp(.92,1,cin)*lerp(1,.9,toB)}) rotate(${(1-cin)*-3}deg)`;
     s.cimg.style.transform=`scale(${1.06+u/PB*.12+pulse}) translate(${(i%2?-1:1)*u/PB*18}px,${-u/PB*10}px)`;
     s.mparts.forEach((e,k)=>{const at=.25+k*.1,p=eExpo(seg(u,at,at+.32)); e.style.opacity=clamp(p*2); e.style.transform=`translateY(${(1-p)*(k==1?0:-120)}px) scale(${lerp(k==1?.2:1.6,1,p)})`; e.classList.toggle('glitch',u>=at&&u<at+.1)});
-    s.mu.style.transform=`translateY(${toB*-660}px) scale(${lerp(1,.6,toB)})`;
+    s.mu.style.transform=`translateY(${toB*-660}px) scale(${lerp(1,.6,toB)})`; s.mu.style.opacity=1-toB;
     const bp=eOut(seg(u,.6,1)); s.bars.style.opacity=1-toB; [...s.bars.children].forEach(b=>b.style.transform=`scaleX(${bp})`);
     s.kick.style.opacity=eOut(seg(u,.75,1.05))*(1-toB);
     words(s.hws,u,.85,.055); s.hl.style.opacity=1-toB;
     s.credit.style.opacity=.9*eOut(seg(u,.5,.9))*(1-seg(u,PB,PB+.3));
-    // B: player table
-    if(u>=PB-.1&&u<PC+.4){ s.tb.style.display='block'; popIn(s.tb,u,PB+.15); popOut(s.tb,u,PC-.05);
-      s.trows.forEach((r,k)=>{const p=eOut(seg(u,PB+.35+k*.09,PB+.75+k*.09)); r.style.opacity=p; r.style.transform=`translateX(${(1-p)*-80}px)`;});
-      const best=s.tb.querySelector('tr.best td.on b'); if(best){const q=seg(u,PB+1.3,PB+1.7); best.style.transform=`scale(${1+Math.sin(q*Math.PI)*.25})`;}
+    // B: team table -> scan to the best pick -> zoom into his row
+    if(u>=PB-.1&&u<PC+.25){ s.tb.style.display='block';
+      const zp=eInOut(seg(u,PZ,PC));
+      popIn(s.tb,u,PB+.1);
+      s.trows.forEach((r,k)=>{const at=PB+.3+k*.045,p=eOut(seg(u,at,at+.4));
+        r.style.opacity=p*(k===s.bi?1:lerp(1,.15,clamp(zp*2))); r.style.transform=`translateX(${(1-p)*120}px)`;
+        const q=eOut(seg(u,at+.1,at+.75)); s.tgb[k].style.transform=`scaleX(${q})`;
+        s.tnums[k].forEach(b=>b.textContent=pct(+b.dataset.v*q));});
+      // scan bar sweeps down to the pick's row
+      const sp=eInOut(seg(u,PB+1.45,PB+2.2)), sy=lerp(s.trows[0].offsetTop,s.trows[s.bi].offsetTop,sp);
+      s.tscan.style.top=sy+'px'; s.tscan.style.opacity=clamp(seg(u,PB+1.35,PB+1.5))*(1-seg(u,PB+2.2,PB+2.45));
+      const hit=seg(u,PB+2.2,PB+2.5), br=s.trows[s.bi];
+      br.classList.toggle('best',u>=PB+2.2);
+      if(s.tbt){const bp=eBack(seg(u,PB+2.25,PB+2.6)); s.tbt.style.opacity=clamp(bp); s.tbt.style.transform=`scale(${lerp(.4,1,bp)})`;}
+      const onb=br.querySelector('span.on b'); if(onb) onb.style.transform=`scale(${1+Math.sin(seg(u,PB+2.3,PB+2.7)*Math.PI)*.3})`;
+      // zoom: scale around the pick's row and lift it to the top of the screen
+      const ry=s.trows[s.bi].parentElement.offsetTop+s.trows[s.bi].offsetTop+26, zs=lerp(1,2.4,zp);
+      if(zp>0){ s.tb.style.transformOrigin=`50% ${ry}px`; s.tb.style.transform=`translateY(${lerp(0,560-(318+ry),zp)}px) scale(${zs})`; s.tb.style.filter=zp>.6?`blur(${(zp-.6)*12}px)`:'none'; }
+      else s.tb.style.filter='none';
+      s.tb.style.opacity=(+s.tb.style.opacity||1)*(1-seg(u,PC-.2,PC+.15));
     } else s.tb.style.display='none';
-    // C: profile + bet
-    if(u>=PC-.1&&u<PD+.4){ s.prof.style.display=s.bet.style.display='block';
-      popIn(s.prof,u,PC+.1); popIn(s.bet,u,PC+.45,160); popOut(s.prof,u,PD-.05); popOut(s.bet,u,PD-.05);
-      s.ptiles.forEach((e,k)=>{const p=eBack(seg(u,PC+.35+k*.07,PC+.75+k*.07)); e.style.transform=`scale(${lerp(.6,1,p)})`; e.style.opacity=clamp(p)});
-      s.pbars.forEach((e,k)=>{e.style.transform=`scaleY(${eOut(seg(u,PC+.5+k*.05,PC+.9+k*.05))})`});
-      const pv=eOut(seg(u,PC+.8,PC+1.6)), pk=g.pick;
+    // C: phone with the site's profile, scrolling down at an even, readable pace
+    if(s.phone){ if(u>=PC-.25&&u<PD+.4){ s.phone.style.display=s.plab.style.display='block';
+        const ip=eOut(seg(u,PC-.25,PC+.45));
+        s.phone.style.opacity=clamp(seg(u,PC-.25,PC+.1)); s.phone.style.transform=`translateY(${(1-ip)*60}px) scale(${lerp(1.18,1,ip)})`;
+        s.phone.style.filter=ip<1?`blur(${(1-ip)*10}px)`:'none';
+        popIn(s.plab,u,PC+.2,40);
+        const SA=PC+.9, SB=PD-.55, sp=seg(u,SA,SB), ease=sp<.12?(sp/.12)*(sp/.12)*.06:sp>.88?1-((1-sp)/.12)*((1-sp)/.12)*.06:.06+(sp-.12)/.76*.88;
+        const y=s.pstop*ease;
+        s.pimg.style.transform=`translateY(${-y*s.pscale}px) scale(${s.pscale})`;
+        const th=Math.max(80,(s.pvis/s.pf.h)*900), ty=170+(y/Math.max(1,s.pf.h-s.pvis))*(900-th);
+        s.psb.style.height=th+'px'; s.psb.style.top=ty+'px'; s.psb.style.opacity=(sp>0&&sp<1)?.9:.35;
+        popOut(s.phone,u,PD-.05); popOut(s.plab,u,PD-.05);
+      } else { s.phone.style.display=s.plab.style.display='none'; } }
+    // D: the bet (model vs market) and who wins
+    if(u>=PD-.1){ s.bet.style.display='block'; popIn(s.bet,u,PD+.05,160);
+      const pv=eOut(seg(u,PD+.3,PD+1.1)), pk=g.pick;
       s.bm.style.width=pct(pk.v*pv); s.bmv.textContent=pct(pk.v*pv);
       if(s.bk){s.bk.style.width=pct(s.mkp*pv); s.bkv.textContent=pct(s.mkp*pv);}
-    } else { s.prof.style.display=s.bet.style.display='none'; }
+    } else s.bet.style.display='none';
     // D: game numbers
-    if(u>=PD-.1){ s.gn.style.display='block'; popIn(s.gn,u,PD+.1);
-      const p=eOut(seg(u,PD+.35,PD+1.2));
+    if(u>=PD-.1){ s.gn.style.display='block'; popIn(s.gn,u,PD+.4);
+      const p=eOut(seg(u,PD+.65,PD+1.5));
       s.gtracks.forEach((tr,k)=>{const ph=lerp(.5,s.gvals[k],p),[ba,bh]=tr.children; const vw=clamp(ph,.17,.83); ba.style.width=(1-vw)*100+'%'; bh.style.width=vw*100+'%'; ba.textContent=g.away+' '+pct(1-ph); bh.textContent=pct(ph)+' '+g.home;});
       s.gt.textContent=(g.exp_total*p).toFixed(1);
     } else s.gn.style.display='none';

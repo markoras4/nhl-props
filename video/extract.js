@@ -31,6 +31,9 @@
     }).sort((a, b) => b.pt.v - a.pt.v);
     const top = rows.slice(0, 6);
     if (picks[0] && !top.some(x => x.id === picks[0].id)) { top.pop(); top.push(rows.find(x => x.id === picks[0].id)); }
+    // every active player of the best pick's team, for the animated team table
+    const team_rows = picks[0] ? rows.filter(x => x.team === picks[0].team).sort((a, b) => b.g.v - a.g.v).slice(0, 18) : [];
+    if (picks[0] && !team_rows.some(x => x.id === picks[0].id)) { team_rows.pop(); team_rows.push(rows.find(x => x.id === picks[0].id)); }
     const o = DATA.odds?.[g.id] || {};
     const nv = (a, b) => a && b ? (1 / a) / ((1 / a) + (1 / b)) : null;
     out.games.push({
@@ -38,7 +41,7 @@
       p_home: r2(g.default.p_home), mk_home: r2(nv(o.winner?.home, o.winner?.away)),
       exp_total: g.default.exp_total, over: r2(g.default["over_5.5"]), mk_over: r2(nv(o.totals?.["5.5"]?.over, o.totals?.["5.5"]?.under)),
       public: o.public || null, stakes: DATA.futures?.games?.[g.id] || null,
-      picks, table: top,
+      picks, table: top, team_rows,
     });
   }
   const T = DATA.futures?.teams || {};
