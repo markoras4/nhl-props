@@ -17,7 +17,7 @@ from pathlib import Path
 
 from .lock import is_locked
 
-GROUPS = {"pts": ["g", "a", "pt", "fg"], "pp": ["ppp"], "s": ["s1.5", "s2.5", "s3.5", "s4.5"],
+GROUPS = {"pts": ["g", "a", "pt", "fg"], "pp": ["ppp"], "s": ["s1.5", "s2.5", "s3.5"],
           "h": ["h0.5", "h1.5", "h2.5", "h3.5"], "b": ["b0.5", "b1.5", "b2.5"], "pim": ["pim0.5", "pim2.5"]}
 MULTI = ["pt2", "pt3", "g2", "g3", "a2"]
 # the official picks ("All" tab, the tracked record): goals, assists, points, power-play points and shots on goal.

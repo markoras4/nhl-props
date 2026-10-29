@@ -1568,7 +1568,7 @@ function savesExp(g, team){
 const linesAround = (lam, step) => { const c = Math.floor(lam) + 0.5 - (step===2 && Math.floor(lam)%2 ? 1 : 0); return [-2,-1,0,1,2].map(i=>c+i*step); };
 const nearHalf = (lines, f) => lines.reduce((b,x)=>Math.abs(f(x)-0.5) < Math.abs(f(b)-0.5) ? x : b, lines[0]);
 const FO_LINES = C.fo_lines || [4.5, 6.5, 8.5, 10.5];
-const MGROUPS = {pts:["g","a","pt","fg"], multi:["pt2","pt3","g2","g3","a2"], pp:["ppp"], s:C.sog_lines.map(L=>"s"+L),
+const MGROUPS = {pts:["g","a","pt","fg"], multi:["pt2","pt3","g2","g3","a2"], pp:["ppp"], s:C.sog_lines.filter(L=>L<4).map(L=>"s"+L),
   h:HIT_LINES.map(L=>"h"+L), b:BLK_LINES.map(L=>"b"+L), fo:FO_LINES.map(L=>"fo"+L), pim:["pim0.5","pim2.5"]};
 const GROUP_ORDER = ["pts","multi","pp","s","h","b","fo","pim"];
 const GROUP_DEFAULT = {pts:"pt", multi:"pt2", pp:"ppp", fo:"fo6.5", pim:"pim0.5"};
