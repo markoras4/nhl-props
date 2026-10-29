@@ -137,6 +137,7 @@ def odds():
 def main():
     ss = seasons()
     print("seasons", ss)
+    status = {"seasons": ss, "per_season": {}}
     cur = max(ss)
     for code in sorted(ss):
         sch = schedule(code, ss[code])
@@ -144,11 +145,15 @@ def main():
         with ThreadPoolExecutor(6) as ex:
             new = sum(ex.map(lambda g: game(code, g), done))
         print(f"  {code}: {len(sch.get('gameInfo', []))} games, {len(done)} finished, {new} new")
+        status["per_season"][code] = {"games": len(sch.get("gameInfo", [])), "finished": len(done), "new": new,
+                                       "stored": len(list((ROOT / "games" / str(code)).glob("*.json.gz"))) if (ROOT / "games" / str(code)).exists() else 0}
         if code == cur:
             rosters(sch)
             if sch.get("ssgtUuid"):
                 summaries(sch["ssgtUuid"])
     odds()
+    status["at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes")
+    (ROOT / "status.json").write_text(json.dumps(status, indent=1))
 
 
 if __name__ == "__main__":

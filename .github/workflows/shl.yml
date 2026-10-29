@@ -27,9 +27,16 @@ jobs:
         run: |
           if [ -f shl/build.py ]; then python -m shl.build || echo "build failed"; fi
       - name: Save data and page to private branches
+        env:
+          GIT_AUTHOR_NAME: nhl-props-bot
+          GIT_AUTHOR_EMAIL: actions@users.noreply.github.com
+          GIT_COMMITTER_NAME: nhl-props-bot
+          GIT_COMMITTER_EMAIL: actions@users.noreply.github.com
         run: |
-          git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
+          set -e
           rm -rf /tmp/sd && cp -r data/shl /tmp/sd && cd /tmp/sd && git init -q && git checkout -q -b shl-data
-          git add -A && git commit -qm "SHL data $(date -u +%F-%H%M)" && git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:shl-data
+          git add -A
+          git commit -qm "SHL data $(date -u +%F-%H%M)"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:shl-data
           cd "$GITHUB_WORKSPACE"
           if [ -d output/shl ]; then rm -rf /tmp/sp && cp -r output/shl /tmp/sp && cd /tmp/sp && git init -q && git checkout -q -b shl-page && git add -A && git commit -qm "SHL page $(date -u +%F-%H%M)" && git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" HEAD:shl-page; fi
