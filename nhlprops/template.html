@@ -4476,7 +4476,7 @@ function publicBox(g){
     const gapA = a[1] - a[0], gapB = b[1] - b[0], big = gapA >= 10 ? la : gapB >= 10 ? lb : null;
     return `<div class="pbm" style="${cv||""}"><div class="pbh"><b>${lab}</b><span class="pbs"><span>${la}</span><span>${lb}</span></span></div>${bar("pb_t",0)}${bar("pb_m",1)}${big?`<p class="pbsharp">${t("pb_big",{s:esc(big)})}</p>`:""}</div>`; };
   const ml = P_.ml ? pair(t("pb_ml"), P_.ml.away, P_.ml.home, g.away, g.home, tcVars(g.away,g.home)) : "";
-  const tl = P_.tot ? pair(t("pb_tot",{l:P_.tot.line}), P_.tot.over, P_.tot.under, t("over_short",{l:P_.tot.line}), t("under_short",{l:P_.tot.line})) : "";
+  const tl = P_.tot ? pair(t("pb_tot",{l:P_.tot.line}), P_.tot.over, P_.tot.under, t("over_short",{l:P_.tot.line}), t("under_short",{l:P_.tot.line}), tcVars(g.away,g.home)) : "";
   const pl = P_.pl?.away && P_.pl?.home ? pair(t("pb_pl"), [P_.pl.away.t, P_.pl.away.m], [P_.pl.home.t, P_.pl.home.m], `${g.away} ${P_.pl.away.line>0?"+":""}${P_.pl.away.line}`, `${g.home} ${P_.pl.home.line>0?"+":""}${P_.pl.home.line}`, tcVars(g.away,g.home)) : "";
   if (!ml && !tl && !pl) return "";
   return `<div class="box pubbox"><h4><span>${t("pb_title")} ${HI("pb_tip")}</span>${P_.n?`<span class="meta">${t("pb_n",{n:Number(P_.n).toLocaleString(LOCALE())})}</span>`:""}</h4>
