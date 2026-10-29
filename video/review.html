@@ -1,0 +1,391 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Anton;src:url(fonts/anton.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:500;src:url(fonts/exo2-500.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:700;src:url(fonts/exo2-700.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:800;src:url(fonts/exo2-800.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:600;src:url(fonts/oxanium-600.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:800;src:url(fonts/oxanium-800.woff2) format("woff2")}
+:root{--bg:#06080c;--mint:#3ddc97;--gold:#f2c66d;--blue:#5aa9ff;--coral:#ff6b6b;--text:#f4f7fb;--mute:#8e9cae}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif}
+.scene{position:absolute;inset:0;display:none}
+.abs{position:absolute}
+.bgimg{position:absolute;inset:-90px;background-size:cover;background-position:center}
+.shade{position:absolute;inset:0}
+.anton{font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.5px;line-height:.92}
+.gtxt{background:linear-gradient(100deg,var(--mint) 0%,#c9f7e1 22%,var(--gold) 45%,var(--mint) 70%,#c9f7e1 85%,var(--gold) 100%);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{display:inline-flex;align-items:center;gap:14px;padding:12px 26px;border-radius:999px;background:rgba(10,14,19,.78);
+  border:2px solid rgba(255,255,255,.14);font:600 30px Oxanium;letter-spacing:3px;text-transform:uppercase}
+.chip.gold{border-color:rgba(242,198,109,.55)}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--mint);box-shadow:0 0 18px var(--mint)}
+.lab{font:600 26px Oxanium;letter-spacing:5px;text-transform:uppercase;color:var(--mute)}
+.glass{position:absolute;border-radius:36px;background:linear-gradient(160deg,rgba(26,34,46,.92),rgba(9,12,17,.94));
+  border:2px solid rgba(255,255,255,.09);box-shadow:0 40px 100px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+.glass::before{content:"";position:absolute;inset:-2px;border-radius:36px;padding:2px;background:linear-gradient(140deg,rgba(242,198,109,.55),rgba(255,255,255,0) 35%,rgba(61,220,151,0) 65%,rgba(61,220,151,.5));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+/* intro */
+.rec{position:absolute;left:0;right:0;text-align:center}
+.rec .wl{font:400 300px/0.9 Anton;letter-spacing:4px}
+.rec .wl i{font-style:normal;color:var(--mute);margin:0 18px;font-size:200px;vertical-align:40px}
+.units{font:400 120px/1 Anton;letter-spacing:2px}
+/* pick cards */
+#picks{perspective:1800px}
+.pc{position:absolute;left:60px;top:300px;width:960px;height:840px;transform-style:preserve-3d;backface-visibility:hidden}
+.pc .ph{position:absolute;left:0;right:0;top:0;height:300px;border-radius:36px 36px 0 0;overflow:hidden}
+.pc .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%}
+.pc .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,8,12,.05) 30%,rgba(12,16,22,.96))}
+.pc .score{position:absolute;left:34px;top:32px;z-index:2}
+.pc .no{position:absolute;right:34px;top:36px;z-index:2;font:800 28px Oxanium;letter-spacing:4px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.pc .nm{position:absolute;left:44px;right:40px;top:262px;font:800 78px/1 "Exo 2";white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.pc .meta{position:absolute;left:46px;top:352px;font:700 28px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase}
+.pc .mk{position:absolute;left:44px;top:414px;display:flex;align-items:center;gap:26px}
+.pc .mk b{font:400 120px/0.9 Anton;letter-spacing:1px;text-transform:uppercase}
+.odds{display:inline-block;padding:10px 24px;border-radius:18px;background:#fff;color:#07090d;font:400 66px/1 Anton;letter-spacing:1px}
+.vrow{position:absolute;left:44px;right:44px;display:flex;align-items:center;gap:20px}
+.vrow .who{width:190px;font:700 24px Oxanium;letter-spacing:3px;color:var(--mute)}
+.vtrack{flex:1;height:54px;border-radius:15px;background:rgba(255,255,255,.07);overflow:hidden;position:relative}
+.vtrack i{position:absolute;left:0;top:0;bottom:0;border-radius:15px}
+.vtrack b{position:absolute;right:18px;top:0;line-height:54px;font:800 30px "Exo 2"}
+.pc .line{position:absolute;left:46px;top:716px;font:700 32px "Exo 2";color:#d8e1eb}
+.pc .line em{font-style:normal;color:var(--mute);font:700 22px Oxanium;letter-spacing:3px;margin-right:14px}
+.stamp{position:absolute;right:46px;top:640px;padding:12px 28px 10px;border-radius:20px;border:6px solid;text-align:center;transform-origin:center}
+.stamp b{display:block;font:400 92px/0.95 Anton;letter-spacing:4px}
+.stamp span{display:block;font:800 34px Oxanium;letter-spacing:2px}
+.stamp.w{color:var(--mint);border-color:var(--mint);background:rgba(61,220,151,.1);box-shadow:0 0 60px rgba(61,220,151,.35)}
+.stamp.l{color:var(--coral);border-color:rgba(255,107,107,.8);background:rgba(255,107,107,.07)}
+.stamp.v{color:var(--mute);border-color:var(--mute)}
+.spark{position:absolute;width:14px;height:14px;border-radius:50%;pointer-events:none}
+.sheen{position:absolute;inset:0;border-radius:36px;overflow:hidden;pointer-events:none}
+.sheen i{position:absolute;top:-20%;bottom:-20%;width:180px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.16),rgba(255,255,255,0));transform:skewX(-18deg)}
+/* progress dots + ledger */
+#dots{position:absolute;left:40px;right:40px;top:246px;display:flex;gap:8px;justify-content:center}
+#dots i{flex:0 1 46px;height:10px;border-radius:5px;background:rgba(255,255,255,.16)}
+#ledger{left:60px;width:960px;top:1166px;height:300px;padding:26px 36px}
+#ledger .v{position:absolute;right:36px;top:16px;font:400 84px/1 Anton;letter-spacing:1px}
+#ledger svg{position:absolute;left:36px;right:36px;top:108px;width:888px;height:170px;overflow:visible}
+/* multi */
+.mrow{display:grid;grid-template-columns:1fr 200px 140px 150px;align-items:center;height:84px;border-radius:18px;background:rgba(255,255,255,.04);margin-top:12px;padding:0 24px;font:800 32px "Exo 2"}
+.mrow small{display:block;font:600 22px Oxanium;color:var(--mute);letter-spacing:2px}
+.mrow .r{text-align:right}
+.ck{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;font:800 30px "Exo 2"}
+.ck.w{background:var(--mint);color:#06210f}.ck.l{background:rgba(255,107,107,.18);color:var(--coral)}.ck.v{background:rgba(255,255,255,.1);color:var(--mute)}
+/* summary tiles */
+.tiles{position:absolute;left:60px;right:60px;top:470px;display:grid;grid-template-columns:1fr 1fr;gap:26px;perspective:1600px}
+.tile{position:relative;height:330px;border-radius:32px;padding:34px 36px}
+.tile .lab{font-size:24px}
+.tile b{position:absolute;left:36px;bottom:70px;font:400 150px/0.9 Anton;letter-spacing:1px}
+.tile span{position:absolute;left:38px;bottom:30px;font:700 26px "Exo 2";color:#cbd5e1}
+/* phone */
+.phone{position:absolute;left:130px;top:322px;width:820px;height:1158px;border-radius:72px;background:#0b0e13;
+  box-shadow:0 0 0 3px #2a313b,0 0 0 9px #151a21,0 50px 120px rgba(0,0,0,.75),0 0 90px rgba(242,198,109,.16)}
+.phone .scr{position:absolute;left:14px;top:14px;right:14px;bottom:14px;border-radius:58px;overflow:hidden;background:#0d1117}
+.phone .cont{position:absolute;left:0;top:146px;transform-origin:0 0}
+.phone .cont img{display:block}
+.phone .hl{position:absolute;border-radius:12px;border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(242,198,109,.25),0 0 26px rgba(242,198,109,.55),inset 0 0 18px rgba(242,198,109,.18);opacity:0}
+.phone .top{position:absolute;left:0;right:0;top:0;height:146px;background:#0d1117;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.phone .tm{position:absolute;left:62px;top:30px;font:700 30px 'Exo 2';color:#fff}
+.phone .ic{position:absolute;right:58px;top:34px;display:flex;gap:8px;align-items:flex-end}
+.phone .ic i{width:7px;border-radius:2px;background:#fff}
+.phone .url{position:absolute;left:26px;right:26px;top:82px;height:52px;border-radius:26px;background:#1b222c;display:flex;align-items:center;justify-content:center;gap:10px;font:600 26px 'Exo 2';color:#cfd8e3}
+.phone .url b{width:16px;height:16px;border-radius:4px;border:3px solid #8fa0b3;border-bottom-width:6px}
+.phone .isl{position:absolute;left:50%;top:22px;width:200px;height:52px;margin-left:-100px;border-radius:26px;background:#000;z-index:3}
+.phone .fade{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,rgba(13,17,23,0),rgba(13,17,23,.85));z-index:2}
+.call{position:absolute;left:70px;right:70px;top:1222px;min-height:200px;padding:30px 36px 30px 44px;border-radius:30px;overflow:hidden;background:linear-gradient(160deg,rgba(26,34,46,.985),rgba(9,12,17,.985))!important}
+.call::after{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(180deg,var(--gold),var(--mint))}
+.call .lab{font-size:22px;color:var(--gold)}
+.call .big{margin-top:10px;font:800 46px/1.15 "Exo 2"}
+.call .big em{font-style:normal;color:var(--mint)}
+.call .big u{text-decoration:none;color:var(--blue)}
+.call .sm{margin-top:8px;font:600 28px/1.3 "Exo 2";color:#c6d0dc}
+/* outro */
+.ol{position:absolute;left:0;right:0;text-align:center}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 52%,rgba(0,0,0,.6) 100%)}
+.leak{position:absolute;width:1400px;height:1400px;border-radius:50%;pointer-events:none}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#brand{position:absolute;left:40px;top:172px;display:flex;align-items:center;gap:14px;font:800 30px Oxanium;letter-spacing:3px}
+#brand img{width:46px;height:46px;border-radius:12px}
+#bdate{position:absolute;right:40px;top:180px;font:600 28px Oxanium;letter-spacing:3px;color:var(--mute)}
+#bars{position:absolute;left:0;right:0;top:0;height:0;background:#000;z-index:5}
+#barsb{position:absolute;left:0;right:0;bottom:0;height:0;background:#000;z-index:5}
+.credit{position:absolute;left:40px;right:40px;top:1482px;font:500 22px "Exo 2";color:rgba(242,246,251,.55)}
+</style></head>
+<body><div id="stage"></div>
+<script>
+const SPEC = /*SPEC*/null;
+const T = SPEC.timing, PK = SPEC.picks, NP = PK.length, MU = SPEC.multi, SP = SPEC.spots, SUM = SPEC.sum;
+const stage = document.getElementById('stage');
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const eOut=x=>1-Math.pow(1-x,3), eExpo=x=>x>=1?1:1-Math.pow(2,-10*x), eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c1=1.5,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const lerp=(a,b,x)=>a+(b-a)*x;
+const pct=x=>Math.round(x*100)+'%', pct1=x=>(x*100).toFixed(1)+'%';
+const odd=x=>x==null?'–':Number(x).toFixed(2);
+const un=x=>(x>=0?'+':'−')+Math.abs(x).toFixed(2)+'u';
+function el(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;(parent||stage).appendChild(e);return e}
+function css(e,o){Object.assign(e.style,o);return e}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function hash(n){const x=Math.sin(n*127.1)*43758.5453;return x-Math.floor(x)}
+const statLine=st=>st?`${st.g} G · ${st.a} A · ${st.s} SOG`:'Did not play';
+
+// timeline
+const tI=T.intro, tP0=tI, tPe=tP0+T.pick*NP, tM0=tPe, tS0=tM0+T.multi, tSp0=tS0+T.summary, tO0=tSp0+T.spot*SP.length, TOTAL=tO0+T.outro;
+const scenes=[];
+const bgs=[]; // background photo layers, cross-faded by time
+function bgLayer(src,parent){const b=el('div','bgimg',null,parent); if(src) b.style.backgroundImage=`url(${src})`; return b}
+
+// ---------------- intro ----------------
+const intro=el('div','scene'); scenes.push({el:intro,a:0,b:tI});
+const ibg=bgLayer((PK.find(p=>p.bsrc)||{}).bsrc,intro);
+css(el('div','shade',null,intro),{background:'radial-gradient(900px 700px at 50% 40%,rgba(242,198,109,.12),transparent 70%),linear-gradient(180deg,rgba(6,8,12,.7),rgba(6,8,12,.55) 40%,rgba(6,8,12,.95))'});
+const i1=css(el('div','abs anton','LAST NIGHT',intro),{left:0,right:0,top:'290px',textAlign:'center',fontSize:'150px'});
+const i2=css(el('div','abs anton gtxt','RESULTS',intro),{left:0,right:0,top:'440px',textAlign:'center',fontSize:'250px'});
+const ichip=css(el('div','abs',`<span class="chip gold"><span class="dot" style="background:var(--gold);box-shadow:0 0 18px var(--gold)"></span>${esc(SPEC.day)} · ${SPEC.ngames} GAMES · ${NP} PICKS</span>`,intro),{left:0,right:0,top:'740px',textAlign:'center'});
+const irec=el('div','rec',`<div class="wl"><span class="w">0</span><i>–</i><span class="l">0</span></div>`,intro); css(irec,{top:'860px'});
+const irw=irec.querySelector('.w'), irl=irec.querySelector('.l');
+const iun=css(el('div','abs units',`+0.00u`,intro),{left:0,right:0,top:'1160px',textAlign:'center'});
+const isub=css(el('div','abs','1 unit per pick · locked 5 min before puck drop',intro),{left:0,right:0,top:'1310px',textAlign:'center',font:'700 32px "Exo 2"',color:'var(--mute)'});
+const irule=css(el('div','abs',null,intro),{left:'340px',width:'400px',top:'1286px',height:'2px',background:'linear-gradient(90deg,transparent,var(--gold),transparent)'});
+
+// ---------------- picks ----------------
+const picks=el('div','scene'); picks.id='picks'; scenes.push({el:picks,a:tP0,b:tPe});
+const pbgs=PK.map(p=>bgLayer(p.bsrc,picks));
+css(el('div','shade',null,picks),{background:'linear-gradient(180deg,rgba(6,8,12,.78),rgba(6,8,12,.62) 35%,rgba(6,8,12,.94) 75%)'});
+const dots=el('div',null,PK.map(()=>'<i></i>').join(''),picks); dots.id='dots'; const dotI=[...dots.children];
+const cum=[]; {let c=0; PK.forEach(p=>{c+=(p.u||0); cum.push(c)});}
+const cmin=Math.min(0,...cum), cmax=Math.max(0.5,...cum);
+const cards=PK.map((p,i)=>{
+  const c=el('div','pc glass',`<div class="ph">${p.src?`<img src="${p.src}">`:''}</div>
+    <div class="score"><span class="chip" style="font-size:26px;padding:10px 20px"><b style="color:${p.ac}">${p.away}</b>&nbsp;${p.as??''} – ${p.hs??''}&nbsp;<b style="color:${p.hc}">${p.home}</b>&nbsp;·&nbsp;FINAL${p.last&&p.last!=='REG'?'/'+p.last:''}</span></div>
+    <div class="no">PICK ${i+1}/${NP}</div>
+    <div class="nm">${esc(p.n)}</div>
+    <div class="meta"><span style="display:inline-block;width:12px;height:30px;border-radius:6px;background:${p.tc};vertical-align:-6px;margin-right:14px"></span>${esc(p.t)} ${p.t===p.home?'vs':'@'} ${esc(p.o)}</div>
+    <div class="mk"><b>${esc(p.mn)}</b><span class="odds">${odd(p.od)}</span></div>
+    <div class="vrow" style="top:556px"><div class="who">MODEL</div><div class="vtrack"><i class="m" style="background:linear-gradient(90deg,#1f9e68,var(--mint))"></i><b class="mv">0%</b></div></div>
+    <div class="vrow" style="top:622px;right:330px"><div class="who">ODDS SAY</div><div class="vtrack"><i class="k" style="background:linear-gradient(90deg,#2b5f9a,var(--blue))"></i><b class="kv">0%</b></div></div>
+    <div class="line"><em>LAST NIGHT</em>${esc(statLine(p.st))}</div>
+    <div class="stamp ${p.r}"><b>${p.r==='w'?'WON':p.r==='l'?'LOST':'VOID'}</b><span>${un(p.u||0)}</span></div>
+    <div class="sheen"><i></i></div>`,picks);
+  const sparks=p.r==='w'?Array.from({length:14},(_,k)=>{const s=el('div','spark',null,c); s.style.background=k%2?'var(--mint)':'var(--gold)'; s.style.boxShadow=`0 0 14px ${k%2?'var(--mint)':'var(--gold)'}`; return s}):[];
+  return {p,c,m:c.querySelector('i.m'),mv:c.querySelector('.mv'),k:c.querySelector('i.k'),kv:c.querySelector('.kv'),stamp:c.querySelector('.stamp'),
+    line:c.querySelector('.line'),sheen:c.querySelector('.sheen i'),img:c.querySelector('.ph img'),sparks};
+});
+const ledger=el('div','glass',`<div class="lab">Running profit · 1u per pick</div><div class="v">+0.00u</div>
+  <svg viewBox="0 0 888 170" preserveAspectRatio="none"><line class="z" x1="0" x2="888" stroke="rgba(255,255,255,.25)" stroke-dasharray="8 10" stroke-width="2"/>
+  <path class="ar" fill="url(#lg)" opacity=".5"/><path class="pl" fill="none" stroke="url(#ls)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <defs><linearGradient id="ls" x1="0" x2="1"><stop offset="0" stop-color="#3ddc97"/><stop offset="1" stop-color="#f2c66d"/></linearGradient>
+  <linearGradient id="lg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3ddc97" stop-opacity=".45"/><stop offset="1" stop-color="#3ddc97" stop-opacity="0"/></linearGradient></defs>
+  ${PK.map((_,i)=>`<circle class="pt" r="9" fill="#fff"/>`).join('')}</svg>`,picks);
+ledger.id='ledger';
+const lv=ledger.querySelector('.v'), lpl=ledger.querySelector('.pl'), lar=ledger.querySelector('.ar'), lpts=[...ledger.querySelectorAll('.pt')];
+const ly=v=>170-((v-cmin)/(cmax-cmin))*150-10, lx=i=>(i+1)/NP*888;
+ledger.querySelector('.z').setAttribute('y1',ly(0)); ledger.querySelector('.z').setAttribute('y2',ly(0));
+const pcred=el('div','credit','',picks);
+
+// ---------------- long shots ----------------
+let multi=null, mrows=[], mtot=null;
+if(MU.length){
+  multi=el('div','scene'); scenes.push({el:multi,a:tM0,b:tS0});
+  bgLayer((MU.find(p=>p.bsrc)||PK[NP-1]||{}).bsrc,multi);
+  css(el('div','shade',null,multi),{background:'linear-gradient(180deg,rgba(6,8,12,.86),rgba(6,8,12,.95))'});
+  css(el('div','abs anton','LONG SHOTS',multi),{left:0,right:0,top:'300px',textAlign:'center',fontSize:'140px'});
+  css(el('div','abs lab','Multi-point picks · tracked separately',multi),{left:0,right:0,top:'450px',textAlign:'center'});
+  const box=el('div','glass',`${MU.slice(0,6).map(p=>`<div class="mrow"><div>${esc(p.n)}<small>${esc(p.a)} @ ${esc(p.h)} · ${esc(statLine(p.st))}</small></div><div>${esc(p.mn)}</div><div class="r" style="font:400 44px Anton">${odd(p.od)}</div><div class="r"><span class="ck ${p.r}">${p.r==='w'?'✓':p.r==='l'?'✗':'–'}</span></div></div>`).join('')}
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:26px"><div class="lab">${SUM.mw}/${SUM.mn} won</div><div class="mt" style="font:400 90px/1 Anton;color:${SUM.mu>=0?'var(--mint)':'var(--coral)'}">${un(SUM.mu)}</div></div>`,multi);
+  css(box,{left:'60px',width:'960px',top:'530px',padding:'26px 30px'});
+  mrows=[...box.querySelectorAll('.mrow')]; mtot=box.querySelector('.mt');
+}
+
+// ---------------- summary ----------------
+const summ=el('div','scene'); scenes.push({el:summ,a:tS0,b:tSp0});
+bgLayer((SP[0]||PK[0]||{}).bsrc,summ);
+css(el('div','shade',null,summ),{background:'radial-gradient(900px 700px at 50% 35%,rgba(61,220,151,.12),transparent 70%),linear-gradient(180deg,rgba(6,8,12,.82),rgba(6,8,12,.95))'});
+const s1=css(el('div','abs anton','THE NIGHT',summ),{left:0,right:0,top:'270px',textAlign:'center',fontSize:'110px'});
+const s2=css(el('div','abs anton gtxt','IN NUMBERS',summ),{left:0,right:0,top:'370px',textAlign:'center',fontSize:'90px'});
+const TL=[['Picks won',`${SUM.w}/${SUM.n}`,`${SUM.n?pct(SUM.w/SUM.n):'–'} hit rate`,SUM.w/Math.max(1,SUM.n)],
+  ['Profit',un(SUM.u),'flat 1 unit per pick',SUM.u],
+  ['Return',(SUM.roi>=0?'+':'−')+Math.abs(Math.round(SUM.roi*100))+'%','profit per unit staked',SUM.roi],
+  ['Avg winning odds',SUM.avg_win_odds?odd(SUM.avg_win_odds):'–','prices at the lock',SUM.avg_win_odds||0]];
+const tiles=el('div','tiles',TL.map(([l,v,s],k)=>`<div class="tile glass"><div class="lab">${l}</div><b style="color:${k===1||k===2?(SUM.u>=0?'var(--mint)':'var(--coral)'):'#fff'}">${v}</b><span>${s}</span><div class="sheen"><i></i></div></div>`).join(''),summ);
+const tcells=[...tiles.children];
+const snote=css(el('div','abs',`${SUM.v?SUM.v+' void (did not play) · ':''}every pick, wins and losses, on the Track record page`,summ),{left:'60px',right:'60px',top:'1200px',textAlign:'center',font:'600 30px "Exo 2"',color:'var(--mute)'});
+
+// ---------------- profit spotlights ----------------
+const SPS=SP.map((p,i)=>{
+  const root=el('div','scene'); const a=tSp0+i*T.spot; scenes.push({el:root,a,b:a+T.spot});
+  const bg=bgLayer(p.bsrc,root);
+  css(el('div','shade',null,root),{background:'radial-gradient(900px 700px at 50% 30%,rgba(242,198,109,.16),transparent 70%),linear-gradient(180deg,rgba(6,8,12,.72),rgba(6,8,12,.9))'});
+  const chip=css(el('div','abs',`<span class="chip gold"><span class="dot" style="background:var(--gold);box-shadow:0 0 18px var(--gold)"></span>Profit spotlight · ${esc(p.n)} · <b style="color:var(--mint)">${un(p.u)}</b></span>`,root),{left:0,right:0,top:'238px',textAlign:'center'});
+  const pf=p.prof, bx=pf.boxes||{};
+  const ph=el('div','phone',`<div class="scr"><div class="cont"><img src="${pf.src}" style="width:${pf.w}px"></div>
+    <div class="top"><div class="tm">${esc(p.time||'')}</div><div class="ic"><i style="height:10px"></i><i style="height:15px"></i><i style="height:20px"></i><i style="height:25px"></i></div><div class="url"><b></b>${esc(SPEC.site)}</div></div><div class="fade"></div></div><div class="isl"></div>`,root);
+  const cont=ph.querySelector('.cont');
+  const hl=k=>{const r=bx[k]; if(!r) return null; const d=el('div','hl',null,cont); css(d,{left:r[0]+'px',top:r[1]+'px',width:r[2]+'px',height:r[3]+'px'}); return d};
+  const H={row:hl('row')||hl('prices'), built:hl('built'), chart:hl('chart')||hl('l10')};
+  const sc=(820-28)/pf.w, vis=(1158-28-146)/sc, maxY=Math.max(0,pf.h-vis);
+  const at=k=>{const r=bx[k]; return r?clamp(r[1]-24,0,maxY):null};
+  const stops=[0, at('built') ?? Math.min(maxY,460), at('chart') ?? at('l10') ?? maxY];
+  const imp=1/p.od, edge=p.p*p.od-1;
+  const calls=[
+    ['At the lock', `Model <em>${pct1(p.p)}</em> vs odds <u>${odd(p.od)}</u> (${pct(imp)})`, `The model saw ${edge>=0?'+':''}${Math.round(edge*100)}% value in the ${esc(p.mn.toLowerCase())} price before puck drop.`],
+    ['How the number is built', `Rates, ice time, matchup & goalie`, `Every factor behind the chance is shown on his profile, nothing hidden.`],
+    ['What happened', `${esc(statLine(p.st))} → <em>WON ${un(p.u)}</em>`, `${esc(p.a)} ${p.as??''} – ${p.hs??''} ${esc(p.h)} · final`],
+  ].map(([l,b,s])=>el('div','call glass',`<div class="lab">${l}</div><div class="big">${b}</div><div class="sm">${s}</div>`,root));
+  const cred=el('div','credit',esc(p.credit||''),root); cred.style.top='1490px';
+  return {p,root,bg,chip,ph,cont,H,sc,stops,calls,cred};
+});
+
+// ---------------- outro ----------------
+const outro=el('div','scene'); scenes.push({el:outro,a:tO0,b:TOTAL+1});
+bgLayer((PK[NP-1]||{}).bsrc,outro);
+css(el('div','shade',null,outro),{background:'linear-gradient(180deg,rgba(6,8,12,.86),rgba(6,8,12,.96))'});
+const o1=css(el('div','abs anton','EVERY PICK.',outro),{left:0,right:0,top:'300px',textAlign:'center',fontSize:'150px'});
+const o2=css(el('div','abs anton gtxt','TRACKED.',outro),{left:0,right:0,top:'450px',textAlign:'center',fontSize:'190px'});
+const o3=css(el('div','ol','Locked 5 min before puck drop · graded every night · wins and losses',outro),{top:'660px',font:'700 34px "Exo 2"',color:'#cfd8e3',padding:'0 80px'});
+const oicon=el('img','abs',null,outro); oicon.src='img/icon.png'; css(oicon,{left:'452px',top:'820px',width:'176px',height:'176px',borderRadius:'40px',boxShadow:'0 0 120px rgba(242,198,109,.45)'});
+const oname=css(el('div','ol','NHL PROPS LAB',outro),{top:'1030px',font:'800 92px Oxanium',letterSpacing:'4px'});
+const ourl=css(el('div','ol',`<span class="chip gold" style="font-size:36px;letter-spacing:1px;text-transform:none"><span class="dot"></span>Track record → ${esc(SPEC.site)}</span>`,outro),{top:'1160px'});
+const ofol=css(el('div','ol anton','FOLLOW FOR TONIGHT’S PICKS',outro),{top:'1270px',fontSize:'76px'});
+const odis=css(el('div','ol','Model numbers, not betting advice · past results don’t guarantee future ones · 18+',outro),{top:'1400px',font:'500 26px "Exo 2"',color:'var(--mute)',padding:'0 60px'});
+
+// ---------------- overlays ----------------
+const leak1=el('div','leak'); leak1.style.background='radial-gradient(circle,rgba(242,198,109,.38),transparent 60%)';
+const leak2=el('div','leak'); leak2.style.background='radial-gradient(circle,rgba(61,220,151,.32),transparent 60%)';
+el('div',null).id='vig';
+const brand=el('div',null,`<img src="img/icon.png">NHL PROPS LAB`); brand.id='brand';
+const bdate=el('div',null,esc(SPEC.day)+' · RESULTS'); bdate.id='bdate';
+const flash=el('div',null); flash.id='flash';
+const barT=el('div',null); barT.id='bars'; const barB=el('div',null); barB.id='barsb';
+
+// ---------------- helpers ----------------
+function slam(e,t,at,from=1.5){const p=seg(t,at,at+.34),q=eExpo(p); e.style.opacity=p<=0?0:clamp(p*3); e.style.transform=`scale(${lerp(from,1,q)})`; e.style.filter=q<1?`blur(${(1-q)*14}px)`:'none';}
+function popIn(e,t,at,dy=120,dur=.55){const p=eBack(seg(t,at,at+dur)); e.style.opacity=clamp(seg(t,at,at+.2)); e.style.transform=`translateY(${(1-p)*dy}px) scale(${lerp(.94,1,p)})`;}
+function fadeOut(e,t,at,dur=.3){const q=eInOut(seg(t,at,at+dur)); if(q>0){e.style.opacity=(+e.style.opacity||1)*(1-q); e.style.filter=`blur(${q*10}px)`;}}
+const beatPulse=t=>Math.exp(-((t%T.beat)/T.beat)*6);
+function shimmer(e,t,at,dur=.9){const p=seg(t,at,at+dur); e.style.left=lerp(-260,1200,eInOut(p))+'px'; e.style.opacity=p>0&&p<1?1:0;}
+function gshine(e,t){e.style.backgroundPosition=`${(t*22)%240}% 0`;}
+
+window.render=function(t){
+  for(const s of scenes) s.el.style.display=(t>=s.a&&t<s.b)?'block':'none';
+  const cuts=[tP0,...(MU.length?[tM0]:[]),tS0,...SP.map((_,i)=>tSp0+i*T.spot),tO0];
+  let sx=0,sy=0; for(const c of cuts){const d=t-c; if(d>=0&&d<.22){const k=(1-d/.22)*10; sx+=(hash(t*90)-.5)*k; sy+=(hash(t*77+3)-.5)*k;}}
+  stage.style.transform=`translate(${sx}px,${sy}px)`;
+
+  // intro
+  if(t<tI){
+    ibg.style.transform=`scale(${1.18+t*.025})`;
+    slam(i1,t,.05,1.7); slam(i2,t,.4,1.7); gshine(i2,t);
+    popIn(ichip,t,1.0,60);
+    const rp=eOut(seg(t,1.5,2.7)); irec.style.opacity=clamp(seg(t,1.45,1.7)); irec.style.transform=`scale(${lerp(.8,1,eBack(seg(t,1.45,2.0)))})`;
+    irw.textContent=Math.round(SUM.w*rp); irl.textContent=Math.round(SUM.l*rp);
+    const up=eOut(seg(t,2.2,3.4)); iun.textContent=un(SUM.u*up); iun.style.color=SUM.u>=0?'var(--mint)':'var(--coral)'; iun.style.opacity=clamp(seg(t,2.15,2.4));
+    iun.style.textShadow=`0 0 ${40+beatPulse(t)*40}px ${SUM.u>=0?'rgba(61,220,151,.45)':'rgba(255,107,107,.3)'}`;
+    irule.style.transform=`scaleX(${eOut(seg(t,3.0,3.6))})`; isub.style.opacity=eOut(seg(t,3.2,3.7));
+    intro.style.opacity=1-seg(t,tI-.2,tI);
+  }
+
+  // picks
+  if(t>=tP0&&t<tPe){
+    const u=t-tP0, i=Math.min(NP-1,Math.floor(u/T.pick)), v=u-i*T.pick, L=T.pick, f=x=>x*L;
+    pbgs.forEach((b,k)=>{b.style.opacity=k===i?1:(k===i-1?1-seg(v,0,.35):0); b.style.transform=`scale(${1.16+u*.008})`;});
+    cards.forEach((c,k)=>{
+      if(k<i-1||k>i){c.c.style.display='none';return;}
+      c.c.style.display='block';
+      if(k===i){
+        const e=eExpo(seg(v,0,Math.min(.45,f(.22))));
+        let tr=`translateX(${(1-e)*820}px) rotateY(${(1-e)*-38}deg) scale(${lerp(.9,1,e)})`;
+        const xo=eInOut(seg(v,L-Math.min(.32,f(.15)),L));
+        if(i<NP-1&&xo>0) tr=`translateX(${-xo*900}px) rotateY(${xo*34}deg) scale(${lerp(1,.9,xo)})`;
+        c.c.style.transform=tr; c.c.style.opacity=clamp(e*1.6)*(1-xo*.9); c.c.style.filter=(e<1||xo>0)?`blur(${Math.max(1-e,xo)*8}px)`:'none';
+        if(c.img) c.img.style.transform=`scale(${1.08+v/L*.06})`;
+        const bp=eOut(seg(v,f(.18),f(.5)));
+        c.m.style.width=pct(c.p.p*bp); c.mv.textContent=pct1(c.p.p*bp);
+        c.k.style.width=pct((1/c.p.od)*bp); c.kv.textContent=pct((1/c.p.od)*bp);
+        c.line.style.opacity=eOut(seg(v,f(.3),f(.45)));
+        const sa=f(.42), sp=seg(v,sa,sa+.28), sq=eBack(sp);
+        c.stamp.style.opacity=clamp(sp*3); c.stamp.style.transform=`rotate(${lerp(-22,-7,sq)}deg) scale(${lerp(2.4,1,eExpo(sp))})`;
+        if(c.p.r==='w'){ shimmer(c.sheen,v,sa+.1,.8);
+          c.sparks.forEach((s,k2)=>{const q=seg(v,sa+.05,sa+.85), ang=k2/c.sparks.length*Math.PI*2+hash(k2+i)*.4, dist=eOut(q)*(150+hash(k2*3+i)*120);
+            css(s,{left:(760+Math.cos(ang)*dist)+'px',top:(700+Math.sin(ang)*dist)+'px',opacity:q>0?(1-q):0,transform:`scale(${1-q*.6})`});});
+          c.c.style.boxShadow=`0 40px 100px rgba(0,0,0,.6),0 0 ${80*(1-seg(v,sa,sa+1))}px rgba(61,220,151,.5)`;
+        } else c.c.style.boxShadow='';
+      } else { // previous card finishing its exit
+        const xo=eInOut(seg(v+L,L-Math.min(.32,f(.15)),L)); c.c.style.display=v<.05?'block':'none';
+      }
+    });
+    // dots + ledger
+    dotI.forEach((d,k)=>{const rev=k<i||(k===i&&v>=f(.42)); d.style.background=rev?(PK[k].r==='w'?'var(--mint)':PK[k].r==='l'?'var(--coral)':'var(--mute)'):(k===i?'rgba(255,255,255,.55)':'rgba(255,255,255,.16)'); d.style.boxShadow=rev&&PK[k].r==='w'?'0 0 14px rgba(61,220,151,.7)':'none';});
+    const ledIn=eOut(seg(u,.15,.6)); ledger.style.opacity=ledIn; ledger.style.transform=`translateY(${(1-ledIn)*80}px)`;
+    const rev=k=>k<i?1:k===i?eOut(seg(v,f(.42),f(.42)+.35)):0;
+    let path='',cur=0; const ptsN=[]; for(let k=0;k<NP;k++){const r=rev(k); if(r<=0) break; const prev=k?cum[k-1]:0; const val=lerp(prev,cum[k],r); cur=val; ptsN.push([lerp(k?lx(k-1):0,lx(k),r),ly(val)]);}
+    path=`M0 ${ly(0)} `+ptsN.map(([x,y])=>`L${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+    lpl.setAttribute('d',path); lar.setAttribute('d',ptsN.length?path+` L${ptsN[ptsN.length-1][0].toFixed(1)} 170 L0 170 Z`:'');
+    lpts.forEach((c,k)=>{const r=rev(k); if(r>=1){c.setAttribute('cx',lx(k)); c.setAttribute('cy',ly(cum[k])); c.setAttribute('fill',PK[k].r==='w'?'#3ddc97':PK[k].r==='l'?'#ff6b6b':'#8e9cae'); c.style.opacity=1;} else c.style.opacity=0;});
+    lv.textContent=un(cur); lv.style.color=cur>=0?'var(--mint)':'var(--coral)';
+    pcred.textContent=PK[i].credit||''; pcred.style.opacity=.85;
+  }
+
+  // long shots
+  if(multi&&t>=tM0&&t<tS0){
+    const u=t-tM0; mrows.forEach((r,k)=>{const p=eOut(seg(u,.3+k*.16,.75+k*.16)); r.style.opacity=p; r.style.transform=`translateX(${(1-p)*-140}px)`;
+      const ck=r.querySelector('.ck'); const q=eBack(seg(u,.55+k*.16,.9+k*.16)); ck.style.transform=`scale(${q})`;});
+    popIn(mtot,u,.6+mrows.length*.16,40); multi.style.opacity=1-seg(u,T.multi-.25,T.multi);
+  }
+
+  // summary
+  if(t>=tS0&&t<tSp0){
+    const u=t-tS0; slam(s1,u,.05,1.5); slam(s2,u,.3,1.5); gshine(s2,t);
+    tcells.forEach((c,k)=>{const at=.55+k*.18,p=eBack(seg(u,at,at+.6)); c.style.opacity=clamp(seg(u,at,at+.2)); c.style.transform=`rotateX(${(1-p)*-70}deg) translateY(${(1-p)*60}px)`;
+      const b=c.querySelector('b'), val=TL[k][3], q=eOut(seg(u,at+.15,at+1.1));
+      if(k===0) b.textContent=`${Math.round(SUM.w*q)}/${SUM.n}`; else if(k===1) b.textContent=un(SUM.u*q); else if(k===2) b.textContent=(SUM.roi>=0?'+':'−')+Math.abs(Math.round(SUM.roi*100*q))+'%'; else if(SUM.avg_win_odds) b.textContent=odd(1+(SUM.avg_win_odds-1)*q);
+      shimmer(c.querySelector('.sheen i'),u,at+1.0,.9);});
+    snote.style.opacity=eOut(seg(u,1.8,2.3)); summ.style.opacity=1-seg(u,T.summary-.2,T.summary);
+  }
+
+  // spotlights
+  SPS.forEach((s,i)=>{
+    const a=tSp0+i*T.spot; if(t<a||t>=a+T.spot) return;
+    const u=t-a, D=T.spot;
+    s.bg.style.transform=`scale(${1.15+u*.012})`;
+    popIn(s.chip,u,.1,40);
+    const ip=eOut(seg(u,0,.7)); s.ph.style.opacity=clamp(seg(u,0,.3)); s.ph.style.transform=`translateY(${(1-ip)*120}px) scale(${lerp(1.12,1,ip)}) rotateX(${(1-ip)*12}deg)`; s.ph.style.filter=ip<1?`blur(${(1-ip)*10}px)`:'none';
+    // three stops: prices (his pick's row) -> how the number is built -> the game-by-game chart + what happened
+    const K=[[.9,3.4],[3.4,6.2],[6.2,D]], mv=.95;
+    let y=s.stops[0];
+    K.forEach(([k0,k1],k)=>{ if(u>=k0){ y=lerp(k?s.stops[k-1]:s.stops[0],s.stops[k],eInOut(seg(u,k0,k0+(k?mv:0.01)))); }});
+    s.cont.style.transform=`translateY(${-y*s.sc}px) scale(${s.sc})`;
+    const hk=['row','built','chart'];
+    hk.forEach((h,k)=>{const e=s.H[h]; if(!e) return; const [k0,k1]=K[k], st=k0+(k?mv:.2), q=eOut(seg(u,st,st+.4)), o=1-seg(u,k1-.25,k1);
+      e.style.opacity=q*o*(.75+beatPulse(u)*.25); e.style.transform=`scale(${lerp(1.08,1,q)})`;});
+    s.calls.forEach((c,k)=>{const [k0,k1]=K[k], st=k0+(k?mv:.2)+.15; const p=eBack(seg(u,st,st+.5)); const o=k===2?1:1-seg(u,k1-.3,k1);
+      c.style.opacity=clamp(seg(u,st,st+.2))*o; c.style.transform=`translateY(${(1-p)*90}px)`; c.style.display=(u>=st-.05&&(k===2||u<k1))?'block':'none';});
+    s.cred.style.opacity=.7;
+    s.root.style.opacity=1-seg(u,D-.25,D);
+  });
+
+  // outro
+  if(t>=tO0){
+    const u=t-tO0;
+    slam(o1,u,.05,1.6); slam(o2,u,.35,1.6); gshine(o2,t); o3.style.opacity=eOut(seg(u,.8,1.3));
+    const ip=eBack(seg(u,1.3,1.8)); oicon.style.opacity=clamp(ip); oicon.style.transform=`scale(${lerp(.3,1,ip)}) rotate(${(1-ip)*-20}deg)`;
+    slam(oname,u,1.55,1.4); popIn(ourl,u,1.9,40); slam(ofol,u,2.3,1.5); odis.style.opacity=eOut(seg(u,2.7,3.2));
+    stage.style.opacity=1-seg(u,T.outro-.5,T.outro);
+  } else stage.style.opacity=1;
+
+  const mid=t>=tP0&&t<tO0; brand.style.opacity=mid?.95:0; bdate.style.opacity=mid?.9:0;
+  leak1.style.transform=`translate(${-520+Math.sin(t*.4)*380}px,${-320+Math.cos(t*.28)*300}px)`; leak1.style.opacity=.18+beatPulse(t)*.06;
+  leak2.style.transform=`translate(${280+Math.cos(t*.34)*360}px,${900+Math.sin(t*.25)*420}px)`; leak2.style.opacity=.14;
+  let fl=0; for(const c of cuts){const d=t-c; if(d>=0&&d<.28) fl=Math.max(fl,(1-d/.28)*.45);}
+  if(t<.25) fl=Math.max(fl,(1-t/.25)*.5);
+  flash.style.opacity=fl;
+  // letterbox bars breathe in on section changes (cinematic)
+  let lb=0; for(const c of cuts){const d=t-c; if(d>-.25&&d<.35) lb=Math.max(lb,1-Math.abs(d-.05)/.3);}
+  barT.style.height=barB.style.height=(clamp(lb)*70)+'px';
+};
+Promise.all([document.fonts.ready, ...['400 20px Anton','500 20px "Exo 2"','700 20px "Exo 2"','800 20px "Exo 2"','600 20px Oxanium','800 20px Oxanium'].map(f=>document.fonts.load(f)),
+  ...[...PK,...MU,...SP].flatMap(p=>[p.src,p.bsrc,p.prof&&p.prof.src]).filter(Boolean).map(u=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=u}))
+]).then(()=>{render(0); window.READY=true;});
+</script></body></html>

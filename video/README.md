@@ -24,3 +24,19 @@ How it works
 - Music is synthesised in `music.py` (no samples, no copyright claims); loudness -14 LUFS.
 - Fonts (Anton, Exo 2, Oxanium) are SIL Open Font License, see `fonts/`.
 - Needs Python with Playwright (Chromium), Pillow, numpy, scipy, and ffmpeg. About 10 minutes on 2 CPUs.
+
+# Review video (last night's results)
+
+    python video/review.py                      # yesterday (New York); --date 2026-10-28 for another night
+    python video/review.py --preview 4,8,30,36  # still frames only
+
+Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DATE>-review-captions.txt`.
+- Data: every pick of that exact date from the site's Track record (origin/site:data/bestpicks.json: the picks as
+  they stood at the lock, graded after the game), results and box-score lines from origin/site:data/archive/<DATE>.json.
+- Intro with the night's record and units -> every main pick as a card (photo, score, model vs odds, what he did,
+  WON/LOST stamp, running profit chart) -> multi-point long shots -> the night in numbers -> profit spotlights: the
+  biggest winners' real site profiles (archive of that date, dark theme, phone width) with the pick's market row,
+  "how the number is built" and the game-by-game chart highlighted, plus callouts -> outro (every pick tracked).
+- Music: `music.review_track`, a different original song (half-time groove, FM electric piano, 808, bell sparkles on
+  each winning pick). Template: `review.html`.
+

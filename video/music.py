@@ -232,6 +232,121 @@ def track(duration, cues=(), bpm=120, intro=None):
     return (st * 0.89).astype(np.float32)[: int(duration * SR)]
 
 
+# ---------------------------------------------------------------- review track (a different song)
+# Warm, premium half-time groove for the "last night's results" video: FM electric piano, deep 808 bass,
+# rim + clap backbeat, rolling hats and bell sparkles on the winning picks. D-flat major / F minor colours.
+REV_PROG = [(49, [53, 56, 60, 63]), (48, [51, 55, 58, 62]), (53, [56, 60, 63, 67]), (51, [55, 58, 62, 65])]
+
+
+def _epiano(m, dur, vel=1.0):
+    """FM electric piano: carrier + 1:1 modulator with a decaying index, slight tremolo."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    f = _note(m)
+    idx = 1.8 * np.exp(-t / 0.35) + 0.25
+    mod = np.sin(2 * np.pi * f * t) * idx
+    x = np.sin(2 * np.pi * f * t + mod) + 0.25 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t / 0.2)
+    x *= _env(n, 0.004, 1.6) * (1 + 0.12 * np.sin(2 * np.pi * 4.5 * t)) * vel
+    return x
+
+
+def _bell(m, dur=1.6):
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    f = _note(m)
+    x = np.sin(2 * np.pi * f * t + 2.2 * np.exp(-t / 0.5) * np.sin(2 * np.pi * f * 3.5 * t))
+    return x * _env(n, 0.002, 0.55)
+
+
+def _808(m, dur):
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    f = _note(m) * (1 + 0.6 * np.exp(-t / 0.03))
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR)
+    x = np.tanh(2.2 * x) * _env(n, 0.003, min(dur * 0.7, 1.1))
+    return _lp(x, 700)
+
+
+def rim():
+    n = int(0.12 * SR)
+    t = np.arange(n) / SR
+    x = np.sin(2 * np.pi * 1650 * t) * np.exp(-t / 0.012) + _bp(rng.standard_normal(n), 2000, 6000) * np.exp(-t / 0.008) * 0.6
+    return x * 0.5
+
+
+def review_track(duration, cues=(), wins=(), bpm=96):
+    """`cues`: section starts (impact + whoosh). `wins`: times of winning-pick reveals (bell sparkle)."""
+    beat = 60.0 / bpm
+    bar = beat * 4
+    n = int((duration + 0.1) * SR)
+    drums, bass, keys, fx = np.zeros(n), np.zeros(n), np.zeros(n), np.zeros(n)
+    duck = np.ones(n)
+    intro = cues[0] if cues else 0
+    outro = duration - 5.0
+    K, C, H, O, RM = kick(), clap(), hat(), hat(True), rim()
+    dk = 1 - 0.55 * np.exp(-np.arange(int(beat * SR)) / SR / 0.12)
+    nb = int(duration / beat) + 1
+    for b in range(nb):
+        t = b * beat
+        groove = intro - bar <= t < outro + bar
+        pos = b % 8           # two-bar pattern in half time
+        if groove and pos in (0, 5):
+            _add(drums, K, t)
+            i = int(t * SR); j = min(n, i + len(dk)); duck[i:j] = np.minimum(duck[i:j], dk[: j - i])
+        if groove and pos in (0,) and b % 16 == 8:
+            _add(drums, K * 0.7, t + beat * 0.75)
+        if groove and pos in (2, 6):
+            _add(drums, C * 0.75, t); _add(drums, RM * 0.5, t + 0.006)
+        if t < duration - 1.2:
+            for k in range(4):   # 16th hats with velocity, a triplet roll every 4 bars
+                v = (0.55, 0.25, 0.4, 0.22)[k] * (1.0 if groove else 0.4)
+                _add(drums, H * v, t + k * beat / 4 + (0.012 if k % 2 else 0))
+            if groove and b % 16 == 15:
+                for k in range(6):
+                    _add(drums, H * 0.3, t + k * beat / 6)
+            if groove and pos == 7:
+                _add(drums, O * 0.35, t + beat / 2)
+    for b in range(int(duration / bar) + 1):
+        t0 = b * bar
+        root, chord = REV_PROG[b % 4]
+        on = intro - bar <= t0 < outro + bar
+        # electric piano: chord on 1, soft re-hit on the "and" of 3
+        for at, vel in ((0, 1.0), (beat * 2.5, 0.55)):
+            for k, c in enumerate(chord):
+                _add(keys, _epiano(c, bar * 0.95, vel) * 0.06, t0 + at + k * 0.012)
+        if on:
+            for at, ln, mm in ((0, beat * 1.4, root - 24), (beat * 1.5, beat * 0.5, root - 24), (beat * 2.5, beat * 1.3, root - 17)):
+                _add(bass, _808(mm, ln) * 0.6, t0 + at)
+            # sparse top melody
+            mel = [chord[3] + 12, chord[2] + 12, chord[1] + 12]
+            for k, mm in enumerate(mel):
+                _add(keys, _bell(mm, 1.0) * 0.025, t0 + beat * (1 + k * 1.0))
+    d = int(beat * 0.75 * SR)
+    echo = np.zeros(n); echo[d:] = keys[:-d] * 0.28
+    keys = _reverb(keys + echo, 2.2, 0.35)
+    if intro > 0.5:
+        i = int(intro * SR); seg = keys[:i]; lo = _lp(seg, 700); w = np.linspace(0, 1, i) ** 2
+        keys[:i] = lo * (1 - w) + seg * w
+    for c in cues:
+        _add(fx, impact() * 0.6, c)
+        _add(fx, whoosh(0.5) * 0.8, max(0, c - 0.45))
+    for w in wins:
+        for k, mm in enumerate((84, 88, 91, 96)):
+            _add(fx, _bell(mm, 1.2) * 0.05, w + k * 0.045)
+    if intro > 1.2:
+        _add(fx, riser(min(2.5, intro - 0.2)) * 0.8, intro - min(2.5, intro - 0.2))
+    fx = _reverb(fx, 1.2, 0.2)
+    mix = drums * 0.8 + (bass + keys) * duck + fx
+    mix = _hp(mix, 26)
+    fo = int(3.0 * SR); mix[-fo:] *= np.linspace(1, 0, fo) ** 1.5
+    fi = int(0.03 * SR); mix[:fi] *= np.linspace(0, 1, fi)
+    hd = int(0.014 * SR); wide = np.zeros(n); wide[hd:] = keys[:-hd]
+    st = np.stack([mix, mix - keys * 0.3 + wide * 0.3], 1)
+    st = np.tanh(st * 1.1) / np.tanh(1.1)
+    st /= np.max(np.abs(st)) + 1e-9
+    return (st * 0.89).astype(np.float32)[: int(duration * SR)]
+
+
 def write_wav(path, x):
     from scipy.io import wavfile
     wavfile.write(path, SR, (np.clip(x, -1, 1) * 32767).astype(np.int16))
