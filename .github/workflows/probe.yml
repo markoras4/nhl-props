@@ -12,9 +12,9 @@ jobs:
           node-version: "20"
       - name: SHL stats pages (browser)
         run: |
-          python3 tools/probe/shl3.py || echo "probe failed"
+          python3 tools/probe/shl4.py || echo "probe failed"
       - name: Save
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          mkdir -p /tmp/pr && cp -r probe-shl3 /tmp/pr/
-          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-shl3 . && git add probe-shl3 && git commit -qm probe && git push -f origin HEAD:probe2
+          mkdir -p /tmp/pr && cp -r probe-shl4 /tmp/pr/
+          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-shl4 . && git add probe-shl4 && git commit -qm probe && git push -f origin HEAD:probe2
