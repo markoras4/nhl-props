@@ -13,10 +13,10 @@ jobs:
       - name: SHL stats pages (browser)
         run: |
           npm i playwright@1.47.2 >/dev/null 2>&1 && npx playwright install --with-deps chromium >/dev/null 2>&1
-          node tools/probe/shl.js || echo "probe failed"
-          ls probe-shl | head -80
+          node tools/probe/shl2.js || echo "probe failed"
+          ls probe-shl2 | head -80
       - name: Save
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          mkdir -p /tmp/pr && cp -r probe-shl /tmp/pr/
-          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-shl . && git add probe-shl && git commit -qm probe && git push -f origin HEAD:probe2
+          mkdir -p /tmp/pr && cp -r probe-shl2 /tmp/pr/
+          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-shl2 . && git add probe-shl2 && git commit -qm probe && git push -f origin HEAD:probe2
