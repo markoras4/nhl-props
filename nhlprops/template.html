@@ -3373,6 +3373,10 @@ Object.assign(I18N.sv, {
   rk_exp:"Modellen väntade {e} vinster", rk_since:"sedan {d}",
 });
 
+// record categories: each scoring market on its own (goals, assists, points…), line markets grouped (all shots lines together)
+const RK_ORDER = ["g","a","pt","fg","ppp","s","h","b","fo","pim","pt2","pt3","g2","g3","a2"];
+const rkCat = m => RK_ORDER.includes(m) ? m : m.startsWith("pim") ? "pim" : m.startsWith("fo") ? "fo" : m[0];
+const rkCatName = c => ["s","h","b","fo","pim"].includes(c) ? t("mg_"+c) : mName(c);
 let BPREC = null, BPREC_LOADING = null;
 function loadRecord(){
   if (BPREC) return Promise.resolve(BPREC);
@@ -3456,16 +3460,16 @@ function recordView(){
   const keys = S_.per==="all" ? ["all"] : [...new Set(dates.map(d=>periodKey(d, S_.per)))].sort();
   if (S_.per!=="all" && !keys.includes(S_.at)) S_.at = keys[keys.length-1];
   const inPer = all.filter(r => S_.per==="all" || periodKey(r.d, S_.per)===S_.at);
-  const groupsAvail = GROUP_ORDER.filter(gk => inPer.some(r => mGroup(r.m)===gk));
+  const groupsAvail = RK_ORDER.filter(c => inPer.some(r => rkCat(r.m)===c));
   if (S_.mk!=="all" && !groupsAvail.includes(S_.mk)) S_.mk = "all";
-  const rows = inPer.filter(r => S_.mk==="all" || mGroup(r.m)===S_.mk);
+  const rows = inPer.filter(r => S_.mk==="all" || rkCat(r.m)===S_.mk);
   const st = rkStats(rows);
   const segB = (attr, cur, opts) => `<span class="seg olseg">${opts.map(([v,l,tip])=>`<button type="button" data-${attr}="${v}" class="${cur===v?"on":""} ${cur===v && SEG_POP===attr+":"+v?"pop":""}${tip?" tip":""}"${tip?` data-tip="${esc(tip)}"`:""}>${l}</button>`).join("")}</span>`;
   const ki = keys.indexOf(S_.at);
   const stepper = S_.per==="all" ? "" : `<span class="rkstep"><button type="button" data-rkstep="-1" ${ki<=0?"disabled":""} aria-label="‹">‹</button><b>${periodLabel(S_.at, S_.per)}</b><button type="button" data-rkstep="1" ${ki>=keys.length-1?"disabled":""} aria-label="›">›</button></span>`;
   const controls = `<div class="rkctl">${segB("rkk", S_.k, [["all",t("rk_main")],["multi",t("rk_multi"),t("rk_multi_tip")]])}
     ${segB("rkper", S_.per, [["all",t("rk_all")],["month",t("rk_month")],["week",t("rk_week")],["day",t("rk_day")]])}${stepper}
-    ${groupsAvail.length>1 ? `<select id="rkmk" aria-label="${esc(t("rk_market"))}"><option value="all">${t("rk_allm")}</option>${groupsAvail.map(g=>`<option value="${g}" ${S_.mk===g?"selected":""}>${t("mg_"+g)}</option>`).join("")}</select>` : ""}</div>`;
+    ${groupsAvail.length>1 ? `<select id="rkmk" aria-label="${esc(t("rk_market"))}"><option value="all">${t("rk_allm")}</option>${groupsAvail.map(g=>`<option value="${g}" ${S_.mk===g?"selected":""}>${rkCatName(g)}</option>`).join("")}</select>` : ""}</div>`;
   const kpi = (lbl, val, cls, sub, tip, cu) => `<div class="rkk ${cls||""}"><small${tip?` class="tip" tabindex="0" data-tip="${esc(tip)}"`:""}>${lbl}</small><b ${cu!=null?`data-cu="${cu}"`:""}>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
   const kpis = `<div class="rkkpis">
     ${kpi(t("rk_units"), sgnU(st.u), "big "+uCls(st.u), st.n?`${st.n} ${t("rk_picks").toLowerCase()}`:"", t("rk_units_tip"), st.u.toFixed(2))}
@@ -3476,7 +3480,7 @@ function recordView(){
     ${kpi(t("rk_ev"), sgnP(st.ev), "", "", t("rk_ev_tip"))}
     ${kpi(t("rk_clv"), sgnP(st.clv), uCls(st.clv||0), st.clvUp!=null?t("rk_clv_share",{p:pct(st.clvUp,0)}):"", t("rk_clv_tip"))}</div>`;
   if (!rows.length){ box.innerHTML = controls + `<div class="card empty"><p>${t("rk_none")}</p></div><p class="note">${t("rk_note")}</p>`; return; }
-  const mk = rkGroup(rows, r => mGroup(r.m)).sort((a,b)=>b.s.u-a.s.u);
+  const mk = rkGroup(rows, r => rkCat(r.m)).sort((a,b)=>b.s.u-a.s.u);
   const tm = rkGroup(rows, r => r.t).sort((a,b)=> S_.tb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
   const pl = rkGroup(rows, r => String(r.pid)).sort((a,b)=> S_.pb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
   const mx = arr => Math.max(0.01, ...arr.map(x=>Math.abs(x.s.u)));
@@ -3492,7 +3496,7 @@ function recordView(){
   box.innerHTML = controls + kpis + `
     <div class="box rkcard"><h4>${t("rk_chart")} <span class="meta">${t("rk_chart_sub")}</span></h4>${rkProfitChart(rows)}</div>
     <div class="rkgrid">
-      <div class="box rkcard"><h4>${t("rk_mkt")}</h4><div class="rkrows">${rkBarRows(mk, x=>t("mg_"+x.k), mx(mk))}</div></div>
+      <div class="box rkcard"><h4>${t("rk_mkt")}</h4><div class="rkrows">${rkBarRows(mk, x=>rkCatName(x.k), mx(mk))}</div></div>
       <div class="box rkcard"><h4>${t("rk_teams")} ${bw("rktb", S_.tb)}</h4><div class="rkrows rkscroll">${rkBarRows(tm, x=>`${logo(x.k,18)} <b>${x.k}</b>`, mx(tm))}</div></div>
       <div class="box rkcard"><h4>${t("rk_players")} ${bw("rkpb", S_.pb)}</h4><div class="rkrows rkscroll">${rkBarRows(pl, x=>`${logo(x.rs[0].t,16)} ${esc(x.rs[0].n)}`, mx(pl))}</div></div>
     </div>
