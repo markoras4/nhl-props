@@ -533,6 +533,7 @@ body.has-cmp .slipfab{bottom:84px}
 .spctl{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;text-transform:none;letter-spacing:0}
 .spgame{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:6px 8px;font:600 12.5px var(--f-ui);max-width:170px}
 .spgame.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+@keyframes rowglow{0%{box-shadow:inset 0 0 0 2px var(--accent)}100%{box-shadow:inset 0 0 0 2px transparent}}tr.row.reveal td{animation:rowglow 1.6s ease-out}
 tr[data-spd]{cursor:pointer}tr[data-spd]:hover td{background:var(--panel2)}tr.spsel td{background:color-mix(in srgb,var(--accent) 14%,transparent)}.spbox h4 .seg{text-transform:none;letter-spacing:0}
 .spgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:18px;align-items:start}
 @media (max-width:760px){.spgrid{grid-template-columns:1fr}}
@@ -1702,7 +1703,7 @@ function streakStrip(g){
 document.addEventListener("click", e => {
   const c = e.target.closest("[data-stp]"); if (!c) return;
   state.side = c.dataset.stt; state.open = c.dataset.stp; render();
-  setTimeout(()=>{ const r = document.querySelector(`tr.row[data-id="${c.dataset.stp}"]`); if (r) r.scrollIntoView({behavior:"smooth", block:"start"}); }, 50);
+  revealPlayer(c.dataset.stp, {force:true});
 });
 function streaksTable(){
   const f = state.stf || "all", rows = [];
@@ -1895,7 +1896,7 @@ function gamePage(){
   $("#main").innerHTML = html;
   $("#back").onclick = () => go({game:null});
   $("#main").querySelectorAll(".pick").forEach(el => el.onclick = () => { state.side = el.dataset.team; state.sort = null; state.open = el.dataset.open; gamePage();
-    document.querySelector(`tr.row[data-id="${el.dataset.open}"]`)?.scrollIntoView({behavior:"smooth", block:"center"}); });
+    revealPlayer(el.dataset.open, {force:true}); });
   $("#sides").onclick = e => { const b=e.target.closest("button"); if(b){ state.side=b.dataset.s; state.open=null; gamePage(); } };
   $("#main").onchange = e => {
     const o = e.target.closest("input.ouodds"); if(o){ const v=parseOdds(o.value)??NaN; store.set(o.dataset.k, isNaN(v)?"":v); gamePage(); return; }
@@ -2218,6 +2219,30 @@ function teamCols(away, home){
   TC_MEMO.set(key, out); return out;
 }
 const tcVars = (away, home) => { const c = teamCols(away, home); return c ? `--ca:${c[0]};--ch:${c[1]};` : ""; };
+
+// bring an opened player (his row and the breakdown under it) into view: just below the sticky header, smoothly,
+// and only as far as needed; a short glow shows which row it is
+function revealPlayer(id, opts={}){
+  const run = () => {
+    const row = document.querySelector(`tr.row[data-id="${id}"]`); if (!row) return;
+    const det = row.nextElementSibling && row.nextElementSibling.querySelector(".detail") ? row.nextElementSibling : null;
+    const hdr = document.querySelector("header"), hs = hdr && ["sticky","fixed"].includes(getComputedStyle(hdr).position) ? hdr.getBoundingClientRect().bottom : 0;
+    const bnav = document.querySelector("nav"), bh = bnav && getComputedStyle(bnav).position === "fixed" ? bnav.offsetHeight : 0;
+    const top = row.getBoundingClientRect().top, bottom = (det || row).getBoundingClientRect().bottom;
+    const viewTop = hs + 10, viewBottom = innerHeight - bh - 10;
+    const fits = top >= viewTop && bottom <= viewBottom;
+    if (!fits || opts.force){
+      // the breakdown is taller than the screen, or partly hidden: put the player's row at the top of the view
+      const y = scrollY + top - viewTop;
+      const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (smooth && Math.abs(y - scrollY) > innerHeight * 2.5) window.scrollTo({top: y - innerHeight * 0.6 * Math.sign(y - scrollY), behavior: "instant"});
+      window.scrollTo({top: Math.max(0, y), behavior: smooth ? "smooth" : "auto"});
+    }
+    row.classList.remove("reveal"); void row.offsetWidth; row.classList.add("reveal");
+    setTimeout(() => row.classList.remove("reveal"), 1600);
+  };
+  requestAnimationFrame(() => requestAnimationFrame(run));
+}
 function heat(p, colMax){ const a = Math.min(1, p/Math.max(colMax,0.05)); return `background:rgba(var(--heat),${(0.06+0.42*a*a).toFixed(3)})`; }
 
 function sidePanel(g, team){
@@ -2280,7 +2305,7 @@ function sidePanel(g, team){
       if (d.cv) state.chart.view = d.cv; if (d.cs) state.chart.stat = d.cs; if (d.cm) state.chart.mode = d.cm; if (d.cu) state.chart.unit = d.cu;
       store.set("set:chart", JSON.stringify(state.chart)); sidePanel(g, team); return; }
     const th = e.target.closest("th.s"); if (th){ state.sort = state.sort===th.dataset.m ? null : th.dataset.m; sidePanel(g, team); return; }
-    const tr = e.target.closest("tr.row"); if (tr){ state.open = String(state.open)===tr.dataset.id ? null : tr.dataset.id; sidePanel(g, team); }
+    const tr = e.target.closest("tr.row"); if (tr){ state.open = String(state.open)===tr.dataset.id ? null : tr.dataset.id; sidePanel(g, team); if (state.open) revealPlayer(state.open); }
   };
 }
 
@@ -3083,7 +3108,7 @@ function linesList(){
 }
 function rowsTop(){
   if (state.psort==="streaks"){ $("#ptb").innerHTML = streaksTable();
-    $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
+    $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
     $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,i.dataset.m), isNaN(v)?"":v); rowsTop(); };
     return; }
   const m = state.market; const rows = [];
@@ -3108,7 +3133,7 @@ function rowsTop(){
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm">${noHistory(m) ? `<span class="meta">–</span>` : `<div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""} gtg" data-gtp="${pr.id}" data-gtd="${x.d}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}`}</td>
       <td><div class="ptsig">${regPills(p)}</div></td><td><div class="ptact">${watchBtn(pr.id)}${cmpBtn(g, pr)}${slipBtn(g, pr, m)}${saveBtn(g, pr, m)}</div></td></tr>`; }).join("") || `<tr><td colspan="9" class="empty">${t("no_match")}</td></tr>`;
-  $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); } };
+  $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
 
@@ -4233,7 +4258,7 @@ function watchCardWire(){
         if (error){ const m = $("#wn_msg"); m.className = "mmsg err"; m.textContent = error.message; return; }
         w.note = note; closeModal(); render(); };
       return; }
-    const r = e.target.closest("tr[data-wg]"); if (r){ go({tab:"games", game:r.dataset.wg, side:r.dataset.wt}); state.open = r.dataset.wp; render();
+    const r = e.target.closest("tr[data-wg]"); if (r){ go({tab:"games", game:r.dataset.wg, side:r.dataset.wt}); state.open = r.dataset.wp; render(); revealPlayer(r.dataset.wp, {force:true});
       setTimeout(()=>document.querySelector(`tr.row[data-id="${r.dataset.wp}"]`)?.scrollIntoView({behavior:"smooth", block:"center"}), 80); }
   };
 }
