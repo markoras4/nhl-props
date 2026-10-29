@@ -1968,9 +1968,9 @@ function linesView(g){
 
 // ------------------------------------------------------------ best picks (helper, not a verdict)
 // markets best picks can choose from, by group (the filter on the box); hits and blocks only show when there are odds
-// "All" (the official, tracked picks) uses goals, assists, points and shots on goal only. Multi-point, first goal,
-// power play, hits, blocks, faceoffs and penalties show only when their own tab is chosen.
-const BP_ALL_M = ["g","a","pt", ...MGROUPS.s];
+// "All" (the official, tracked picks) uses goals, assists, points, power-play points and shots on goal. Multi-point,
+// first goal, hits, blocks, faceoffs and penalties show only when their own tab is chosen.
+const BP_ALL_M = ["g","a","pt","ppp", ...MGROUPS.s];
 // best picks use the same market groups as a player's Prices & value tabs (Points, Multi-point, Power play, Shots, ...)
 const bpFamily = m => { const g = mGroup(m); return g === "pts" || g === "multi" ? "pts" : g; };
 // the groups worth a tab for this game: with odds, only groups that have a price; without, groups the players have
@@ -3354,7 +3354,7 @@ Object.assign(I18N.en, {
   rk_list:"Every pick", rk_list_sub:"{n} picks · newest first", rk_game:"Game", rk_player:"Player", rk_market:"Market", rk_odds:"Odds", rk_model:"Model", rk_res:"Result", rk_u:"Units",
   rk_w:"Won", rk_l:"Lost", rk_v:"Void", rk_p:"In play",
   rk_none:"No graded picks in this period yet.", rk_loading:"Loading the record…", rk_err:"The record couldn't be loaded right now.",
-  rk_note:"The two best picks of every game exactly as they stood at the lock, 5 minutes before puck drop, at the sportsbook price shown then, 1 unit each. Nothing is removed: every win, loss and void is listed. A player who doesn't play is void. Under about 300 picks results are mostly luck, so compare the hit rate with the wins the model expected first. Only goals, assists, points and shots on goal are tracked. Picks of the first nights (25–28 Oct) were rebuilt from the lock snapshots.",
+  rk_note:"The two best picks of every game exactly as they stood at the lock, 5 minutes before puck drop, at the sportsbook price shown then, 1 unit each. Nothing is removed: every win, loss and void is listed. A player who doesn't play is void. Under about 300 picks results are mostly luck, so compare the hit rate with the wins the model expected first. Only goals, assists, points, power-play points and shots on goal are tracked. Picks of the first nights (25–28 Oct) were rebuilt from the lock snapshots.",
   rk_exp:"Model expected {e} wins", rk_since:"since {d}",
 });
 Object.assign(I18N.sv, {
@@ -3370,7 +3370,7 @@ Object.assign(I18N.sv, {
   rk_list:"Alla spel", rk_list_sub:"{n} spel · nyast först", rk_game:"Match", rk_player:"Spelare", rk_market:"Spel", rk_odds:"Odds", rk_model:"Modell", rk_res:"Utfall", rk_u:"Enheter",
   rk_w:"Vann", rk_l:"Förlorade", rk_v:"Ogiltigt", rk_p:"Pågår",
   rk_none:"Inga rättade spel under perioden än.", rk_loading:"Laddar resultaten …", rk_err:"Resultaten kunde inte laddas just nu.",
-  rk_note:"De två bästa spelen i varje match exakt som de stod vid låsningen, 5 minuter före nedsläpp, till spelbolagets odds då, 1 enhet styck. Inget tas bort: varje vinst, förlust och ogiltigt spel visas. En spelare som inte spelar blir ogiltig. Under ungefär 300 spel är resultatet mest tur, så jämför först träffprocenten med de vinster modellen väntade sig. Bara mål, assist, poäng och skott på mål räknas. Spelen från de första kvällarna (25–28 okt) återskapades från låsningsögonblicken.",
+  rk_note:"De två bästa spelen i varje match exakt som de stod vid låsningen, 5 minuter före nedsläpp, till spelbolagets odds då, 1 enhet styck. Inget tas bort: varje vinst, förlust och ogiltigt spel visas. En spelare som inte spelar blir ogiltig. Under ungefär 300 spel är resultatet mest tur, så jämför först träffprocenten med de vinster modellen väntade sig. Bara mål, assist, poäng, powerplaypoäng och skott på mål räknas. Spelen från de första kvällarna (25–28 okt) återskapades från låsningsögonblicken.",
   rk_exp:"Modellen väntade {e} vinster", rk_since:"sedan {d}",
 });
 

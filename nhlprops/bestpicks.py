@@ -20,9 +20,9 @@ from .lock import is_locked
 GROUPS = {"pts": ["g", "a", "pt", "fg"], "pp": ["ppp"], "s": ["s1.5", "s2.5", "s3.5", "s4.5"],
           "h": ["h0.5", "h1.5", "h2.5", "h3.5"], "b": ["b0.5", "b1.5", "b2.5"], "pim": ["pim0.5", "pim2.5"]}
 MULTI = ["pt2", "pt3", "g2", "g3", "a2"]
-# the official picks ("All" tab, the tracked record): goals, assists, points and shots on goal only. First goal,
-# power play, hits, blocks and penalties can still be browsed in their own tabs on the game page but aren't tracked.
-ALL = ["g", "a", "pt"] + GROUPS["s"]
+# the official picks ("All" tab, the tracked record): goals, assists, points, power-play points and shots on goal.
+# First goal, hits, blocks and penalties can still be browsed in their own tabs on the game page but aren't tracked.
+ALL = ["g", "a", "pt", "ppp"] + GROUPS["s"]
 
 
 def _family(m: str) -> str:
@@ -118,6 +118,24 @@ def _result(m: str, st: dict, fg, ppp) -> bool | None:
     return None
 
 
+def _pp_points(src, gid: int) -> dict | None:
+    """player id -> power-play points in a final game, from the NHL game summary (fallback when play-by-play is
+    missing); None if the summary isn't available or the game isn't final"""
+    js = src.json(f"https://api-web.nhle.com/v1/gamecenter/{gid}/landing", f"nhl/landing_final/{gid}.json", 24) or {}
+    if js.get("gameState") not in ("OFF", "FINAL"):
+        return None
+    out: dict = {}
+    for per in (js.get("summary") or {}).get("scoring") or []:
+        if (per.get("periodDescriptor") or {}).get("periodType") == "SO":
+            continue
+        for g in per.get("goals") or []:
+            if str(g.get("strength", "")).lower() == "pp":
+                for pid in [g.get("playerId")] + [a.get("playerId") for a in g.get("assists") or []]:
+                    if pid:
+                        out[int(pid)] = out.get(int(pid), 0) + 1
+    return out
+
+
 def grade(src, bp_dir: Path, out_path: Path, log=print) -> int:
     from .grade import _box_players, _first_scorers
     pbp = {}
@@ -164,6 +182,9 @@ def grade(src, bp_dir: Path, out_path: Path, log=print) -> int:
                             ppp = None
                             if p["m"] == "ppp" and "gl" in gp_:
                                 ppp = sum(1 for g_ in gp_["gl"] if g_[4] and int(p["pid"]) in (g_[0], g_[1], g_[2]))
+                            elif p["m"] == "ppp":
+                                pp_ = _pp_points(src, int(gid))
+                                ppp = None if pp_ is None else pp_.get(int(p["pid"]), 0)
                             won = _result(p["m"], st, (fgs or {}).get(int(gid), "?"), ppp)
                             if won is None:
                                 row["r"] = "p"
