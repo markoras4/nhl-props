@@ -868,6 +868,69 @@ body.has-cmp main{padding-bottom:110px}
 }
 @media (max-width:420px){.gmid .odds-row,.gmid .godds{gap:6px}.gmid .sc{font-size:19px}.grow .abbr{font-size:17px}.grow{padding:12px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+/* best picks record */
+.trksw{margin:2px 0 14px}.trksw .seg button{font-size:13px;padding:7px 14px}
+.rkctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.rkctl select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:inherit;font-size:13px}
+.rkstep{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.rkstep b{font-size:13px;min-width:120px;text-align:center;font-weight:600}
+.rkstep button{background:none;border:0;color:var(--text);width:28px;height:28px;border-radius:7px;font-size:17px;cursor:pointer}
+.rkstep button:hover:not(:disabled){background:var(--panel2)}.rkstep button:disabled{opacity:.3;cursor:default}
+.rkkpis{display:grid;grid-template-columns:1.5fr repeat(6,1fr);gap:10px;margin-bottom:14px}
+.rkk{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:12px 14px;animation:rkin .5s cubic-bezier(.2,.8,.2,1) both}
+.rkk:nth-child(2){animation-delay:.04s}.rkk:nth-child(3){animation-delay:.08s}.rkk:nth-child(4){animation-delay:.12s}.rkk:nth-child(5){animation-delay:.16s}.rkk:nth-child(6){animation-delay:.2s}.rkk:nth-child(7){animation-delay:.24s}
+.rkk small{display:inline-block;font-size:10.5px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.rkk b{display:block;font-family:var(--f-disp);font-size:22px;margin-top:4px;font-variant-numeric:tabular-nums}
+.rkk em{display:block;font-style:normal;font-size:11.5px;color:var(--mute);margin-top:2px}
+.rkk.big{position:relative;overflow:hidden}.rkk.big b{font-size:34px;line-height:1.05}
+.rkk.big::after{content:"";position:absolute;inset:auto -30% -60% auto;width:70%;height:120%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--mute) 18%,transparent),transparent);pointer-events:none}
+.rkk.big.up::after{background:radial-gradient(closest-side,color-mix(in srgb,var(--good) 28%,transparent),transparent)}
+.rkk.big.dn::after{background:radial-gradient(closest-side,color-mix(in srgb,var(--bad) 24%,transparent),transparent)}
+.rkk.up b,.rkrows .up,.rklist .up,.rktip i.up{color:var(--good)}.rkk.dn b,.rkrows .dn,.rklist .dn,.rktip i.dn{color:var(--bad)}
+@keyframes rkin{from{opacity:0;transform:translateY(8px)}}
+.rkcard{margin-bottom:14px}.rkcard h4{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.rkcard h4 .seg{margin-left:auto;text-transform:none;letter-spacing:0}.rkcard h4 .seg button{font-size:11.5px;padding:4px 9px}
+.rkchart{position:relative}
+.rkchart svg text{fill:var(--mute);font-size:11px;font-family:var(--f-ui)}.rkchart svg.nar text{font-size:13px}
+.rkchart .grid line{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}.rkchart .grid line.z{stroke:color-mix(in srgb,var(--mute) 55%,transparent);stroke-dasharray:none}
+.rkchart .rkb{transform-box:fill-box;animation:rkbar .6s cubic-bezier(.2,.8,.2,1) both}
+.rkchart .rkb.pos{fill:color-mix(in srgb,var(--good) 78%,transparent);transform-origin:50% 100%}
+.rkchart .rkb.neg{fill:color-mix(in srgb,var(--bad) 72%,transparent);transform-origin:50% 0%}
+@keyframes rkbar{from{transform:scaleY(0)}}
+.rkchart .cum{fill:none;stroke:var(--line2);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:rkdraw 1.4s .25s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes rkdraw{to{stroke-dashoffset:0}}
+.rkchart .area{opacity:0;animation:rkfade .9s 1s ease forwards}@keyframes rkfade{to{opacity:1}}
+.rkchart .end{fill:var(--bg);stroke:var(--line2);stroke-width:2.5;opacity:0;animation:rkfade .4s 1.55s ease forwards}
+.rkchart .hit{fill:transparent;cursor:crosshair}.rkchart .hov{stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:1;pointer-events:none;transition:opacity .15s}
+.rktip{position:absolute;top:6px;transform:translateX(-50%);background:color-mix(in srgb,var(--panel2) 92%,transparent);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:12px;display:flex;flex-direction:column;gap:2px;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.rktip i{font-style:normal;font-weight:700}.rktip[hidden]{display:none}
+.rkgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.rkgrid .rkcard{margin-bottom:14px}
+.rkrows{display:flex;flex-direction:column;gap:2px}
+.rkscroll{max-height:330px;overflow-y:auto;scrollbar-width:thin;padding-right:4px;mask-image:linear-gradient(180deg,#000 calc(100% - 26px),transparent)}
+.rkrow{display:grid;grid-template-columns:minmax(0,1.6fr) 58px minmax(60px,1.2fr) 56px 48px;gap:8px;align-items:center;padding:6px 4px;border-radius:8px;font-size:13px}
+.rkrow:hover{background:var(--panel2)}
+.rkn{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rkc{color:var(--mute);font-size:12px;text-align:right;white-space:nowrap}.rku{text-align:right;font-weight:700}.rkr{text-align:right;font-size:12px}
+.rkbar{position:relative;height:8px;border-radius:5px;background:color-mix(in srgb,var(--line) 70%,transparent)}
+.rkbar::before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:color-mix(in srgb,var(--mute) 60%,transparent)}
+.rkbar i{position:absolute;top:0;bottom:0;border-radius:5px;animation:rkgrow .7s cubic-bezier(.2,.8,.2,1) both}
+.rkbar i.pos{left:50%;background:linear-gradient(90deg,color-mix(in srgb,var(--good) 55%,transparent),var(--good));transform-origin:0 50%}
+.rkbar i.neg{right:50%;background:linear-gradient(270deg,color-mix(in srgb,var(--bad) 55%,transparent),var(--bad));transform-origin:100% 50%}
+@keyframes rkgrow{from{transform:scaleX(0)}}
+.rklist{max-height:480px;overflow:auto;border-radius:10px;scrollbar-width:thin}
+.rklist table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.rklist thead th{position:sticky;top:0;z-index:2;background:var(--panel);font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;font-weight:600;text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+.rklist th.n,.rklist td.n{text-align:right}
+.rklist td{padding:8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);white-space:nowrap}
+.rklist tr.rkd td{position:sticky;top:33px;z-index:1;background:color-mix(in srgb,var(--panel2) 94%,transparent);backdrop-filter:blur(4px);font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;padding:6px 8px}
+.rklist tr.rkl:hover td{background:color-mix(in srgb,var(--panel2) 70%,transparent)}
+.rkgm{display:flex;align-items:center;gap:5px;color:var(--mute);font-size:12px}
+.rkres{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--chip);color:var(--mute)}
+.rkres.w{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}.rkres.l{color:var(--bad);background:color-mix(in srgb,var(--bad) 13%,transparent)}
+.rkres.p{color:var(--accent2);background:color-mix(in srgb,var(--accent2) 14%,transparent)}
+@media (max-width:1100px){.rkkpis{grid-template-columns:repeat(4,minmax(0,1fr))}.rkk.big{grid-column:span 2}.rkgrid{grid-template-columns:1fr 1fr}.rkgrid .rkcard:first-child{grid-column:1/-1}}
+@media (max-width:640px){.rkrow{grid-template-columns:minmax(0,1.6fr) 50px minmax(50px,1fr) 54px}.rkrow .rkr{display:none}.rkkpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rkk{padding:10px}.rkk b{font-size:18px}.rkk.big b{font-size:28px}.rkgrid{grid-template-columns:1fr}.rkstep b{min-width:96px;font-size:12px}.trksw .seg button{font-size:12px;padding:6px 10px}}
+@media (prefers-reduced-motion:reduce){.rkk,.rkchart .rkb,.rkbar i{animation:none}.rkchart .cum{animation:none;stroke-dashoffset:0}.rkchart .area,.rkchart .end{animation:none;opacity:1}}
 </style>
 </head>
 <body>
@@ -3259,7 +3322,7 @@ function calibChart(s){
     <text x="4" y="12" fill="var(--mute)" font-size="10">${t("actual")}</text>
     ${s.bins.map(b=>`<circle cx="${X(sc(b.pred))}" cy="${Y(sc(b.actual))}" r="${Math.min(9,3+Math.sqrt(b.n)/3)}" fill="var(--accent)" fill-opacity=".75"><title>${t("predicted")} ${pct(b.pred,1)} · ${t("actual")} ${pct(b.actual,1)} · n=${b.n}</title></circle>`).join("")}</svg>`;
 }
-function trackTab(){
+function trackModel(){
   const T = DATA.graded;
   if (!T || !T.days?.length || !Object.values(T.props||{}).some(x=>x && x.n)){
     $("#main").innerHTML = `<div class="card empty prose" style="margin:auto"><h3>${t("tr_none_h")}</h3><p>${t("tr_none_p")}</p></div>`; return; }
@@ -3274,6 +3337,208 @@ function trackTab(){
     ${T.bets && Object.values(T.bets).some(Boolean) ? `<div class="card tablewrap" style="margin-top:14px"><table><thead><tr><th>${t("tr_val")}</th><th class="n">${t("tr_bets")}</th><th class="n">${t("tr_won")}</th><th class="n">${t("tr_profit")}</th><th class="n">ROI</th></tr></thead><tbody>
       ${Object.entries(T.bets).filter(([,b])=>b).map(([k,b])=>`<tr><td>${esc(MKT_NAME(k))}</td><td class="n num">${b.n}</td><td class="n num">${b.won}</td><td class="n num ${b.profit>0?"ev-pos":"ev-neg"}">${b.profit>0?"+":""}${b.profit.toFixed(2)}</td><td class="n num ${b.roi>0?"ev-pos":"ev-neg"}">${(b.roi*100).toFixed(1)}%</td></tr>`).join("")}</tbody></table></div>` : ""}
     <div class="dgrid" style="margin-top:14px">${Object.entries(T.props).filter(([,s])=>s).map(([k,s])=>`<div class="box"><h4>${t("tr_calib",{k:MKT_NAME(k)})}</h4>${calibChart(s)}<p class="note">${t("tr_calib_note")}</p></div>`).join("")}${blends}</div>`;
+}
+
+// ------------------------------------------------------------ best picks record (public: locked picks, graded)
+Object.assign(I18N.en, {
+  trk_bp:"Best picks record", trk_model:"Model accuracy",
+  rk_main:"Best picks", rk_multi:"Long shots", rk_multi_tip:"The Multi-point tab's picks (2+ goals, 2+ points…), kept apart so a few big prices don't swing the main record.",
+  rk_all:"All time", rk_month:"Month", rk_week:"Week", rk_day:"Day", rk_allm:"All markets",
+  rk_picks:"Picks", rk_record:"Record", rk_hit:"Hit rate", rk_units:"Units", rk_roi:"ROI", rk_avgodds:"Avg odds", rk_ev:"Avg EV at lock", rk_clv:"CLV",
+  rk_units_tip:"Profit in units, staking 1 unit on every pick at the locked price.", rk_roi_tip:"Units won per unit staked.",
+  rk_ev_tip:"The edge the model saw at the locked price, on average.", rk_clv_tip:"How the price moved from when the pick first appeared to the lock. Positive = it shortened, i.e. the market moved toward the pick. The earliest sign that an edge is real, long before profit can show it. Share = picks whose price shortened.",
+  rk_clv_share:"{p} shortened", rk_record_v:"{v} void",
+  rk_chart:"Profit over time", rk_chart_sub:"daily units (bars) · running total (line)", rk_cum:"Running total", rk_day_u:"Day",
+  rk_mkt:"By market", rk_teams:"By team", rk_players:"By player", rk_best:"Most profitable", rk_worst:"Least profitable",
+  rk_list:"Every pick", rk_list_sub:"{n} picks · newest first", rk_game:"Game", rk_player:"Player", rk_market:"Market", rk_odds:"Odds", rk_model:"Model", rk_res:"Result", rk_u:"Units",
+  rk_w:"Won", rk_l:"Lost", rk_v:"Void", rk_p:"In play",
+  rk_none:"No graded picks in this period yet.", rk_loading:"Loading the record…", rk_err:"The record couldn't be loaded right now.",
+  rk_note:"The two best picks of every game exactly as they stood at the lock, 5 minutes before puck drop, at the sportsbook price shown then, 1 unit each. Nothing is removed: every win, loss and void is listed. A player who doesn't play is void. Under about 300 picks results are mostly luck, so watch CLV and the hit rate against the model's chances first. Picks of the first nights (25–28 Oct) were rebuilt from the lock snapshots; their CLV uses the day's opening price.",
+  rk_exp:"Model expected {e} wins", rk_since:"since {d}",
+});
+Object.assign(I18N.sv, {
+  trk_bp:"Bästa spelen – resultat", trk_model:"Modellens träffsäkerhet",
+  rk_main:"Bästa spelen", rk_multi:"Långskott", rk_multi_tip:"Spelen från fliken Flera poäng (2+ mål, 2+ poäng …), hålls isär så att några höga odds inte svänger huvudresultatet.",
+  rk_all:"Hela tiden", rk_month:"Månad", rk_week:"Vecka", rk_day:"Dag", rk_allm:"Alla spel",
+  rk_picks:"Spel", rk_record:"Facit", rk_hit:"Träffprocent", rk_units:"Enheter", rk_roi:"ROI", rk_avgodds:"Snittodds", rk_ev:"Snitt-EV vid låsning", rk_clv:"CLV",
+  rk_units_tip:"Vinst i enheter, med 1 enhet på varje spel till det låsta oddset.", rk_roi_tip:"Vunna enheter per insatt enhet.",
+  rk_ev_tip:"Edgen modellen såg till det låsta oddset, i snitt.", rk_clv_tip:"Hur oddset rörde sig från när spelet först dök upp till låsningen. Positivt = oddset sjönk, alltså rörde sig marknaden mot spelet. Det tidigaste tecknet på att en edge är verklig, långt innan vinsten kan visa det. Andel = spel vars odds sjönk.",
+  rk_clv_share:"{p} sjönk", rk_record_v:"{v} ogiltiga",
+  rk_chart:"Resultat över tid", rk_chart_sub:"enheter per dag (staplar) · löpande summa (linje)", rk_cum:"Löpande summa", rk_day_u:"Dag",
+  rk_mkt:"Per spel", rk_teams:"Per lag", rk_players:"Per spelare", rk_best:"Mest lönsamma", rk_worst:"Minst lönsamma",
+  rk_list:"Alla spel", rk_list_sub:"{n} spel · nyast först", rk_game:"Match", rk_player:"Spelare", rk_market:"Spel", rk_odds:"Odds", rk_model:"Modell", rk_res:"Utfall", rk_u:"Enheter",
+  rk_w:"Vann", rk_l:"Förlorade", rk_v:"Ogiltigt", rk_p:"Pågår",
+  rk_none:"Inga rättade spel under perioden än.", rk_loading:"Laddar resultaten …", rk_err:"Resultaten kunde inte laddas just nu.",
+  rk_note:"De två bästa spelen i varje match exakt som de stod vid låsningen, 5 minuter före nedsläpp, till spelbolagets odds då, 1 enhet styck. Inget tas bort: varje vinst, förlust och ogiltigt spel visas. En spelare som inte spelar blir ogiltig. Under ungefär 300 spel är resultatet mest tur, så titta först på CLV och träffprocenten mot modellens chanser. Spelen från de första kvällarna (25–28 okt) återskapades från låsningsögonblicken; deras CLV använder dagens öppningsodds.",
+  rk_exp:"Modellen väntade {e} vinster", rk_since:"sedan {d}",
+});
+
+let BPREC = null, BPREC_LOADING = null;
+function loadRecord(){
+  if (BPREC) return Promise.resolve(BPREC);
+  if (!BPREC_LOADING) BPREC_LOADING = fetch(new URL("../data/bestpicks.json", location.href), {cache:"no-cache"}).then(r => r.ok ? r.json() : null)
+    .catch(() => null).then(js => { BPREC = js; BPREC_LOADING = null; return js; });
+  return BPREC_LOADING;
+}
+const RK = () => (state.rk = state.rk || {k:"all", per:"all", at:null, mk:"all", tb:"best", pb:"best"});
+const isoWeekStart = d => { const x = new Date(d+"T12:00:00"); const wd = (x.getDay()+6)%7; x.setDate(x.getDate()-wd); return x.toISOString().slice(0,10); };
+const periodKey = (d, per) => per==="month" ? d.slice(0,7) : per==="week" ? isoWeekStart(d) : per==="day" ? d : "all";
+function periodLabel(key, per){
+  if (per==="month") return new Date(key+"-15T12:00:00").toLocaleDateString(LOCALE(),{month:"long",year:"numeric"});
+  if (per==="week"){ const a = new Date(key+"T12:00:00"), b = new Date(a); b.setDate(b.getDate()+6);
+    const f = x => x.toLocaleDateString(LOCALE(),{day:"numeric",month:"short"}); return `${f(a)} – ${f(b)}`; }
+  if (per==="day") return new Date(key+"T12:00:00").toLocaleDateString(LOCALE(),{weekday:"short",day:"numeric",month:"short"});
+  return "";
+}
+function rkStats(rows){
+  const done = rows.filter(r => r.r==="w" || r.r==="l"), w = done.filter(r=>r.r==="w").length, v = rows.filter(r=>r.r==="v").length;
+  const u = done.reduce((a,r)=>a+r.u,0), clvR = done.concat(rows.filter(r=>r.r==="p"));
+  return {n: done.length, w, l: done.length-w, v, u, roi: done.length ? u/done.length : null,
+    odds: done.length ? done.reduce((a,r)=>a+r.od,0)/done.length : null, ev: done.length ? done.reduce((a,r)=>a+r.ev,0)/done.length : null,
+    exp: done.reduce((a,r)=>a+r.p,0), clv: clvR.length ? clvR.reduce((a,r)=>a+(r.clv||0),0)/clvR.length : null,
+    clvUp: clvR.length ? clvR.filter(r=>(r.clv||0)>0.001).length/clvR.length : null};
+}
+const sgnU = (x, d=2) => x==null ? "–" : (x>0?"+":x<0?"−":"") + Math.abs(x).toFixed(d);
+const sgnP = (x, d=1) => x==null ? "–" : (x>0?"+":x<0?"−":"") + Math.abs(x*100).toFixed(d) + "%";
+const uCls = x => x>0.0001 ? "up" : x<-0.0001 ? "dn" : "";
+
+function rkProfitChart(rows){
+  const days = [...new Set(rows.map(r=>r.d))].sort();
+  if (!days.length) return "";
+  let cum = 0;
+  const pts = days.map(d => { const rs = rows.filter(r=>r.d===d && (r.r==="w"||r.r==="l")); const u = rs.reduce((a,r)=>a+r.u,0);
+    cum += u; return {d, u, cum, n: rs.length, w: rs.filter(r=>r.r==="w").length}; });
+  const narrow = innerWidth < 640, W = narrow ? 440 : 920, H = narrow ? 250 : 280, L = narrow ? 36 : 44, R = 14, T = 18, B = 34, iw = W-L-R, ih = H-T-B;
+  const vals = pts.flatMap(p=>[p.u, p.cum, 0]); let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = Math.max(1, (hi-lo)*0.12); lo -= pad; hi += pad;
+  const Y = v => T + ih*(hi-v)/(hi-lo), step = iw/pts.length, X = i => L + step*(i+0.5), bw = Math.min(34, step*0.62);
+  const tick = (() => { const r = hi-lo, s = r>40?10:r>16?5:r>8?2:1; const out=[]; for (let v=Math.ceil(lo/s)*s; v<=hi; v+=s) out.push(v); return out; })();
+  const grid = tick.map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" class="${v===0?"z":""}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${v>0?"+":""}${v}</text>`).join("");
+  const k = Math.min(1, 30/pts.length);
+  const bars = pts.map((p,i)=>{ const y0 = Y(0), y1 = Y(p.u), h = Math.max(1.5, Math.abs(y1-y0));
+    return `<rect class="rkb ${p.u>=0?"pos":"neg"}" x="${X(i)-bw/2}" y="${p.u>=0?y1:y0}" width="${bw}" height="${h}" rx="${Math.min(5,bw/4)}" style="animation-delay:${(i*k*0.035).toFixed(3)}s"/>`; }).join("");
+  // smooth running-total line (monotone-ish cubic) with a fading area under it
+  const P = pts.map((p,i)=>[X(i), Y(p.cum)]);
+  let dpath = `M${P[0][0]},${P[0][1]}`;
+  for (let i=1;i<P.length;i++){ const [x0,y0]=P[i-1],[x1,y1]=P[i], cx=(x0+x1)/2; dpath += ` C${cx},${y0} ${cx},${y1} ${x1},${y1}`; }
+  const area = `${dpath} L${P[P.length-1][0]},${Y(0)} L${P[0][0]},${Y(0)} Z`;
+  const last = pts[pts.length-1], up = last.cum >= 0;
+  const xl = pts.map((p,i)=> (pts.length<=(narrow?6:12) || i%Math.ceil(pts.length/(narrow?5:10))===0 || i===pts.length-1)
+    ? `<text x="${X(i)}" y="${H-12}" text-anchor="middle">${new Date(p.d+"T12:00:00").toLocaleDateString(LOCALE(),{day:"numeric",month:"short"})}</text>` : "").join("");
+  const hits = pts.map((p,i)=>`<rect class="hit" x="${L+step*i}" y="${T}" width="${step}" height="${ih}" data-rkt="${esc(JSON.stringify({d:p.d,u:p.u,c:p.cum,n:p.n,w:p.w}))}"/>`).join("");
+  return `<div class="rkchart"><svg class="${narrow?"nar":""}" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(t("rk_chart"))}">
+    <defs><linearGradient id="rkArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${up?"var(--line2)":"var(--bad)"}" stop-opacity=".32"/><stop offset="1" stop-color="${up?"var(--line2)":"var(--bad)"}" stop-opacity="0"/></linearGradient>
+      <filter id="rkGlow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <g class="grid">${grid}</g>${bars}
+    <path class="area" d="${area}" fill="url(#rkArea)"/>
+    <path class="cum" d="${dpath}" pathLength="1" filter="url(#rkGlow)"/>
+    <circle class="end" cx="${P[P.length-1][0]}" cy="${P[P.length-1][1]}" r="5"/>
+    <g class="xl">${xl}</g>${hits}<line class="hov" x1="0" x2="0" y1="${T}" y2="${T+ih}" style="opacity:0"/></svg><div class="rktip" hidden></div></div>`;
+}
+function rkBarRows(groups, label, max){
+  return groups.map((x,i)=>{ const w = max ? Math.abs(x.s.u)/max*50 : 0;
+    return `<div class="rkrow"><span class="rkn">${label(x)}</span><span class="rkc num">${x.s.w}–${x.s.l}</span>
+      <span class="rkbar"><i class="${x.s.u>=0?"pos":"neg"}" style="width:${w.toFixed(1)}%;animation-delay:${Math.min(i,14)*0.04}s"></i></span>
+      <span class="rku num ${uCls(x.s.u)}">${sgnU(x.s.u)}</span><span class="rkr num ${uCls(x.s.u)}">${sgnP(x.s.roi,0)}</span></div>`; }).join("");
+}
+function rkGroup(rows, keyOf){
+  const m = new Map(); rows.forEach(r => { const k = keyOf(r); if (!m.has(k)) m.set(k, []); m.get(k).push(r); });
+  return [...m.entries()].map(([k, rs]) => ({k, rs, s: rkStats(rs)})).filter(x => x.s.n > 0);
+}
+const RES_CHIP = r => `<span class="rkres ${r.r}">${r.r==="w"?"✓ ":r.r==="l"?"✗ ":""}${t("rk_"+r.r)}</span>`;
+
+function recordView(){
+  const box = $("#rkbody"); if (!box) return;
+  if (!BPREC){ box.innerHTML = `<div class="card empty"><p class="meta">${t("rk_loading")}</p></div>`;
+    loadRecord().then(js => { if (state.tab==="track" && (state.trk||"bp")==="bp") { if (!js) $("#rkbody").innerHTML = `<div class="card empty"><p>${t("rk_err")}</p></div>`; else recordView(); } }); return; }
+  const S_ = RK(), all = (BPREC.rows||[]).filter(r => r.k === S_.k);
+  const dates = [...new Set(all.map(r=>r.d))].sort();
+  const keys = S_.per==="all" ? ["all"] : [...new Set(dates.map(d=>periodKey(d, S_.per)))].sort();
+  if (S_.per!=="all" && !keys.includes(S_.at)) S_.at = keys[keys.length-1];
+  const inPer = all.filter(r => S_.per==="all" || periodKey(r.d, S_.per)===S_.at);
+  const groupsAvail = GROUP_ORDER.filter(gk => inPer.some(r => mGroup(r.m)===gk));
+  if (S_.mk!=="all" && !groupsAvail.includes(S_.mk)) S_.mk = "all";
+  const rows = inPer.filter(r => S_.mk==="all" || mGroup(r.m)===S_.mk);
+  const st = rkStats(rows);
+  const segB = (attr, cur, opts) => `<span class="seg olseg">${opts.map(([v,l,tip])=>`<button type="button" data-${attr}="${v}" class="${cur===v?"on":""} ${cur===v && SEG_POP===attr+":"+v?"pop":""}${tip?" tip":""}"${tip?` data-tip="${esc(tip)}"`:""}>${l}</button>`).join("")}</span>`;
+  const ki = keys.indexOf(S_.at);
+  const stepper = S_.per==="all" ? "" : `<span class="rkstep"><button type="button" data-rkstep="-1" ${ki<=0?"disabled":""} aria-label="‹">‹</button><b>${periodLabel(S_.at, S_.per)}</b><button type="button" data-rkstep="1" ${ki>=keys.length-1?"disabled":""} aria-label="›">›</button></span>`;
+  const controls = `<div class="rkctl">${segB("rkk", S_.k, [["all",t("rk_main")],["multi",t("rk_multi"),t("rk_multi_tip")]])}
+    ${segB("rkper", S_.per, [["all",t("rk_all")],["month",t("rk_month")],["week",t("rk_week")],["day",t("rk_day")]])}${stepper}
+    ${groupsAvail.length>1 ? `<select id="rkmk" aria-label="${esc(t("rk_market"))}"><option value="all">${t("rk_allm")}</option>${groupsAvail.map(g=>`<option value="${g}" ${S_.mk===g?"selected":""}>${t("mg_"+g)}</option>`).join("")}</select>` : ""}</div>`;
+  const kpi = (lbl, val, cls, sub, tip, cu) => `<div class="rkk ${cls||""}"><small${tip?` class="tip" tabindex="0" data-tip="${esc(tip)}"`:""}>${lbl}</small><b ${cu!=null?`data-cu="${cu}"`:""}>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
+  const kpis = `<div class="rkkpis">
+    ${kpi(t("rk_units"), sgnU(st.u), "big "+uCls(st.u), st.n?`${st.n} ${t("rk_picks").toLowerCase()}`:"", t("rk_units_tip"), st.u.toFixed(2))}
+    ${kpi(t("rk_roi"), sgnP(st.roi), uCls(st.roi||0), "", t("rk_roi_tip"))}
+    ${kpi(t("rk_record"), `${st.w}–${st.l}`, "", st.v?t("rk_record_v",{v:st.v}):"")}
+    ${kpi(t("rk_hit"), st.n?pct(st.w/st.n,1):"–", "", st.n?t("rk_exp",{e:fmt(st.exp,1)}):"")}
+    ${kpi(t("rk_avgodds"), st.odds?oddsTxt(st.odds):"–")}
+    ${kpi(t("rk_ev"), sgnP(st.ev), "", "", t("rk_ev_tip"))}
+    ${kpi(t("rk_clv"), sgnP(st.clv), uCls(st.clv||0), st.clvUp!=null?t("rk_clv_share",{p:pct(st.clvUp,0)}):"", t("rk_clv_tip"))}</div>`;
+  if (!rows.length){ box.innerHTML = controls + `<div class="card empty"><p>${t("rk_none")}</p></div><p class="note">${t("rk_note")}</p>`; return; }
+  const mk = rkGroup(rows, r => mGroup(r.m)).sort((a,b)=>b.s.u-a.s.u);
+  const tm = rkGroup(rows, r => r.t).sort((a,b)=> S_.tb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
+  const pl = rkGroup(rows, r => String(r.pid)).sort((a,b)=> S_.pb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
+  const mx = arr => Math.max(0.01, ...arr.map(x=>Math.abs(x.s.u)));
+  const bw = (attr, cur) => segB(attr, cur, [["best",t("rk_best")],["worst",t("rk_worst")]]);
+  const list = [...rows].sort((a,b)=> b.d.localeCompare(a.d) || a.g-b.g || a.rk-b.rk);
+  let lastD = "";
+  const lrows = list.map(r => { const hd = r.d!==lastD ? `<tr class="rkd"><td colspan="9">${dayLabel(r.d)}</td></tr>` : ""; lastD = r.d;
+    return hd + `<tr class="rkl ${r.r}"><td class="rkgm">${logo(r.a,16)}<span>${r.a} @ ${r.h}</span>${logo(r.h,16)}</td>
+      <td><b>${esc(r.n)}</b> <span class="meta">${r.t}</span></td><td>${mName(r.m)}</td>
+      <td class="n num"><b>${oddsTxt(r.od)}</b>${r.f && Math.abs(r.f-r.od)>0.004 ? `<small class="meta"> ${`${t("mv_from")} ${oddsTxt(r.f)}`}</small>`:""}</td>
+      <td class="n num">${pct(r.p,0)}</td><td class="n num ev-pos">${sgnP(r.ev)}</td><td class="n num ${uCls(r.clv||0)}">${sgnP(r.clv||0)}</td>
+      <td>${RES_CHIP(r)}</td><td class="n num ${uCls(r.u||0)}">${r.u==null?"–":sgnU(r.u)}</td></tr>`; }).join("");
+  box.innerHTML = controls + kpis + `
+    <div class="box rkcard"><h4>${t("rk_chart")} <span class="meta">${t("rk_chart_sub")}</span></h4>${rkProfitChart(rows)}</div>
+    <div class="rkgrid">
+      <div class="box rkcard"><h4>${t("rk_mkt")}</h4><div class="rkrows">${rkBarRows(mk, x=>t("mg_"+x.k), mx(mk))}</div></div>
+      <div class="box rkcard"><h4>${t("rk_teams")} ${bw("rktb", S_.tb)}</h4><div class="rkrows rkscroll">${rkBarRows(tm, x=>`${logo(x.k,18)} <b>${x.k}</b>`, mx(tm))}</div></div>
+      <div class="box rkcard"><h4>${t("rk_players")} ${bw("rkpb", S_.pb)}</h4><div class="rkrows rkscroll">${rkBarRows(pl, x=>`${logo(x.rs[0].t,16)} ${esc(x.rs[0].n)}`, mx(pl))}</div></div>
+    </div>
+    <div class="box rkcard"><h4>${t("rk_list")} <span class="meta">${t("rk_list_sub",{n:list.length})}</span></h4>
+      <div class="rklist"><table><thead><tr><th>${t("rk_game")}</th><th>${t("rk_player")}</th><th>${t("rk_market")}</th><th class="n">${t("rk_odds")}</th><th class="n">${t("rk_model")}</th><th class="n">EV</th><th class="n">CLV</th><th>${t("rk_res")}</th><th class="n">${t("rk_u")}</th></tr></thead><tbody>${lrows}</tbody></table></div></div>
+    <p class="note">${t("rk_note")}</p>`;
+  rkCountUp(box);
+}
+function rkCountUp(root){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  root.querySelectorAll("[data-cu]").forEach(el => { const to = parseFloat(el.dataset.cu), t0 = performance.now(), dur = 900;
+    const tick = now => { const k = Math.min(1, (now-t0)/dur), e = 1-Math.pow(1-k,3), v = to*e; el.textContent = sgnU(v); if (k<1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick); });
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-rkk],[data-rkper],[data-rkstep],[data-rktb],[data-rkpb],[data-trk]"); if (!b) return;
+  const S_ = RK(), d = b.dataset;
+  if (d.trk){ state.trk = d.trk; segPop("trk:"+d.trk); render(); return; }
+  if (d.rkk){ S_.k = d.rkk; segPop("rkk:"+d.rkk); }
+  if (d.rkper){ S_.per = d.rkper; S_.at = null; segPop("rkper:"+d.rkper); }
+  if (d.rktb){ S_.tb = d.rktb; segPop("rktb:"+d.rktb); }
+  if (d.rkpb){ S_.pb = d.rkpb; segPop("rkpb:"+d.rkpb); }
+  if (d.rkstep){ const all = (BPREC?.rows||[]).filter(r=>r.k===S_.k), keys = [...new Set(all.map(r=>periodKey(r.d,S_.per)))].sort();
+    const i = keys.indexOf(S_.at) + (+d.rkstep); if (keys[i]) S_.at = keys[i]; }
+  recordView();
+});
+document.addEventListener("change", e => { if (e.target.id === "rkmk"){ RK().mk = e.target.value; recordView(); } });
+// hover tooltip on the profit chart
+document.addEventListener("mousemove", e => {
+  const h = e.target.closest?.(".rkchart .hit"), wrap = e.target.closest?.(".rkchart");
+  if (!wrap) return;
+  const tip = wrap.querySelector(".rktip"), hov = wrap.querySelector(".hov");
+  if (!h){ tip.hidden = true; hov.style.opacity = 0; return; }
+  const x = JSON.parse(h.dataset.rkt), r = wrap.getBoundingClientRect(), hr = h.getBoundingClientRect();
+  tip.innerHTML = `<b>${dayLabel(x.d)}</b><span>${t("rk_day_u")}: <i class="${uCls(x.u)}">${sgnU(x.u)}</i> · ${x.w}–${x.n-x.w}</span><span>${t("rk_cum")}: <i class="${uCls(x.c)}">${sgnU(x.c)}</i></span>`;
+  tip.hidden = false;
+  const cx = hr.left + hr.width/2 - r.left; tip.style.left = Math.max(70, Math.min(r.width-70, cx)) + "px";
+  const svg = wrap.querySelector("svg"), sx = svg.viewBox.baseVal.width / r.width;
+  hov.setAttribute("x1", cx*sx); hov.setAttribute("x2", cx*sx); hov.style.opacity = 1;
+});
+function trackTab(){
+  const k = state.trk || "bp";
+  const sw = `<div class="trksw"><span class="seg olseg">${[["bp",t("trk_bp")],["model",t("trk_model")]].map(([v,l])=>`<button type="button" data-trk="${v}" class="${k===v?"on":""} ${k===v && SEG_POP==="trk:"+v?"pop":""}">${l}</button>`).join("")}</span></div>`;
+  if (k === "model"){ trackModel(); $("#main").insertAdjacentHTML("afterbegin", sw); return; }
+  $("#main").innerHTML = sw + `<div id="rkbody"></div>`;
+  recordView();
 }
 
 // ------------------------------------------------------------ how it works
@@ -4240,6 +4505,7 @@ wireHeader();
 function startApp(){
   if (!ARCH){ pollScores(); setInterval(pollScores, 60e3); }
   { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) state.game = m[1]; }
+  if (location.hash === "#record"){ state.tab = "track"; state.trk = "bp"; history.replaceState(null,"",location.pathname); }
   render();
 }
 if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){

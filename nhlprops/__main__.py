@@ -399,7 +399,19 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
     for p in previews:
         if str(p["id"]) in by_id:
             p["game"] = game_summary(by_id[str(p["id"])])
-    payload = clean({"date": day, "games": games, "previews": previews, "built": now,
+    record = None
+    try:   # best picks record summary (main picks, graded ones only) for the landing card
+        rows = json.loads((out_dir / "bestpicks.json").read_text(encoding="utf-8")).get("rows") or []
+        done = [r for r in rows if r.get("k") == "all" and r.get("r") in ("w", "l")]
+        live = [r for r in rows if r.get("k") == "all" and r.get("r") in ("w", "l", "p")]
+        if done:
+            u = sum(r["u"] for r in done)
+            record = {"n": len(done), "w": sum(r["r"] == "w" for r in done), "u": round(u, 2), "roi": round(u / len(done), 4),
+                      "clv": round(sum(r.get("clv") or 0 for r in live) / len(live), 4), "since": min(r["d"] for r in rows),
+                      "v": sum(1 for r in rows if r.get("k") == "all" and r.get("r") == "v")}
+    except Exception:
+        record = None
+    payload = clean({"date": day, "games": games, "previews": previews, "built": now, "record": record,
                      "logos": {k: v for k, v in (slate.get("logos") or {}).items() if k in teams}})
     js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = LANDING.read_text(encoding="utf-8").replace("/*__DATA__*/null", js).replace("APP_URL", app_url)
@@ -681,6 +693,12 @@ def main(argv=None):
     except Exception as e:  # alerts are optional; never break the build
         print("Alerts feed skipped:", e)
     save_history(slate, hist_dir)  # after odds, so the book price at prediction time is kept
+    if not args.demo:
+        try:   # best picks as they stand now (games not locked yet); the last refresh before the lock is official
+            from .bestpicks import snapshot as bp_snapshot
+            bp_snapshot(slate, data_dir / "bestpicks")
+        except Exception as e:  # never break the build
+            print("Best picks snapshot skipped:", e)
     if raw.get("pbp"):
         try:
             from .shots import player_file
@@ -711,6 +729,12 @@ def main(argv=None):
             slate["archive_dates"] = build_archive(slate, src, data_dir, ROOT / "output", raw.get("pbp"))
         except Exception as e:  # the archive is optional; never break the build
             print("Archive skipped:", e)
+    if not args.demo:
+        try:   # the public best picks record (locked picks, graded once final)
+            from .bestpicks import grade as bp_grade
+            bp_grade(src, data_dir / "bestpicks", ROOT / "output" / "bestpicks.json")
+        except Exception as e:  # never break the build
+            print("Best picks record skipped:", e)
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))

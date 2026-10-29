@@ -145,6 +145,14 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 .ed .cr{position:absolute;right:8px;top:6px;z-index:2;font-size:10px;color:#fff;opacity:.75;text-shadow:0 1px 2px #000}
 
 /* features */
+.lrec{margin-top:22px;border:1px solid var(--line);border-radius:18px;padding:20px 22px;background:radial-gradient(120% 140% at 0% 0%,rgba(var(--glow),.10),transparent 55%),linear-gradient(180deg,var(--panel2),var(--panel));display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) auto;gap:18px 26px;align-items:center}
+.lrec h3{margin:0;font-family:var(--f-disp);font-size:19px}.lrec p{margin:4px 0 0;color:var(--mute);font-size:13.5px}
+.lrec .lrk{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.lrec .lrk div{border-left:1px solid var(--line);padding-left:12px}.lrec .lrk small{display:block;font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.lrec .lrk b{display:block;font-family:var(--f-disp);font-size:24px;font-variant-numeric:tabular-nums}.lrec .up{color:var(--accent)}.lrec .dn{color:#ff6b6b}
+.lrec a.btn2{white-space:nowrap;border:1.5px solid var(--accent);color:var(--accent);border-radius:999px;padding:9px 16px;font-weight:700;text-decoration:none;font-size:14px;transition:background .2s}
+.lrec a.btn2:hover{background:rgba(var(--glow),.12)}.lrec .lrn{grid-column:1/-1;font-size:12px;color:var(--mute);margin:0}
+@media (max-width:900px){.lrec{grid-template-columns:1fr}.lrec .lrk{grid-template-columns:repeat(3,minmax(0,1fr))}.lrec .lrk div:nth-child(n+4){margin-top:6px}}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .fcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
 .fshot{background:#0a0e13;border-bottom:1px solid var(--line);aspect-ratio:16/9.5;overflow:hidden}
@@ -322,6 +330,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
         <div class="fcard"><div class="fshot"><img src="assets/el-picks.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f2h"></h3><p data-t="f2p"></p></div></div>
         <div class="fcard"><div class="fshot"><img src="assets/el-grid.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f3h"></h3><p data-t="f3p"></p></div></div>
       </div>
+      <div class="lrec" id="lrec" hidden></div>
       <div class="also"><span class="also-h" data-t="also_h"></span><ul id="also"></ul></div>
     </div>
   </section>
@@ -438,14 +447,15 @@ const I18N = {
   prev_soon:"Preview publishes on game day", read_prev:"Read preview →", all_prev:"All previews →", open_match:"Open matchup →", prev_proj:"Projected {a} {sa} – {sh} {h}", prev_win:"{t} win chance {p}", prev_total:"Expected total {x} goals",
   feat_h:"Everything you need, nothing you don't", feat_sub:"Three views do most of the work.",
   f1h:"Every skater, every market", f1p:"Goals, assists, points, shots, hits, blocks, multi-point, power-play points, faceoffs and penalties for the whole lineup, with prices from two sportsbooks, one of them a sharp book, next to the model's.",
-  f2h:"Two picks per game, with reasons", f2p:"The two strongest options in each game, from goals and points to shots, hits and blocks, with the facts behind them: ice time, opponent, goalie, recent form.",
+  f2h:"Two picks per game, ranked by edge", f2p:"The two strongest edges against the sportsbook in each game, from goals and points to shots, hits and blocks, with the facts behind them. They follow the odds through the day, lock 5 minutes before puck drop, and every one is graded in a public record.",
+  lr_h:"Best picks record", lr_sub:"Every pick since {d}, as it stood at the lock, 1 unit each. Wins, losses and voids: nothing removed.", lr_picks:"Picks", lr_rec:"Record", lr_units:"Units", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"How much the price moved toward the pick between when it appeared and the lock.", lr_cta:"See every pick", lr_note:"Under about 300 picks the result is mostly luck. CLV shows sooner whether the edge is real.",
   f3h:"The whole game in one view", f3p:"Win chance, total goals, puck line, 1st period, team shots and goalie saves, plus each team's last 6 games. Everything updates when the starting goalie changes.",
   scr_h:"Phone, tablet or desktop", scr_sub:"Built for every screen. Add it to your home screen and it opens like an app.",
   s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
   plans_h:"Start free. Upgrade when it pays.", plans_sub:"A free account shows how it works. Pro unlocks every player and every edge.",
   free_n:"Free", per_month:"/ month", pro_n:"Pro", pro_badge:"Full access", pro_price:"– <small>price at launch</small>",
-  free_items:[["y","Every game: projected score, win chance, total goals, puck line and more markets"],["y","Previews, lineups, starting goalies and injuries"],["y","Team ranks, what each defence allows, team shots"],["y","One forward and one defenceman per team, fully open"],["y","Player pages: last 10 games, streaks and milestones"],["y","Game recaps: every goal and player line from past games"],["y","Playoff and Stanley Cup chances for every team"],["y","My picks: automatic grading, profit and closing-odds check"],["y","Watchlist: follow up to 3 players"],["n","Every player in every market"],["n","Best picks and value against the market"]],
-  pro_items:[["y","Everything in Free"],["y","Every player: goals, points, shots, hits, blocks and more"],["y","Best picks and value against the market on every prop"],["y","First goalscorer, multi-point, power play, faceoffs, penalties"],["y","Full hit rates, matchups and shot maps"],["y","Compare up to 4 players side by side, with a plain-language Quick read"],["y","7-day archive: every game as it looked before puck drop, with what happened"],["y","Futures value: playoffs, division, conference, Cup and season points vs the odds"],["y","Sharp-book prices, odds movement and alerts"],["y","Public betting: where the tickets and the money are on every game"],["y","Unlimited watchlist with game-day alerts"],["y","How every number is built"],["s","AI analysis in Compare: a written breakdown of the players you're comparing"]],
+  free_items:[["y","Every game: projected score, win chance, total goals, puck line and more markets"],["y","Previews, lineups, starting goalies and injuries"],["y","Team ranks, what each defence allows, team shots"],["y","One forward and one defenceman per team, fully open"],["y","Player pages: last 10 games, streaks and milestones"],["y","Game recaps: every goal and player line from past games"],["y","Playoff and Stanley Cup chances for every team"],["y","My picks: automatic grading, profit and closing-odds check"],["y","Watchlist: follow up to 3 players"],["y","Best picks record: every past pick, graded"],["n","Every player in every market"],["n","Today's best picks and value against the market"]],
+  pro_items:[["y","Everything in Free"],["y","Every player: goals, points, shots, hits, blocks and more"],["y","Today's best picks, live until the lock, and value against the market on every prop"],["y","First goalscorer, multi-point, power play, faceoffs, penalties"],["y","Full hit rates, matchups and shot maps"],["y","Compare up to 4 players side by side, with a plain-language Quick read"],["y","7-day archive: every game as it looked before puck drop, with what happened"],["y","Futures value: playoffs, division, conference, Cup and season points vs the odds"],["y","Sharp-book prices, odds movement and alerts"],["y","Public betting: where the tickets and the money are on every game"],["y","Unlimited watchlist with game-day alerts"],["y","How every number is built"],["s","AI analysis in Compare: a written breakdown of the players you're comparing"]],
   soon:"Coming soon",
   how_h:"How it works",
   st1h:"Real talent, not hot streaks", st1p:"Each player's scoring rate is pulled toward his true level, so a lucky week doesn't fool the numbers.",
@@ -494,14 +504,15 @@ const I18N = {
   prev_soon:"Förhandstitten publiceras på matchdagen", read_prev:"Läs förhandstitten →", all_prev:"Alla förhandstittar →", open_match:"Öppna matchen →", prev_proj:"Beräknat {a} {sa} – {sh} {h}", prev_win:"{t} vinstchans {p}", prev_total:"Förväntat totalt {x} mål",
   feat_h:"Allt du behöver, inget du inte behöver", feat_sub:"Tre vyer gör det mesta av jobbet.",
   f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng, skott, tacklingar, blockeringar, flera poäng, PP-poäng, tekningar och utvisningar för hela uppställningen, med odds från två spelbolag, varav ett skarpt, bredvid modellens.",
-  f2h:"Två spel per match, med skäl", f2p:"De två starkaste alternativen i varje match, från mål och poäng till skott, tacklingar och blockeringar, med fakta bakom dem: istid, motstånd, målvakt, aktuell form.",
+  f2h:"Två spel per match, rankade efter edge", f2p:"De två största edgarna mot spelbolaget i varje match, från mål och poäng till skott, tacklingar och blockeringar, med fakta bakom dem. De följer oddsen under dagen, låses 5 minuter före nedsläpp, och varje spel rättas i ett öppet facit.",
+  lr_h:"Bästa spelen – facit", lr_sub:"Varje spel sedan {d}, som det stod vid låsningen, 1 enhet styck. Vinster, förluster och ogiltiga: inget borttaget.", lr_picks:"Spel", lr_rec:"Facit", lr_units:"Enheter", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"Hur mycket oddset rörde sig mot spelet mellan när det dök upp och låsningen.", lr_cta:"Se alla spel", lr_note:"Under ungefär 300 spel är resultatet mest tur. CLV visar tidigare om edgen är verklig.",
   f3h:"Hela matchen i en vy", f3p:"Vinstchans, totalmål, puck line, första perioden, lagens skott och målvaktsräddningar, plus varje lags senaste 6 matcher. Allt uppdateras när startmålvakten ändras.",
   scr_h:"Mobil, surfplatta eller dator", scr_sub:"Byggd för alla skärmar. Lägg den på hemskärmen så öppnas den som en app.",
   s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
   plans_h:"Börja gratis. Uppgradera när det lönar sig.", plans_sub:"Ett gratiskonto visar hur det fungerar. Pro låser upp varje spelare och varje edge.",
   free_n:"Gratis", per_month:"/ månad", pro_n:"Pro", pro_badge:"Full tillgång", pro_price:"– <small>pris vid lansering</small>",
-  free_items:[["y","Varje match: beräknat resultat, vinstchans, totalmål, puck line och fler spel"],["y","Förhandstittar, uppställningar, startmålvakter och skador"],["y","Lagrankning, vad varje försvar släpper till, lagens skott"],["y","En forward och en back per lag, helt öppna"],["y","Spelarsidor: senaste 10 matcherna, sviter och milstolpar"],["y","Matchsammanfattningar: alla mål och spelarrader från tidigare matcher"],["y","Chanser till slutspel och Stanley Cup för varje lag"],["y","Mina spel: automatisk rättning, vinst och koll mot stängningsodds"],["y","Bevakning: följ upp till 3 spelare"],["n","Varje spelare i varje spel"],["n","Bästa spelen och värde mot marknaden"]],
-  pro_items:[["y","Allt i Gratis"],["y","Varje spelare: mål, poäng, skott, tacklingar, blockeringar med mera"],["y","Bästa spelen och värde mot marknaden på varje spel"],["y","Första målskytt, flera poäng, powerplay, tekningar, utvisningar"],["y","Full träffprocent, matchups och skottkartor"],["y","Jämför upp till 4 spelare sida vid sida, med en snabbläsning i klartext"],["y","7 dagars arkiv: varje match som den såg ut före nedsläpp, med vad som hände"],["y","Värde i långtidsspel: slutspel, division, konferens, cup och säsongspoäng mot oddsen"],["y","Skarpa spelbolagets odds, oddsrörelser och aviseringar"],["y","Spelfördelning: var spelen och pengarna ligger i varje match"],["y","Obegränsad bevakning med notis på matchdagen"],["y","Hur varje siffra byggs"],["s","AI-analys i Jämför: en skriven genomgång av spelarna du jämför"]],
+  free_items:[["y","Varje match: beräknat resultat, vinstchans, totalmål, puck line och fler spel"],["y","Förhandstittar, uppställningar, startmålvakter och skador"],["y","Lagrankning, vad varje försvar släpper till, lagens skott"],["y","En forward och en back per lag, helt öppna"],["y","Spelarsidor: senaste 10 matcherna, sviter och milstolpar"],["y","Matchsammanfattningar: alla mål och spelarrader från tidigare matcher"],["y","Chanser till slutspel och Stanley Cup för varje lag"],["y","Mina spel: automatisk rättning, vinst och koll mot stängningsodds"],["y","Bevakning: följ upp till 3 spelare"],["y","Facit för bästa spelen: varje tidigare spel, rättat"],["n","Varje spelare i varje spel"],["n","Dagens bästa spel och värde mot marknaden"]],
+  pro_items:[["y","Allt i Gratis"],["y","Varje spelare: mål, poäng, skott, tacklingar, blockeringar med mera"],["y","Dagens bästa spel, live fram till låsningen, och värde mot marknaden på varje spel"],["y","Första målskytt, flera poäng, powerplay, tekningar, utvisningar"],["y","Full träffprocent, matchups och skottkartor"],["y","Jämför upp till 4 spelare sida vid sida, med en snabbläsning i klartext"],["y","7 dagars arkiv: varje match som den såg ut före nedsläpp, med vad som hände"],["y","Värde i långtidsspel: slutspel, division, konferens, cup och säsongspoäng mot oddsen"],["y","Skarpa spelbolagets odds, oddsrörelser och aviseringar"],["y","Spelfördelning: var spelen och pengarna ligger i varje match"],["y","Obegränsad bevakning med notis på matchdagen"],["y","Hur varje siffra byggs"],["s","AI-analys i Jämför: en skriven genomgång av spelarna du jämför"]],
   soon:"Kommer snart",
   how_h:"Så fungerar det",
   st1h:"Verklig talang, inte heta sviter", st1p:"Varje spelares målfrekvens dras mot hans verkliga nivå, så en tursam vecka lurar inte siffrorna.",
@@ -582,6 +593,15 @@ function plans(){
   $("#pro_list").innerHTML = t("pro_items").map(li).join("");
   $("#ab_do").innerHTML = t("ab_do").map(x => `<li><span>${x}</span></li>`).join("");
   $("#also").innerHTML = t("also").map(x => `<li>${x}</li>`).join("");
+  const R = LDATA && LDATA.record, lr = $("#lrec");
+  if (R && lr){ const sg = (x, d) => (x>0?"+":x<0?"−":"") + Math.abs(x).toFixed(d), cl = x => x>0.0001?"up":x<-0.0001?"dn":"";
+    const since = new Date(R.since+"T12:00:00").toLocaleDateString(LANG==="sv"?"sv-SE":"en-GB",{day:"numeric",month:"short"});
+    lr.innerHTML = `<div><h3>${t("lr_h")}</h3><p>${t("lr_sub").replace("{d}", since)}</p></div>
+      <div class="lrk"><div><small>${t("lr_picks")}</small><b>${R.n}</b></div><div><small>${t("lr_rec")}</small><b>${R.w}–${R.n-R.w}</b></div>
+        <div><small>${t("lr_units")}</small><b class="${cl(R.u)}">${sg(R.u,2)}</b></div><div><small>${t("lr_roi")}</small><b class="${cl(R.roi)}">${sg(R.roi*100,1)}%</b></div>
+        <div title="${t("lr_clv_tip")}"><small>${t("lr_clv")}</small><b class="${cl(R.clv)}">${sg(R.clv*100,1)}%</b></div></div>
+      <a class="btn2" href="APP_URL#record">${t("lr_cta")} →</a><p class="lrn">${t("lr_note")}</p>`;
+    lr.hidden = false; }
   const open = new Set([...document.querySelectorAll("#faqlist details[open]")].map(d => d.dataset.i));
   $("#faqlist").innerHTML = t("faq").map(([q,a],i) => `<details data-i="${i}"${open.has(String(i))?" open":""}><summary>${q}</summary><div class="a">${a}</div></details>`).join("");
 }

@@ -13,7 +13,10 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Team shots & total shots | yes | yes |
 | More markets (1X2, puck line, team totals, 1st period, BTTS) | yes (game level) | yes |
 | Goalie saves | expected saves number | line probabilities & fair odds |
-| Player probabilities, EV, best picks | 1 forward + 1 defenceman per team | everyone |
+| Player probabilities, EV | 1 forward + 1 defenceman per team | everyone |
+| Best picks in each game (live, until the lock) | no: blurred box ("2 picks · +edge") with an upgrade button | every tab (All, Points, Multi-point, …) |
+| Best picks record (Track record: W–L, units, ROI, CLV, charts by market/team/player, every past pick) | yes, after each game locks | yes |
+| Best picks record on the landing page | yes (public) | yes |
 | First goalscorer | team "scores first" % | player list |
 | Hits & blocks | no | yes |
 | Multi-point (2+/3+ points, 2+ goals, hat trick, 2+ assists), PP point, faceoffs won, penalties | no | yes |
