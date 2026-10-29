@@ -49,9 +49,10 @@ Never invent facts, numbers or quotes. If something cannot be verified, leave it
   push to main, then run the build: `gh api -X POST repos/markoras4/nhl-props/actions/workflows/daily.yml/dispatches -f ref=main`.
 - If there are no games on DATE, do nothing.
 
-## 6. Video (after the build is started)
-- Run `python video/render.py --date <DATE>` (needs ffmpeg and Playwright; takes ~8 min, run it in the background and poll).
-  It reads the previews, photos and origin/site data. Fetch origin first (`git fetch origin site`).
-- Check a few stills first if anything looks off: `--preview 2,6,10` writes frames to `video/out/`.
-- Send `video/out/<DATE>-nhl-previews.mp4`, `<DATE>-cover.jpg` and `<DATE>-captions.txt` to the user (SendUserFile).
+## 6. Video (after the build is started and has finished)
+- Wait until the daily build has pushed the new site (origin/site contains DATE's games and odds), then `git fetch origin site`.
+- Run `python video/render.py --date <DATE>` (needs ffmpeg and Playwright; ~10 min, run it in the background and poll).
+  It picks 3-4 games with very high quality photos and real best picks from the site, see video/README.md.
+- Check a few stills if anything looks off: `--preview 2,5,9` writes frames to `video/out/`.
+- Send `video/out/<DATE>-nhl-best-bets.mp4`, `<DATE>-cover.jpg` and `<DATE>-captions.txt` to the user (SendUserFile).
   Do not commit the video files.
