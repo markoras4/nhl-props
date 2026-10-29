@@ -34,9 +34,9 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
 - Data: every pick of that exact date from the site's Track record (origin/site:data/bestpicks.json: the picks as
   they stood at the lock, graded after the game), results and box-score lines from origin/site:data/archive/<DATE>.json.
 - Intro with the night's record and units -> every main pick as a card (photo, score, model vs odds, what he did,
-  WON/LOST stamp, running profit chart) -> multi-point long shots -> the night in numbers -> profit spotlights: the
+  WON/LOST stamp, running profit chart) -> multi-point long shots (only when one won at 5.00+) -> the night in numbers -> profit spotlights: the
   biggest winners' real site profiles (archive of that date, dark theme, phone width) with the pick's market row,
   "how the number is built" and the game-by-game chart highlighted, plus callouts -> outro (every pick tracked).
-- Music: `music.review_track`, a different original song (half-time groove, FM electric piano, 808, bell sparkles on
+- Music: `music.review_track`, a different original song, no rising build-up at the start (half-time groove, FM electric piano, 808, bell sparkles on
   each winning pick). Template: `review.html`.
 

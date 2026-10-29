@@ -7,7 +7,7 @@ YouTube without claims.
     track(duration, cues, bpm=120) -> float32 stereo array (n, 2) at SR
 
 `cues` is a list of times (seconds) where a new section starts (each game);
-they get an impact, a whoosh and a short riser leading into them.
+they get an impact and a whoosh leading into them (no rising build-up at the start).
 """
 import numpy as np
 from scipy import signal
@@ -198,19 +198,9 @@ def track(duration, cues=(), bpm=120, intro=None):
     echo[2 * d:] += music[:-2 * d] * 0.12
     music = _reverb(music + echo, 1.6, 0.3)
 
-    # intro filter sweep: open the low-pass across the intro
-    if intro > 0.5:
-        i = int(intro * SR)
-        seg = music[:i]
-        lo = _lp(seg, 500)
-        w = np.linspace(0, 1, i) ** 2
-        music[:i] = lo * (1 - w) + seg * w
-
     for c in cues:
         _add(fx, impact() * 0.8, c)
         _add(fx, whoosh(0.45), max(0, c - 0.42))
-    if intro > 1.2:
-        _add(fx, riser(min(2.0, intro - 0.2)), intro - min(2.0, intro - 0.2))
 
     mix = drums * 0.9 + (bass + music) * duck + fx
     mix = _hp(mix, 28)
@@ -324,17 +314,12 @@ def review_track(duration, cues=(), wins=(), bpm=96):
     d = int(beat * 0.75 * SR)
     echo = np.zeros(n); echo[d:] = keys[:-d] * 0.28
     keys = _reverb(keys + echo, 2.2, 0.35)
-    if intro > 0.5:
-        i = int(intro * SR); seg = keys[:i]; lo = _lp(seg, 700); w = np.linspace(0, 1, i) ** 2
-        keys[:i] = lo * (1 - w) + seg * w
     for c in cues:
         _add(fx, impact() * 0.6, c)
         _add(fx, whoosh(0.5) * 0.8, max(0, c - 0.45))
     for w in wins:
         for k, mm in enumerate((84, 88, 91, 96)):
             _add(fx, _bell(mm, 1.2) * 0.05, w + k * 0.045)
-    if intro > 1.2:
-        _add(fx, riser(min(2.5, intro - 0.2)) * 0.8, intro - min(2.5, intro - 0.2))
     fx = _reverb(fx, 1.2, 0.2)
     mix = drums * 0.8 + (bass + keys) * duck + fx
     mix = _hp(mix, 26)

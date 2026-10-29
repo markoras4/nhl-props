@@ -33,6 +33,7 @@ BEAT = 60 / BPM
 INTRO = 8 * BEAT          # 5 s
 SUMMARY = 6 * BEAT        # 3.75 s
 MULTI = 6 * BEAT
+BIG_HIT = 5.0             # the long shots (multi-point picks) only get a card when one of them won at odds this big or more
 SPOT = 16 * BEAT          # 10 s per profit spotlight
 OUTRO = 10 * BEAT         # 6.25 s
 MAX_SPOTS = 2
@@ -130,6 +131,9 @@ def build(date, bp, archive, previews):
     graded = [r for r in main if r["r"] in ("w", "l")]
     u = sum(r["u"] for r in graded)
     won = [r for r in graded if r["r"] == "w"]
+    # long shots are only worth mentioning on a night one of them hit big
+    if not any(r["r"] == "w" and r["od"] >= BIG_HIT for r in multi):
+        multi = []
     summary = {"n": len(graded), "w": len(won), "l": len(graded) - len(won), "v": sum(r["r"] == "v" for r in main),
                "u": round(u, 2), "roi": (u / len(graded)) if graded else 0,
                "avg_win_odds": (sum(r["od"] for r in won) / len(won)) if won else None,
