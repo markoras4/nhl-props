@@ -541,6 +541,7 @@ def main(argv=None):
     bt.add_argument("--oppos", action="store_true", help="test what the opponent allows by position")
     bt.add_argument("--depth", action="store_true", help="test depth players / rookies and a role-based prior")
     bt.add_argument("--depthcal", action="store_true", help="test a goal/point correction for low-minute forwards")
+    bt.add_argument("--roadtrip", action="store_true", help="test the last game of road trips and trip length")
     bt.add_argument("--season", action="store_true", help="test the season simulation (playoff chances, game importance)")
     bt.add_argument("--teamluck", action="store_true", help="test whether team luck affects player props")
     bt.add_argument("--matchups", action="store_true", help="test line matchups (which defence pairs forwards face) from shift charts")
@@ -586,6 +587,10 @@ def main(argv=None):
         if args.season:
             from .backtest_season import run as run_ss
             run_ss(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.roadtrip:
+            from .backtest_roadtrip import run as run_rt
+            run_rt(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.depthcal:
             from .backtest_depthcal import run as run_dc
