@@ -398,6 +398,18 @@ td.h{text-align:center;padding:4px}
 .gthit{fill:transparent;cursor:pointer}
 .gtg{outline:none}.gtg:focus-visible rect:not(.gthit){stroke:var(--accent);stroke-width:2}
 .hits i.gtg{cursor:pointer}
+.l10lines{pointer-events:none}
+.nxbar{fill:color-mix(in srgb,var(--accent) 10%,transparent);stroke:var(--accent);stroke-width:1.4;stroke-dasharray:4 3}
+.nxg:hover .nxbar,.nxg:focus-visible .nxbar{fill:color-mix(in srgb,var(--accent) 22%,transparent)}.nxq{fill:var(--accent);font:700 13px var(--f-ui)}.nxo{fill:var(--accent) !important}
+.gtip.gtnext{width:300px;max-width:calc(100vw - 16px);padding:11px 13px}
+.gtip.gtsheet{position:fixed;left:8px !important;right:8px;bottom:calc(72px + env(safe-area-inset-bottom));width:auto;max-width:none;pointer-events:auto}
+.nxb{border-top:1px solid var(--line);padding:7px 0 5px;margin-top:6px}.nxh{font:700 10px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.nxr{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;line-height:1.55}.nxr>span:first-child{color:var(--mute)}.nxr>span:last-child{text-align:right;white-space:nowrap}
+.nxr .rk{font-size:10px;padding:1px 5px;margin-left:3px}.rk.rk-mid{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}
+.nxctx{font-size:9px;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:0 3px;margin-left:4px;vertical-align:1px}
+.nxtr{font-size:11px;margin-top:4px}.nxtr .ok{color:var(--good)}.nxtr .no{color:var(--mute)}.nxtr .trib{font-size:9.5px;padding:1px 6px}
+.nxtag{font-size:9.5px;font-weight:700;border-radius:4px;padding:0 4px;margin-left:3px}.nxtag.lo{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}.nxtag.hi{color:var(--bad,#e5484d);background:color-mix(in srgb,#e5484d 14%,transparent)}
+.nxf{font-size:10px;color:var(--mute);margin-top:4px;line-height:1.35}
 .gtip{position:fixed;z-index:60;min-width:220px;max-width:min(340px,calc(100vw - 16px));background:var(--panel);color:var(--text);border:1px solid var(--line2, var(--line));border-radius:12px;padding:10px 12px;box-shadow:0 12px 32px rgba(0,0,0,.4);pointer-events:none;font-family:var(--f-ui)}
 .gtip[hidden]{display:none}
 .gth{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:13px;margin-bottom:8px}
@@ -1437,7 +1449,12 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
+Object.assign(I18N.en, {nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponent · {t}", nx_exp_s:"Expected shots", nx_min:"min", nx_s60:"Shots per 60", nx_hit10:"Over {l} in last 10",
+  nx_sh:"Shooting % this season", nx_vs_true:"true {v}", nx_unlucky:"unlucky", nx_hot:"hot", nx_l5:"Last 5 games", nx_ppp5:"PP points, last 5",
+  nx_goalie:"Goalie", nx_sa:"Shots allowed / game", nx_pos_s:"Shots allowed to {p}", nx_pos_g:"Goals allowed to {p}", nx_pos_p:"Points allowed to {p}",
+  nx_def:"Defence xGA/60", nx_gsax:"Goaltending GSAx/game", nx_gavx:"Goals allowed vs expected", nx_pen:"Penalties taken / game", nx_pk:"Penalty kill xGA/60",
+  nx_ctx:"context", nx_ctx_tip:"Not in the model: shown for context. Tested, it didn't predict better than the model, so don't count it as an extra edge.",
+  nx_foot:"Ranks: green favours him, red is tough. Rows without a tag are already in the model's number.",tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
 <p><b>Every value bet is checked three ways</b>, all in tonight's matchup (same opponent, same goalie):</p>
 <ol><li><b>The model's number</b>: what the site normally shows.</li><li><b>His season so far</b>: what his actual production this season would say.</li><li><b>His last 10 games</b>: what his recent form would say.</li></ol>
 <p><b>Then the warning signs:</b> depth forward on goals or points, opposing goalie not confirmed, the market moving against it (the price drifting out, or the sharp book's fair price above the one on offer; together these count as one warning), shooting clearly up or down this season, a short NHL history.</p>
@@ -1459,7 +1476,12 @@ Object.assign(I18N.en, {tri_how_h:"How Triage works", tri_how:`<p><b>Triage chec
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
+Object.assign(I18N.sv, {nx_tonight:"I kväll", nx_his:"Hans sida", nx_opp:"Motstånd · {t}", nx_exp_s:"Väntade skott", nx_min:"min", nx_s60:"Skott per 60", nx_hit10:"Över {l} senaste 10",
+  nx_sh:"Skottprocent i år", nx_vs_true:"verklig {v}", nx_unlucky:"otur", nx_hot:"het", nx_l5:"Senaste 5 matcherna", nx_ppp5:"PP-poäng, senaste 5",
+  nx_goalie:"Målvakt", nx_sa:"Insläppta skott / match", nx_pos_s:"Skott släppta till {p}", nx_pos_g:"Mål släppta till {p}", nx_pos_p:"Poäng släppta till {p}",
+  nx_def:"Försvar xGA/60", nx_gsax:"Målvaktsspel GSAx/match", nx_gavx:"Insläppta mål mot förväntat", nx_pen:"Utvisningar / match", nx_pk:"Boxplay xGA/60",
+  nx_ctx:"kontext", nx_ctx_tip:"Inte i modellen: visas som kontext. Testat, det förutsade inte bättre än modellen, så räkna det inte som ett extra värde.",
+  nx_foot:"Rankning: grönt gynnar honom, rött är tufft. Rader utan märkning finns redan i modellens siffra.",tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
 <p><b>Varje värdespel kontrolleras på tre sätt</b>, alla i kvällens match (samma motstånd, samma målvakt):</p>
 <ol><li><b>Modellens siffra</b>: det sajten normalt visar.</li><li><b>Hans säsong hittills</b>: vad hans faktiska produktion i år säger.</li><li><b>Hans senaste 10 matcher</b>: vad hans senaste form säger.</li></ol>
 <p><b>Sedan varningstecknen:</b> djupforward på mål eller poäng, motståndarmålvakten inte bekräftad, marknaden går emot (oddset stiger, eller skarpa bookens rättvisa odds är högre än det erbjudna; tillsammans räknas de som en varning), skjuter klart mer eller mindre i år, kort NHL-historik.</p>
@@ -2693,16 +2715,76 @@ function gameLine(pid, d){
   if (h) cells.push(cell(t("h_hit"), h.hit), cell(t("h_blk"), h.blk));
   return `<div class="gth"><b>${dt_}</b> <span>${b.h ? "vs" : "@"} ${b.o}</span>${p.name ? `<span class="meta">${esc(shortName(p.name))}</span>` : ""}</div><div class="gtc">${cells.join("")}</div>`;
 }
+// ------------------------------------------------------------ tonight's empty bar: a compact preview (number, his side, opponent)
+function nxRank(vals, team, desc){ // rank of team among all teams by value (1 = highest when desc)
+  const arr = Object.entries(vals).filter(([,v]) => v != null && isFinite(v)).sort((a,b) => desc ? b[1]-a[1] : a[1]-b[1]);
+  const i = arr.findIndex(([k]) => k === team); return i < 0 ? null : i + 1; }
+function nextTip(pid, gid, m){
+  const g = gameById[gid], pr = g?.props.find(x => String(x.id) === String(pid)), p = P(pid); if (!pr || !p) return null;
+  const opp = pr.opp, l = lambdas(pr, g), N = Object.keys(DATA.teams).length || 32;
+  const row = (k, v, extra) => `<div class="nxr"><span>${k}</span><span>${v}${extra ? " " + extra : ""}</span></div>`;
+  const ctx = `<span class="nxctx" title="${esc(t("nx_ctx_tip"))}">${t("nx_ctx")}</span>`;
+  const good = r => r <= 8, bad = r => r > N - 8, chip = (r, fav) => r == null ? "" : `<span class="rk ${fav(r) ? "rk-good" : fav(N + 1 - r) ? "rk-bad" : "rk-mid"}">#${r}</span>`;
+  // --- tonight's number
+  let mk, head;
+  if (m === "s"){ const L = state.l10line?.s ?? C.sog_lines.reduce((b,x)=>Math.abs(prob(pr,g,"s"+x)-0.5) < Math.abs(prob(pr,g,"s"+b)-0.5) ? x : b, C.sog_lines[0]); mk = "s" + L;
+    head = row(t("nx_exp_s"), `<b>${fmt(l.s,2)}</b>`); }
+  else { mk = m === "p" ? "pt" : m; head = ""; }
+  const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), od = getOdds(g.id, pr.id, mk);
+  const tro = od ? triage(g, pr, mk, "o", od) : null, trn = b?.n ? triage(g, pr, mk, "n", b.n) : null, tr = tro || trn;
+  const lbl = m === "s" ? t("tri_so",{l:mk.slice(1)}) : mName(mk);
+  let num = head + row(lbl, `<b>${pct(pm,1)}</b> <span class="meta">${t("h_fair").toLowerCase()} ${oddsTxt(1/pm)}</span>`);
+  if (od) num += row(t("h_odds"), `<b>${oddsTxt(od)}</b>${b?.n ? ` <span class="meta">/ ${oddsTxt(b.n)}</span>` : ""}`, `<span class="${pm*od-1>0?"ev-pos":"ev-neg"}">${evTxt(pm*od-1)}</span>`);
+  if (tr){ num += `<div class="nxtr">${trn && !tro ? `<span class="meta">${esc(triMkt(mk,"n"))}</span> ` : ""}${triBadge(tr)} ${Object.entries(tr.views).map(([k,e]) => `<span class="${e>0?"ok":"no"}">${t(k==="season"?"tvs_season":"tvs_l10")} ${evTxt(e)}</span>`).join(" · ")}</div>`; }
+  // --- his side
+  const lu = DATA.teams[pr.team]?.lineup?.groups || {}, line = Object.entries(lu).find(([k,ids]) => /^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
+  const ppu = (lu.pp1||[]).includes(pr.id) ? "PP1" : (lu.pp2||[]).includes(pr.id) ? "PP2" : null;
+  const r = p.rates || {}, rg = p.regress || {}, d = p.drought || {};
+  let his = row(t("toi"), `<b>${fmt(p.toi_proj,1)}</b> ${t("nx_min")}`, `<span class="meta">${[line?.toUpperCase(), ppu].filter(Boolean).join(" · ")}</span>`);
+  if (m === "s"){ his += row(t("nx_s60"), `<b>${fmt(r.s60,1)}</b>`);
+    const H = p.hr?.[mk], n = p.hr?.n; if (H && n?.[1]) his += row(t("nx_hit10",{l:mk.slice(1)}), `<b>${H[1]}/${n[1]}</b>`); }
+  else if (m === "g"){ his += row(t("nx_sh"), `<b>${pct(p.windows?.cur?.sh ?? 0,1)}</b> <span class="meta">${t("nx_vs_true",{v:pct(r.recent_sh ?? r.career_sh,1)})}</span>`);
+    if (rg.exp != null) his += row(t("k_gvx"), `<b>${fmt(rg.g,0)}</b> ${t("vs")} ${fmt(rg.exp,1)}`, rg.z <= -1 ? `<span class="nxtag lo">${t("nx_unlucky")}</span>` : rg.z >= 1.5 ? `<span class="nxtag hi">${t("nx_hot")}</span>` : "");
+    if (d.shots != null) his += row(t("k_since"), `<b>${d.found ? d.shots : d.shots + "+"}</b> <span class="meta">(${d.games} ${t("gm")})</span>`); }
+  else { const f = p.form || {}; his += row(t("nx_l5"), `<b>${f.g||0}</b> ${t("h_g")} · <b>${f.a||0}</b> ${t("h_a")}`);
+    if (p.role?.ppp5 != null && ppu) his += row(t("nx_ppp5"), `<b>${p.role.ppp5}</b>`); }
+  // --- opponent
+  const TR = DATA.team_ranks?.teams?.[opp] || {}, T = DATA.teams[opp] || {}, op = DATA.opp_pos?.[opp]?.[posGroup(p.pos)];
+  const gk = G(state.goalie[g.id][opp]), st = g.starter_status?.[opp] || "";
+  let oppH = "";
+  if (m !== "s" && gk){ const q = gk.ratio; oppH += row(t("nx_goalie"), `<b>${esc(shortName(gk.name))}</b> <span class="${q>1.02?"up":q<0.98?"down":""}">×${fmt(q,3)}</span>`, `<span class="meta">${esc(trData(st)||"")}</span>`); }
+  if (m === "s"){
+    const sa = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.sa_all])); oppH += row(t("nx_sa"), `<b>${fmt(T.sa_all,1)}</b>`, chip(nxRank(sa, opp, true), good));
+    if (op) oppH += row(t("nx_pos_s",{p:t("op_"+posGroup(p.pos)).toLowerCase()}), `<b>${fmt(op.s,1)}</b>`, chip(op.s_rk, good) + ctx);
+  } else {
+    if (TR.def) oppH += row(t("nx_def"), `<b>${fmt(TR.def.v,2)}</b>`, chip(N + 1 - TR.def.rk, good));
+    if (TR.gsax) oppH += row(t("nx_gsax"), `<b>${(TR.gsax.v>=0?"+":"")+fmt(TR.gsax.v,2)}</b>`, chip(N + 1 - TR.gsax.rk, good) + ctx);
+    const gx = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.gp ? (v.s_ga - v.s_xga)/v.gp : null]));
+    if (T.gp) oppH += row(t("nx_gavx"), `<b>${T.s_ga}</b> ${t("vs")} ${fmt(T.s_xga,1)}`, chip(nxRank(gx, opp, true), good) + ctx);
+    if (op){ const k = m === "g" ? "g" : "pt"; oppH += row(t(m === "g" ? "nx_pos_g" : "nx_pos_p",{p:t("op_"+posGroup(p.pos)).toLowerCase()}), `<b>${fmt(op[k],2)}</b>`, chip(op[k+"_rk"], good) + ctx); }
+  }
+  if (ppu){ const pen = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.pen_pg])); oppH += row(t("nx_pen"), `<b>${fmt(T.pen_pg,1)}</b>`, chip(nxRank(pen, opp, true), good) + ctx);
+    if (TR.pk) oppH += row(t("nx_pk"), `<b>${fmt(TR.pk.v,2)}</b>`, chip(N + 1 - TR.pk.rk, good)); }
+  const dt_ = g.date === dates[0] ? t("today") : new Date(g.date + "T12:00:00").toLocaleDateString(LOCALE(), {weekday:"short", day:"numeric", month:"short"});
+  const tm = g.start ? new Date(g.start).toLocaleTimeString(LOCALE(), {hour:"2-digit", minute:"2-digit"}) : "";
+  return `<div class="gth"><b>${dt_}${tm ? " · " + tm : ""}</b> <span>${pr.home ? "vs" : "@"} ${opp}</span><span class="meta">${esc(shortName(p.name))}</span></div>
+    <div class="nxb"><div class="nxh">${t("nx_tonight")}</div>${num}</div>
+    <div class="nxb"><div class="nxh">${t("nx_his")}</div>${his}</div>
+    <div class="nxb"><div class="nxh">${t("nx_opp",{t:opp})}</div>${oppH || `<span class="meta">–</span>`}</div>
+    <div class="nxf">${t("nx_foot")}</div>`;
+}
 (() => {
   let tipEl = null, pinned = null;
   const el = () => tipEl || (tipEl = Object.assign(document.body.appendChild(document.createElement("div")), {className: "gtip", hidden: true}));
   const show = (g, ev) => {
-    const html = gameLine(g.dataset.gtp, g.dataset.gtd); if (!html) return;
-    const e = el(); e.innerHTML = html; e.hidden = false;
+    const nx = g.dataset.gtd === "next", html = nx ? nextTip(g.dataset.gtp, g.dataset.gtg, g.dataset.gtm) : gameLine(g.dataset.gtp, g.dataset.gtd); if (!html) return;
+    const e = el(); e.innerHTML = html; e.hidden = false; e.classList.toggle("gtnext", nx);
+    if (nx && innerWidth < 600){ e.style.left = "8px"; e.style.top = "auto"; e.classList.add("gtsheet"); return; } e.classList.remove("gtsheet");
     const r = g.getBoundingClientRect(), w = e.offsetWidth, hh = e.offsetHeight;
     const py = ev && ev.clientY != null && r.height > 60 ? ev.clientY : r.top;
     let x = (ev && ev.clientX != null ? ev.clientX : r.left + r.width / 2) - w / 2, y = py - hh - 14;
     x = Math.max(8, Math.min(innerWidth - w - 8, x)); if (y < 8) y = py + 18;
+    y = Math.max(8, Math.min(innerHeight - hh - 8, y));
     e.style.left = x + "px"; e.style.top = y + "px";
   };
   const hide = () => { if (tipEl) tipEl.hidden = true; pinned = null; };
@@ -2754,7 +2836,8 @@ function l10Chart(pr, g){
   const avgLbl = hb ? t("l10_avg_last",{n:games.length}) : (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
   const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0, line||0);
   const ymax = cnt ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
-  const narrow = innerWidth < 600, W = narrow ? 360 : 720, H = narrow ? 220 : 250, L = 22, R = narrow ? 44 : 64, T = 16, B = narrow ? 40 : 44, cw = (W - L - R) / games.length, bw = Math.min(30, cw * 0.58);
+  const nxOn = ["s","g","a","p"].includes(m) && (!g.state || ["FUT","PRE"].includes(g.state)) && games.length > 0;
+  const narrow = innerWidth < 600, W = narrow ? 360 : 720, H = narrow ? 220 : 250, L = 22, R = narrow ? 44 : 64, T = 16, B = narrow ? 40 : 44, cw = (W - L - R) / (games.length + (nxOn ? 1 : 0)), bw = Math.min(30, cw * 0.58);
   const y = v => T + (H - T - B) * (1 - v / ymax);
   const ticks = []; const step = ymax <= 3 ? 1 : ymax <= 8 ? 2 : 3; for (let v = 0; v <= ymax; v += step) ticks.push(v);
   const grid = ticks.map(v => `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="l10g"/><text x="${L-6}" y="${y(v)+3.5}" text-anchor="end" class="l10t">${v}</text>`).join("");
@@ -2769,6 +2852,12 @@ function l10Chart(pr, g){
       ${v>0 && !crowd?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
       ${showLab?`<text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
       <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text>`:""}</g>`; }).join("");
+  // tonight: an empty dashed bar up to the model's expectation, opening the preview card on hover / tap
+  const nxBar = nxOn ? (() => { const i = games.length, cx = L + cw*i + cw/2, h = Math.max(3, (H - T - B) * Math.min(exp||0, ymax) / ymax);
+    return `<g class="gtg nxg" data-gtp="${pr.id}" data-gtd="next" data-gtg="${g.id}" data-gtm="${m}" tabindex="0" role="button" aria-label="${esc(t("nx_tonight"))}"><rect x="${L + cw*i}" y="${T}" width="${cw}" height="${H-T}" class="gthit"/>
+      <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="nxbar"/><text x="${cx}" y="${y(0)-h-5}" text-anchor="middle" class="nxq">?</text>
+      <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o nxo">${pr.home?"":"@"}${pr.opp}</text>
+      <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d nxo">${g.date === dates[0] ? t("today") : (+g.date.slice(5,7)) + "/" + (+g.date.slice(8,10))}</text></g>`; })() : "";
   // reference lines (model, average, chosen line), each with a value tag at the right edge; tags never overlap
   const refs = [];
   if (exp!=null) refs.push({v:exp, y:y(exp), cls:"l10exp"});
@@ -2788,7 +2877,7 @@ function l10Chart(pr, g){
   const anim = state.l10anim ? " l10anim" : ""; state.l10anim = false;
   return `<h4>${t("l10_chart")} <span class="l10hd"><span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}${hbOk?btn("h",t("l10_h"))+btn("b",t("l10_b")):""}</span>
     <button type="button" class="l10fbtn ${state.l10pop?"on":""}" data-l10f aria-expanded="${!!state.l10pop}" title="${esc(t("l10_games"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>${nLab}</button>${pop}</span></h4>
-    <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${linesG}</svg>
+    <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${nxBar}${linesG}</svg>
     <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""} ${line===v && SEG_POP==="ln:"+(v??"")?"pop":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
       ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b> · <b>${hitN}/${games.length}</b> ${t("l10_over_n")}</span>`:""}
