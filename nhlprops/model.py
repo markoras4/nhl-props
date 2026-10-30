@@ -680,8 +680,19 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     # role-based prior (backtest_depth): little history -> pulled toward what players with his ice time produce,
     # not the average player at his position (fixes rookies and depth forwards being rated too high)
     tf = min(1.8, max(0.4, toi_proj / L["toi"])) ** cfg.get("prior_toi_beta", 0.0) if L.get("toi") else 1.0
-    s60 = shrink(W["s"], W["h"], L["s60"] * tf, cfg["k_shots_hours"])
-    xg60 = shrink(W["xg"], W["h"], L["xg60"] * tf, cfg["k_ixg_hours"])
+    # this season counts extra (backtest_usage: shot volume and shot quality move with a player's role, and the plain
+    # season weights reacted too slowly to risers and fallers): shots for SOG x2; for goals, shots x10 and xG x4
+    um = cfg.get("usage_mult") or {}
+    cur_m = (mw.season == cur).astype(float)
+    def Wm(c, m):
+        f = ws * (1 + (m - 1) * cur_m)
+        return float((mw[c] * f).sum()), float((mw["h"] * f).sum())
+    s_, h_ = Wm("s", um.get("s_sog", 1.0))
+    s60 = shrink(s_, h_, L["s60"] * tf, cfg["k_shots_hours"])
+    s_, h_ = Wm("s", um.get("s_goal", 1.0))
+    s60g = shrink(s_, h_, L["s60"] * tf, cfg["k_shots_hours"])
+    x_, h_ = Wm("xg", um.get("xg_goal", 1.0))
+    xg60 = shrink(x_, h_, L["xg60"] * tf, cfg["k_ixg_hours"])
     a60 = shrink(W["a"], W["h"], L["a60"] * tf, cfg["k_assist_hours"])
 
     seasons = _nhl_seasons(land)
@@ -695,7 +706,7 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     recent_sh = shrink(float((mw.g * ws).sum()), float((mw.s * ws).sum()), career_sh, cfg["k_recent_sh_shots"])
     finish = shrink(W["g"], W["xg"], 1.0, cfg["k_finish_xg"])
     al = cfg["alpha_shots_vs_xg"]
-    g60 = al * s60 * recent_sh + (1 - al) * xg60 * finish
+    g60 = al * s60g * recent_sh + (1 - al) * xg60 * finish
 
 
     l5 = lc[:5]
