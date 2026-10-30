@@ -1462,7 +1462,7 @@ Object.assign(I18N.en, {nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponen
 <p><b>Every value bet is checked three ways</b>, all in tonight's matchup (same opponent, same goalie):</p>
 <ol><li><b>The model's number</b>: what the site normally shows.</li><li><b>His season so far</b>: what his actual production this season would say.</li><li><b>His last 10 games</b>: what his recent form would say.</li></ol>
 <p><b>Then the warning signs:</b> depth forward on goals or points, opposing goalie not confirmed, the market moving against it (the price drifting out, or the sharp book's fair price above the one on offer; together these count as one warning), shooting clearly up or down this season, a short NHL history.</p>
-<table class="trihow"><tr><td><span class="trib tr-S">Solid</span></td><td>All three views show value, and no warning signs. Long shots (odds 8.00+) can be Lean at best.</td></tr><tr><td><span class="trib tr-L">Lean</span></td><td>Value is there, but one view disagrees or there's one warning.</td></tr><tr><td><span class="trib tr-F">Fragile</span></td><td>Only the model sees value, or there are two or more warnings.</td></tr></table>
+<table class="trihow"><tr><td><span class="trib tr-S">Solid</span></td><td>All three views show value, and no warning signs. Long shots (odds 8.00+) and very short prices (under 1.30) can be Lean at best.</td></tr><tr><td><span class="trib tr-L">Lean</span></td><td>Value is there, but one view disagrees or there's one warning.</td></tr><tr><td><span class="trib tr-F">Fragile</span></td><td>Only the model sees value, or there are two or more warnings.</td></tr></table>
 <p class="trinote"><b>Fragile doesn't mean wrong or skip it.</b> The model is patient with players in slumps, and historically that patience beats raw season numbers. Fragile means much more uncertain: you're betting purely on the model's view. If you play those, play them smaller, and give Solid bets your bigger stakes.</p>
 <p class="meta">Every best pick stores its grade, and the Track record shows how each grade has done over time.</p>`,tri_tab:"Triage", tri_S:"Solid", tri_L:"Lean", tri_F:"Fragile",
   tri_S_tip:"Solid: his season and last-10 numbers also show value at this price, and nothing in the checks argues against it.",
@@ -1474,7 +1474,7 @@ Object.assign(I18N.en, {nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponen
   tc_drift:"Price drifting out since it opened: the market is moving away", tc_sharp:"The sharp book's price doesn't show value", tc_mkt:"The market disagrees",
   tc_drift2:"Price drifting out: opened {a}, now {b} (the market is moving away)", tc_sharp2:"Sharp book's fair price {f} is above the {o} on offer: the sharpest market rates this a bit less likely than we do",
   ti_sharp_ok:"Sharp book's fair price {f} is below the {o} on offer: the sharp market sees value too", tvs_season:"Season", tvs_l10:"Last 10", tc_short:"Short NHL history: little data behind the number",
-  ti_long:"Long shot: expect long losing runs even when the price is right", ti_unlucky:"Unlucky so far: his chances are already counted, so bad luck alone isn't value",
+  ti_long:"Long shot: expect long losing runs even when the price is right", ti_short_price:"Very short price: a small miss in the model wipes out the edge, and one loss cancels many wins", ti_unlucky:"Unlucky so far: his chances are already counted, so bad luck alone isn't value",
   tri_title:"Slate triage", tri_sub:"Every value bet, re-checked with his season and last-10 numbers and the cautions that matter",
   tri_all:"All", tri_sideo:"Overs / yes", tri_siden:"Unders / no", tri_none:"No value bets for this day yet. They appear once prices are posted.",
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
@@ -1491,7 +1491,7 @@ Object.assign(I18N.sv, {nx_tonight:"I kväll", nx_his:"Hans sida", nx_opp:"Motst
 <p><b>Varje värdespel kontrolleras på tre sätt</b>, alla i kvällens match (samma motstånd, samma målvakt):</p>
 <ol><li><b>Modellens siffra</b>: det sajten normalt visar.</li><li><b>Hans säsong hittills</b>: vad hans faktiska produktion i år säger.</li><li><b>Hans senaste 10 matcher</b>: vad hans senaste form säger.</li></ol>
 <p><b>Sedan varningstecknen:</b> djupforward på mål eller poäng, motståndarmålvakten inte bekräftad, marknaden går emot (oddset stiger, eller skarpa bookens rättvisa odds är högre än det erbjudna; tillsammans räknas de som en varning), skjuter klart mer eller mindre i år, kort NHL-historik.</p>
-<table class="trihow"><tr><td><span class="trib tr-S">Stabil</span></td><td>Alla tre vyerna visar värde, och inga varningstecken. Långskott (odds 8.00+) kan som bäst bli Lutar.</td></tr><tr><td><span class="trib tr-L">Lutar</span></td><td>Värdet finns, men en vy håller inte med eller så finns en varning.</td></tr><tr><td><span class="trib tr-F">Skör</span></td><td>Bara modellen ser värde, eller så finns två eller fler varningar.</td></tr></table>
+<table class="trihow"><tr><td><span class="trib tr-S">Stabil</span></td><td>Alla tre vyerna visar värde, och inga varningstecken. Långskott (odds 8.00+) och mycket låga odds (under 1.30) kan som bäst bli Lutar.</td></tr><tr><td><span class="trib tr-L">Lutar</span></td><td>Värdet finns, men en vy håller inte med eller så finns en varning.</td></tr><tr><td><span class="trib tr-F">Skör</span></td><td>Bara modellen ser värde, eller så finns två eller fler varningar.</td></tr></table>
 <p class="trinote"><b>Skör betyder inte fel eller hoppa över.</b> Modellen har tålamod med spelare i svackor, och historiskt slår det tålamodet råa säsongssiffror. Skör betyder mycket osäkrare: du spelar helt på modellens bild. Spelar du dem, satsa mindre, och lägg de större insatserna på stabila spel.</p>
 <p class="meta">Varje bästa spel sparar sitt betyg, och resultatsidan visar hur varje betyg har gått över tid.</p>`,tri_tab:"Triage", tri_S:"Stabil", tri_L:"Lutar", tri_F:"Skör",
   tri_S_tip:"Stabil: hans säsongs- och senaste-10-siffror visar också värde till det här priset, och inget i kontrollerna talar emot.",
@@ -1503,7 +1503,7 @@ Object.assign(I18N.sv, {nx_tonight:"I kväll", nx_his:"Hans sida", nx_opp:"Motst
   tc_drift:"Oddset har stigit sedan öppning: marknaden rör sig bort", tc_sharp:"Den skarpa bookens pris visar inget värde", tc_mkt:"Marknaden håller inte med",
   tc_drift2:"Oddset stiger: öppnade {a}, nu {b} (marknaden rör sig bort)", tc_sharp2:"Skarpa bookens rättvisa odds {f} är högre än erbjudna {o}: den skarpaste marknaden ser det som lite mindre troligt än vi",
   ti_sharp_ok:"Skarpa bookens rättvisa odds {f} är lägre än erbjudna {o}: den skarpa marknaden ser också värde", tvs_season:"Säsong", tvs_l10:"Senaste 10", tc_short:"Kort NHL-historik: lite data bakom siffran",
-  ti_long:"Långskott: räkna med långa förlustsviter även när priset är rätt", ti_unlucky:"Otur hittills: hans chanser räknas redan, så otur ensam är inget värde",
+  ti_long:"Långskott: räkna med långa förlustsviter även när priset är rätt", ti_short_price:"Mycket lågt odds: ett litet fel i modellen raderar värdet, och en förlust tar ut många vinster", ti_unlucky:"Otur hittills: hans chanser räknas redan, så otur ensam är inget värde",
   tri_title:"Triage för kvällen", tri_sub:"Varje värdespel, kontrollerat mot hans säsong, senaste 10 matcherna och varningarna som spelar roll",
   tri_all:"Alla", tri_sideo:"Över / ja", tri_siden:"Under / nej", tri_none:"Inga värdespel för den här dagen än. De dyker upp när oddsen är ute.",
   tri_fragile:"Sköra ({n})", tri_linked:"{t}: {n} spel åt samma håll på ett lag i kväll. De vinner och förlorar ofta tillsammans, så se dem som ett större spel.",
@@ -2194,9 +2194,10 @@ function triage(g, pr, m, side, od){
   if (mk.length) c.push("mkt");
   if ((p.windows?.career?.gp||0) < 50) c.push("short");
   if (od >= 8) info.push("long");
+  if (od < 1.30) info.push("short_price");
   if (sc && p.regress?.z != null && p.regress.z <= -1) info.push("unlucky");
   const vs = Object.values(views), v = vs.filter(e => e > 0).length;
-  const gr = (vs.length && v === 0) || c.length >= 2 ? "F" : vs.length === 2 && v === 2 && !c.length && od < 8 ? "S" : "L";
+  const gr = (vs.length && v === 0) || c.length >= 2 ? "F" : vs.length === 2 && v === 2 && !c.length && od >= 1.30 && od < 8 ? "S" : "L";
   return {gr, ev, views, c, info, side, m, od, pm, mk, sf, o0};
 }
 // cautions and notes as readable lines (the market caution lists what the market did)
