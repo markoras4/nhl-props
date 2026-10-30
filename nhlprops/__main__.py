@@ -543,6 +543,7 @@ def main(argv=None):
     bt.add_argument("--depthcal", action="store_true", help="test a goal/point correction for low-minute forwards")
     bt.add_argument("--roadtrip", action="store_true", help="test the last game of road trips and trip length")
     bt.add_argument("--b2b", action="store_true", help="fit the back-to-back adjustment")
+    bt.add_argument("--onice", action="store_true", help="test on-ice xGF (useful plus/minus) for assists and points")
     bt.add_argument("--tail", action="store_true", help="test multi-point / 2+ goal long-shot probabilities")
     bt.add_argument("--shooters", action="store_true", help="test whether high-volume shooters are underrated on shots")
     bt.add_argument("--usage", action="store_true", help="test trusting this season more when a player's shooting breaks from his history")
@@ -592,6 +593,10 @@ def main(argv=None):
         if args.season:
             from .backtest_season import run as run_ss
             run_ss(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.onice:
+            from .backtest_onice import run as run_oi
+            run_oi(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.tail:
             from .backtest_tail import run as run_tl2
