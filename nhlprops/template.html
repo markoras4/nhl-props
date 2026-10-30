@@ -2228,7 +2228,8 @@ function triageRows(day){
 }
 function triageList(){
   const day = state.pday || "all", grp = state.trg || "all", sd = state.trs || "all";
-  let rows = triageRows(day).filter(r => (grp === "all" || bpFamily(r.m) === grp || (grp === "pts" && GROUP_OF[r.m] === "multi")) && (sd === "all" || r.side === sd));
+  const gsel = state.trgame || "all", dayGames = DATA.games.filter(g => (day === "all" || g.date === day) && (!g.state || ["FUT","PRE"].includes(g.state)));
+  let rows = triageRows(day).filter(r => (gsel === "all" || String(r.g.id) === String(gsel)) && (grp === "all" || bpFamily(r.m) === grp || (grp === "pts" && GROUP_OF[r.m] === "multi")) && (sd === "all" || r.side === sd));
   rows.sort((a,b) => "SLF".indexOf(a.gr) - "SLF".indexOf(b.gr) || b.ev - a.ev);
   const fams = [...new Set(triageRows(day).map(r => bpFamily(r.m)))].filter(f => MGROUPS[f]);
   // linked: several solid / lean bets on the same side of one team (distinct players) rise and fall with that team's night
@@ -2245,6 +2246,7 @@ function triageList(){
   $("#main").innerHTML = `<div class="controls">
     <div class="seg olseg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button><button data-s="tri" class="on">${t("tri_tab")}</button><button data-s="streaks">${t("st_tab")}</button><button data-s="lines">${t("ll_tab")}</button></div>
     <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${day===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
+    <select id="trgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${dayGames.map(g=>`<option value="${g.id}" ${String(gsel)===String(g.id)?"selected":""}>${day==="all"?dayLabel(g.date)+" · ":""}${g.away} @ ${g.home}</option>`).join("")}</select>
     <div class="seg olseg" id="trg"><button data-k="all" class="${grp==="all"?"on":""}">${t("tri_all")}</button>${fams.map(f=>`<button data-k="${f}" class="${grp===f?"on":""}">${t("mg_"+f)}</button>`).join("")}</div>
     <div class="seg olseg" id="trs">${["all","o","n"].map(k=>`<button data-k="${k}" class="${sd===k?"on":""}">${t(k==="all"?"tri_all":"tri_side"+k)}</button>`).join("")}</div></div>
     <div class="card trhow clp ${CL_OPEN("trihow")?"open":""}" data-clk="trihow"><button type="button" class="clph" aria-expanded="${CL_OPEN("trihow")}"><span class="trhh">${I_SVG}${t("tri_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${t("tri_how")}</div></div></div></div>
@@ -2253,7 +2255,8 @@ function triageList(){
       ${bad.length ? `<details class="trif"><summary>${t("tri_fragile",{n:bad.length})}</summary><div class="tablewrap"><table class="tritab">${head}<tbody>${bad.map(row).join("")}</tbody></table></div></details>` : ""}` : `<p class="meta">${t("tri_none")}</p>`}
     </div>`;
   $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); popBtn(`#psort [data-s="${b.dataset.s}"]`); } };
-  $("#fday").onchange = e => { state.pday=e.target.value; triageList(); };
+  $("#fday").onchange = e => { state.pday=e.target.value; state.trgame="all"; triageList(); };
+  $("#trgame").onchange = e => { state.trgame=e.target.value; triageList(); };
   $("#trg").onclick = e => { const b=e.target.closest("button"); if(b){ state.trg=b.dataset.k; triageList(); popBtn(`#trg [data-k="${b.dataset.k}"]`); } };
   $("#trs").onclick = e => { const b=e.target.closest("button"); if(b){ state.trs=b.dataset.k; triageList(); popBtn(`#trs [data-k="${b.dataset.k}"]`); } };
   $("#main").onclick = e => { if (e.target.closest(".tip,summary")) return; const tr=e.target.closest("tr.row"); if(tr && tr.closest(".tritab")){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
