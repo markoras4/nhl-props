@@ -5,7 +5,7 @@ his season average and his last 10 games (goals from his expected goals, so luck
 shooting clearly down (overs) or up (unders) this season vs his previous 3 seasons, a depth forward on scoring
 markets, the opposing goalie not confirmed, the price drifting out since it opened, the sharp book disagreeing,
 a short NHL history. Grade:
-  S (solid)    both views also show value and no caution
+  S (solid)    both views also show value, no caution, odds below 8.00 (long shots top out at lean)
   F (fragile)  neither view shows value, or 2+ cautions
   L (lean)     everything in between
 """
@@ -40,7 +40,13 @@ def _p(m: str, lg: float, la: float, ls: float) -> float | None:
         return 1 - math.exp(-(lg + la))
     if m in ("pt2", "pt3", "g2", "g3", "a2"):
         lam = lg + la if m.startswith("pt") else (lg if m[0] == "g" else la)
-        return 1 - _pois_le(lam, int(m[-1]) - 1)
+        try:
+            from .model import tail_factor
+            from .config import CONFIG
+            f = tail_factor(CONFIG, m, lam)
+        except Exception:  # noqa: BLE001
+            f = 1.0
+        return min(1.0, (1 - _pois_le(lam, int(m[-1]) - 1)) * f)
     if m.startswith("s") and m[1:].replace(".", "").isdigit():
         return 1 - _pois_le(ls, int(math.floor(float(m[1:]))))
     return None
@@ -132,7 +138,7 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
         caut.append("mkt")
     if (((pl.get("windows") or {}).get("career") or {}).get("gp") or 0) < 50:
         caut.append("short")
-    if od >= 6:
+    if od >= 8:
         info.append("long")
     z = (pl.get("regress") or {}).get("z")
     if m in SCORING and z is not None and z <= -1:
@@ -141,7 +147,7 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
     nv = len(views)
     if (nv and v == 0) or len(caut) >= 2:
         gr = "F"
-    elif nv == 2 and v == 2 and not caut:
+    elif nv == 2 and v == 2 and not caut and od < 8:      # long shots (8.00+) are never graded solid
         gr = "S"
     else:
         gr = "L"

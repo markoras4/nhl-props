@@ -50,6 +50,19 @@ def p_at_least_one(lam: float) -> float:
     return 1.0 - math.exp(-max(lam, 0.0))
 
 
+def tail_factor(cfg: dict, m: str, lam: float) -> float:
+    """multiplier for 'at least k' chances (backtest_tail): linear between knots [expected value, factor], flat outside"""
+    kn = (cfg.get("tail_cal") or {}).get(m)
+    if not kn:
+        return 1.0
+    if lam <= kn[0][0]:
+        return kn[0][1]
+    for (x0, f0), (x1, f1) in zip(kn, kn[1:]):
+        if lam <= x1:
+            return f0 + (f1 - f0) * (lam - x0) / (x1 - x0)
+    return kn[-1][1]
+
+
 def p_over_poisson(lam: float, line: float) -> float:
     k = int(math.floor(line))  # P(X > line) = 1 - P(X <= k)
     term, cdf = math.exp(-lam), 0.0
@@ -1588,8 +1601,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                 # multi-point / multi-goal (Poisson, backtest_extra), power-play point, faceoffs won, penalties
                 xr = prof.get("x") or {}
                 lam_pt = lam_g + lam_a
-                hbp.update({"pt2": p_over_poisson(lam_pt, 1.5), "pt3": p_over_poisson(lam_pt, 2.5), "g2": p_over_poisson(lam_g, 1.5),
-                            "g3": p_over_poisson(lam_g, 2.5), "a2": p_over_poisson(lam_a, 1.5)})
+                tc = lambda mk, lam, pv: min(1.0, pv * tail_factor(cfg, mk, lam))   # backtest_tail: long-shot calibration
+                hbp.update({"pt2": tc("pt2", lam_pt, p_over_poisson(lam_pt, 1.5)), "pt3": tc("pt3", lam_pt, p_over_poisson(lam_pt, 2.5)),
+                            "g2": tc("g2", lam_g, p_over_poisson(lam_g, 1.5)), "g3": tc("g3", lam_g, p_over_poisson(lam_g, 2.5)),
+                            "a2": tc("a2", lam_a, p_over_poisson(lam_a, 1.5))})
                 if xr:
                     opp_pen = team_pen_pg.get(opp, lg_pen_pg) / lg_pen_pg if lg_pen_pg else 1.0
                     base["ppp"] = xr["ppp_lam"] * opp_pen ** cfg["ppp_opp_beta"]
