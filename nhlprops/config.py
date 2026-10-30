@@ -46,6 +46,7 @@ CONFIG = {
     # home team only about 0.10; travel distance and time zones showed no effect
     "b2b_factor_away": 0.945,
     "b2b_factor_home": 0.984,
+    "b2b_factor_shots": 0.983,   # backtest_shooters (128k player-games): shots on a back-to-back about 1.7% lower
     "env_cap": 0.05,             # max +/- adjustment for league scoring environment
     "k_env_team_games": 300,     # current-season league scoring regressed with this many team-games
 

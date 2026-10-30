@@ -1556,6 +1556,8 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             octx = team_ctx(opp)
             venue = ha if is_home else 1 / ha
             bb = bfac[t] / bfac[opp]
+            # shots have their own, smaller back-to-back effect (backtest_shooters: about -1.7%, not the goals factor)
+            bb_s = cfg.get("b2b_factor_shots", 1.0) if b2b[t] else 1.0
             d_xg = octx["xga_all"] / lg_xga
             d_s = octx["sa_all"] / lg_sa
             gr = goalies_out[starters[opp]]["ratio"] if starters.get(opp) else 1.0
@@ -1573,7 +1575,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                     role = max(dc["floor"], 1 - dc["k"] * (dc["t0"] - prof["toi_proj"]) * (1 + dc["vet"] * vet))
                 base = {"g": r["g60"] * hrs * d_xg * venue * bb * env * r.get("fm_g", 1.0) * role,
                         "a": r["a60"] * hrs * d_xg * venue * bb * env * r.get("fm_a", 1.0) * role,
-                        "s": r["s60"] * hrs * d_s * venue * bb * cfg.get("sog_calibration", 1.0) * r.get("fm_s", 1.0)}
+                        "s": r["s60"] * hrs * d_s * venue * bb_s * cfg.get("sog_calibration", 1.0) * r.get("fm_s", 1.0)}
                 lam_g, lam_a = base["g"] * gr, base["a"] * gr
                 if r.get("hit60") is not None:
                     arena = hb_f["arena"].get(H, 1.0)
@@ -1603,7 +1605,7 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                         hbp.update({f"fo{L}": p_over_nb(base["fow"], L, cfg["fo_r"]) for L in cfg["fo_lines"]})
                 props.append({
                     "id": p["id"], "team": t, "opp": opp, "home": is_home, "base": base, "hv": hv,
-                    "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "env": env, "goalie": gr, "role": role},
+                    "factors": {"opp_def": d_xg, "opp_shots": d_s, "venue": venue, "b2b": bb, "b2b_s": bb_s, "env": env, "goalie": gr, "role": role},
                     "p": {"g": p_at_least_one(lam_g), "a": p_at_least_one(lam_a), "pt": p_at_least_one(lam_g + lam_a),
                           **{f"s{L}": p_over_poisson(base["s"], L) for L in cfg["sog_lines"]}, **hbp},
                 })
