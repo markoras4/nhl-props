@@ -24,8 +24,9 @@ from .grade import summarize
 from .model import game_ixg
 from .shots import collect
 
+FORM = {"g": 40.0, "s": 80.0}
 MS = [1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 10.0]
-ZS = [1.5, 2.0, 2.5]
+ZS = [2.0]
 
 
 def frames(src, seasons, cfg, log):
@@ -48,6 +49,8 @@ def frames(src, seasons, cfg, log):
         g = df.groupby("pid")
         df["c_xg"] = g.xg.cumsum() - df.xg
         df["c_att"] = g.att.cumsum() - df.att
+        for c in ("g", "a", "s", "toi"):
+            df[f"r10_{c}"] = g[c].transform(lambda x: x.shift(1).rolling(10, min_periods=1).sum()).fillna(0)
         P = pri["sk"]
         L = P[P.season >= season - 3].groupby("posg")[["h", "s", "g", "xg", "gp"]].sum()
         lg = {pg: {"s60": r.s / r.h, "xg60": r.xg / r.h, "sh": r.g / r.s, "toi": r.h * 60 / r.gp} for pg, r in L.iterrows()}
@@ -57,7 +60,7 @@ def frames(src, seasons, cfg, log):
         df["exp_gp"] = df.pid.map(prev_gp).fillna(0)
         df["season"] = season
         keep = ["season", "pid", "posg", "date", "g", "a", "s", "lam_g", "lam_a", "lam_s", "toi_proj", "c_gp", "c_toi", "c_s", "c_g",
-                "c_xg", "c_att", "wh", "ws", "wg", "wxg", "car_s", "car_g", "exp_gp", "L_s60", "L_xg60", "L_sh", "L_toi"]
+                "c_xg", "c_att", "r10_g", "r10_a", "r10_s", "r10_toi", "wh", "ws", "wg", "wxg", "car_s", "car_g", "exp_gp", "L_s60", "L_xg60", "L_sh", "L_toi"]
         out.append(df[keep])
         log(f"  {season}: {len(df):,} player-games, in-season xG for {int((df.xg > 0).sum()):,}")
     return pd.concat(out, ignore_index=True)
@@ -93,15 +96,21 @@ def lams(d, pt, cfg, ms, mx, z=None):
     s60 = shrink(ms * d.c_s + d.ws, ms * h + d.wh, pt["Ls"], cfg["k_shots_hours"])
     xg60 = shrink(mx * d.c_xg + d.wxg, mx * h + d.wh, pt["Lx"], cfg["k_ixg_hours"])
     g60 = pt["al"] * s60 * pt["recent_sh"] + (1 - pt["al"]) * xg60 * pt["fin"]
-    return d.lam_g * g60 / pt["g60_bt"], d.lam_s * s60 / pt["s60_bt"]
+    lg, ls = d.lam_g * g60 / pt["g60_bt"], d.lam_s * s60 / pt["s60_bt"]
+    if FORM:                                 # live recent-form factor (last 10 games vs his level), so the test matches the site
+        h10 = d.r10_toi / 60
+        fg = (d.r10_g + FORM["g"]) / (g60 * h10 + FORM["g"])
+        fs = (d.r10_s + FORM["s"]) / (s60 * h10 + FORM["s"])
+        lg, ls = lg * fg, ls * fs
+    return lg, ls
 
 
 def probs(d, lg, ls):
-    return {"Goal": 1 - np.exp(-lg), "Point": 1 - np.exp(-(lg + d.lam_a)), "SOG 2+": p_over(ls, 1.5), "SOG 3+": p_over(ls, 2.5)}
+    return {"Goal": 1 - np.exp(-lg), "2+ goals": 1 - np.exp(-lg) * (1 + lg), "Point": 1 - np.exp(-(lg + d.lam_a)), "SOG 2+": p_over(ls, 1.5), "SOG 3+": p_over(ls, 2.5)}
 
 
 def ys(d):
-    return {"Goal": d.g >= 1, "Point": d.g + d.a >= 1, "SOG 2+": d.s >= 2, "SOG 3+": d.s >= 3}
+    return {"Goal": d.g >= 1, "2+ goals": d.g >= 2, "Point": d.g + d.a >= 1, "SOG 2+": d.s >= 2, "SOG 3+": d.s >= 3}
 
 
 def brier(p, y):
@@ -189,6 +198,17 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
                     "goals": {"season_xg_rate": float(cur_x.mean()), "model": float(mod_g.mean()), "actual": float(q.g.mean()),
                               "kept": float((q.g.mean() - mod_g.mean()) / (cur_x.mean() - mod_g.mean() + 1e-9))}})
     rep["persistence"] = per
+    # 2+ goals: does a plain Poisson give the tail right? by expected goals tonight
+    tail = []
+    for lo, hi in ((0, .06), (.06, .1), (.1, .15), (.15, .2), (.2, .3), (.3, .45), (.45, 9)):
+        m = (lg0 >= lo) & (lg0 < hi)
+        if m.sum() < 300:
+            continue
+        lam = lg0[m]
+        tail.append({"bin": f"{lo:.2f}-{hi:.2f}", "n": int(m.sum()), "lam": float(lam.mean()), "g1_pred": float((1 - np.exp(-lam)).mean()),
+                     "g1_act": float((dt.g[m] >= 1).mean()), "g2_pred": float((1 - np.exp(-lam) * (1 + lam)).mean()),
+                     "g2_act": float((dt.g[m] >= 2).mean()), "g2_n": int((dt.g[m] >= 2).sum())})
+    rep["tail"] = tail
     (out_dir / "usage.json").write_text(json.dumps(rep, indent=1, default=float), encoding="utf-8")
     md = to_md(rep)
     (out_dir / "usage.md").write_text(md, encoding="utf-8")
@@ -224,4 +244,8 @@ def to_md(r):
         s, g = x["shots"], x["goals"]
         L.append(f"| {x['group']} | {x['n']:,} | {s['season_rate']:.2f} / {s['model']:.2f} / {s['actual']:.2f} / {s['kept']:.0%} | "
                  f"{g['season_xg_rate']:.3f} / {g['model']:.3f} / {g['actual']:.3f} / {g['kept']:.0%} |")
+    L += ["", "## 2+ goals: plain Poisson vs what happened (test seasons, model now)",
+          "| Expected goals tonight | n | 1+ pred | 1+ act | 2+ pred | 2+ act | 2+ count | act / pred |", "|---|---|---|---|---|---|---|---|"]
+    for x in r.get("tail", []):
+        L.append(f"| {x['bin']} (avg {x['lam']:.3f}) | {x['n']:,} | {x['g1_pred']:.1%} | {x['g1_act']:.1%} | {x['g2_pred']:.2%} | {x['g2_act']:.2%} | {x['g2_n']} | {x['g2_act'] / max(x['g2_pred'], 1e-9):.2f} |")
     return "\n".join(L) + "\n"
