@@ -62,8 +62,18 @@ def choose(g: dict, odds: dict, players: dict, markets: list[str], n: int = 2) -
             pick = safer[0]
         gp = ((pl.get("windows") or {}).get("career") or {}).get("gp") or 0
         trust = min(1.0, (gp + 10) / 60)
+        tg = {}
+        try:   # triage grade, stored with the pick so the record can show results by grade
+            from .triage import grade as tri
+            op = (((odds or {}).get("open") or {}).get("players") or {})
+            op = (op.get(pr["id"]) or op.get(str(pr["id"])) or {})
+            ov = op.get(pick["m"])
+            tg = tri(pl, pr, pick["m"], pick["o"], "o", (g.get("starter_status") or {}).get(pr["opp"], ""),
+                     prices.get(pick["m"]), ov if isinstance(ov, (int, float)) else None)
+        except Exception:  # noqa: BLE001
+            tg = {}
         cands.append({**pick, "pid": pr["id"], "name": pl.get("name"), "team": pr["team"], "opp": pr["opp"],
-                      "rank": pick["ev"] * trust})
+                      "rank": pick["ev"] * trust, "tg": tg.get("gr")})
     cands.sort(key=lambda x: -x["rank"])
     return cands[:n]
 
@@ -95,7 +105,7 @@ def snapshot(slate: dict, bp_dir: Path, now: dt.datetime | None = None) -> None:
                     key = f"{p['pid']}|{p['m']}"
                     seen.setdefault(key, {"o": p["o"], "at": stamp})
                 out[kind] = [{"pid": p["pid"], "name": p["name"], "team": p["team"], "opp": p["opp"], "m": p["m"],
-                              "p": round(p["p"], 4), "o": p["o"], "ev": round(p["ev"], 4)} for p in picks]
+                              "p": round(p["p"], 4), "o": p["o"], "ev": round(p["ev"], 4), "tg": p.get("tg")} for p in picks]
             store[gid] = {"home": g["home"], "away": g["away"], "start": g.get("start"), "at": stamp,
                           "picks": out, "seen": seen}
         f.write_text(json.dumps(store, separators=(",", ":")), encoding="utf-8")
@@ -169,7 +179,7 @@ def grade(src, bp_dir: Path, out_path: Path, log=print) -> int:
                     first = ((rec.get("seen") or {}).get(f"{p['pid']}|{p['m']}") or {}).get("o") or p["o"]
                     row = {"d": d, "g": int(gid), "h": rec["home"], "a": rec["away"], "k": kind, "rk": rk,
                            "pid": p["pid"], "n": p["name"], "t": p["team"], "o": p["opp"], "m": p["m"],
-                           "od": p["o"], "p": p["p"], "ev": p["ev"], "f": first,
+                           "od": p["o"], "p": p["p"], "ev": p["ev"], "f": first, "tg": p.get("tg"),
                            "clv": round(first / p["o"] - 1, 4) if p["o"] else 0.0}
                     if not final:
                         row["r"] = "p"            # in play / not final yet
@@ -232,7 +242,7 @@ def backfill(frozen_dir: Path, archive_dir: Path, open_dir: Path, bp_dir: Path, 
                     o0 = (op.get(str(p["pid"])) or {}).get(p["m"] + ("@p" if book.get("b") == "p" else ""))
                     seen[f"{p['pid']}|{p['m']}"] = {"o": o0 or p["o"], "at": "open"}
                 out[kind] = [{"pid": p["pid"], "name": p["name"], "team": p["team"], "opp": p["opp"], "m": p["m"],
-                              "p": round(p["p"], 4), "o": p["o"], "ev": round(p["ev"], 4)} for p in picks]
+                              "p": round(p["p"], 4), "o": p["o"], "ev": round(p["ev"], 4), "tg": p.get("tg")} for p in picks]
             store[gid] = {"home": g.get("home"), "away": g.get("away"), "start": g.get("start"), "at": rec.get("at"),
                           "picks": out, "seen": seen, "backfill": True}
             n += 1

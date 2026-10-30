@@ -254,6 +254,14 @@ td.h{text-align:center;padding:4px}
 .cell .bk.pos{color:var(--good)}
 .cell .bk.neg{color:var(--mute);font-weight:500}
 .cell.val{box-shadow:inset 0 0 0 1.5px var(--good)}
+.trib.tip:hover::after,.trib.tip:focus::after{white-space:pre-line;max-width:300px;width:300px;left:auto;right:0;transform:none}
+.trib{display:inline-block;position:relative;font-size:10px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:999px;line-height:1.4;white-space:nowrap;cursor:help;vertical-align:middle}
+.trib.tr-S{color:var(--good);box-shadow:inset 0 0 0 1.5px var(--good)}.trib.tr-L{color:#e3a33b;box-shadow:inset 0 0 0 1.5px #e3a33b}.trib.tr-F{color:var(--mute);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--mute) 60%,transparent)}
+.pick .pm .trib{margin-top:4px}
+.tritab td{vertical-align:middle}@media(max-width:560px){.tritab td,.tritab th{padding-left:5px;padding-right:5px}.tritab .llnm img,.tritab .llnm svg{display:none}}.tritab tr.row{cursor:pointer}.trv{display:inline-block;font-size:11px;padding:1px 6px;border-radius:6px;margin:1px 0}.trv.ok{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}.trv.no{color:var(--mute);background:var(--panel2)}
+.trc,.tri_i{display:block;font-size:11px;line-height:1.35}.trc{color:#e3a33b}.tri_i{color:var(--mute)}
+.trif{margin-top:10px}.trif summary{cursor:pointer;color:var(--mute);font-size:13px;padding:6px 0}
+.cell .evtag.tg-F{opacity:.55}.cell .evtag.tg-S{box-shadow:0 0 0 1.5px var(--good)}
 .cell .evtag{position:absolute;top:-7px;right:-5px;z-index:1;font-style:normal;font-size:9px;font-weight:700;line-height:1;padding:2px 4px;border-radius:5px;color:var(--good);background:var(--bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--good) 55%,transparent);pointer-events:none}
 .legend .evtag{font-style:normal;font-size:9px;font-weight:700;padding:2px 3px;border-radius:4px;color:var(--good);background:var(--panel2);margin-right:4px}
 .cell .evtag.big,.legend .evtag.big{color:#06140d;background:var(--good)}
@@ -1427,6 +1435,34 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
+Object.assign(I18N.en, {tri_tab:"Triage", tri_S:"Solid", tri_L:"Lean", tri_F:"Fragile",
+  tri_S_tip:"Solid: his season and last-10 numbers also show value at this price, and nothing in the checks argues against it.",
+  tri_L_tip:"Lean: real edge, but one view or one caution doesn't back it.",
+  tri_F_tip:"Fragile: only the model sees value here, or several cautions stack up. Not wrong by itself, just much less certain.",
+  tv_season:"His season average in tonight's context: {e}", tv_l10:"His last 10 games in tonight's context: {e}",
+  tc_down:"Shooting clearly down this season: the model may still be too high", tc_up:"Shooting clearly up this season: the model may be too low",
+  tc_depth:"Depth forward: goals and points have been overrated at this ice time", tc_goalie:"Opposing goalie not confirmed",
+  tc_drift:"Price drifting out since it opened: the market is moving away", tc_sharp:"The sharp book's price doesn't show value", tc_short:"Short NHL history: little data behind the number",
+  ti_long:"Long shot: expect long losing runs even when the price is right", ti_unlucky:"Unlucky so far: his chances are already counted, so bad luck alone isn't value",
+  tri_title:"Slate triage", tri_sub:"Every value bet, re-checked with his season and last-10 numbers and the cautions that matter",
+  tri_all:"All", tri_sideo:"Overs / yes", tri_siden:"Unders / no", tri_none:"No value bets for this day yet. They appear once prices are posted.",
+  tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
+  tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
+  tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
+Object.assign(I18N.sv, {tri_tab:"Triage", tri_S:"Stabil", tri_L:"Lutar", tri_F:"Skör",
+  tri_S_tip:"Stabil: hans säsongs- och senaste-10-siffror visar också värde till det här priset, och inget i kontrollerna talar emot.",
+  tri_L_tip:"Lutar: verkligt värde, men en vy eller en varning stöder det inte.",
+  tri_F_tip:"Skör: bara modellen ser värde här, eller så staplas flera varningar. Inte fel i sig, bara mycket osäkrare.",
+  tv_season:"Hans säsongssnitt i kvällens läge: {e}", tv_l10:"Hans senaste 10 matcher i kvällens läge: {e}",
+  tc_down:"Skjuter klart mindre i år: modellen kan fortfarande ligga för högt", tc_up:"Skjuter klart mer i år: modellen kan ligga för lågt",
+  tc_depth:"Djupforward: mål och poäng har överskattats med den här istiden", tc_goalie:"Motståndarmålvakten inte bekräftad",
+  tc_drift:"Oddset har stigit sedan öppning: marknaden rör sig bort", tc_sharp:"Den skarpa bookens pris visar inget värde", tc_short:"Kort NHL-historik: lite data bakom siffran",
+  ti_long:"Långskott: räkna med långa förlustsviter även när priset är rätt", ti_unlucky:"Otur hittills: hans chanser räknas redan, så otur ensam är inget värde",
+  tri_title:"Triage för kvällen", tri_sub:"Varje värdespel, kontrollerat mot hans säsong, senaste 10 matcherna och varningarna som spelar roll",
+  tri_all:"Alla", tri_sideo:"Över / ja", tri_siden:"Under / nej", tri_none:"Inga värdespel för den här dagen än. De dyker upp när oddsen är ute.",
+  tri_fragile:"Sköra ({n})", tri_linked:"{t}: {n} spel åt samma håll på ett lag i kväll. De vinner och förlorar ofta tillsammans, så se dem som ett större spel.",
+  tri_note:"Betyget är en säkerhetskontroll, inte ett tips. Stabila värden håller hur du än ser på spelaren; sköra vilar bara på modellen (ofta för att den drar ner en het start mer än hans råa siffror gör). Varje bästa spel sparar sitt betyg, och resultatsidan visar hur varje betyg har gått.",
+  tri_su:"Under {l} skott", tri_so:"Över {l} skott", tri_no:"Nej: {m}", tri_linked2:"Kopplade (de vinner och förlorar tillsammans, så se varje grupp som ett större spel):", tri_lk_n:"spelare under/nej", tri_lk_o:"spelare över/ja", tri_views:"Vyer", tri_checks:"Kontroller", rk_tg:"Per triagebetyg", rk_tg_none:"Betygen sparas från och med i dag."});
 let LANG = (()=>{ const s = store.get("set:lang"); if (s==="sv"||s==="en") return s; return (navigator.language||"").toLowerCase().startsWith("sv") ? "sv" : "en"; })();
 const LOCALE = () => LANG==="sv" ? "sv-SE" : "en-GB";
 function t(key, vars){
@@ -2053,7 +2089,108 @@ function pickReasons(c, g){
   if (fam !== "h" && fam !== "b" && (!st.includes("confirmed") || st.includes("unconfirmed"))) warn.push(t("r_gk_unconf",{t:opp}));
   if (!["projected","gameday"].includes(DATA.teams[pr.team]?.lineup?.source)) warn.push(t("r_lineup_est"));
   if ((p.windows?.career?.gp||0) < 50) warn.push(t("r_short",{n:p.windows?.career?.gp||0}));
+  const tr = c.od ? triage(g, pr, c.m, "o", c.od) : null;
+  if (tr){ for (const [k, e] of Object.entries(tr.views)) (e > 0 ? why : warn).push(t("tv_"+k, {e:evTxt(e)}));
+    for (const k of tr.c) if (!["goalie","short"].includes(k)) warn.push(t("tc_"+k));
+    for (const k of tr.info) why.push(t("ti_"+k)); }
   return {why, warn};
+}
+// ------------------------------------------------------------ triage (nhlprops/triage.py runs the same rules for the record)
+const TRI_SCORING = new Set(["g","a","pt","pt2","pt3","g2","g3","a2"]);
+function triRatios(p){
+  const r = p.rates || {}, toi = p.toi_proj || 0, out = {}; if (!toi) return out;
+  const mod = {g:(r.g60||0)*toi/60, a:(r.a60||0)*toi/60, s:(r.s60||0)*toi/60};
+  const cur = p.windows?.cur || {}, xc = p.xg_windows?.cur || {};
+  if ((cur.gp||0) >= 5) out.season = {g:(xc.xg||0)/Math.max(1, xc.gp||cur.gp), a:(cur.a||0)/cur.gp, s:(cur.s||0)/cur.gp};
+  const l10 = (p.form?.games||[]).slice(0,10);
+  if (l10.length >= 5){ const n = l10.length, sum = k => l10.reduce((a,x)=>a+(x[k]||0),0); out.l10 = {g:sum("x")/n, a:sum("a")/n, s:sum("s")/n}; }
+  for (const k in out) for (const kk in out[k]) out[k][kk] = mod[kk] > 0 ? out[k][kk]/mod[kk] : 1;
+  return out;
+}
+function triZ(p){
+  const w = p.windows || {}, cur = w.cur || {}, base = (w.prev3?.gp||0) >= 40 ? w.prev3 : (w.career || {});
+  const gp = cur.gp || 0; if (gp < 8 || !base.gp) return [0,0];
+  const ps = (base.s||0)/base.gp, zs = ps > 0 ? ((cur.s||0) - gp*ps)/Math.sqrt(gp*ps) : 0;
+  const xc = p.xg_windows?.cur || {}, xb = p.xg_windows?.prev3 || {}; let zx = 0;
+  if ((xb.gp||0) >= 40 && (xc.gp||0) >= 8){ const px = xb.xg/xb.gp; zx = px > 0 ? (xc.xg - xc.gp*px)/Math.sqrt(xc.gp*px) : 0; }
+  return [zs, zx];
+}
+function triage(g, pr, m, side, od){
+  const p = P(pr.id); if (!p || !od || m === "fg") return null;
+  const q0 = prob(pr, g, m), pm = side === "n" ? 1 - q0 : q0, ev = pm*od - 1; if (!(ev > 0)) return null;
+  const sc = TRI_SCORING.has(m), sh = /^s\d/.test(m), views = {};
+  if (sc || sh) for (const [k, r] of Object.entries(triRatios(p))){
+    const pr2 = {...pr, base:{...pr.base, g:pr.base.g*r.g, a:pr.base.a*r.a, s:pr.base.s*r.s/(C.sog_calibration||1)}};
+    const q = prob(pr2, g, m); views[k] = (side === "n" ? 1 - q : q)*od - 1; }
+  const c = [], info = [], [zs, zx] = triZ(p);
+  if (sc || sh){ if (side !== "n" && (zs <= -2 || zx <= -2)) c.push("down"); if (side === "n" && (zs >= 2 || zx >= 2)) c.push("up"); }
+  if (sc && side !== "n" && p.posg === "F" && (p.toi_proj||99) < 14) c.push("depth");
+  const st = (g.starter_status?.[pr.opp]||"").toLowerCase(), pc = st.match(/(\d+)%/);
+  if (sc && (!st.includes("confirmed") || st.includes("unconfirmed")) && !(pc && +pc[1] >= 70)) c.push("goalie");
+  const o0 = openOdds(g.id, pr.id, m); if (side !== "n" && o0 && od > o0*1.05) c.push("drift");
+  const b = book(g.id, pr.id, m); if (b?.p && b?.pn){ const sp = noVig({o:b.p, n:b.pn}); if (((side === "n" ? 1 - sp : sp)*od - 1) < 0) c.push("sharp"); }
+  if ((p.windows?.career?.gp||0) < 50) c.push("short");
+  if (od >= 6) info.push("long");
+  if (sc && p.regress?.z != null && p.regress.z <= -1) info.push("unlucky");
+  const vs = Object.values(views), v = vs.filter(e => e > 0).length;
+  const gr = (vs.length && v === 0) || c.length >= 2 ? "F" : vs.length === 2 && v === 2 && !c.length ? "S" : "L";
+  return {gr, ev, views, c, info, side, m, od, pm};
+}
+function triTip(tr){
+  const lines = [t("tri_"+tr.gr+"_tip")];
+  for (const [k, e] of Object.entries(tr.views)) lines.push((e > 0 ? "✓ " : "✗ ") + t("tv_"+k, {e:evTxt(e)}));
+  for (const k of tr.c) lines.push("! " + t("tc_"+k));
+  for (const k of tr.info) lines.push("· " + t("ti_"+k));
+  return lines.join("\n");
+}
+const triBadge = tr => tr ? `<span class="trib tr-${tr.gr} tip" tabindex="0" data-tip="${esc(triTip(tr))}">${t("tri_"+tr.gr)}</span>` : "";
+const triMkt = (m, side) => /^s\d/.test(m) ? t(side === "n" ? "tri_su" : "tri_so", {l:m.slice(1)}) : side === "n" ? t("tri_no",{m:mName(m)}) : mName(m);
+// every value bet of a day, with both sides when the book posts an under / no price
+function triageRows(day){
+  const out = [];
+  for (const g of DATA.games){
+    if (day !== "all" && g.date !== day) continue;
+    if (g.state && !["FUT","PRE"].includes(g.state)) continue;
+    const po = DATA.odds?.[g.id]?.players || {};
+    for (const pr of g.props){ const p = P(pr.id); if (!p?.active) continue;
+      for (const [m, b] of Object.entries(po[pr.id] || {})){
+        if (!hasM(pr, m) || m === "fg") continue;
+        const uo = userOdds(g.id, pr.id, m);
+        for (const [side, od] of [["o", uo ?? b.o], ["n", b.n]]){ const tr = od ? triage(g, pr, m, side, od) : null; if (tr) out.push({g, pr, p, ...tr}); }
+      } }
+  }
+  return out;
+}
+function triageList(){
+  const day = state.pday || "all", grp = state.trg || "all", sd = state.trs || "all";
+  let rows = triageRows(day).filter(r => (grp === "all" || bpFamily(r.m) === grp || (grp === "pts" && GROUP_OF[r.m] === "multi")) && (sd === "all" || r.side === sd));
+  rows.sort((a,b) => "SLF".indexOf(a.gr) - "SLF".indexOf(b.gr) || b.ev - a.ev);
+  const fams = [...new Set(triageRows(day).map(r => bpFamily(r.m)))].filter(f => MGROUPS[f]);
+  // linked: several solid / lean bets on the same side of one team (distinct players) rise and fall with that team's night
+  const linked = {}; rows.filter(r => r.gr !== "F" && r.ev >= 0.03).forEach(r => { const k = `${r.pr.team}|${r.side}`; (linked[k] = linked[k] || new Set()).add(r.pr.id); });
+  const lkl = Object.entries(linked).filter(([,v]) => v.size >= 3).sort((a,b)=>b[1].size-a[1].size)
+    .map(([k, v]) => `<b>${k.split("|")[0]}</b> ${v.size} ${t(k.endsWith("|n")?"tri_lk_n":"tri_lk_o")}`);
+  const lk = lkl.length ? `<p class="note">⚠ ${t("tri_linked2")} ${lkl.join(" · ")}</p>` : "";
+  const row = r => `<tr class="row" data-id="${r.pr.id}" data-g="${r.g.id}"><td>${triBadge(r)}</td><td><div class="llnm">${logo(r.pr.team,18)}<div><b>${esc(r.p.name)}</b><div class="meta">${r.pr.team} ${r.pr.home?"vs":"@"} ${r.pr.opp} · ${dayShort(r.g.date)}</div></div></div></td>
+    <td>${esc(triMkt(r.m, r.side))}</td><td class="n num hide-xs"><b>${pct(r.pm,0)}</b></td><td class="n num">${oddsTxt(r.od)}</td><td class="n num ev-pos">${evTxt(r.ev)}</td>
+    <td class="hide-sm">${Object.entries(r.views).map(([k,e]) => `<span class="trv ${e>0?"ok":"no"}" title="${esc(t("tv_"+k,{e:evTxt(e)}))}">${k==="season"?"SZN":"L10"} ${evTxt(e)}</span>`).join(" ") || `<span class="meta">–</span>`}</td>
+    <td class="hide-xs">${r.c.map(k => `<span class="trc">${esc(t("tc_"+k))}</span>`).join("")}${r.info.map(k => `<span class="tri_i">${esc(t("ti_"+k))}</span>`).join("")}</td></tr>`;
+  const head = `<thead><tr><th></th><th>${t("h_player")}</th><th>${t("h_market")}</th><th class="n hide-xs">${t("model")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("tri_views")}</th><th class="hide-xs">${t("tri_checks")}</th></tr></thead>`;
+  const good = rows.filter(r => r.gr !== "F"), bad = rows.filter(r => r.gr === "F");
+  $("#main").innerHTML = `<div class="controls">
+    <div class="seg olseg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button><button data-s="tri" class="on">${t("tri_tab")}</button><button data-s="streaks">${t("st_tab")}</button><button data-s="lines">${t("ll_tab")}</button></div>
+    <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${day===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
+    <div class="seg olseg" id="trg"><button data-k="all" class="${grp==="all"?"on":""}">${t("tri_all")}</button>${fams.map(f=>`<button data-k="${f}" class="${grp===f?"on":""}">${t("mg_"+f)}</button>`).join("")}</div>
+    <div class="seg olseg" id="trs">${["all","o","n"].map(k=>`<button data-k="${k}" class="${sd===k?"on":""}">${t(k==="all"?"tri_all":"tri_side"+k)}</button>`).join("")}</div></div>
+    <div class="box"><h4>${t("tri_title")} <span class="meta">${t("tri_sub")}</span></h4>${lk}
+    ${rows.length ? `<div class="tablewrap"><table class="tritab">${head}<tbody>${good.map(row).join("")}</tbody></table></div>
+      ${bad.length ? `<details class="trif"><summary>${t("tri_fragile",{n:bad.length})}</summary><div class="tablewrap"><table class="tritab">${head}<tbody>${bad.map(row).join("")}</tbody></table></div></details>` : ""}` : `<p class="meta">${t("tri_none")}</p>`}
+    <p class="note">${t("tri_note")}</p></div>`;
+  $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); popBtn(`#psort [data-s="${b.dataset.s}"]`); } };
+  $("#fday").onchange = e => { state.pday=e.target.value; triageList(); };
+  $("#trg").onclick = e => { const b=e.target.closest("button"); if(b){ state.trg=b.dataset.k; triageList(); popBtn(`#trg [data-k="${b.dataset.k}"]`); } };
+  $("#trs").onclick = e => { const b=e.target.closest("button"); if(b){ state.trs=b.dataset.k; triageList(); popBtn(`#trs [data-k="${b.dataset.k}"]`); } };
+  $("#main").onclick = e => { if (e.target.closest(".tip,summary")) return; const tr=e.target.closest("tr.row"); if(tr && tr.closest(".tritab")){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
 }
 // last 6 games of each team: date, opponent, final score, result
 function recentBox(g){
@@ -2087,7 +2224,7 @@ function bestPicksBox(g){
     return `<div class="pick" data-open="${c.pr.id}" data-team="${c.pr.team}" role="button" tabindex="0">
       <div class="ph">${logo(c.pr.team,26)}<div><div class="pn">${esc(c.p.name)}</div><div class="meta">${c.pr.team} ${c.pr.home?"vs":"@"} ${c.pr.opp}</div></div>
         <div class="pm"><span class="pill ${c.m==="pt"?"s-confirmed":c.m==="g"?"s-dry":"s-up"}">${c.m==="pt"?t("point1"):c.m==="g"?t("goal"):mName(c.m)}</span>
-          <div class="po">${c.od?oddsTxt(c.od):"–"}</div>${moveTag(g,c.pr,c.m)}${(()=>{ const h = archHit(g.id, c.pr.id, c.m); return h==null ? "" : `<span class="pill ${h?"s-confirmed":"s-out"}">${t(h?"bp_won":"bp_lost")}</span>`; })()}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div></div></div>
+          <div class="po">${c.od?oddsTxt(c.od):"–"}</div>${moveTag(g,c.pr,c.m)}${(()=>{ const h = archHit(g.id, c.pr.id, c.m); return h==null ? "" : `<span class="pill ${h?"s-confirmed":"s-out"}">${t(h?"bp_won":"bp_lost")}</span>`; })()}<div class="meta">${c.ev!=null?t("edge",{e:evTxt(c.ev)}):t("likely",{p:pct(c.v)})}</div>${c.od?triBadge(triage(g, c.pr, c.m, "o", c.od)):""}</div></div>
       <ul class="pw">${why.map(x=>`<li>${esc(x)}</li>`).join("")}${warn.map(x=>`<li class="wn">${esc(x)}</li>`).join("")}</ul><div class="svsl">${saveBtn(g, c.pr, c.m)}${slipBtn(g, c.pr, c.m)}</div></div>`; }).join("");
   const [[t1,n1],[,n2]] = Object.entries(teamCount).sort((a,b)=>b[1]-a[1]);
   const lopsided = hasOdds && n1>=4 && n2<=1 ? `<p class="note">${t("lopsided",{n1, n:n1+n2, t:t1})}</p>` : "";
@@ -2287,7 +2424,7 @@ function sidePanel(g, team){
         const tip = t("tip",{p:pct(v,1), f:oddsTxt(1/v)}) + (od ? t("tip_odds",{o:oddsTxt(od), e:evTxt(ev)}) : "");
         const hr_ = ARCH ? archHit(g.id, r.pr.id, m) : null;
         const slk = slipOK && r.p.active ? `${g.id}|${r.pr.id}|${m}` : "", insl = slk && inSlip(`p:${g.id}:${r.pr.id}:${m}`);
-        return `<td class="h"><div class="cell ${val?"val":""} ${hr_==null?"":hr_?"rhit":"rmiss"} ${slk?"slc":""} ${insl?"insl":""}" ${slk?`data-slipc="${slk}"`:""} title="${esc(tip + (slk ? (insl ? t("sl_cell_in") : t("sl_cell_add")) : ""))}" style="${r.p.active?heat(v,colMax[m]):""}">${resMark(hr_)}${r.p.active && ev!=null && ev>0 ? `<i class="evtag ${val?"big":""}">+${ev<0.01?(ev*100).toFixed(1):Math.round(ev*100)}%</i>` : ""}<b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>${moveArrow(g, r.pr, m)}`:oddsTxt(1/v)}</small></div></td>`; }).join("")}
+        return `<td class="h"><div class="cell ${val?"val":""} ${hr_==null?"":hr_?"rhit":"rmiss"} ${slk?"slc":""} ${insl?"insl":""}" ${slk?`data-slipc="${slk}"`:""} title="${esc(tip + (slk ? (insl ? t("sl_cell_in") : t("sl_cell_add")) : ""))}" style="${r.p.active?heat(v,colMax[m]):""}">${resMark(hr_)}${r.p.active && ev!=null && ev>0 ? `<i class="evtag ${val?"big":""} tg-${triage(g, r.pr, m, "o", od)?.gr||"L"}">+${ev<0.01?(ev*100).toFixed(1):Math.round(ev*100)}%</i>` : ""}<b>${pct(v,0)}</b><small>${od?`<span class="bk ${ev>=VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>${moveArrow(g, r.pr, m)}`:oddsTxt(1/v)}</small></div></td>`; }).join("")}
       <td>${regPills(r.p)}</td></tr>
       ${open?`<tr><td colspan="${GRID.length+3}">${detail(r.pr, g)}</td></tr>`:""}`;
   }
@@ -2467,7 +2604,7 @@ function detail(pr, g){
     return `<span>${mName(m)} ${ARCH?resMark(archHit(g.id, pr.id, m)):""}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${oddsTxt(1/pv)}</span></span>
       <span class="num">${b?`<b>${oddsTxt(b.o)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}${b.b==="p"?` <span class="sharp tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span>`:""}${b.p?`<div class="meta"><span class="tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span> ${oddsTxt(b.p)}${b.pn?` · ${pct(noVig({o:b.p, n:b.pn}),0)}`:""}</div>`:""}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
-      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</span><span class="svsl">${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</span>`; }).join("");
+      <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}${ev>0?" "+triBadge(triage(g, pr, m, "o", od)):""}</span><span class="svsl">${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</span>`; }).join("");
   return `<div class="detail"><div class="dgrid">
     <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${cmpBtn(g, pr, true)}${watchBtn(pr.id, true)} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""} ${state.pvtab===k && SEG_POP==="pv:"+k?"pop":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
       <p class="note">${t("pv_note")}</p></div>
@@ -3048,6 +3185,7 @@ function oppPosPlayer(pr, p){
 // ------------------------------------------------------------ top props
 function propsTab(){
   if (state.psort === "lines") return linesList();
+  if (state.psort === "tri") return triageList();
   const groups = GROUP_ORDER.filter(gk => DATA.games.some(g=>g.props.some(pr=>hasM(pr, MGROUPS[gk][0]))));
   if (!groups.includes(mGroup(state.market))) state.market = "pt";
   const hbOn = true;
@@ -3059,7 +3197,7 @@ function propsTab(){
     <select id="fgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${gameOpts}</select>
     <input type="search" id="fq" placeholder="${t("search")}" value="${esc(state.q)}">
     <label class="toggle"><input type="checkbox" id="freg" ${state.onlyReg?"checked":""}> ${t("reg_only")}</label>
-    <div class="seg olseg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button><button data-s="streaks" class="${state.psort==="streaks"?"on":""}">${t("st_tab")}</button><button data-s="lines" class="${state.psort==="lines"?"on":""}">${t("ll_tab")}</button></div></div>
+    <div class="seg olseg" id="psort"><button data-s="p" class="${state.psort==="p"?"on":""}">${t("most_likely")}</button><button data-s="ev" class="${state.psort==="ev"?"on":""}">${t("best_value")}</button><button data-s="tri" class="${state.psort==="tri"?"on":""}">${t("tri_tab")}</button><button data-s="streaks" class="${state.psort==="streaks"?"on":""}">${t("st_tab")}</button><button data-s="lines" class="${state.psort==="lines"?"on":""}">${t("ll_tab")}</button></div></div>
   ${state.psort==="streaks" ? `<div class="controls"><div class="seg olseg" id="stf">${["all","gd","pd","ps","ms"].map(k=>`<button data-f="${k}" class="${(state.stf||"all")===k?"on":""}">${t("stf_"+k)}</button>`).join("")}</div></div>
   <div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th>${t("st_h")}</th><th class="n hide-xs">${t("st_h_rare")}</th><th>${t("st_h_tonight")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th></tr></thead><tbody id="ptb"></tbody></table></div>
   <p class="foot">${t("st_note")} ${t("st_foot")}</p>` : `<div class="card tablewrap"><table><thead><tr><th>${t("h_player")}</th><th class="n hide-xs">${t("toi")}</th><th>${t("h_prob")}</th><th class="n hide-xs">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th><th class="hide-sm">${t("h_last10")}</th><th>${t("signals")}</th><th class="n"></th></tr></thead><tbody id="ptb"></tbody></table></div>
@@ -3109,7 +3247,7 @@ function linesList(){
       <td class="n num hide-xs">${r.sf}–${r.sa}</td><td class="n num"><b>${pct(r.xgp)}</b></td><td class="n num hide-xs">${fmt(r.xg60,2)}</td>
       <td class="hide-sm">${lineFlags(r)}</td><td class="hide-xs">${tn}</td></tr>`; }).join("") || `<tr><td colspan="9" class="empty">${t("ll_none")}</td></tr>`;
   $("#main").innerHTML = `<div class="controls">
-    <div class="seg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button><button data-s="streaks">${t("st_tab")}</button><button data-s="lines" class="on">${t("ll_tab")}</button></div>
+    <div class="seg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button><button data-s="tri">${t("tri_tab")}</button><button data-s="streaks">${t("st_tab")}</button><button data-s="lines" class="on">${t("ll_tab")}</button></div>
     <div class="seg" id="llk"><button data-k="f" class="${state.llk==="f"?"on":""}">${t("ll_f")}</button><button data-k="d" class="${state.llk==="d"?"on":""}">${t("ll_d")}</button></div>
     <select id="lls" aria-label="${t("ll_sort")}">${LL_SORTS.map(k=>`<option value="${k}" ${S===k?"selected":""}>${t("ll_s_"+k)}</option>`).join("")}</select>
     <select id="llteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${state.llteam===x?"selected":""}>${x}</option>`).join("")}</select>
@@ -3587,6 +3725,7 @@ function recordView(){
   const mk = rkGroup(rows, r => rkCat(r.m)).sort((a,b)=>b.s.u-a.s.u);
   const tm = rkGroup(rows, r => r.t).sort((a,b)=> S_.tb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
   const pl = rkGroup(rows, r => String(r.pid)).sort((a,b)=> S_.pb==="best" ? b.s.u-a.s.u : a.s.u-b.s.u);
+  const tg = rkGroup(rows.filter(r => r.tg), r => r.tg).sort((a,b)=>"SLF".indexOf(a.k)-"SLF".indexOf(b.k));
   const mx = arr => Math.max(0.01, ...arr.map(x=>Math.abs(x.s.u)));
   const bw = (attr, cur) => segB(attr, cur, [["best",t("rk_best")],["worst",t("rk_worst")]]);
   const list = [...rows].sort((a,b)=> b.d.localeCompare(a.d) || a.g-b.g || a.rk-b.rk);
@@ -3600,7 +3739,8 @@ function recordView(){
   box.innerHTML = controls + kpis + `
     <div class="box rkcard"><h4>${t("rk_chart")} <span class="meta">${t("rk_chart_sub")}</span></h4>${rkProfitChart(rows)}</div>
     <div class="rkgrid">
-      <div class="box rkcard"><h4>${t("rk_mkt")}</h4><div class="rkrows">${rkBarRows(mk, x=>rkCatName(x.k), mx(mk))}</div></div>
+      <div class="box rkcard"><h4>${t("rk_mkt")}</h4><div class="rkrows">${rkBarRows(mk, x=>rkCatName(x.k), mx(mk))}</div>
+        <h4 style="margin-top:14px">${t("rk_tg")}</h4>${tg.length ? `<div class="rkrows">${rkBarRows(tg, x=>`<span class="trib tr-${x.k}">${t("tri_"+x.k)}</span>`, mx(tg))}</div>` : `<p class="meta">${t("rk_tg_none")}</p>`}</div>
       <div class="box rkcard"><h4>${t("rk_teams")} ${bw("rktb", S_.tb)}</h4><div class="rkrows rkscroll">${rkBarRows(tm, x=>`${logo(x.k,18)} <b>${x.k}</b>`, mx(tm))}</div></div>
       <div class="box rkcard"><h4>${t("rk_players")} ${bw("rkpb", S_.pb)}</h4><div class="rkrows rkscroll">${rkBarRows(pl, x=>`${logo(x.rs[0].t,16)} ${esc(x.rs[0].n)}`, mx(pl))}</div></div>
     </div>
