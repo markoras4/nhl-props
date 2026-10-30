@@ -407,6 +407,7 @@ td.h{text-align:center;padding:4px}
 .nxr{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;line-height:1.55}.nxr>span:first-child{color:var(--mute)}.nxr>span:last-child{text-align:right;white-space:nowrap}
 .nxr .rk{font-size:10px;padding:1px 5px;margin-left:3px}.rk.rk-mid{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}
 .nxctx{font-size:9px;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:0 3px;margin-left:4px;vertical-align:1px}
+.nxtr2{display:flex;align-items:center;gap:10px;margin-top:3px}.nxtrl{flex:1;min-width:0}.nxtrb{flex:none}.nxtrb .trib{font-size:10px;padding:2px 8px}
 .nxtr{font-size:11px;margin-top:4px}.nxtr .ok{color:var(--good)}.nxtr .no{color:var(--mute)}.nxtr .trib{font-size:9.5px;padding:1px 6px}
 .nxtag{font-size:9.5px;font-weight:700;border-radius:4px;padding:0 4px;margin-left:3px}.nxtag.lo{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}.nxtag.hi{color:var(--bad,#e5484d);background:color-mix(in srgb,#e5484d 14%,transparent)}
 .nxf{font-size:10px;color:var(--mute);margin-top:4px;line-height:1.35}
@@ -1454,7 +1455,9 @@ Object.assign(I18N.en, {nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponen
   nx_goalie:"Goalie", nx_sa:"Shots allowed / game", nx_pos_s:"Shots allowed to {p}", nx_pos_g:"Goals allowed to {p}", nx_pos_p:"Points allowed to {p}",
   nx_def:"Defence xGA/60", nx_gsax:"Goaltending GSAx/game", nx_gavx:"Goals allowed vs expected", nx_pen:"Penalties taken / game", nx_pk:"Penalty kill xGA/60",
   nx_ctx:"context", nx_ctx_tip:"Not in the model: shown for context. Tested, it didn't predict better than the model, so don't count it as an extra edge.",
-  nx_foot:"Ranks: green favours him, red is tough. Rows without a tag are already in the model's number.",tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
+  nx_foot:"Ranks: green favours him, red is tough.",
+  nxv_val:"value", nxv_season_g:"Season chances (xG)", nxv_l10_g:"Last 10 chances (xG)", nxv_season_s:"Season shot rate", nxv_l10_s:"Last 10 shot rate",
+  nxv_season_a:"Season assist rate", nxv_l10_a:"Last 10 assist rate", nxv_season_p:"Season scoring rate", nxv_l10_p:"Last 10 scoring rate",tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
 <p><b>Every value bet is checked three ways</b>, all in tonight's matchup (same opponent, same goalie):</p>
 <ol><li><b>The model's number</b>: what the site normally shows.</li><li><b>His season so far</b>: what his actual production this season would say.</li><li><b>His last 10 games</b>: what his recent form would say.</li></ol>
 <p><b>Then the warning signs:</b> depth forward on goals or points, opposing goalie not confirmed, the market moving against it (the price drifting out, or the sharp book's fair price above the one on offer; together these count as one warning), shooting clearly up or down this season, a short NHL history.</p>
@@ -1481,7 +1484,9 @@ Object.assign(I18N.sv, {nx_tonight:"I kväll", nx_his:"Hans sida", nx_opp:"Motst
   nx_goalie:"Målvakt", nx_sa:"Insläppta skott / match", nx_pos_s:"Skott släppta till {p}", nx_pos_g:"Mål släppta till {p}", nx_pos_p:"Poäng släppta till {p}",
   nx_def:"Försvar xGA/60", nx_gsax:"Målvaktsspel GSAx/match", nx_gavx:"Insläppta mål mot förväntat", nx_pen:"Utvisningar / match", nx_pk:"Boxplay xGA/60",
   nx_ctx:"kontext", nx_ctx_tip:"Inte i modellen: visas som kontext. Testat, det förutsade inte bättre än modellen, så räkna det inte som ett extra värde.",
-  nx_foot:"Rankning: grönt gynnar honom, rött är tufft. Rader utan märkning finns redan i modellens siffra.",tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
+  nx_foot:"Rankning: grönt gynnar honom, rött är tufft.",
+  nxv_val:"värde", nxv_season_g:"Säsongens chanser (xG)", nxv_l10_g:"Senaste 10, chanser (xG)", nxv_season_s:"Säsongens skott", nxv_l10_s:"Senaste 10, skott",
+  nxv_season_a:"Säsongens assist", nxv_l10_a:"Senaste 10, assist", nxv_season_p:"Säsongens poäng", nxv_l10_p:"Senaste 10, poäng",tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
 <p><b>Varje värdespel kontrolleras på tre sätt</b>, alla i kvällens match (samma motstånd, samma målvakt):</p>
 <ol><li><b>Modellens siffra</b>: det sajten normalt visar.</li><li><b>Hans säsong hittills</b>: vad hans faktiska produktion i år säger.</li><li><b>Hans senaste 10 matcher</b>: vad hans senaste form säger.</li></ol>
 <p><b>Sedan varningstecknen:</b> djupforward på mål eller poäng, motståndarmålvakten inte bekräftad, marknaden går emot (oddset stiger, eller skarpa bookens rättvisa odds är högre än det erbjudna; tillsammans räknas de som en varning), skjuter klart mer eller mindre i år, kort NHL-historik.</p>
@@ -2723,7 +2728,6 @@ function nextTip(pid, gid, m){
   const g = gameById[gid], pr = g?.props.find(x => String(x.id) === String(pid)), p = P(pid); if (!pr || !p) return null;
   const opp = pr.opp, l = lambdas(pr, g), N = Object.keys(DATA.teams).length || 32;
   const row = (k, v, extra) => `<div class="nxr"><span>${k}</span><span>${v}${extra ? " " + extra : ""}</span></div>`;
-  const ctx = `<span class="nxctx" title="${esc(t("nx_ctx_tip"))}">${t("nx_ctx")}</span>`;
   const good = r => r <= 8, bad = r => r > N - 8, chip = (r, fav) => r == null ? "" : `<span class="rk ${fav(r) ? "rk-good" : fav(N + 1 - r) ? "rk-bad" : "rk-mid"}">#${r}</span>`;
   // --- tonight's number
   let mk, head;
@@ -2735,7 +2739,9 @@ function nextTip(pid, gid, m){
   const lbl = m === "s" ? t("tri_so",{l:mk.slice(1)}) : mName(mk);
   let num = head + row(lbl, `<b>${pct(pm,1)}</b> <span class="meta">${t("h_fair").toLowerCase()} ${oddsTxt(1/pm)}</span>`);
   if (od) num += row(t("h_odds"), `<b>${oddsTxt(od)}</b>${b?.n ? ` <span class="meta">/ ${oddsTxt(b.n)}</span>` : ""}`, `<span class="${pm*od-1>0?"ev-pos":"ev-neg"}">${evTxt(pm*od-1)}</span>`);
-  if (tr){ num += `<div class="nxtr">${trn && !tro ? `<span class="meta">${esc(triMkt(mk,"n"))}</span> ` : ""}${triBadge(tr)} ${Object.entries(tr.views).map(([k,e]) => `<span class="${e>0?"ok":"no"}">${t(k==="season"?"tvs_season":"tvs_l10")} ${evTxt(e)}</span>`).join(" · ")}</div>`; }
+  if (tr){ const base = m === "s" ? "s" : m === "g" ? "g" : m === "a" ? "a" : "p";
+    const vr = Object.entries(tr.views).map(([k,e]) => `<div class="nxr"><span>${t("nxv_"+k+"_"+base)}</span><span class="${e>0?"ev-pos":"ev-neg"}">${t("nxv_val")} ${evTxt(e)}</span></div>`).join("");
+    num += `<div class="nxtr2"><div class="nxtrl">${trn && !tro ? `<div class="nxr"><span>${esc(triMkt(mk,"n"))}</span><span></span></div>` : ""}${vr}</div><div class="nxtrb">${triBadge(tr)}</div></div>`; }
   // --- his side
   const lu = DATA.teams[pr.team]?.lineup?.groups || {}, line = Object.entries(lu).find(([k,ids]) => /^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
   const ppu = (lu.pp1||[]).includes(pr.id) ? "PP1" : (lu.pp2||[]).includes(pr.id) ? "PP2" : null;
@@ -2755,15 +2761,15 @@ function nextTip(pid, gid, m){
   if (m !== "s" && gk){ const q = gk.ratio; oppH += row(t("nx_goalie"), `<b>${esc(shortName(gk.name))}</b> <span class="${q>1.02?"up":q<0.98?"down":""}">×${fmt(q,3)}</span>`, `<span class="meta">${esc(trData(st)||"")}</span>`); }
   if (m === "s"){
     const sa = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.sa_all])); oppH += row(t("nx_sa"), `<b>${fmt(T.sa_all,1)}</b>`, chip(nxRank(sa, opp, true), good));
-    if (op) oppH += row(t("nx_pos_s",{p:t("op_"+posGroup(p.pos)).toLowerCase()}), `<b>${fmt(op.s,1)}</b>`, chip(op.s_rk, good) + ctx);
+    if (op) oppH += row(t("nx_pos_s",{p:t("op_"+posGroup(p.pos)).toLowerCase()}), `<b>${fmt(op.s,1)}</b>`, chip(op.s_rk, good));
   } else {
     if (TR.def) oppH += row(t("nx_def"), `<b>${fmt(TR.def.v,2)}</b>`, chip(N + 1 - TR.def.rk, good));
-    if (TR.gsax) oppH += row(t("nx_gsax"), `<b>${(TR.gsax.v>=0?"+":"")+fmt(TR.gsax.v,2)}</b>`, chip(N + 1 - TR.gsax.rk, good) + ctx);
+    if (TR.gsax) oppH += row(t("nx_gsax"), `<b>${(TR.gsax.v>=0?"+":"")+fmt(TR.gsax.v,2)}</b>`, chip(N + 1 - TR.gsax.rk, good));
     const gx = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.gp ? (v.s_ga - v.s_xga)/v.gp : null]));
-    if (T.gp) oppH += row(t("nx_gavx"), `<b>${T.s_ga}</b> ${t("vs")} ${fmt(T.s_xga,1)}`, chip(nxRank(gx, opp, true), good) + ctx);
-    if (op){ const k = m === "g" ? "g" : "pt"; oppH += row(t(m === "g" ? "nx_pos_g" : "nx_pos_p",{p:t("op_"+posGroup(p.pos)).toLowerCase()}), `<b>${fmt(op[k],2)}</b>`, chip(op[k+"_rk"], good) + ctx); }
+    if (T.gp) oppH += row(t("nx_gavx"), `<b>${T.s_ga}</b> ${t("vs")} ${fmt(T.s_xga,1)}`, chip(nxRank(gx, opp, true), good));
+    if (op){ const k = m === "g" ? "g" : "pt"; oppH += row(t(m === "g" ? "nx_pos_g" : "nx_pos_p",{p:t("op_"+posGroup(p.pos)).toLowerCase()}), `<b>${fmt(op[k],2)}</b>`, chip(op[k+"_rk"], good)); }
   }
-  if (ppu){ const pen = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.pen_pg])); oppH += row(t("nx_pen"), `<b>${fmt(T.pen_pg,1)}</b>`, chip(nxRank(pen, opp, true), good) + ctx);
+  if (ppu){ const pen = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.pen_pg])); oppH += row(t("nx_pen"), `<b>${fmt(T.pen_pg,1)}</b>`, chip(nxRank(pen, opp, true), good));
     if (TR.pk) oppH += row(t("nx_pk"), `<b>${fmt(TR.pk.v,2)}</b>`, chip(N + 1 - TR.pk.rk, good)); }
   const dt_ = g.date === dates[0] ? t("today") : new Date(g.date + "T12:00:00").toLocaleDateString(LOCALE(), {weekday:"short", day:"numeric", month:"short"});
   const tm = g.start ? new Date(g.start).toLocaleTimeString(LOCALE(), {hour:"2-digit", minute:"2-digit"}) : "";
