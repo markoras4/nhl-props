@@ -115,13 +115,21 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
     likely = bool(pct) and int(pct.group(1)) >= 70
     if m in SCORING and ("confirmed" not in st or "unconfirmed" in st) and not likely:
         caut.append("goalie")
+    # the market's view (price drifting out, the sharp book's fair price) is one opinion: one caution at most
+    mk, sf = [], None
     if side == "o" and open_odds and od > open_odds * 1.05:
-        caut.append("drift")
+        mk.append("drift")
     b = book or {}
     if b.get("p") and b.get("pn"):
         sp = (1 / b["p"]) / (1 / b["p"] + 1 / b["pn"])
-        if ((sp if side == "o" else 1 - sp) * od - 1) < 0:
-            caut.append("sharp")
+        sps = sp if side == "o" else 1 - sp
+        sf = round(1 / sps, 2) if sps > 0 else None
+        if sps * od - 1 < 0:
+            mk.append("sharp")
+        else:
+            info.append("sharp_ok")
+    if mk:
+        caut.append("mkt")
     if (((pl.get("windows") or {}).get("career") or {}).get("gp") or 0) < 50:
         caut.append("short")
     if od >= 6:
@@ -137,4 +145,4 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
         gr = "S"
     else:
         gr = "L"
-    return {"gr": gr, "views": views, "c": caut, "i": info}
+    return {"gr": gr, "views": views, "c": caut, "i": info, "mk": mk, "sf": sf}
