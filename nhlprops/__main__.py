@@ -797,9 +797,9 @@ def pregame(src: Source, state_file: Path, window: int) -> int:
                 starts.add(g["startTimeUTC"])
     done = json.loads(state_file.read_text()) if state_file.exists() else []
     due = []
-    for s in sorted(starts):   # two refreshes per puck drop: ~1 hour before, and ~30 min before (goalies confirmed)
+    for s in sorted(starts):   # three refreshes per puck drop: ~1 hour before, ~30 min before, and ~15 min before (warmups)
         mins = (dt.datetime.fromisoformat(s.replace("Z", "+00:00")) - now).total_seconds() / 60
-        for w in (window, 35):
+        for w in (window, 35, 20):
             if 0 < mins <= w and f"{s}|{w}" not in done:
                 due.append(f"{s}|{w}")
     # post-game refresh: once every game of a night is final, rebuild so results show and picks get graded

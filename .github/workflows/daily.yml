@@ -8,6 +8,8 @@ on:
     - cron: "15 22 * * *"   # 23:15 - just before most puck drops
     - cron: "25,55 15-23 * * *"  # pre-game checks: rebuild ~1 hour before each puck drop
     - cron: "25,55 0-8 * * *"    #   (only builds when a game starts within 75 minutes, or when a night's games are all final)
+    - cron: "15,45 15-23 * * *"  # last check ~15 min before each puck drop (goalies confirmed at warmups), before the 5-min lock
+    - cron: "15,45 0-8 * * *"
     - cron: "15 8 * * *"    # 09:15 Stockholm - morning results, after the late West Coast games
   workflow_dispatch:         # "Run workflow" button in the Actions tab
 
@@ -37,7 +39,7 @@ jobs:
           SCHED: ${{ github.event.schedule }}
         run: |
           case "$SCHED" in
-            "25,55 "*) python -m nhlprops pregame ;;
+            "25,55 "*|"15,45 "*) python -m nhlprops pregame ;;
             *) echo "run=true" >> "$GITHUB_OUTPUT" ;;
           esac
 
