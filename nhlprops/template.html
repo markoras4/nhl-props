@@ -399,6 +399,7 @@ td.h{text-align:center;padding:4px}
 .gtg{outline:none}.gtg:focus-visible rect:not(.gthit){stroke:var(--accent);stroke-width:2}
 .hits i.gtg{cursor:pointer}
 .l10lines{pointer-events:none}
+.newsprev{margin:6px 0 0;font-size:12.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.newsbox.open .newsprev{display:none}
 .nxbar{fill:color-mix(in srgb,var(--accent) 10%,transparent);stroke:var(--accent);stroke-width:1.4;stroke-dasharray:4 3}
 .nxg:hover .nxbar,.nxg:focus-visible .nxbar{fill:color-mix(in srgb,var(--accent) 22%,transparent)}.nxq{fill:var(--accent);font:700 13px var(--f-ui)}.nxo{fill:var(--accent) !important}
 .gtip.gtnext{width:300px;max-width:calc(100vw - 16px);padding:11px 13px}
@@ -1215,7 +1216,7 @@ const I18N = {
     al_ios:"On iPhone and iPad: tap Share, then “Add to Home Screen”, open Props Lab from your home screen and turn notifications on here.",
     al_test_title:"Props Lab alerts work", al_test_body:"You'll get a notification like this when one of your alerts fires.", proj_short:"proj.", frozen_note:"Locked 5 minutes before puck drop: probabilities, odds, picks and player details stay exactly as they were then.",
     st_uncertain:"Not decided", or_g:"or {n}", alt_note:"Sources disagree on the starter. {n} may start instead – switch below to see his effect.",
-    st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", upd_at:"updated {t}",
+    st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", news_n:"{n} notes", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
     inj_out:"Out", inj_q:"Questionable",
     h2h_title:"Last meetings", h2h_sum:"{a} {aw} – {hw} {h} in wins · avg {avg} goals · over {l} in {o} of {n}", h2h_total:"Goals", h2h_away:"Away", h2h_home:"Home",
@@ -1440,7 +1441,7 @@ const I18N = {
     al_ios:"På iPhone och iPad: tryck på Dela, sedan ”Lägg till på hemskärmen”, öppna Props Lab från hemskärmen och slå på notiser här.",
     al_test_title:"Props Lab-aviseringar fungerar", al_test_body:"Du får en notis som den här när en av dina aviseringar slår till.", proj_short:"ber.", frozen_note:"Låst 5 minuter före nedsläpp: sannolikheter, odds, spel och spelardetaljer står kvar precis som de var då.",
     st_uncertain:"Inte avgjort", or_g:"eller {n}", alt_note:"Källorna är oense om startmålvakten. {n} kan starta i stället – byt nedan för att se effekten.",
-    st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", upd_at:"uppdaterad {t}",
+    st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", news_n:"{n} notiser", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
     inj_out:"Ute", inj_q:"Osäker",
     h2h_title:"Senaste mötena", h2h_sum:"{a} {aw} – {hw} {h} i vinster · snitt {avg} mål · över {l} i {o} av {n}", h2h_total:"Mål", h2h_away:"Borta", h2h_home:"Hemma",
@@ -2366,8 +2367,12 @@ function newsCard(team){
   const n = DATA.teams[team]?.news; if(!n || !n.notes) return "";
   let when = ""; try { when = new Date(n.updated).toLocaleString(LOCALE(),{weekday:"short",hour:"2-digit",minute:"2-digit"}); } catch(e){}
   const items = n.notes.split(/\s*(?:\.\.\.|…)\s*/).map(x=>x.trim()).filter(Boolean);
-  return `<div class="box newsbox"><h4>${t("team_news")} <span class="meta">${when?t("upd_at",{t:esc(when)}):""}</span></h4>
-    <ul class="newsl">${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  // collapsed by default (one shared open/closed choice): the header keeps the count and the first item as a preview
+  const k = "news", op = CL_OPEN(k);
+  return `<div class="box newsbox clp ${op?"open":""}" data-clk="${k}"><button type="button" class="clph" aria-expanded="${op}"><h4 style="margin:0;flex:1;display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0">
+      <span>${logo(team,18)} ${t("team_news")} <span class="meta">· ${team} · ${t("news_n",{n:items.length})}</span></span><span class="meta">${when?t("upd_at",{t:esc(when)}):""}</span></h4><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+    <p class="newsprev">${esc(items[0] || "")}</p>
+    <div class="clpb"><div class="clpi"><ul class="newsl">${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div></div>`;
 }
 
 const GRID_STD = ["g","a","pt",...C.sog_lines.slice(0,3).map(L=>"s"+L)];
