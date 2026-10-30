@@ -543,6 +543,7 @@ def main(argv=None):
     bt.add_argument("--depthcal", action="store_true", help="test a goal/point correction for low-minute forwards")
     bt.add_argument("--roadtrip", action="store_true", help="test the last game of road trips and trip length")
     bt.add_argument("--b2b", action="store_true", help="fit the back-to-back adjustment")
+    bt.add_argument("--shooters", action="store_true", help="test whether high-volume shooters are underrated on shots")
     bt.add_argument("--usage", action="store_true", help="test trusting this season more when a player's shooting breaks from his history")
     bt.add_argument("--homeroad", action="store_true", help="test team-specific home ice")
     bt.add_argument("--season", action="store_true", help="test the season simulation (playoff chances, game importance)")
@@ -590,6 +591,10 @@ def main(argv=None):
         if args.season:
             from .backtest_season import run as run_ss
             run_ss(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.shooters:
+            from .backtest_shooters import run as run_sh
+            run_sh(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.usage:
             from .backtest_usage import run as run_us

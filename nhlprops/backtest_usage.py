@@ -59,7 +59,25 @@ def frames(src, seasons, cfg, log):
         prev_gp = P.groupby("pid").gp.sum() if len(P) else pd.Series(dtype=float)
         df["exp_gp"] = df.pid.map(prev_gp).fillna(0)
         df["season"] = season
-        keep = ["season", "pid", "posg", "date", "g", "a", "s", "lam_g", "lam_a", "lam_s", "toi_proj", "c_gp", "c_toi", "c_s", "c_g",
+        # opponent shots allowed so far (per game) and back-to-backs, for backtest_shooters
+        tg = []
+        for gm in games.itertuples():
+            if gm.hsog is None or gm.asog is None or pd.isna(gm.hsog) or pd.isna(gm.asog):
+                continue
+            tg.append((gm.id, gm.date, gm.home, float(gm.asog))); tg.append((gm.id, gm.date, gm.away, float(gm.hsog)))
+        tg = pd.DataFrame(tg, columns=["gid", "date", "team", "sa"]).sort_values(["team", "date"])
+        tg["c_sa"] = tg.groupby("team").sa.cumsum() - tg.sa
+        tg["c_n"] = tg.groupby("team").cumcount()
+        lg_sa = float(tg.sa.mean()) if len(tg) else 30.0
+        tg["sa_pg"] = (tg.c_sa + 10 * lg_sa) / (tg.c_n + 10)
+        tg["opp_sa_r"] = tg.sa_pg / lg_sa
+        tg["prev"] = pd.to_datetime(tg.groupby("team").date.shift(1))
+        tg["b2b"] = ((pd.to_datetime(tg.date) - tg.prev).dt.days == 1).astype(float)
+        osa = tg.set_index(["gid", "team"]).opp_sa_r
+        b2b = tg.set_index(["gid", "team"]).b2b
+        df["opp_sa_r"] = [osa.get((a, b), 1.0) for a, b in zip(df.gid, df.opp)]
+        df["b2b"] = [b2b.get((a, b), 0.0) for a, b in zip(df.gid, df.team)]
+        keep = ["season", "gid", "team", "opp", "opp_sa_r", "b2b", "pid", "posg", "date", "g", "a", "s", "lam_g", "lam_a", "lam_s", "toi_proj", "c_gp", "c_toi", "c_s", "c_g",
                 "c_xg", "c_att", "r10_g", "r10_a", "r10_s", "r10_toi", "wh", "ws", "wg", "wxg", "car_s", "car_g", "exp_gp", "L_s60", "L_xg60", "L_sh", "L_toi"]
         out.append(df[keep])
         log(f"  {season}: {len(df):,} player-games, in-season xG for {int((df.xg > 0).sum()):,}")
