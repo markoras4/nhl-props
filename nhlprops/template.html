@@ -54,7 +54,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:center;gap:14px;padding-block:12px;flex-wrap:wrap}
 .brand{font-family:var(--f-disp);font-weight:800;font-size:19px;letter-spacing:.6px;cursor:pointer;text-transform:uppercase}
-.brand b{color:var(--accent)}
+.brand b{color:var(--accent)}.betap{font:700 10px/1 var(--f-ui);letter-spacing:.6px;text-transform:uppercase;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 55%,transparent);border-radius:999px;padding:3px 7px;margin-left:6px;vertical-align:3px}
 .meta{color:var(--mute);font-size:12px}
 .demo{background:var(--warn);color:#111;font-weight:700;border-radius:6px;padding:2px 8px;font-size:11px}
 nav{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
@@ -963,6 +963,7 @@ body.has-cmp main{padding-bottom:110px}
 
 <script>
 const DATA=/*__DATA__*/null;
+const IS_SHL = DATA && DATA.league_code === "SHL";
 const C = DATA.config;
 const $ = (s, el=document) => el.querySelector(s);
 const fmt = (x, d=1) => x==null || isNaN(x) ? "–" : Number(x).toFixed(d);
@@ -1521,7 +1522,7 @@ function regJoint(mh, ma, n=16){
 function gameDist(mh, ma){
   const J=regJoint(mh, ma), tot=new Array(34).fill(0); let tie=0, hw=0;
   for(let i=0;i<J.length;i++) for(let j=0;j<J.length;j++){ const p=J[i][j]; let s=i+j; if(i===j){tie+=p;s+=1;} else if(i>j) hw+=p; tot[s]+=p; }
-  const ph_ = hw + tie*((mh+ma)>0 ? mh/(mh+ma) : 0.5);
+  const ph_ = hw + tie*Math.min(0.9, ((mh+ma)>0 ? mh/(mh+ma) : 0.5) + (C.tie_home_bonus||0));
   return {ph:ph_, pa:1-ph_, tie, over: L => tot.slice(Math.floor(L)+1).reduce((a,b)=>a+b,0)};
 }
 function gameMu(g){
@@ -1563,7 +1564,7 @@ function prob(pr, game, m){
   if (m==="pt") return atLeastOne(l.g + l.a);
   if (m[0]==="h") return nbOver(pr.base.hit, parseFloat(m.slice(1)), C.hb_dispersion);
   if (m[0]==="b") return nbOver(pr.base.blk, parseFloat(m.slice(1)), C.hb_dispersion);
-  return poisOver(l.s, parseFloat(m.slice(1)));
+  return C.shots_r ? nbOver(l.s, parseFloat(m.slice(1)), C.shots_r) : poisOver(l.s, parseFloat(m.slice(1)));
 }
 const HIT_LINES = C.hit_lines || [], BLK_LINES = C.blk_lines || [];
 // team shots on goal and goalie saves (saves follow the goalie you pick)
@@ -1588,7 +1589,7 @@ const MKEYS = [...MGROUPS.pts, ...MGROUPS.s];
 const isHB = m => /^[hb]\d/.test(m);
 const hasHB = pr => pr && pr.base && pr.base.hit != null;
 function hasM(pr, m){
-  if (!pr || !pr.base) return false;
+  if (!pr || !pr.base || !m) return false;
   if (isHB(m)) return pr.base.hit != null;
   if (m==="ppp") return pr.base.ppp != null;
   if (m.startsWith("pim")) return pr.base.pen != null;
@@ -1767,6 +1768,7 @@ function header(){
   $("#acct").textContent = USER ? (USER.email||"").split("@")[0] : t("login");
   $("#acct").classList.toggle("in", !!USER);
   $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["futures","nav_futures"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
+    .filter(([k]) => !IS_SHL || ["games","props"].includes(k))
     .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}"><svg class="nico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${t(l)}</span></button>`).join("");
   $("#ofmt").innerHTML = [["dec","1.85"],["us","−118"],["frac","17/20"]].map(([k,l])=>`<option value="${k}" ${OFMT===k?"selected":""}>${innerWidth < 760 ? l : l+" · "+t("of_"+k)}</option>`).join("");
   $("#ofmt").title = t("of_title"); $("#ofmt").setAttribute("aria-label", t("of_title"));
@@ -2830,13 +2832,13 @@ function matchup(g){
   <div class="card" style="padding:6px 14px"><table class="cmp"><tbody>
     <tr><td><b>${g.away}</b></td><td>${t("cmp")}</td><td><b>${g.home}</b></td></tr>
     ${row(t("c_ptspct"), A.pts_pct, H.pts_pct, v=>pct(v,1))}
-    ${raw(t("c_tier"), trTier(A.tier), trTier(H.tier))}
-    ${raw(t("c_streak2"), streak(A), streak(H))}
+    ${IS_SHL?"":raw(t("c_tier"), trTier(A.tier), trTier(H.tier))}
+    ${IS_SHL?"":raw(t("c_streak2"), streak(A), streak(H))}
     ${raw(t("c_l5"), trResults(A.last5), trResults(H.last5))}
     ${raw(t("c_l5gfga"), `${fmt(A.l5_gf,1)} / ${fmt(A.l5_ga,1)}`, `${fmt(H.l5_gf,1)} / ${fmt(H.l5_ga,1)}`)}
     ${raw(t("c_gfga"), `${fmt(A.gf_pg,2)} / ${fmt(A.ga_pg,2)}`, `${fmt(H.gf_pg,2)} / ${fmt(H.ga_pg,2)}`)}
     ${raw(t("c_rh"), `${fmt(A.gf_away,2)} – ${fmt(A.ga_away,2)}`, `${fmt(H.gf_home,2)} – ${fmt(H.ga_home,2)}`)}
-    ${row(t("c_ppm"), A.pp_min, H.pp_min, v=>fmt(v,1))}
+    ${IS_SHL?"":row(t("c_ppm"), A.pp_min, H.pp_min, v=>fmt(v,1))}
     ${row(t("c_o55"), A["over_5.5_reg"], H["over_5.5_reg"], v=>pct(v), null)}
     ${row(t("c_o55rh"), A["over_5.5_away"], H["over_5.5_home"], v=>pct(v), null)}
     ${row(t("c_o553"), A["over_5.5_3y"], H["over_5.5_3y"], v=>pct(v), null)}
@@ -3905,6 +3907,8 @@ function howTab(){
 
 function render(){
   header();
+  if (IS_SHL){ const h = $("#home"); if (h && !h.dataset.shl){ h.dataset.shl = "1"; h.innerHTML = `SHL Props <b>Lab</b> <span class="betap">beta</span>`; document.title = "SHL Props Lab (beta)"; }
+    if (!["games","props"].includes(state.tab)) state.tab = "games"; }
   archBar();
   const af = $("#appfoot"); if (af) af.innerHTML = `<span class="age">18+</span><span>${t("rg_foot")}<br><span class="legal">${t("legal_links")}</span></span>`;
   if (state.tab==="games") (state.game ? gamePage : gamesList)();

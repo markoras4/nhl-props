@@ -111,6 +111,22 @@ def rosters(sched):
         wgz(ROOT / "rosters.json.gz", out)
 
 
+def logos(sched):
+    """team logos (SVG) so the page works offline"""
+    d = ROOT / "logos"; d.mkdir(parents=True, exist_ok=True)
+    for g in sched.get("gameInfo", []):
+        for side in ("homeTeamInfo", "awayTeamInfo"):
+            t = g.get(side) or {}
+            code, url = t.get("code"), t.get("icon")
+            if not code or not url or (d / f"{code}.svg").exists():
+                continue
+            try:
+                with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": H["User-Agent"]}), timeout=30) as r:
+                    (d / f"{code}.svg").write_bytes(r.read())
+            except Exception as e:  # noqa: BLE001
+                print("  logo fail", code, str(e)[:60])
+
+
 def summaries(ssgt):
     for kind, name in (("players_summary", "summary_players"), ("goalkeepers_summary", "summary_goalies")):
         js = get(f"{SHL}/statistics-v2/stats-info/{kind}?count=1000&ssgtUuid={ssgt}&provider=statnet")
@@ -149,6 +165,7 @@ def main():
                                        "stored": len(list((ROOT / "games" / str(code)).glob("*.json.gz"))) if (ROOT / "games" / str(code)).exists() else 0}
         if code == cur:
             rosters(sch)
+            logos(sch)
             if sch.get("ssgtUuid"):
                 summaries(sch["ssgtUuid"])
     odds()
