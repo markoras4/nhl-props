@@ -405,7 +405,7 @@ td.h{text-align:center;padding:4px}
 .gtip.gtsheet{position:fixed;left:8px !important;right:8px;bottom:calc(72px + env(safe-area-inset-bottom));width:auto;max-width:none;pointer-events:auto}
 .nxb{border-top:1px solid var(--line);padding:7px 0 5px;margin-top:6px}.nxh{font:700 10px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
 .nxr{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;line-height:1.55}.nxr>span:first-child{color:var(--mute)}.nxr>span:last-child{text-align:right;white-space:nowrap}
-.nxr .rk{font-size:10px;padding:1px 5px;margin-left:3px}.rk.rk-mid{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}
+.nxrk{display:inline-block;min-width:30px;text-align:right;font-weight:700;font-size:11.5px;margin-left:6px}.nxrk.good{color:var(--good)}.nxrk.mid{color:#e3a33b}.nxrk.bad{color:var(--bad,#e5484d)}.rk.rk-mid{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}
 .nxctx{font-size:9px;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:0 3px;margin-left:4px;vertical-align:1px}
 .nxtr2{display:flex;align-items:center;gap:10px;margin-top:3px}.nxtrl{flex:1;min-width:0}.nxtrb{flex:none}.nxtrb .trib{font-size:10px;padding:2px 8px}
 .nxtr{font-size:11px;margin-top:4px}.nxtr .ok{color:var(--good)}.nxtr .no{color:var(--mute)}.nxtr .trib{font-size:9.5px;padding:1px 6px}
@@ -2728,7 +2728,7 @@ function nextTip(pid, gid, m){
   const g = gameById[gid], pr = g?.props.find(x => String(x.id) === String(pid)), p = P(pid); if (!pr || !p) return null;
   const opp = pr.opp, l = lambdas(pr, g), N = Object.keys(DATA.teams).length || 32;
   const row = (k, v, extra) => `<div class="nxr"><span>${k}</span><span>${v}${extra ? " " + extra : ""}</span></div>`;
-  const good = r => r <= 8, bad = r => r > N - 8, chip = (r, fav) => r == null ? "" : `<span class="rk ${fav(r) ? "rk-good" : fav(N + 1 - r) ? "rk-bad" : "rk-mid"}">#${r}</span>`;
+  const good = r => r <= 8, bad = r => r > N - 8, chip = (r, fav) => r == null ? "" : `<span class="nxrk ${fav(r) ? "good" : fav(N + 1 - r) ? "bad" : "mid"}">#${r}</span>`;
   // --- tonight's number
   let mk, head;
   if (m === "s"){ const L = state.l10line?.s ?? C.sog_lines.reduce((b,x)=>Math.abs(prob(pr,g,"s"+x)-0.5) < Math.abs(prob(pr,g,"s"+b)-0.5) ? x : b, C.sog_lines[0]); mk = "s" + L;
@@ -2751,7 +2751,8 @@ function nextTip(pid, gid, m){
     const H = p.hr?.[mk], n = p.hr?.n; if (H && n?.[1]) his += row(t("nx_hit10",{l:mk.slice(1)}), `<b>${H[1]}/${n[1]}</b>`); }
   else if (m === "g"){ his += row(t("nx_sh"), `<b>${pct(p.windows?.cur?.sh ?? 0,1)}</b> <span class="meta">${t("nx_vs_true",{v:pct(r.recent_sh ?? r.career_sh,1)})}</span>`);
     if (rg.exp != null) his += row(t("k_gvx"), `<b>${fmt(rg.g,0)}</b> ${t("vs")} ${fmt(rg.exp,1)}`, rg.z <= -1 ? `<span class="nxtag lo">${t("nx_unlucky")}</span>` : rg.z >= 1.5 ? `<span class="nxtag hi">${t("nx_hot")}</span>` : "");
-    if (d.shots != null) his += row(t("k_since"), `<b>${d.found ? d.shots : d.shots + "+"}</b> <span class="meta">(${d.games} ${t("gm")})</span>`); }
+    if (d.shots != null) his += row(t("k_since"), `<b>${d.found ? d.shots : d.shots + "+"}</b> <span class="meta">(${d.games} ${t("gm")})</span>`);
+    if (d.shots_per_goal) his += row(t("k_spg"), `<b>${fmt(d.shots_per_goal,1)}</b>`); }
   else { const f = p.form || {}; his += row(t("nx_l5"), `<b>${f.g||0}</b> ${t("h_g")} · <b>${f.a||0}</b> ${t("h_a")}`);
     if (p.role?.ppp5 != null && ppu) his += row(t("nx_ppp5"), `<b>${p.role.ppp5}</b>`); }
   // --- opponent
