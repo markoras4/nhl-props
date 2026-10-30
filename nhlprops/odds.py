@@ -202,6 +202,42 @@ def merge_second(main: dict, pin: dict) -> None:
                     cur[m] = {"o": v["o"], "n": v.get("n"), "b": "p"}
 
 
+def merge_manual(main: dict, data_dir, games: list[dict], log=print) -> None:
+    """Odds copied by hand from another sportsbook (data/manual_odds/<date>.json, keyed by game id): fill player markets,
+    totals and game markets the feeds lack (marked b='s'); existing feed prices are kept."""
+    import json
+    from pathlib import Path
+    ids = {str(g["id"]) for g in games}
+    n = 0
+    for f in sorted(Path(data_dir, "manual_odds").glob("*.json")):
+        try:
+            man = json.loads(f.read_text(encoding="utf-8"))
+        except Exception as e:  # noqa: BLE001
+            log(f"  manual odds {f.name} unreadable: {e}")
+            continue
+        for gid, rec in man.items():
+            if gid not in ids:
+                continue
+            key = int(gid) if any(isinstance(k, int) for k in main) else gid
+            o = main.setdefault(key, {"book": "Bookmaker", "players": {}, "totals": {}, "winner": {}, "fetched": None})
+            if not o.get("fetched"):
+                o["fetched"] = rec.get("fetched")
+            o.setdefault("markets", {}).update({k: v for k, v in (rec.get("markets") or {}).items() if k not in o.get("markets", {})})
+            tot = o.setdefault("totals", {})
+            for L, v in (rec.get("totals") or {}).items():
+                tot.setdefault(L, v)
+            po = o.setdefault("players", {})
+            for pid, mk in (rec.get("players") or {}).items():
+                pkey = int(pid) if any(isinstance(k, int) for k in po) else pid
+                cur = po.setdefault(pkey, {})
+                for m, v in mk.items():
+                    if m not in cur:
+                        cur[m] = {"o": v["o"], "n": v.get("n"), "b": "s"}
+                        n += 1
+    if n:
+        log(f"  manual odds: {n} player prices added")
+
+
 FUT_URL = BASE + "/listView/ice_hockey/nhl/all/all/competitions.json?lang=en_GB&market=SE&useCombined=true"
 
 

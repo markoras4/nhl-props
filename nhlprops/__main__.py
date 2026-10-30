@@ -698,6 +698,11 @@ def main(argv=None):
             merge_second(slate["odds"], fetch_pinnacle(src, slate["games"], raw["skaters"]))
         except Exception as e:
             print("Sharp-book odds unavailable:", e)
+        try:   # prices copied by hand from another sportsbook fill the markets the feeds lack
+            from .odds import merge_manual
+            merge_manual(slate["odds"], data_dir, slate["games"])
+        except Exception as e:
+            print("Manual odds skipped:", e)
         try:   # public betting splits (tickets and money per side), kept with the odds so they lock with them
             from .odds import fetch_public
             for gid, rec in fetch_public(src, slate["games"]).items():
