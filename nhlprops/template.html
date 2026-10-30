@@ -260,6 +260,7 @@ td.h{text-align:center;padding:4px}
 .pick .pm .trib{margin-top:4px}
 .tritab td{vertical-align:middle}@media(max-width:560px){.tritab td,.tritab th{padding-left:5px;padding-right:5px}.tritab .llnm img,.tritab .llnm svg{display:none}}.tritab tr.row{cursor:pointer}.trv{display:inline-block;font-size:11px;padding:1px 6px;border-radius:6px;margin:1px 0}.trv.ok{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}.trv.no{color:var(--mute);background:var(--panel2)}
 .trc,.tri_i{display:block;font-size:11px;line-height:1.35}.trc{color:#e3a33b}.tri_i{color:var(--mute)}
+.trihow{border-collapse:collapse;margin:10px 0}.trihow td{padding:6px 10px 6px 0;vertical-align:middle;border:0}.trihow .trib{cursor:default}.trinote{border-left:3px solid #e3a33b;padding:8px 12px;background:color-mix(in srgb,#e3a33b 8%,transparent);border-radius:0 8px 8px 0}
 .trif{margin-top:10px}.trif summary{cursor:pointer;color:var(--mute);font-size:13px;padding:6px 0}
 .cell .evtag.tg-F{opacity:.55}.cell .evtag.tg-S{box-shadow:0 0 0 1.5px var(--good)}
 .cell .evtag{position:absolute;top:-7px;right:-5px;z-index:1;font-style:normal;font-size:9px;font-weight:700;line-height:1;padding:2px 4px;border-radius:5px;color:var(--good);background:var(--bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--good) 55%,transparent);pointer-events:none}
@@ -1435,7 +1436,13 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {tri_tab:"Triage", tri_S:"Solid", tri_L:"Lean", tri_F:"Fragile",
+Object.assign(I18N.en, {tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
+<p><b>Every value bet is checked three ways</b>, all in tonight's matchup (same opponent, same goalie):</p>
+<ol><li><b>The model's number</b>: what the site normally shows.</li><li><b>His season so far</b>: what his actual production this season would say.</li><li><b>His last 10 games</b>: what his recent form would say.</li></ol>
+<p><b>Then the warning signs:</b> depth forward on goals or points, opposing goalie not confirmed, price drifting out since it opened, the sharp book disagreeing, shooting clearly up or down this season, a short NHL history.</p>
+<table class="trihow"><tr><td><span class="trib tr-S">Solid</span></td><td>All three views show value, and no warning signs.</td></tr><tr><td><span class="trib tr-L">Lean</span></td><td>Value is there, but one view disagrees or there's one warning.</td></tr><tr><td><span class="trib tr-F">Fragile</span></td><td>Only the model sees value, or there are two or more warnings.</td></tr></table>
+<p class="trinote"><b>Fragile doesn't mean wrong or skip it.</b> The model is patient with players in slumps, and historically that patience beats raw season numbers. Fragile means much more uncertain: you're betting purely on the model's view. If you play those, play them smaller, and give Solid bets your bigger stakes.</p>
+<p class="meta">Every best pick stores its grade, and the Track record shows how each grade has done over time.</p>`,tri_tab:"Triage", tri_S:"Solid", tri_L:"Lean", tri_F:"Fragile",
   tri_S_tip:"Solid: his season and last-10 numbers also show value at this price, and nothing in the checks argues against it.",
   tri_L_tip:"Lean: real edge, but one view or one caution doesn't back it.",
   tri_F_tip:"Fragile: only the model sees value here, or several cautions stack up. Not wrong by itself, just much less certain.",
@@ -1449,7 +1456,13 @@ Object.assign(I18N.en, {tri_tab:"Triage", tri_S:"Solid", tri_L:"Lean", tri_F:"Fr
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {tri_tab:"Triage", tri_S:"Stabil", tri_L:"Lutar", tri_F:"Skör",
+Object.assign(I18N.sv, {tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
+<p><b>Varje värdespel kontrolleras på tre sätt</b>, alla i kvällens match (samma motstånd, samma målvakt):</p>
+<ol><li><b>Modellens siffra</b>: det sajten normalt visar.</li><li><b>Hans säsong hittills</b>: vad hans faktiska produktion i år säger.</li><li><b>Hans senaste 10 matcher</b>: vad hans senaste form säger.</li></ol>
+<p><b>Sedan varningstecknen:</b> djupforward på mål eller poäng, motståndarmålvakten inte bekräftad, oddset har stigit sedan öppning, den skarpa booken håller inte med, skjuter klart mer eller mindre i år, kort NHL-historik.</p>
+<table class="trihow"><tr><td><span class="trib tr-S">Stabil</span></td><td>Alla tre vyerna visar värde, och inga varningstecken.</td></tr><tr><td><span class="trib tr-L">Lutar</span></td><td>Värdet finns, men en vy håller inte med eller så finns en varning.</td></tr><tr><td><span class="trib tr-F">Skör</span></td><td>Bara modellen ser värde, eller så finns två eller fler varningar.</td></tr></table>
+<p class="trinote"><b>Skör betyder inte fel eller hoppa över.</b> Modellen har tålamod med spelare i svackor, och historiskt slår det tålamodet råa säsongssiffror. Skör betyder mycket osäkrare: du spelar helt på modellens bild. Spelar du dem, satsa mindre, och lägg de större insatserna på stabila spel.</p>
+<p class="meta">Varje bästa spel sparar sitt betyg, och resultatsidan visar hur varje betyg har gått över tid.</p>`,tri_tab:"Triage", tri_S:"Stabil", tri_L:"Lutar", tri_F:"Skör",
   tri_S_tip:"Stabil: hans säsongs- och senaste-10-siffror visar också värde till det här priset, och inget i kontrollerna talar emot.",
   tri_L_tip:"Lutar: verkligt värde, men en vy eller en varning stöder det inte.",
   tri_F_tip:"Skör: bara modellen ser värde här, eller så staplas flera varningar. Inte fel i sig, bara mycket osäkrare.",
@@ -2182,10 +2195,11 @@ function triageList(){
     <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${day===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
     <div class="seg olseg" id="trg"><button data-k="all" class="${grp==="all"?"on":""}">${t("tri_all")}</button>${fams.map(f=>`<button data-k="${f}" class="${grp===f?"on":""}">${t("mg_"+f)}</button>`).join("")}</div>
     <div class="seg olseg" id="trs">${["all","o","n"].map(k=>`<button data-k="${k}" class="${sd===k?"on":""}">${t(k==="all"?"tri_all":"tri_side"+k)}</button>`).join("")}</div></div>
+    <div class="card trhow clp ${CL_OPEN("trihow")?"open":""}" data-clk="trihow"><button type="button" class="clph" aria-expanded="${CL_OPEN("trihow")}"><span class="trhh">${I_SVG}${t("tri_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${t("tri_how")}</div></div></div></div>
     <div class="box"><h4>${t("tri_title")} <span class="meta">${t("tri_sub")}</span></h4>${lk}
     ${rows.length ? `<div class="tablewrap"><table class="tritab">${head}<tbody>${good.map(row).join("")}</tbody></table></div>
       ${bad.length ? `<details class="trif"><summary>${t("tri_fragile",{n:bad.length})}</summary><div class="tablewrap"><table class="tritab">${head}<tbody>${bad.map(row).join("")}</tbody></table></div></details>` : ""}` : `<p class="meta">${t("tri_none")}</p>`}
-    <p class="note">${t("tri_note")}</p></div>`;
+    </div>`;
   $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); popBtn(`#psort [data-s="${b.dataset.s}"]`); } };
   $("#fday").onchange = e => { state.pday=e.target.value; triageList(); };
   $("#trg").onclick = e => { const b=e.target.closest("button"); if(b){ state.trg=b.dataset.k; triageList(); popBtn(`#trg [data-k="${b.dataset.k}"]`); } };
