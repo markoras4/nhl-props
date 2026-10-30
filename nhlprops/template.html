@@ -2161,6 +2161,14 @@ function triZ(p){
   if ((xb.gp||0) >= 40 && (xc.gp||0) >= 8){ const px = xb.xg/xb.gp; zx = px > 0 ? (xc.xg - xc.gp*px)/Math.sqrt(xc.gp*px) : 0; }
   return [zs, zx];
 }
+// the season and last-10 views of a market as probabilities, in tonight's context (also used when there's no value)
+function triViewProbs(g, pr, m){
+  const p = P(pr.id), out = {}; if (!p || !(TRI_SCORING.has(m) || /^s\d/.test(m))) return out;
+  for (const [k, r] of Object.entries(triRatios(p))){
+    const pr2 = {...pr, base:{...pr.base, g:pr.base.g*r.g, a:pr.base.a*r.a, s:pr.base.s*r.s/(C.sog_calibration||1)}};
+    out[k] = prob(pr2, g, m); }
+  return out;
+}
 function triage(g, pr, m, side, od){
   const p = P(pr.id); if (!p || !od || m === "fg") return null;
   const q0 = prob(pr, g, m), pm = side === "n" ? 1 - q0 : q0, ev = pm*od - 1; if (!(ev > 0)) return null;
@@ -2744,9 +2752,11 @@ function nextTip(pid, gid, m){
   const lbl = m === "s" ? t("tri_so",{l:mk.slice(1)}) : mName(mk);
   let num = head + row(lbl, `<b>${pct(pm,1)}</b> <span class="meta">${t("h_fair").toLowerCase()} ${oddsTxt(1/pm)}</span>`);
   if (od) num += row(t("h_odds"), `<b>${oddsTxt(od)}</b>${b?.n ? ` <span class="meta">/ ${oddsTxt(b.n)}</span>` : ""}`, `<span class="${pm*od-1>0?"ev-pos":"ev-neg"}">${evTxt(pm*od-1)}</span>`);
-  if (tr){ const base = m === "s" ? "s" : m === "g" ? "g" : m === "a" ? "a" : "p";
-    const vr = Object.entries(tr.views).map(([k,e]) => `<div class="nxr"><span>${t("nxv_"+k+"_"+base)}</span><span class="${e>0?"ev-pos":"ev-neg"}">${t("nxv_val")} ${evTxt(e)}</span></div>`).join("");
-    num += `<div class="nxtr2"><div class="nxtrl">${trn && !tro ? `<div class="nxr"><span>${esc(triMkt(mk,"n"))}</span><span></span></div>` : ""}${vr}</div><div class="nxtrb">${triBadge(tr)}</div></div>`; }
+  { // season and last-10 views: always shown; with odds as value at the price (under side when only the under has value)
+    const base = m === "s" ? "s" : m === "g" ? "g" : m === "a" ? "a" : "p", useN = trn && !tro, vp = triViewProbs(g, pr, mk);
+    const vr = Object.entries(vp).map(([k,q]) => { const qq = useN ? 1 - q : q, oo = useN ? b.n : od, e = oo ? qq*oo - 1 : null;
+      return `<div class="nxr"><span>${t("nxv_"+k+"_"+base)}</span><span>${e == null ? `<b>${pct(qq,1)}</b>` : `<span class="meta">${pct(qq,0)}</span> <span class="${e>0?"ev-pos":"ev-neg"}">${t("nxv_val")} ${evTxt(e)}</span>`}</span></div>`; }).join("");
+    if (vr) num += `<div class="nxtr2"><div class="nxtrl">${useN ? `<div class="nxr"><span>${esc(triMkt(mk,"n"))}</span><span></span></div>` : ""}${vr}</div>${tr ? `<div class="nxtrb">${triBadge(tr)}</div>` : ""}</div>`; }
   // --- his side
   const lu = DATA.teams[pr.team]?.lineup?.groups || {}, line = Object.entries(lu).find(([k,ids]) => /^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
   const ppu = (lu.pp1||[]).includes(pr.id) ? "PP1" : (lu.pp2||[]).includes(pr.id) ? "PP2" : null;
