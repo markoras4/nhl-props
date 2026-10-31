@@ -10,11 +10,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: SHL stats pages (browser)
+      - name: Commons photos for the blog
         run: |
-          python3 tools/probe/swe.py || echo "probe failed"
+          python3 tools/probe/commons.py || echo "probe failed"
       - name: Save
         run: |
           git config user.name "nhl-props-bot"; git config user.email "actions@users.noreply.github.com"
-          mkdir -p /tmp/pr && cp -r probe-swe /tmp/pr/
-          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-swe . && git add probe-swe && git commit -qm probe && git push -f origin HEAD:probe2
+          mkdir -p /tmp/pr && cp -r probe-commons /tmp/pr/
+          git checkout --orphan probe2 && git rm -rfq --cached . && rm -rf ./* && cp -r /tmp/pr/probe-commons . && git add probe-commons && git commit -qm probe && git push -f origin HEAD:probe2
