@@ -414,7 +414,8 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
     solid = None
     try:   # Triage ledger: every bet graded Solid at the lock (the landing card shows this record)
         rows = json.loads((out_dir / "ledger.json").read_text(encoding="utf-8")).get("rows") or []
-        sr = [r for r in rows if r.get("gr") == "S"]
+        # blocked shots are graded but kept out of the headline record until ~50 graded blocks bets prove them
+        sr = [r for r in rows if r.get("gr") == "S" and not (r["m"][0] == "b" and r["m"][1:2].isdigit())]
         done = [r for r in sr if r.get("r") in ("w", "l")]
         if done:
             u = sum(r["u"] for r in done)

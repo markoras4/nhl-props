@@ -155,6 +155,9 @@ def grade(src, led_dir: Path, out_path: Path, log=print) -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps({"built": now.isoformat(timespec="minutes"), "rows": rows}, separators=(",", ":")), encoding="utf-8")
     done = [r for r in rows if r.get("r") in ("w", "l")]
+    nb = sum(1 for r in done if r["m"][0] == "b" and r["m"][1:2].isdigit())
+    if nb >= 50:
+        log(f"Triage ledger: {nb} graded blocks bets: time to review whether blocks join the headline Solid record")
     if done:
         by = {}
         for r in done:
