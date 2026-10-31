@@ -6,7 +6,7 @@ shooting clearly down (overs) or up (unders) this season vs his previous 3 seaso
 markets, the opposing goalie not confirmed, the price drifting out since it opened, the sharp book disagreeing,
 a short NHL history; for power-play points, his season and last-10 PP rate as the two views, an over on a player off
 the first PP unit, and a "no" on a player newly moved to the first unit. Grade:
-  S (solid)    both views also show value, no caution, odds 1.30-7.99 (long shots and very short prices top out at lean)
+  S (solid)    both views also show value, no caution, odds 1.30-7.99, edge at least 3% (long shots and very short prices top out at lean)
   F (fragile)  neither view shows value, or 2+ cautions
   L (lean)     everything in between
 """
@@ -222,7 +222,7 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
     nv = len(views)
     if (nv and v == 0) or len(caut) >= 2:
         gr = "F"
-    elif nv == 2 and v == 2 and not caut and 1.30 <= od < 8:   # long shots (8.00+) and very short prices (under 1.30) top out at lean
+    elif nv == 2 and v == 2 and not caut and 1.30 <= od < 8 and pm * od - 1 >= 0.03:   # Solid needs a 3%+ edge   # long shots (8.00+) and very short prices (under 1.30) top out at lean
         gr = "S"
     else:
         gr = "L"
