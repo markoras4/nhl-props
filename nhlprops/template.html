@@ -400,6 +400,29 @@ td.h{text-align:center;padding:4px}
 .hits i.gtg{cursor:pointer}
 .l10lines{pointer-events:none}
 .newsprev{margin:6px 0 0;font-size:12.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.newsbox.open .newsprev{display:none}
+.exwrap{display:flex;flex-direction:column;gap:12px}.exhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}.exh2{font:800 22px var(--f-head,var(--f-ui));margin:0 0 2px;letter-spacing:.01em}
+.exctl{flex-wrap:wrap}.exsel{display:inline-flex;align-items:center;gap:6px}.exsel>span{font:800 11px var(--f-ui);color:var(--accent);letter-spacing:.06em}
+.exbox{padding:12px 12px 10px;overflow:hidden}.exchart{width:100%}.exsvg{width:100%;height:auto;display:block}
+.explot{stroke:var(--line);stroke-width:1}.exgl{stroke:color-mix(in srgb,var(--text) 7%,transparent);stroke-width:1}.extk{fill:var(--mute);font:500 11px var(--f-ui)}
+.exax{fill:var(--mute);font:700 11px var(--f-ui);letter-spacing:.06em;text-transform:uppercase}
+.exavg{stroke:color-mix(in srgb,var(--text) 22%,transparent);stroke-width:1;stroke-dasharray:3 5}.exdiag{stroke:var(--accent);stroke-opacity:.55;stroke-width:1.5;stroke-dasharray:6 5}
+.exq{font:700 11px var(--f-ui);letter-spacing:.05em;text-transform:uppercase}.exq.hi{fill:var(--good)}.exq.lo{fill:#e3a33b}
+.exd{cursor:pointer;transition:transform .75s cubic-bezier(.2,.8,.2,1),opacity .4s ease}.exd circle{transition:r .25s ease,fill-opacity .25s ease;stroke-width:1.2}
+.exd.f circle{fill:var(--accent);fill-opacity:.55;stroke:var(--accent)}.exd.d circle{fill:#6aa8ff;fill-opacity:.55;stroke:#6aa8ff}
+.exd.top circle{fill-opacity:.95;stroke:var(--text);stroke-width:1.6;filter:url(#exglow)}.exd.hl circle{fill:#ffd166;stroke:#ffd166;fill-opacity:1;filter:url(#exglow)}
+.exd.dim{opacity:.18}.exd:hover circle{r:8;fill-opacity:1}.exlab{fill:var(--text);font:700 11px var(--f-ui);paint-order:stroke;stroke:var(--panel);stroke-width:3px;pointer-events:none}
+.exfirst .exd{animation:exin .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d)}
+@keyframes exin{from{opacity:0}to{opacity:1}}
+.exfirst .exd circle{animation:expop .6s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d)}@keyframes expop{from{r:0}}
+.exleg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mute);margin-top:6px;align-items:center}.exdot{display:inline-block;flex:none;width:9px;min-width:9px;height:9px;box-sizing:border-box;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.exdot.f{background:var(--accent)}.exdot.d{background:#6aa8ff}.exdot.top{background:transparent;border:2px solid var(--text)}
+.exstory{font-size:13px;color:var(--text);margin:0 4px 6px;line-height:1.45}.exstory b{color:var(--accent)}
+.extop{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.exrow{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:var(--panel2);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;animation:exrow .5s ease both;animation-delay:var(--d)}
+.exrow:hover{transform:translateY(-2px);box-shadow:0 0 0 1.5px var(--accent)}@keyframes exrow{from{opacity:0;transform:translateY(6px)}}
+.exrk{font:800 13px var(--f-ui);color:var(--accent);width:18px;text-align:center}.exnm{flex:1;min-width:0;display:flex;flex-direction:column}.exnm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exv{display:flex;flex-direction:column;align-items:flex-end;min-width:58px}@media(max-width:560px){.exv small{max-width:64px}.exv{min-width:48px}.exrow{gap:8px;padding:8px 10px}}.exv small{font-size:9.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis}.exv b{font-size:14px}
+.extip{position:fixed;z-index:60;width:250px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 12px 32px rgba(0,0,0,.4);pointer-events:none;font-family:var(--f-ui);animation:exrow .18s ease both}.extip[hidden]{display:none}
 .nxbar{fill:color-mix(in srgb,var(--accent) 10%,transparent);stroke:var(--accent);stroke-width:1.4;stroke-dasharray:4 3}
 .nxg:hover .nxbar,.nxg:focus-visible .nxbar{fill:color-mix(in srgb,var(--accent) 22%,transparent)}.nxq{fill:var(--accent);font:700 13px var(--f-ui)}.nxo{fill:var(--accent) !important}
 .gtip.gtnext{width:300px;max-width:calc(100vw - 16px);padding:11px 13px}
@@ -1451,7 +1474,22 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponent · {t}", nx_exp_s:"Expected shots", nx_min:"min", nx_s60:"Shots per 60", nx_hit10:"Over {l} in last 10",
+Object.assign(I18N.en, {nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
+  exp_luck:"Luck", exp_vol:"Volume vs finishing", exp_role:"Role", exp_pp:"Power play", exp_trend:"Shots trend", exp_tonight:"Tonight",
+  ex_f:"Forwards", ex_d:"Defencemen", ex_top10:"Top 10 in this view", ex_min:"Minimum games", ex_minopt:"{n}+ games", ex_count:"{n} players", ex_next:"Next game", ex_click:"Click to open his profile", ex_none:"No players match these filters.",
+  ex_foot:"This season's numbers (hits and blocks: last 10 games). 'Tonight' uses 1+ point: market chance with the margin removed vs the model. Players shown are those with an upcoming game.",
+  ex_custom:"<b>{y}</b> against <b>{x}</b>. The dashed lines are the averages of the players shown.", ex_t_custom:"Top 10 by {y}",
+  exs_luck:"<b>Expected goals vs actual goals.</b> On the dashed diagonal, goals match chances. Far below it: unlucky so far (their chances are already counted, so it isn't value by itself). Far above: running hot.",
+  exs_vol:"<b>Shots per game vs shooting %.</b> Right side: high volume. Low shooting % with big volume usually means a cold spell, not lost skill.",
+  exs_role:"<b>Ice time vs points per game.</b> Big minutes with few points, or a lot of points in small minutes: role and production don't always match.",
+  exs_pp:"<b>Power-play minutes vs PP points per game.</b> Who turns power-play time into points.",
+  exs_trend:"<b>Season shots per game vs his last 10 games.</b> Above the diagonal: shooting more lately. Below: shooting less. Volume changes like these are real signals.",
+  exs_tonight:"<b>Tonight, 1+ point: market vs model.</b> Above the diagonal the model sees a bigger chance than the market (value). Check the Triage grade before betting.",
+  ex_t_luck:"Most unlucky (furthest below the diagonal)", ex_t_vol:"Cold high-volume shooters", ex_t_role:"Most productive per minute (points per 60)", ex_t_pp:"Best power-play converters", ex_t_trend:"Shooting more lately", ex_t_tonight:"Biggest model edge tonight (1+ point)",
+  ex_q_luck_hi:"Running hot", ex_q_luck_lo:"Unlucky", ex_q_up:"Shooting more lately", ex_q_down:"Shooting less", ex_q_val:"Model sees value", ex_q_noval:"Market higher",
+  exm_gp:"Games", exm_g:"Goals", exm_a:"Assists", exm_p:"Points", exm_s:"Shots", exm_xg:"Expected goals", exm_g_pg:"Goals / game", exm_a_pg:"Assists / game", exm_p_pg:"Points / game", exm_s_pg:"Shots / game",
+  exm_xg_pg:"Expected goals / game", exm_gmx:"Goals − expected", exm_sh:"Shooting %", exm_sht:"True shooting %", exm_toi:"Ice time / game", exm_toi5:"Ice time, last 5", exm_s60:"Shots / 60", exm_p60:"Points / 60",
+  exm_ppmin:"PP minutes / game", exm_ppp_pg:"PP points / game", exm_l10s:"Shots / game, last 10", exm_o25:"Over 2.5 shots, last 10", exm_hit:"Hits / game", exm_blk:"Blocks / game", exm_mkt:"Tonight: market 1+ point", exm_mod:"Tonight: model 1+ point",nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponent · {t}", nx_exp_s:"Expected shots", nx_min:"min", nx_s60:"Shots per 60", nx_hit10:"Over {l} in last 10",
   nx_sh:"Shooting % this season", nx_vs_true:"true {v}", nx_unlucky:"unlucky", nx_hot:"hot", nx_l5:"Last 5 games", nx_ppp5:"PP points, last 5",
   nx_goalie:"Goalie", nx_sa:"Shots allowed / game", nx_pos_s:"Shots allowed to {p}", nx_pos_g:"Goals allowed to {p}", nx_pos_p:"Points allowed to {p}",
   nx_def:"Defence xGA/60", nx_gsax:"Goaltending GSAx/game", nx_gavx:"Goals allowed vs expected", nx_pen:"Penalties taken / game", nx_pk:"Penalty kill xGA/60",
@@ -1480,7 +1518,22 @@ Object.assign(I18N.en, {nx_tonight:"Tonight", nx_his:"His side", nx_opp:"Opponen
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {nx_tonight:"I kväll", nx_his:"Hans sida", nx_opp:"Motstånd · {t}", nx_exp_s:"Väntade skott", nx_min:"min", nx_s60:"Skott per 60", nx_hit10:"Över {l} senaste 10",
+Object.assign(I18N.sv, {nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
+  exp_luck:"Tur", exp_vol:"Volym mot effektivitet", exp_role:"Roll", exp_pp:"Powerplay", exp_trend:"Skottrend", exp_tonight:"I kväll",
+  ex_f:"Forwards", ex_d:"Backar", ex_top10:"Topp 10 i vyn", ex_min:"Minst matcher", ex_minopt:"{n}+ matcher", ex_count:"{n} spelare", ex_next:"Nästa match", ex_click:"Klicka för att öppna profilen", ex_none:"Inga spelare matchar filtren.",
+  ex_foot:"Säsongens siffror (tacklingar och blockeringar: senaste 10 matcherna). 'I kväll' gäller 1+ poäng: marknadens chans utan marginal mot modellen. Spelare med en kommande match visas.",
+  ex_custom:"<b>{y}</b> mot <b>{x}</b>. De streckade linjerna är snittet för spelarna som visas.", ex_t_custom:"Topp 10 efter {y}",
+  exs_luck:"<b>Förväntade mål mot faktiska mål.</b> På diagonalen stämmer mål med chanser. Långt under: otur hittills (chanserna räknas redan, så det är inget värde i sig). Långt över: het.",
+  exs_vol:"<b>Skott per match mot skottprocent.</b> Till höger: hög volym. Låg skottprocent med stor volym betyder oftast en kall period, inte tappad skicklighet.",
+  exs_role:"<b>Istid mot poäng per match.</b> Mycket istid med få poäng, eller många poäng på lite istid: roll och produktion går inte alltid ihop.",
+  exs_pp:"<b>Powerplayminuter mot PP-poäng per match.</b> Vem som gör poäng av sin powerplaytid.",
+  exs_trend:"<b>Säsongens skott per match mot senaste 10 matcherna.</b> Över diagonalen: skjuter mer nu. Under: mindre. Sådana volymförändringar är verkliga signaler.",
+  exs_tonight:"<b>I kväll, 1+ poäng: marknad mot modell.</b> Över diagonalen ser modellen en större chans än marknaden (värde). Kolla triagebetyget innan du spelar.",
+  ex_t_luck:"Mest otur (längst under diagonalen)", ex_t_vol:"Kalla skyttar med hög volym", ex_t_role:"Mest produktiva per minut (poäng per 60)", ex_t_pp:"Bäst på att omvandla powerplay", ex_t_trend:"Skjuter mer nu", ex_t_tonight:"Största modellvärdet i kväll (1+ poäng)",
+  ex_q_luck_hi:"Het", ex_q_luck_lo:"Otur", ex_q_up:"Skjuter mer nu", ex_q_down:"Skjuter mindre", ex_q_val:"Modellen ser värde", ex_q_noval:"Marknaden högre",
+  exm_gp:"Matcher", exm_g:"Mål", exm_a:"Assist", exm_p:"Poäng", exm_s:"Skott", exm_xg:"Förväntade mål", exm_g_pg:"Mål / match", exm_a_pg:"Assist / match", exm_p_pg:"Poäng / match", exm_s_pg:"Skott / match",
+  exm_xg_pg:"Förväntade mål / match", exm_gmx:"Mål − förväntat", exm_sh:"Skottprocent", exm_sht:"Verklig skottprocent", exm_toi:"Istid / match", exm_toi5:"Istid, senaste 5", exm_s60:"Skott / 60", exm_p60:"Poäng / 60",
+  exm_ppmin:"PP-minuter / match", exm_ppp_pg:"PP-poäng / match", exm_l10s:"Skott / match, senaste 10", exm_o25:"Över 2.5 skott, senaste 10", exm_hit:"Tacklingar / match", exm_blk:"Blockeringar / match", exm_mkt:"I kväll: marknad 1+ poäng", exm_mod:"I kväll: modell 1+ poäng",nx_tonight:"I kväll", nx_his:"Hans sida", nx_opp:"Motstånd · {t}", nx_exp_s:"Väntade skott", nx_min:"min", nx_s60:"Skott per 60", nx_hit10:"Över {l} senaste 10",
   nx_sh:"Skottprocent i år", nx_vs_true:"verklig {v}", nx_unlucky:"otur", nx_hot:"het", nx_l5:"Senaste 5 matcherna", nx_ppp5:"PP-poäng, senaste 5",
   nx_goalie:"Målvakt", nx_sa:"Insläppta skott / match", nx_pos_s:"Skott släppta till {p}", nx_pos_g:"Mål släppta till {p}", nx_pos_p:"Poäng släppta till {p}",
   nx_def:"Försvar xGA/60", nx_gsax:"Målvaktsspel GSAx/match", nx_gavx:"Insläppta mål mot förväntat", nx_pen:"Utvisningar / match", nx_pk:"Boxplay xGA/60",
@@ -1850,11 +1903,11 @@ function header(){
   $("#meta").innerHTML = ARCH ? t("ar_meta",{d:dayLabel(ARCH.date), n:DATA.games.length}) : t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "")
     + (DATA.previews && Object.keys(DATA.previews).length ? ` · <a class="pvlink" href="../previews">${t("pv_all")}</a>` : "");
   const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
-    props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
+    props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', explore:'<path d="M4 4v16h16"/><circle cx="9" cy="14" r="1.6"/><circle cx="13" cy="9" r="1.6"/><circle cx="17" cy="12" r="1.6"/><circle cx="16" cy="6" r="1.6"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
     how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>', futures:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"/>', picks:'<path d="M6 4h12v16l-6-4-6 4z"/>'};
   $("#acct").textContent = USER ? (USER.email||"").split("@")[0] : t("login");
   $("#acct").classList.toggle("in", !!USER);
-  $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["futures","nav_futures"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
+  $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["explore","nav_explore"],["futures","nav_futures"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
     .filter(([k]) => !IS_SHL || ["games","props"].includes(k))
     .map(([k,l])=>`<button data-tab="${k}" class="${state.tab===k?"on":""}"><svg class="nico" viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${t(l)}</span></button>`).join("");
   $("#ofmt").innerHTML = [["dec","1.85"],["us","−118"],["frac","17/20"]].map(([k,l])=>`<option value="${k}" ${OFMT===k?"selected":""}>${innerWidth < 760 ? l : l+" · "+t("of_"+k)}</option>`).join("");
@@ -3332,6 +3385,139 @@ function oppPosPlayer(pr, p){
     <p class="note">${t("op_pnote")}</p></div>`;
 }
 
+// ------------------------------------------------------------ Players explorer: any two stats on a scatter, presets with a story
+const EX_M = {
+  gp:{d:0, f:p => p.windows?.cur?.gp}, g:{d:0, f:p => p.windows?.cur?.g}, a:{d:0, f:p => p.windows?.cur?.a}, p:{d:0, f:p => p.windows?.cur?.p},
+  s:{d:0, f:p => p.windows?.cur?.s}, xg:{d:1, f:p => p.xg_windows?.cur?.xg},
+  g_pg:{d:2, f:p => p.windows?.cur?.g_pg}, a_pg:{d:2, f:p => p.windows?.cur?.a_pg}, p_pg:{d:2, f:p => p.windows?.cur?.p_pg}, s_pg:{d:2, f:p => p.windows?.cur?.s_pg},
+  xg_pg:{d:2, f:p => { const x = p.xg_windows?.cur; return x?.gp ? x.xg / x.gp : null; }},
+  gmx:{d:1, f:p => { const x = p.xg_windows?.cur; return x ? x.g - x.xg : null; }},
+  sh:{d:1, pct:true, f:p => p.windows?.cur?.s ? p.windows.cur.g / p.windows.cur.s : null}, sht:{d:1, pct:true, f:p => p.rates?.career_sh},
+  toi:{d:1, f:p => p.toi_season ?? p.toi_proj}, toi5:{d:1, f:p => p.role?.toi5},
+  s60:{d:1, f:p => { const c = p.windows?.cur, t_ = p.toi_season; return c?.gp && t_ ? c.s / (c.gp * t_ / 60) : null; }},
+  p60:{d:2, f:p => { const c = p.windows?.cur, t_ = p.toi_season; return c?.gp && t_ ? c.p / (c.gp * t_ / 60) : null; }},
+  ppmin:{d:1, f:p => p.x?.pp?.min_pg}, ppp_pg:{d:2, f:p => p.x?.pp?.gp ? p.x.pp.ppp / p.x.pp.gp : null},
+  l10s:{d:2, f:p => { const gs = (p.form?.games||[]).slice(0,10); return gs.length >= 5 ? gs.reduce((a,x)=>a+x.s,0)/gs.length : null; }},
+  o25:{d:0, pct:true, f:p => p.hr?.["s2.5"] && p.hr.n?.[1] ? p.hr["s2.5"][1] / p.hr.n[1] : null},
+  hit:{d:2, f:p => { const gs = (p.hb_games||[]).slice(0,10); return gs.length >= 5 ? gs.reduce((a,x)=>a+x.hit,0)/gs.length : null; }},
+  blk:{d:2, f:p => { const gs = (p.hb_games||[]).slice(0,10); return gs.length >= 5 ? gs.reduce((a,x)=>a+x.blk,0)/gs.length : null; }},
+  mkt:{d:0, pct:true, tonight:true, f:(p, nx) => { if (!nx) return null; const b = book(nx.g.id, nx.pr.id, "pt"); return noVig(b) ?? (b?.o ? 1/b.o : null); }},
+  mod:{d:0, pct:true, tonight:true, f:(p, nx) => nx && getOdds(nx.g.id, nx.pr.id, "pt") ? prob(nx.pr, nx.g, "pt") : null},
+};
+const EX_P = {
+  luck:{x:"xg", y:"g", diag:true, q:["ex_q_luck_hi","ex_q_luck_lo"], top:(x,y)=>x-y, tt:"ex_t_luck"},
+  vol:{x:"s_pg", y:"sh", q:null, top:(x,y,p)=>(EX_M.s_pg.f(p)||0) * ((p.rates?.career_sh||0) - (y||0)), tt:"ex_t_vol"},
+  role:{x:"toi", y:"p_pg", top:(x,y,p)=>EX_M.p60.f(p)||0, tt:"ex_t_role"},
+  pp:{x:"ppmin", y:"ppp_pg", top:(x,y)=> x > 0.5 ? y / x : -1, tt:"ex_t_pp"},
+  trend:{x:"s_pg", y:"l10s", diag:true, q:["ex_q_up","ex_q_down"], top:(x,y)=>y-x, tt:"ex_t_trend"},
+  tonight:{x:"mkt", y:"mod", diag:true, q:["ex_q_val","ex_q_noval"], top:(x,y)=>y-x, tt:"ex_t_tonight"},
+};
+let EX_NEXT = null;
+function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
+  for (const g of [...DATA.games].sort((a,b)=>(a.start||"").localeCompare(b.start||""))){ if (g.state && !["FUT","PRE"].includes(g.state)) continue;
+    for (const pr of g.props) if (!EX_NEXT[pr.id]) EX_NEXT[pr.id] = {g, pr}; }
+  return EX_NEXT; }
+const exVal = (k, p) => { const m = EX_M[k], v = m.f(p, exNext()[p.id]); return v == null || !isFinite(v) ? null : v; };
+const exFmt = (k, v) => v == null ? "–" : EX_M[k].pct ? pct(v, EX_M[k].d) : (k === "gmx" && v > 0 ? "+" : "") + fmt(v, EX_M[k].d);
+function exState(){ const S = state.ex = state.ex || {preset:"luck", pos:"all", team:"all", tonight:false, min:5, q:""};
+  if (S.preset && EX_P[S.preset]){ S.x = EX_P[S.preset].x; S.y = EX_P[S.preset].y; } return S; }
+function exRows(S){
+  const nx = exNext(), out = [];
+  for (const p of Object.values(DATA.players)){
+    if (!p.active || p.posg === "G" || !nx[p.id]) continue;
+    if (S.pos !== "all" && p.posg !== S.pos) continue;
+    if (S.team !== "all" && p.team !== S.team) continue;
+    if (S.tonight && nx[p.id].g.date !== dates[0]) continue;
+    if ((p.windows?.cur?.gp || 0) < S.min) continue;
+    const x = exVal(S.x, p), y = exVal(S.y, p); if (x == null || y == null) continue;
+    out.push({p, x, y, nx: nx[p.id]}); }
+  return out;
+}
+function exploreTab(){
+  const S = exState(), teams = [...new Set(Object.values(DATA.players).map(p => p.team))].filter(Boolean).sort();
+  const opt = k => Object.keys(EX_M).map(m => `<option value="${m}" ${k===m?"selected":""}>${t("exm_"+m)}</option>`).join("");
+  $("#main").innerHTML = `<div class="exwrap">
+    <div class="exhead"><div><h2 class="exh2">${t("ex_title")}</h2><p class="meta">${t("ex_sub")}</p></div></div>
+    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(EX_P).map(k=>`<button data-k="${k}" class="${S.preset===k?"on":""}">${t("exp_"+k)}</button>`).join("")}</div></div>
+    <div class="controls exctl">
+      <label class="exsel"><span>Y</span><select id="exy">${opt(S.y)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(S.x)}</select></label>
+      <div class="seg olseg" id="expos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")]].map(([k,l])=>`<button data-k="${k}" class="${S.pos===k?"on":""}">${l}</button>`).join("")}</div>
+      <select id="exteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${S.team===x?"selected":""}>${x}</option>`).join("")}</select>
+      <select id="exmin" aria-label="${t("ex_min")}">${[1,5,10,20].map(v=>`<option value="${v}" ${S.min===v?"selected":""}>${t("ex_minopt",{n:v})}</option>`).join("")}</select>
+      <label class="toggle"><input type="checkbox" id="extn" ${S.tonight?"checked":""}> ${t("ll_tonight")}</label>
+      <input type="search" id="exq" placeholder="${t("search")}" value="${esc(S.q)}"></div>
+    <div class="box exbox"><div class="exstory" id="exstory"></div><div class="exchart" id="exchart"></div>
+      <div class="exleg"><span><i class="exdot f"></i>${t("ex_f")}</span><span><i class="exdot d"></i>${t("ex_d")}</span><span><i class="exdot top"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span></div></div>
+    <div class="box"><h4 id="extoph"></h4><div id="extop"></div></div>
+    <p class="foot">${t("ex_foot")}</p></div>`;
+  const re = () => exDraw(true);
+  $("#expre").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.preset = b.dataset.k; S.x = EX_P[S.preset].x; S.y = EX_P[S.preset].y;
+    $("#expre").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expre [data-k="${b.dataset.k}"]`); $("#exx").value = S.x; $("#exy").value = S.y; re(); };
+  $("#exx").onchange = e => { S.x = e.target.value; S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); re(); };
+  $("#exy").onchange = e => { S.y = e.target.value; S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); re(); };
+  $("#expos").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.pos = b.dataset.k; $("#expos").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expos [data-k="${b.dataset.k}"]`); re(); };
+  $("#exteam").onchange = e => { S.team = e.target.value; re(); };
+  $("#exmin").onchange = e => { S.min = +e.target.value; re(); };
+  $("#extn").onchange = e => { S.tonight = e.target.checked; re(); };
+  $("#exq").oninput = e => { S.q = e.target.value.toLowerCase(); exDraw(false); };
+  exDraw(true, true);
+}
+function exOpen(id){ const nx = exNext()[id]; if (!nx) return; go({tab:"games", game:nx.g.id, side: nx.pr.team}); state.open = id; render(); revealPlayer(id, {force:true}); }
+function exDraw(animate, first){
+  const S = state.ex, rows = exRows(S), box = $("#exchart"); if (!box) return;
+  const narrow = innerWidth < 640, W = Math.max(320, Math.min(1100, box.clientWidth || 900)), H = narrow ? 380 : 520;
+  const L = narrow ? 40 : 56, R = 18, T = 18, B = narrow ? 40 : 46;
+  const xs = rows.map(r => r.x), ys = rows.map(r => r.y);
+  const P_ = EX_P[S.preset] || null;
+  const ext = (a, diag2) => { if (!a.length) return [0,1]; let lo = Math.min(...a), hi = Math.max(...a); if (diag2){ lo = Math.min(lo, ...diag2); hi = Math.max(hi, ...diag2); }
+    const pad = (hi - lo || 1) * 0.06; return [lo - pad, hi + pad]; };
+  let [x0, x1] = ext(xs, P_?.diag ? ys : null), [y0, y1] = ext(ys, P_?.diag ? xs : null);
+  if (P_?.diag){ const lo = Math.min(x0, y0), hi = Math.max(x1, y1); x0 = y0 = lo; x1 = y1 = hi; }
+  const sx = v => L + (W - L - R) * (v - x0) / (x1 - x0 || 1), sy = v => T + (H - T - B) * (1 - (v - y0) / (y1 - y0 || 1));
+  const nice = (a, b, n) => { const st = Math.pow(10, Math.floor(Math.log10((b - a) / n || 1))), m = [1,2,5,10].find(k => (b - a) / (st * k) <= n) * st; const out = []; for (let v = Math.ceil(a / m) * m; v <= b + 1e-9; v += m) out.push(+v.toFixed(6)); return out; };
+  const fx = v => EX_M[S.x].pct ? pct(v, 0) : fmt(v, Math.abs(x1 - x0) < 3 ? 1 : 0), fy = v => EX_M[S.y].pct ? pct(v, 0) : fmt(v, Math.abs(y1 - y0) < 3 ? 1 : 0);
+  const gx = nice(x0, x1, narrow ? 5 : 8).map(v => `<line x1="${sx(v)}" x2="${sx(v)}" y1="${T}" y2="${H-B}" class="exgl"/><text x="${sx(v)}" y="${H-B+16}" text-anchor="middle" class="extk">${fx(v)}</text>`).join("");
+  const gy = nice(y0, y1, narrow ? 5 : 7).map(v => `<line x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}" class="exgl"/><text x="${L-8}" y="${sy(v)+4}" text-anchor="end" class="extk">${fy(v)}</text>`).join("");
+  const mx = xs.length ? xs.reduce((a,b)=>a+b,0)/xs.length : 0, my = ys.length ? ys.reduce((a,b)=>a+b,0)/ys.length : 0;
+  const avg = `<line x1="${sx(mx)}" x2="${sx(mx)}" y1="${T}" y2="${H-B}" class="exavg"/><line x1="${L}" x2="${W-R}" y1="${sy(my)}" y2="${sy(my)}" class="exavg"/>`;
+  const diag = P_?.diag ? `<line x1="${sx(x0)}" y1="${sy(x0)}" x2="${sx(x1)}" y2="${sy(x1)}" class="exdiag"/>` : "";
+  const ql = P_?.q ? `<text x="${L+10}" y="${T+16}" class="exq hi">${t(P_.q[0])}</text><text x="${W-R-10}" y="${H-B-10}" text-anchor="end" class="exq lo">${t(P_.q[1])}</text>` : "";
+  // top 10 of the view
+  const score = P_ ? (r => P_.top(r.x, r.y, r.p)) : (r => r.y);
+  const top = [...rows].sort((a,b) => score(b) - score(a)).slice(0, 10), topIds = new Set(top.map(r => r.p.id));
+  const q = S.q, hit = r => q && r.p.name.toLowerCase().includes(q);
+  const intX = EX_M[S.x].d === 0 && !EX_M[S.x].pct, intY = EX_M[S.y].d === 0 && !EX_M[S.y].pct;
+  const jit = (id, k) => { const v = Math.sin(id * (k ? 12.9898 : 78.233)) * 43758.5453; return (v - Math.floor(v)) - 0.5; };
+  const px = r => sx(r.x + (intX ? jit(r.p.id, 0) * 0.36 : 0)), py = r => sy(r.y + (intY ? jit(r.p.id, 1) * 0.36 : 0));
+  // labels for the top 10 / search hits, skipped when they'd collide with one already placed
+  const placed = [], canLabel = (x, y) => { if (placed.some(([a,b]) => Math.abs(a - x) < 70 && Math.abs(b - y) < 14)) return false; placed.push([x, y]); return true; };
+  const dots = rows.map((r, i) => { const tp = topIds.has(r.p.id), h = hit(r), cls = `exd ${r.p.posg === "D" ? "d" : "f"}${tp ? " top" : ""}${h ? " hl" : ""}${q && !h ? " dim" : ""}`;
+    return `<g class="${cls}" data-id="${r.p.id}" style="transform:translate(${px(r).toFixed(1)}px,${py(r).toFixed(1)}px);--d:${(i % 40) * 12}ms"><circle r="${tp || h ? 6.5 : 4.6}"/>${(tp || h) && canLabel(px(r), py(r)) ? `<text x="9" y="4" class="exlab">${esc(r.p.name.split(" ").slice(-1)[0])}</text>` : ""}</g>`; }).join("");
+  const axl = `<text x="${(L + W - R)/2}" y="${H-6}" text-anchor="middle" class="exax">${t("exm_"+S.x)}</text><text transform="translate(13 ${(T + H - B)/2}) rotate(-90)" text-anchor="middle" class="exax">${t("exm_"+S.y)}</text>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="exsvg ${animate ? "exanim" : ""} ${first ? "exfirst" : ""}" role="img" aria-label="${esc(t("ex_title"))}">
+    <defs><radialGradient id="exbg" cx="70%" cy="20%" r="90%"><stop offset="0" stop-color="var(--accent)" stop-opacity=".07"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
+    <filter id="exglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" rx="10" fill="url(#exbg)" class="explot"/>${gx}${gy}${avg}${diag}${ql}${axl}<g class="exdots">${dots}</g></svg>`;
+  $("#excount").textContent = t("ex_count",{n:rows.length});
+  $("#exstory").innerHTML = P_ ? t("exs_"+S.preset) : t("ex_custom",{x:t("exm_"+S.x), y:t("exm_"+S.y)});
+  $("#extoph").innerHTML = P_ ? t(P_.tt) : t("ex_t_custom",{y:t("exm_"+S.y)});
+  $("#extop").innerHTML = top.length ? `<div class="extop">${top.map((r, i) => `<div class="exrow" data-id="${r.p.id}" role="button" tabindex="0" style="--d:${i*45}ms"><span class="exrk">${i+1}</span>${logo(r.p.team,20)}<span class="exnm"><b>${esc(r.p.name)}</b><small class="meta">${r.p.team} · ${r.p.pos} · ${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} ${dayShort(r.nx.g.date)}</small></span>
+      <span class="exv"><small>${t("exm_"+S.x)}</small><b>${exFmt(S.x, r.x)}</b></span><span class="exv"><small>${t("exm_"+S.y)}</small><b>${exFmt(S.y, r.y)}</b></span></div>`).join("")}</div>` : `<p class="meta">${t("ex_none")}</p>`;
+  // interactions
+  const tip = document.querySelector(".extip") || Object.assign(document.body.appendChild(document.createElement("div")), {className:"extip", hidden:true});
+  const svg = box.querySelector("svg");
+  const show = (g, ev) => { const r = rows.find(z => String(z.p.id) === g.dataset.id); if (!r) return;
+    tip.innerHTML = `<div class="gth">${logo(r.p.team,18)} <b>${esc(r.p.name)}</b> <span class="meta">${r.p.team} · ${r.p.pos}</span></div>
+      <div class="nxr"><span>${t("exm_"+S.y)}</span><b>${exFmt(S.y, r.y)}</b></div><div class="nxr"><span>${t("exm_"+S.x)}</span><b>${exFmt(S.x, r.x)}</b></div>
+      <div class="nxr"><span>${t("ex_next")}</span><span>${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} · ${dayShort(r.nx.g.date)}</span></div><div class="nxf">${t("ex_click")}</div>`;
+    tip.hidden = false; const b = g.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = b.left + b.width/2 - w/2, y = b.top - h - 10; x = Math.max(8, Math.min(innerWidth - w - 8, x)); if (y < 8) y = b.bottom + 10; tip.style.left = x + "px"; tip.style.top = y + "px"; };
+  svg.onpointerover = e => { const g = e.target.closest(".exd"); if (g) show(g, e); };
+  svg.onpointerout = e => { const g = e.target.closest(".exd"); if (g && !g.contains(e.relatedTarget)) tip.hidden = true; };
+  svg.onclick = e => { const g = e.target.closest(".exd"); if (!g) return; if (e.pointerType === "touch" && tip.hidden){ show(g, e); return; } tip.hidden = true; exOpen(g.dataset.id); };
+  $("#extop").onclick = e => { const r = e.target.closest(".exrow"); if (r){ tip.hidden = true; exOpen(r.dataset.id); } };
+  addEventListener("scroll", () => { tip.hidden = true; }, {passive:true, once:true});
+}
 // ------------------------------------------------------------ top props
 function propsTab(){
   if (state.psort === "lines") return linesList();
@@ -4204,6 +4390,7 @@ function render(){
   const af = $("#appfoot"); if (af) af.innerHTML = `<span class="age">18+</span><span>${t("rg_foot")}<br><span class="legal">${t("legal_links")}</span></span>`;
   if (state.tab==="games") (state.game ? gamePage : gamesList)();
   else if (state.tab==="props") propsTab();
+  else if (state.tab==="explore") exploreTab();
   else if (state.tab==="futures") futuresTab();
   else if (state.tab==="track") trackTab();
   else if (state.tab==="picks") picksTab();
