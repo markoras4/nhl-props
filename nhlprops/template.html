@@ -437,6 +437,7 @@ td.h{text-align:center;padding:4px}
 .nxr{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;line-height:1.55}.nxr>span:first-child{color:var(--mute)}.nxr>span:last-child{text-align:right;white-space:nowrap}
 .nxrk{display:inline-block;min-width:30px;text-align:right;font-weight:700;font-size:11.5px;margin-left:6px}.nxrk.good{color:var(--good)}.nxrk.mid{color:#e3a33b}.nxrk.bad{color:var(--bad,#e5484d)}.rk.rk-mid{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}
 .nxctx{font-size:9px;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:0 3px;margin-left:4px;vertical-align:1px}
+.nxhr{display:flex;justify-content:space-between;align-items:center;gap:8px}.nxhb .trib{font-size:10px;padding:2px 9px;text-transform:none;letter-spacing:0}
 .nxtr2{display:flex;align-items:center;gap:10px;margin-top:3px}.nxtrl{flex:1;min-width:0}.nxtrb{flex:none}.nxtrb .trib{font-size:10px;padding:2px 8px}
 .nxtr{font-size:11px;margin-top:4px}.nxtr .ok{color:var(--good)}.nxtr .no{color:var(--mute)}.nxtr .trib{font-size:9.5px;padding:1px 6px}
 .nxtag{font-size:9.5px;font-weight:700;border-radius:4px;padding:0 4px;margin-left:3px}.nxtag.lo{color:#e3a33b;background:color-mix(in srgb,#e3a33b 14%,transparent)}.nxtag.hi{color:var(--bad,#e5484d);background:color-mix(in srgb,#e5484d 14%,transparent)}
@@ -1559,7 +1560,7 @@ Object.assign(I18N.en, {tc_pp2:"Not on the first power-play unit tonight: power-
   nx_ctx:"context", nx_ctx_tip:"Not in the model: shown for context. Tested, it didn't predict better than the model, so don't count it as an extra edge.",
   nx_foot:"Ranks: green favours him, red is tough.",
   nxv_val:"value", nxv_season_g:"Season chances (xG)", nxv_l10_g:"Last 10 chances (xG)", nxv_season_s:"Season shot rate", nxv_l10_s:"Last 10 shot rate",
-  nxv_season_a:"Season assist rate", nxv_l10_a:"Last 10 assist rate", nxv_season_p:"Season scoring rate", nxv_l10_p:"Last 10 scoring rate",tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
+  nxv_season_a:"Season assist rate", nxv_l10_a:"Last 10 assist rate", nxv_season_p:"Season points rate", nxv_l10_p:"Last 10 points rate",tri_how_h:"How Triage works", tri_how:`<p><b>Triage checks how solid each value bet is.</b> A value bet means the model's chance is higher than the price says. Triage asks: does that still hold if we look at the player another way?</p>
 <p><b>Every value bet is checked three ways</b>, all in tonight's matchup (same opponent, same goalie):</p>
 <ol><li><b>The model's number</b>: what the site normally shows.</li><li><b>His season so far</b>: what his actual production this season would say.</li><li><b>His last 10 games</b>: what his recent form would say.</li></ol>
 <p><b>Then the warning signs:</b> depth forward on goals or points, opposing goalie not confirmed, the market moving against it (the price drifting out, or the sharp book's fair price above the one on offer; together these count as one warning), shooting clearly up or down this season, a short NHL history. For power-play points the two views are his season and last-10 power-play rate, with a warning on an over for a player off the first power-play unit, and on a "no" for a player just moved onto it. For blocked shots they are his season and last-10 blocks per game. Hits aren't graded: arena scorekeepers make them too random.</p>
@@ -1626,7 +1627,7 @@ Object.assign(I18N.sv, {tc_pp2:"Inte i första powerplayfemman i kväll: powerpl
   nx_ctx:"kontext", nx_ctx_tip:"Inte i modellen: visas som kontext. Testat, det förutsade inte bättre än modellen, så räkna det inte som ett extra värde.",
   nx_foot:"Rankning: grönt gynnar honom, rött är tufft.",
   nxv_val:"värde", nxv_season_g:"Säsongens chanser (xG)", nxv_l10_g:"Senaste 10, chanser (xG)", nxv_season_s:"Säsongens skott", nxv_l10_s:"Senaste 10, skott",
-  nxv_season_a:"Säsongens assist", nxv_l10_a:"Senaste 10, assist", nxv_season_p:"Säsongens poäng", nxv_l10_p:"Senaste 10, poäng",tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
+  nxv_season_a:"Säsongens assist", nxv_l10_a:"Senaste 10, assist", nxv_season_p:"Säsongens poängtakt", nxv_l10_p:"Senaste 10, poängtakt",tri_how_h:"Så fungerar Triage", tri_how:`<p><b>Triage kontrollerar hur stabilt varje värdespel är.</b> Ett värdespel betyder att modellens chans är högre än vad oddset säger. Triage frågar: håller det fortfarande om vi ser på spelaren på ett annat sätt?</p>
 <p><b>Varje värdespel kontrolleras på tre sätt</b>, alla i kvällens match (samma motstånd, samma målvakt):</p>
 <ol><li><b>Modellens siffra</b>: det sajten normalt visar.</li><li><b>Hans säsong hittills</b>: vad hans faktiska produktion i år säger.</li><li><b>Hans senaste 10 matcher</b>: vad hans senaste form säger.</li></ol>
 <p><b>Sedan varningstecknen:</b> djupforward på mål eller poäng, motståndarmålvakten inte bekräftad, marknaden går emot (oddset stiger, eller skarpa bookens rättvisa odds är högre än det erbjudna; tillsammans räknas de som en varning), skjuter klart mer eller mindre i år, kort NHL-historik. För powerplaypoäng är de två vyerna hans säsongs- och senaste-10-takt i powerplay, med en varning på över för en spelare utanför första powerplayfemman, och på "nej" för en spelare som nyss flyttats upp dit. För blockerade skott är de hans blockeringar per match i år och de senaste 10 matcherna. Tacklingar får inget betyg: arenornas statistiker gör dem för slumpmässiga.</p>
@@ -2928,7 +2929,8 @@ function nextTip(pid, gid, m){
     const base = m === "s" ? "s" : m === "g" ? "g" : m === "a" ? "a" : "p", useN = trn && !tro, vp = triViewProbs(g, pr, mk);
     const vr = Object.entries(vp).map(([k,q]) => { const qq = useN ? 1 - q : q, oo = useN ? b.n : od, e = oo ? qq*oo - 1 : null;
       return `<div class="nxr"><span>${t("nxv_"+k+"_"+base)}</span><span>${e == null ? `<b>${pct(qq,1)}</b>` : `<span class="meta">${pct(qq,0)}</span> <span class="${e>0?"ev-pos":"ev-neg"}">${t("nxv_val")} ${evTxt(e)}</span>`}</span></div>`; }).join("");
-    if (vr) num += `<div class="nxtr2"><div class="nxtrl">${useN ? `<div class="nxr"><span>${esc(triMkt(mk,"n"))}</span><span></span></div>` : ""}${vr}</div>${tr ? `<div class="nxtrb">${triBadge(tr)}</div>` : ""}</div>`; }
+    if (vr) num += `<div class="nxtr2"><div class="nxtrl">${useN ? `<div class="nxr"><span>${esc(triMkt(mk,"n"))}</span><span></span></div>` : ""}${vr}</div></div>`; }
+  var nxBadge = tr ? `<span class="nxhb">${triBadge(tr)}</span>` : "";
   // --- his side
   const lu = DATA.teams[pr.team]?.lineup?.groups || {}, line = Object.entries(lu).find(([k,ids]) => /^[fd]\d$/.test(k) && ids.includes(pr.id))?.[0];
   const ppu = (lu.pp1||[]).includes(pr.id) ? "PP1" : (lu.pp2||[]).includes(pr.id) ? "PP2" : null;
@@ -2962,7 +2964,7 @@ function nextTip(pid, gid, m){
   const dt_ = g.date === dates[0] ? t("today") : new Date(g.date + "T12:00:00").toLocaleDateString(LOCALE(), {weekday:"short", day:"numeric", month:"short"});
   const tm = g.start ? new Date(g.start).toLocaleTimeString(LOCALE(), {hour:"2-digit", minute:"2-digit"}) : "";
   return `<div class="gth"><b>${dt_}${tm ? " · " + tm : ""}</b> <span>${pr.home ? "vs" : "@"} ${opp}</span><span class="meta">${esc(shortName(p.name))}</span></div>
-    <div class="nxb"><div class="nxh">${t("nx_tonight")}</div>${num}</div>
+    <div class="nxb"><div class="nxh nxhr"><span>${t("nx_tonight")}</span>${typeof nxBadge !== "undefined" ? nxBadge : ""}</div>${num}</div>
     <div class="nxb"><div class="nxh">${t("nx_his")}</div>${his}</div>
     <div class="nxb"><div class="nxh">${t("nx_opp",{t:opp})}</div>${oppH || `<span class="meta">–</span>`}</div>
     <div class="nxf">${t("nx_foot")}</div>`;

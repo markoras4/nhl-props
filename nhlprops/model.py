@@ -1354,6 +1354,23 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         import re as _re
         main = lambda k: bool(_re.fullmatch(r"[fd]\d", k))
         groups = {k: v for k, v in groups.items() if main(k) or _re.fullmatch(r"pp\d", k)}
+        # a source row can lose a name (two forwards read as a defence pair, or the reverse): set each line or pair
+        # by its players' real positions, then number forward lines and pairs again in the order the source listed them
+        if any(main(k) for k in groups):
+            order = {}
+            for i, ln in enumerate(lines):
+                order.setdefault(ln["group"], i)
+            fwd, dfn = [], []
+            for k, v in groups.items():
+                if not main(k):
+                    continue
+                nf = sum(1 for pid in v if (profiles.get(pid) or {}).get("posg") == "F")
+                (fwd if nf * 2 > len(v) else dfn if nf * 2 < len(v) else (fwd if k[0] == "f" else dfn)).append((order.get(k, 99), v))
+            groups = {k: v for k, v in groups.items() if not main(k)}
+            for i, (_, v) in enumerate(sorted(fwd, key=lambda z: z[0]), 1):
+                groups[f"f{i}"] = v
+            for i, (_, v) in enumerate(sorted(dfn, key=lambda z: z[0]), 1):
+                groups[f"d{i}"] = v
         # the NHL.com game-day article has lines and pairs but no power-play units: take those from the
         # projected lineups, keeping only players who are dressed tonight
         if t in nhl_day and not any(_re.fullmatch(r"pp\d", k) for k in groups):
