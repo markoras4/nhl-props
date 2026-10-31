@@ -544,6 +544,7 @@ def main(argv=None):
     bt.add_argument("--roadtrip", action="store_true", help="test the last game of road trips and trip length")
     bt.add_argument("--b2b", action="store_true", help="fit the back-to-back adjustment")
     bt.add_argument("--schedule", action="store_true", help="test busy stretches, look-ahead and late-season stakes")
+    bt.add_argument("--stakes", action="store_true", help="test late-season stakes against the player model")
     bt.add_argument("--due", action="store_true", help="test whether unlucky ('due') players score more than the model says")
     bt.add_argument("--onice", action="store_true", help="test on-ice xGF (useful plus/minus) for assists and points")
     bt.add_argument("--tail", action="store_true", help="test multi-point / 2+ goal long-shot probabilities")
@@ -599,6 +600,10 @@ def main(argv=None):
         if args.schedule:
             from .backtest_schedule import run as run_sc
             run_sc(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.stakes:
+            from .backtest_stakes import run as run_stk
+            run_stk(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.due:
             from .backtest_due import run as run_due
