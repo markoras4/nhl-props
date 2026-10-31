@@ -543,6 +543,7 @@ def main(argv=None):
     bt.add_argument("--depthcal", action="store_true", help="test a goal/point correction for low-minute forwards")
     bt.add_argument("--roadtrip", action="store_true", help="test the last game of road trips and trip length")
     bt.add_argument("--b2b", action="store_true", help="fit the back-to-back adjustment")
+    bt.add_argument("--schedule", action="store_true", help="test busy stretches, look-ahead and late-season stakes")
     bt.add_argument("--due", action="store_true", help="test whether unlucky ('due') players score more than the model says")
     bt.add_argument("--onice", action="store_true", help="test on-ice xGF (useful plus/minus) for assists and points")
     bt.add_argument("--tail", action="store_true", help="test multi-point / 2+ goal long-shot probabilities")
@@ -594,6 +595,10 @@ def main(argv=None):
         if args.season:
             from .backtest_season import run as run_ss
             run_ss(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.schedule:
+            from .backtest_schedule import run as run_sc
+            run_sc(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.due:
             from .backtest_due import run as run_due
