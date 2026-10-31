@@ -558,6 +558,15 @@ body.has-cmp .slipfab{bottom:84px}
 .chip.tip{cursor:help}.hinfo{display:inline-flex;align-items:center;justify-content:center;color:var(--accent);margin-left:5px;text-transform:none;vertical-align:-2px;width:16px;height:16px;border-radius:50%;cursor:help;transition:color .2s,background .2s}
 .hinfo:hover,.hinfo:focus-visible{background:color-mix(in srgb,var(--accent) 16%,transparent)}
 .isvg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.isvg .dot{fill:currentColor;stroke:none}
+.howacc{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:22px}.howg{display:flex;flex-direction:column;gap:10px}
+.howgh{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:2px}.howgh h2{margin:0;font:800 20px var(--f-head,var(--f-ui))}.howgh .meta{margin:2px 0 0}
+.howall{all:unset;cursor:pointer;font:700 12px var(--f-ui);color:var(--accent);padding:6px 10px;border-radius:8px;white-space:nowrap}.howall:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.howl{display:flex;flex-direction:column;gap:8px}
+.howl .howi{margin:0}.howi{background:var(--panel);border:1px solid var(--line);border-radius:14px;transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease;animation:howin .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d)}
+@keyframes howin{from{opacity:0;transform:translateY(8px)}}
+.howi:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}.howi.open{border-color:color-mix(in srgb,var(--accent) 60%,var(--line));box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.howl .howi .clph{padding:14px 16px}.howh{font:700 15px var(--f-ui);color:var(--text)}.howi.open .howh{color:var(--accent)}
+.howl .howi .clpi{padding:0 16px}.howl .howi.open .clpi{padding:2px 16px 14px}.howi .prose>:first-child{margin-top:0}.howi .prose>:last-child{margin-bottom:0}
 .clp{margin:14px 0}.clp .clph{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;padding:2px 0}
 .clp .clph:focus-visible{outline:2px solid var(--accent2);outline-offset:4px;border-radius:6px}
 .clpc{width:18px;height:18px;margin-left:auto;flex:0 0 auto;fill:none;stroke:var(--mute);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s cubic-bezier(.2,.8,.2,1),stroke .2s}
@@ -1474,7 +1483,7 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
+Object.assign(I18N.en, {how_guide:"Guide", how_guide_sub:"How the site works, section by section. Tap a title to open it.", how_faq:"Questions", how_faq_sub:"Short answers to what people ask most.", how_expand:"Open all", how_collapse:"Close all",nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
   exp_luck:"Luck", exp_vol:"Volume vs finishing", exp_role:"Role", exp_pp:"Power play", exp_trend:"Shots trend", exp_tonight:"Tonight",
   ex_f:"Forwards", ex_d:"Defencemen", ex_top10:"Top 10 in this view", ex_min:"Minimum games", ex_minopt:"{n}+ games", ex_count:"{n} players", ex_next:"Next game", ex_click:"Click to open his profile", ex_none:"No players match these filters.",
   ex_foot:"This season's numbers (hits and blocks: last 10 games). 'Tonight' uses 1+ point: market chance with the margin removed vs the model. Players shown are those with an upcoming game.",
@@ -1518,7 +1527,7 @@ Object.assign(I18N.en, {nav_explore:"Explorer", ex_title:"Players explorer", ex_
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
+Object.assign(I18N.sv, {how_guide:"Guide", how_guide_sub:"Så fungerar sajten, avsnitt för avsnitt. Tryck på en rubrik för att öppna den.", how_faq:"Frågor", how_faq_sub:"Korta svar på det folk frågar mest.", how_expand:"Öppna alla", how_collapse:"Stäng alla",nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
   exp_luck:"Tur", exp_vol:"Volym mot effektivitet", exp_role:"Roll", exp_pp:"Powerplay", exp_trend:"Skottrend", exp_tonight:"I kväll",
   ex_f:"Forwards", ex_d:"Backar", ex_top10:"Topp 10 i vyn", ex_min:"Minst matcher", ex_minopt:"{n}+ matcher", ex_count:"{n} spelare", ex_next:"Nästa match", ex_click:"Klicka för att öppna profilen", ex_none:"Inga spelare matchar filtren.",
   ex_foot:"Säsongens siffror (tacklingar och blockeringar: senaste 10 matcherna). 'I kväll' gäller 1+ poäng: marknadens chans utan marginal mot modellen. Spelare med en kommande match visas.",
@@ -4395,7 +4404,23 @@ sv: `<h3>Vad sajten gör</h3>
   <p>Läs <a href="/legal.html#terms">användarvillkoren</a>, <a href="/legal.html#disclaimer">ansvarsfriskrivningen</a> och <a href="/legal.html#privacy">integritetspolicyn</a>. Allt här är bedömningar, inte råd eller garantier. 18+, spela ansvarsfullt.</p>`
 };
 function howTab(){
-  $("#main").innerHTML = `<div class="prose how">${HOW[LANG]||HOW.en}<p class="foot">${t("footer")}</p></div>`;
+  // the guide as two accordions: every section folds open with motion, and the questions get their own group below
+  const src = document.createElement("div"); src.innerHTML = HOW[LANG] || HOW.en;
+  const qRe = /^(Questions|Frågor)$/i, guide = [], faq = [];
+  let cur = null, inQ = false;
+  for (const n of [...src.childNodes]){
+    if (n.nodeType === 1 && n.tagName === "H3"){ inQ = qRe.test(n.textContent.trim()); if (!inQ){ cur = {h:n.innerHTML, body:[]}; guide.push(cur); } continue; }
+    if (inQ){ if (n.nodeType === 1 && n.tagName === "DETAILS"){ const sm = n.querySelector("summary"); const h = sm ? sm.innerHTML : ""; sm && sm.remove(); faq.push({h, body:[n.innerHTML]}); } continue; }
+    if (cur) cur.body.push(n.nodeType === 1 ? n.outerHTML : (n.textContent.trim() ? `<p>${esc(n.textContent)}</p>` : ""));
+  }
+  const item = (x, k, i) => `<div class="clp howi" data-clk="${k}:${i}" style="--d:${i*35}ms"><button type="button" class="clph" aria-expanded="false"><span class="howh">${x.h}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${x.body.join("")}</div></div></div></div>`;
+  const group = (title, sub, list, k) => `<section class="howg"><div class="howgh"><div><h2>${title}</h2>${sub ? `<p class="meta">${sub}</p>` : ""}</div><button type="button" class="howall" data-howall="${k}">${t("how_expand")}</button></div>
+    <div class="howl" data-howk="${k}">${list.map((x, i) => item(x, k, i)).join("")}</div></section>`;
+  $("#main").innerHTML = `<div class="how howacc">${group(t("how_guide"), t("how_guide_sub"), guide, "hg")}${faq.length ? group(t("how_faq"), t("how_faq_sub"), faq, "hq") : ""}<p class="foot">${t("footer")}</p></div>`;
+  $("#main").querySelectorAll("[data-howall]").forEach(b => b.onclick = () => {
+    const list = $("#main").querySelector(`[data-howk="${b.dataset.howall}"]`), items = [...list.querySelectorAll(".howi")], open = !items.every(x => x.classList.contains("open"));
+    items.forEach((x, i) => setTimeout(() => { x.classList.toggle("open", open); x.querySelector(".clph").setAttribute("aria-expanded", open); }, i * 25));
+    b.textContent = t(open ? "how_collapse" : "how_expand"); });
 }
 
 function render(){
