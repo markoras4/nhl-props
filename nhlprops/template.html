@@ -28,8 +28,9 @@
   --f-num:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]) .lg-d{display:none}
+  :root:not([data-theme="dark"]) .lg-d,:root:not([data-theme="dark"]) .xl-d{display:none}
   :root:not([data-theme="dark"]) .lg-l{display:inline-block}
+  :root:not([data-theme="dark"]) .xl-l{display:inline}
   :root:not([data-theme="dark"]){
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
     --accent:#0d9a60; --accent2:#1d6bd0; --warn:#a96400; --bad:#c42f2f; --good:#0d9a60; --chip:#e9eef4;
@@ -37,7 +38,8 @@
     --heat:13,154,96; --line2:#0aa3c2; color-scheme:light;
   }
 }
-:root[data-theme="light"] .lg-d{display:none}
+:root[data-theme="light"] .lg-d,:root[data-theme="light"] .xl-d{display:none}
+:root[data-theme="light"] .xl-l{display:inline}
 :root[data-theme="light"] .lg-l{display:inline-block}
 :root[data-theme="light"]{
     --bg:#f3f5f8; --panel:#ffffff; --panel2:#eef2f6; --line:#dbe2ea; --text:#111821; --mute:#5a697b;
@@ -132,7 +134,7 @@ input.odds{width:70px;padding:5px 7px;text-align:right;font-variant-numeric:tabu
 .tm{display:flex;align-items:center;gap:10px}
 .gteam.r .tm{flex-direction:row-reverse}
 .lg{width:var(--lg,40px);height:var(--lg,40px);object-fit:contain;flex:0 0 auto;display:inline-block}
-.lg-l{display:none}
+.lg-l,.xl-l{display:none}
 .lgfb{width:var(--lg,40px);height:var(--lg,40px);border-radius:50%;background:var(--chip);display:inline-grid;place-items:center;font-family:var(--f-disp);font-size:11px;font-weight:700;color:var(--mute);flex:0 0 auto}
 .gteam .sub{font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .gmid{text-align:center}
@@ -400,7 +402,7 @@ td.h{text-align:center;padding:4px}
 .hits i.gtg{cursor:pointer}
 .l10lines{pointer-events:none}
 .newsprev{margin:6px 0 0;font-size:12.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.newsbox.open .newsprev{display:none}
-.exwrap{display:flex;flex-direction:column;gap:12px}.exhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}.exh2{font:800 22px var(--f-head,var(--f-ui));margin:0 0 2px;letter-spacing:.01em}
+.exwrap{display:flex;flex-direction:column;gap:12px}.exhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}.exh2{font:800 22px var(--f-head,var(--f-ui));margin:0 0 2px;letter-spacing:.01em}
 .exctl{flex-wrap:wrap}.exsel{display:inline-flex;align-items:center;gap:6px}.exsel>span{font:800 11px var(--f-ui);color:var(--accent);letter-spacing:.06em}
 .exbox{padding:12px 12px 10px;overflow:hidden}.exchart{width:100%}.exsvg{width:100%;height:auto;display:block}
 .explot{stroke:var(--line);stroke-width:1}.exgl{stroke:color-mix(in srgb,var(--text) 7%,transparent);stroke-width:1}.extk{fill:var(--mute);font:500 11px var(--f-ui)}
@@ -416,6 +418,10 @@ td.h{text-align:center;padding:4px}
 .exfirst .exd circle{animation:expop .6s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d)}@keyframes expop{from{r:0}}
 .exleg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mute);margin-top:6px;align-items:center}.exdot{display:inline-block;flex:none;width:9px;min-width:9px;height:9px;box-sizing:border-box;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .exdot.f{background:var(--accent)}.exdot.d{background:#6aa8ff}.exdot.top{background:transparent;border:2px solid var(--text)}
+.exmode button{min-width:78px}
+.exd.tm .exti{transition:transform .25s cubic-bezier(.3,1.6,.5,1)}.exd.tm:hover .exti{transform:scale(1.25)}
+.exd.tm .exring{fill:var(--panel);fill-opacity:.82;stroke:var(--line);stroke-width:1}.exd.tm.top .exring{stroke:var(--accent);stroke-width:2;filter:url(#exglow)}
+.exd.tm.hl .exring{stroke:#ffd166;stroke-width:2.5}.exfirst .exd.tm .exti{animation:extin .7s cubic-bezier(.3,1.5,.5,1) both;animation-delay:var(--d)}@keyframes extin{from{transform:scale(0)}}
 .exstory{font-size:13px;color:var(--text);margin:0 4px 6px;line-height:1.45}.exstory b{color:var(--accent)}
 .extop{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
 .exrow{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:var(--panel2);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;animation:exrow .5s ease both;animation-delay:var(--d)}
@@ -1483,7 +1489,24 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {nav_blog:"Blog", how_guide:"Guide", how_guide_sub:"How the site works, section by section. Tap a title to open it.", how_faq:"Questions", how_faq_sub:"Short answers to what people ask most.", how_expand:"Open all", how_collapse:"Close all",nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
+Object.assign(I18N.en, {ex_m_players:"Players", ex_m_teams:"Teams", ext_title:"Teams explorer", ext_sub:"Every team on two stats. Who controls games, who's lucky, whose goalie is carrying them.",
+  ext_playing:"Playing today", ext_search:"Search team", ext_count:"{n} teams", ext_click:"Click to open their next game", ext_nogame:"no game listed", ext_rec:"Season", ext_gp:"GP", ext_pts:"points", ext_rk:"League rank", ext_rk_att:"attack", ext_rk_def:"defence",
+  ext_foot:"This season, 5-on-5 unless it says power play or penalty kill. Points % counts a win as 2, an overtime loss as 1. GSAx = goals saved above expected by their goalies.",
+  ext_custom:"<b>{y}</b> against <b>{x}</b>. The dashed lines are the league averages of the teams shown.", ext_inv:"(Y axis flipped: lower is better, so the best teams sit top right.)",
+  extp_strength:"Strength", extp_luck:"Luck", extp_goalie:"Goaltending", extp_pace:"Pace & totals", extp_special:"Special teams", extp_danger:"Dangerous chances",
+  exts_strength:"<b>Chances created vs chances allowed (expected goals per 60, 5-on-5).</b> The truest picture of who controls games.",
+  exts_luck:"<b>Expected goal difference vs actual goal difference, per game.</b> Above the diagonal: results better than their play (finishing or goaltending running hot). Below: better than their record.",
+  exts_goalie:"<b>Chances allowed vs goals saved above expected.</b> High up: the goalie is stealing goals. Right side: the defence gives up a lot, so the goalie matters even more.",
+  exts_pace:"<b>Total expected goals per game (both teams) vs share of games over 5.5.</b> Right and high: high-event teams for totals overs.",
+  exts_special:"<b>Power-play chances created vs penalty-kill chances allowed (expected goals per 60).</b> Useful for power-play points props.",
+  exts_danger:"<b>High-danger shots for vs against per 60.</b> Who gets to the slot, and who keeps opponents out of it.",
+  ext_t_strength:"Best by expected goal share", ext_t_luck:"Luckiest results so far (above the diagonal)", ext_t_goalie:"Goalies saving the most", ext_t_pace:"Highest-event teams",
+  ext_t_special:"Best special teams overall", ext_t_danger:"Best in the slot",
+  ext_q_dom:"Dominant", ext_q_weak:"Struggling", ext_q_lucky:"Lucky", ext_q_unlucky:"Unlucky", ext_q_st_good:"Strong both ways", ext_q_st_bad:"Weak both ways",
+  exmt_xgf60:"xG for / 60", exmt_xga60:"xG against / 60", exmt_xgd:"xG diff / game", exmt_gd:"Goal diff / game", exmt_gf_pg:"Goals for / game", exmt_ga_pg:"Goals against / game",
+  exmt_pts:"Points %", exmt_gsax:"Goalies GSAx / game", exmt_pdo:"PDO (shooting + save %)", exmt_pace:"Total xG / game", exmt_o55:"Games over 5.5",
+  exmt_pp:"PP xG for / 60", exmt_pk:"PK xG against / 60", exmt_hdf:"High-danger shots for / 60", exmt_hda:"High-danger shots against / 60", exmt_sa:"Shots against / game", exmt_pen:"Penalties taken / game",
+  nav_blog:"Blog", how_guide:"Guide", how_guide_sub:"How the site works, section by section. Tap a title to open it.", how_faq:"Questions", how_faq_sub:"Short answers to what people ask most.", how_expand:"Open all", how_collapse:"Close all",nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
   exp_luck:"Luck", exp_vol:"Volume vs finishing", exp_role:"Role", exp_pp:"Power play", exp_trend:"Shots trend", exp_tonight:"Tonight",
   ex_f:"Forwards", ex_d:"Defencemen", ex_top10:"Top 10 in this view", ex_min:"Minimum games", ex_minopt:"{n}+ games", ex_count:"{n} players", ex_next:"Next game", ex_click:"Click to open his profile", ex_none:"No players match these filters.",
   ex_foot:"This season's numbers (hits and blocks: last 10 games). 'Tonight' uses 1+ point: market chance with the margin removed vs the model. Players shown are those with an upcoming game.",
@@ -1527,7 +1550,24 @@ Object.assign(I18N.en, {nav_blog:"Blog", how_guide:"Guide", how_guide_sub:"How t
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {nav_blog:"Blogg", how_guide:"Guide", how_guide_sub:"Så fungerar sajten, avsnitt för avsnitt. Tryck på en rubrik för att öppna den.", how_faq:"Frågor", how_faq_sub:"Korta svar på det folk frågar mest.", how_expand:"Öppna alla", how_collapse:"Stäng alla",nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
+Object.assign(I18N.sv, {ex_m_players:"Spelare", ex_m_teams:"Lag", ext_title:"Lagutforskaren", ext_sub:"Alla lag på två mått. Vem styr matcherna, vem har tur, vems målvakt bär laget.",
+  ext_playing:"Spelar i dag", ext_search:"Sök lag", ext_count:"{n} lag", ext_click:"Klicka för att öppna nästa match", ext_nogame:"ingen match listad", ext_rec:"Säsong", ext_gp:"M", ext_pts:"poäng", ext_rk:"Ligaplats", ext_rk_att:"anfall", ext_rk_def:"försvar",
+  ext_foot:"Den här säsongen, 5 mot 5 om inget annat står (powerplay, boxplay). Poäng-% räknar vinst som 2 och förlust efter förlängning som 1. GSAx = mål räddade över förväntat av lagets målvakter.",
+  ext_custom:"<b>{y}</b> mot <b>{x}</b>. De streckade linjerna är snittet för lagen som visas.", ext_inv:"(Y-axeln är vänd: lägre är bättre, så de bästa lagen hamnar uppe till höger.)",
+  extp_strength:"Styrka", extp_luck:"Tur", extp_goalie:"Målvakter", extp_pace:"Tempo & totaler", extp_special:"Special teams", extp_danger:"Farliga chanser",
+  exts_strength:"<b>Skapade chanser mot insläppta chanser (förväntade mål per 60, 5 mot 5).</b> Den ärligaste bilden av vem som styr matcherna.",
+  exts_luck:"<b>Förväntad målskillnad mot faktisk målskillnad, per match.</b> Över diagonalen: bättre resultat än spelet (avslut eller målvakt går varmt). Under: bättre än tabellen visar.",
+  exts_goalie:"<b>Insläppta chanser mot mål räddade över förväntat.</b> Högt upp: målvakten stjäl mål. Till höger: försvaret släpper till mycket, så målvakten betyder ännu mer.",
+  exts_pace:"<b>Totalt förväntade mål per match (båda lagen) mot andel matcher över 5,5.</b> Höger och högt: lag med många händelser, för över på totalen.",
+  exts_special:"<b>Skapade chanser i powerplay mot insläppta i boxplay (förväntade mål per 60).</b> Användbart för powerplaypoäng.",
+  exts_danger:"<b>Skott från farliga lägen för och emot per 60.</b> Vem tar sig in i slottet, och vem håller motståndarna borta därifrån.",
+  ext_t_strength:"Bäst andel förväntade mål", ext_t_luck:"Mest tur hittills (över diagonalen)", ext_t_goalie:"Målvakter som räddar mest", ext_t_pace:"Lag med flest händelser",
+  ext_t_special:"Bäst special teams totalt", ext_t_danger:"Bäst i slottet",
+  ext_q_dom:"Dominanta", ext_q_weak:"Kämpar", ext_q_lucky:"Tur", ext_q_unlucky:"Otur", ext_q_st_good:"Starka åt båda håll", ext_q_st_bad:"Svaga åt båda håll",
+  exmt_xgf60:"xG för / 60", exmt_xga60:"xG emot / 60", exmt_xgd:"xG-skillnad / match", exmt_gd:"Målskillnad / match", exmt_gf_pg:"Gjorda mål / match", exmt_ga_pg:"Insläppta mål / match",
+  exmt_pts:"Poäng-%", exmt_gsax:"Målvakter GSAx / match", exmt_pdo:"PDO (skott- + rädd-%)", exmt_pace:"Totalt xG / match", exmt_o55:"Matcher över 5,5",
+  exmt_pp:"PP xG för / 60", exmt_pk:"BP xG emot / 60", exmt_hdf:"Farliga skott för / 60", exmt_hda:"Farliga skott emot / 60", exmt_sa:"Skott emot / match", exmt_pen:"Utvisningar / match",
+  nav_blog:"Blogg", how_guide:"Guide", how_guide_sub:"Så fungerar sajten, avsnitt för avsnitt. Tryck på en rubrik för att öppna den.", how_faq:"Frågor", how_faq_sub:"Korta svar på det folk frågar mest.", how_expand:"Öppna alla", how_collapse:"Stäng alla",nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
   exp_luck:"Tur", exp_vol:"Volym mot effektivitet", exp_role:"Roll", exp_pp:"Powerplay", exp_trend:"Skottrend", exp_tonight:"I kväll",
   ex_f:"Forwards", ex_d:"Backar", ex_top10:"Topp 10 i vyn", ex_min:"Minst matcher", ex_minopt:"{n}+ matcher", ex_count:"{n} spelare", ex_next:"Nästa match", ex_click:"Klicka för att öppna profilen", ex_none:"Inga spelare matchar filtren.",
   ex_foot:"Säsongens siffror (tacklingar och blockeringar: senaste 10 matcherna). 'I kväll' gäller 1+ poäng: marknadens chans utan marginal mot modellen. Spelare med en kommande match visas.",
@@ -3422,6 +3462,23 @@ const EX_P = {
   trend:{x:"s_pg", y:"l10s", diag:true, q:["ex_q_up","ex_q_down"], top:(x,y)=>y-x, tt:"ex_t_trend"},
   tonight:{x:"mkt", y:"mod", diag:true, q:["ex_q_val","ex_q_noval"], top:(x,y)=>y-x, tt:"ex_t_tonight"},
 };
+const EX_TM = {
+  xgf60:{d:2, f:T => T.xgf5}, xga60:{d:2, f:T => T.xga5},
+  xgd:{d:2, f:T => T.gp ? (T.s_xgf - T.s_xga) / T.gp : null}, gd:{d:2, f:T => T.gp ? (T.s_gf - T.s_ga) / T.gp : null},
+  gf_pg:{d:2, f:T => T.gf_pg}, ga_pg:{d:2, f:T => T.ga_pg}, pts:{d:0, pct:true, f:T => T.pts_pct},
+  gsax:{d:2, f:(T,k) => DATA.team_ranks?.teams?.[k]?.gsax?.v}, pdo:{d:3, f:T => T.pdo},
+  pace:{d:2, f:T => T.gp ? (T.s_xgf + T.s_xga) / T.gp : null}, o55:{d:0, pct:true, f:T => T["over_5.5"]},
+  pp:{d:2, f:T => T.pp_xgf60_cur ?? T.xgf_pp}, pk:{d:2, f:T => T.pk_xga60_cur ?? T.xga_pk},
+  hdf:{d:2, f:T => T.hdsf60}, hda:{d:2, f:T => T.hdsa60}, sa:{d:1, f:T => T.sa_all}, pen:{d:2, f:T => T.pen_pg},
+};
+const EX_TP = {
+  strength:{x:"xgf60", y:"xga60", inv:true, q:["ext_q_dom","ext_q_weak"], top:(x,y)=>x-y, tt:"ext_t_strength"},
+  luck:{x:"xgd", y:"gd", diag:true, q:["ext_q_lucky","ext_q_unlucky"], top:(x,y)=>y-x, tt:"ext_t_luck"},
+  goalie:{x:"xga60", y:"gsax", top:(x,y)=>y, tt:"ext_t_goalie"},
+  pace:{x:"pace", y:"o55", top:(x,y)=>x, tt:"ext_t_pace"},
+  special:{x:"pp", y:"pk", inv:true, q:["ext_q_st_good","ext_q_st_bad"], top:(x,y)=>x-y, tt:"ext_t_special"},
+  danger:{x:"hdf", y:"hda", inv:true, q:["ext_q_dom","ext_q_weak"], top:(x,y)=>x-y, tt:"ext_t_danger"},
+};
 let EX_NEXT = null;
 function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
   for (const g of [...DATA.games].sort((a,b)=>(a.start||"").localeCompare(b.start||""))){ if (g.state && !["FUT","PRE"].includes(g.state)) continue;
@@ -3429,8 +3486,22 @@ function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
   return EX_NEXT; }
 const exVal = (k, p) => { const m = EX_M[k], v = m.f(p, exNext()[p.id]); return v == null || !isFinite(v) ? null : v; };
 const exFmt = (k, v) => v == null ? "–" : EX_M[k].pct ? pct(v, EX_M[k].d) : (k === "gmx" && v > 0 ? "+" : "") + fmt(v, EX_M[k].d);
-function exState(){ const S = state.ex = state.ex || {preset:"luck", pos:"all", team:"all", tonight:false, min:5, q:""};
-  if (S.preset && EX_P[S.preset]){ S.x = EX_P[S.preset].x; S.y = EX_P[S.preset].y; } return S; }
+function exState(){ const S = state.ex = state.ex || {mode:"players", preset:"luck", pos:"all", team:"all", tonight:false, min:5, q:"", tpreset:"strength"};
+  S.mode = S.mode || "players"; S.tpreset = S.tpreset === undefined ? "strength" : S.tpreset;
+  if (S.mode === "teams"){ if (S.tpreset && EX_TP[S.tpreset]){ S.tx = EX_TP[S.tpreset].x; S.ty = EX_TP[S.tpreset].y; } }
+  else if (S.preset && EX_P[S.preset]){ S.x = EX_P[S.preset].x; S.y = EX_P[S.preset].y; }
+  return S; }
+// mode-aware accessors: metric table, presets, current axes, preset key
+const exT = S => S.mode === "teams";
+const exMT = S => exT(S) ? EX_TM : EX_M, exPT = S => exT(S) ? EX_TP : EX_P;
+const exAx = S => exT(S) ? [S.tx, S.ty] : [S.x, S.y], exPre = S => exT(S) ? S.tpreset : S.preset;
+const exLbl = (S, k) => t((exT(S) ? "exmt_" : "exm_") + k);
+function exTeamNext(team){ return [...DATA.games].sort((a,b)=>(a.start||"").localeCompare(b.start||"")).find(g => (!g.state || ["FUT","PRE"].includes(g.state)) && (g.home === team || g.away === team)); }
+function exTeamRows(S){ const [kx, ky] = exAx(S), out = [];
+  for (const [k, T] of Object.entries(DATA.teams)){ if (!T || !T.gp) continue;
+    const x = EX_TM[kx].f(T, k), y = EX_TM[ky].f(T, k); if (x == null || y == null || !isFinite(x) || !isFinite(y)) continue;
+    out.push({team:k, T, x, y, nx: exTeamNext(k)}); }
+  return out; }
 function exRows(S){
   const nx = exNext(), out = [];
   for (const p of Object.values(DATA.players)){
@@ -3444,88 +3515,139 @@ function exRows(S){
   return out;
 }
 function exploreTab(){
-  const S = exState(), teams = [...new Set(Object.values(DATA.players).map(p => p.team))].filter(Boolean).sort();
-  const opt = k => Object.keys(EX_M).map(m => `<option value="${m}" ${k===m?"selected":""}>${t("exm_"+m)}</option>`).join("");
-  $("#main").innerHTML = `<div class="exwrap">
-    <div class="exhead"><div><h2 class="exh2">${t("ex_title")}</h2><p class="meta">${t("ex_sub")}</p></div></div>
-    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(EX_P).map(k=>`<button data-k="${k}" class="${S.preset===k?"on":""}">${t("exp_"+k)}</button>`).join("")}</div></div>
-    <div class="controls exctl">
-      <label class="exsel"><span>Y</span><select id="exy">${opt(S.y)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(S.x)}</select></label>
-      <div class="seg olseg" id="expos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")]].map(([k,l])=>`<button data-k="${k}" class="${S.pos===k?"on":""}">${l}</button>`).join("")}</div>
+  const S = exState(), TM = exT(S), MT = exMT(S), PT = exPT(S), [ax, ay] = exAx(S), pre = exPre(S);
+  const teams = [...new Set(Object.values(DATA.players).map(p => p.team))].filter(Boolean).sort();
+  const opt = k => Object.keys(MT).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
+  const filters = TM ? `<label class="toggle"><input type="checkbox" id="extn" ${S.ttonight?"checked":""}> ${t("ext_playing")}</label>`
+    : `<div class="seg olseg" id="expos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")]].map(([k,l])=>`<button data-k="${k}" class="${S.pos===k?"on":""}">${l}</button>`).join("")}</div>
       <select id="exteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${S.team===x?"selected":""}>${x}</option>`).join("")}</select>
       <select id="exmin" aria-label="${t("ex_min")}">${[1,5,10,20].map(v=>`<option value="${v}" ${S.min===v?"selected":""}>${t("ex_minopt",{n:v})}</option>`).join("")}</select>
-      <label class="toggle"><input type="checkbox" id="extn" ${S.tonight?"checked":""}> ${t("ll_tonight")}</label>
-      <input type="search" id="exq" placeholder="${t("search")}" value="${esc(S.q)}"></div>
+      <label class="toggle"><input type="checkbox" id="extn" ${S.tonight?"checked":""}> ${t("ll_tonight")}</label>`;
+  const leg = TM ? `<span><i class="exdot top"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`
+    : `<span><i class="exdot f"></i>${t("ex_f")}</span><span><i class="exdot d"></i>${t("ex_d")}</span><span><i class="exdot top"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`;
+  $("#main").innerHTML = `<div class="exwrap">
+    <div class="exhead"><div><h2 class="exh2">${t(TM ? "ext_title" : "ex_title")}</h2><p class="meta">${t(TM ? "ext_sub" : "ex_sub")}</p></div>
+      <div class="seg olseg exmode" id="exmode"><button data-k="players" class="${TM?"":"on"}">${t("ex_m_players")}</button><button data-k="teams" class="${TM?"on":""}">${t("ex_m_teams")}</button></div></div>
+    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(PT).map(k=>`<button data-k="${k}" class="${pre===k?"on":""}">${t((TM?"extp_":"exp_")+k)}</button>`).join("")}</div></div>
+    <div class="controls exctl">
+      <label class="exsel"><span>Y</span><select id="exy">${opt(ay)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(ax)}</select></label>
+      ${filters}
+      <input type="search" id="exq" placeholder="${TM ? t("ext_search") : t("search")}" value="${esc(S.q)}"></div>
     <div class="box exbox"><div class="exstory" id="exstory"></div><div class="exchart" id="exchart"></div>
-      <div class="exleg"><span><i class="exdot f"></i>${t("ex_f")}</span><span><i class="exdot d"></i>${t("ex_d")}</span><span><i class="exdot top"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span></div></div>
+      <div class="exleg">${leg}</div></div>
     <div class="box"><h4 id="extoph"></h4><div id="extop"></div></div>
-    <p class="foot">${t("ex_foot")}</p></div>`;
+    <p class="foot">${t(TM ? "ext_foot" : "ex_foot")}</p></div>`;
   const re = () => exDraw(true);
-  $("#expre").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.preset = b.dataset.k; S.x = EX_P[S.preset].x; S.y = EX_P[S.preset].y;
-    $("#expre").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expre [data-k="${b.dataset.k}"]`); $("#exx").value = S.x; $("#exy").value = S.y; re(); };
-  $("#exx").onchange = e => { S.x = e.target.value; S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); re(); };
-  $("#exy").onchange = e => { S.y = e.target.value; S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); re(); };
-  $("#expos").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.pos = b.dataset.k; $("#expos").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expos [data-k="${b.dataset.k}"]`); re(); };
-  $("#exteam").onchange = e => { S.team = e.target.value; re(); };
-  $("#exmin").onchange = e => { S.min = +e.target.value; re(); };
-  $("#extn").onchange = e => { S.tonight = e.target.checked; re(); };
+  const setAx = (x, y) => { if (TM){ S.tx = x; S.ty = y; } else { S.x = x; S.y = y; } };
+  const clearPre = () => { if (TM) S.tpreset = null; else S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); };
+  $("#exmode").onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === S.mode) return; S.mode = b.dataset.k; exploreTab(); popBtn(`#exmode [data-k="${b.dataset.k}"]`); };
+  $("#expre").onclick = e => { const b = e.target.closest("button"); if (!b) return; const P_ = PT[b.dataset.k]; if (TM) S.tpreset = b.dataset.k; else S.preset = b.dataset.k; setAx(P_.x, P_.y);
+    $("#expre").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expre [data-k="${b.dataset.k}"]`); $("#exx").value = P_.x; $("#exy").value = P_.y; re(); };
+  $("#exx").onchange = e => { const [, y] = exAx(S); setAx(e.target.value, y); clearPre(); re(); };
+  $("#exy").onchange = e => { const [x] = exAx(S); setAx(x, e.target.value); clearPre(); re(); };
+  if (TM){ $("#extn").onchange = e => { S.ttonight = e.target.checked; re(); }; }
+  else {
+    $("#expos").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.pos = b.dataset.k; $("#expos").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expos [data-k="${b.dataset.k}"]`); re(); };
+    $("#exteam").onchange = e => { S.team = e.target.value; re(); };
+    $("#exmin").onchange = e => { S.min = +e.target.value; re(); };
+    $("#extn").onchange = e => { S.tonight = e.target.checked; re(); };
+  }
   $("#exq").oninput = e => { S.q = e.target.value.toLowerCase(); exDraw(false); };
   exDraw(true, true);
 }
 function exOpen(id){ const nx = exNext()[id]; if (!nx) return; go({tab:"games", game:nx.g.id, side: nx.pr.team}); state.open = id; render(); revealPlayer(id, {force:true}); }
+function exOpenTeam(tm){ const g = exTeamNext(tm); if (!g) return; go({tab:"games", game:g.id, side: tm}); }
+const exNick = n => { const w = n.split(" "); return w.length > 2 && ["Golden","Maple","Blue","Red"].includes(w[w.length-2]) ? w.slice(-2).join(" ") : w.length > 1 ? w[w.length-1] : n; };
+let EX_TN = null;
+const exTmName = tm => { if (!EX_TN){ EX_TN = {}; for (const g of [...DATA.games, ...(DATA.graded?.games || [])]) { if (g.home_name) EX_TN[g.home] = g.home_name; if (g.away_name) EX_TN[g.away] = g.away_name; } }
+  return DATA.teams[tm]?.name || EX_TN[tm] || tm; };
+const exNxTxt = (tm, g) => g ? `${g.home === tm ? "vs" : "@"} ${g.home === tm ? g.away : g.home} · ${g.date === dates[0] ? t("today") : dayShort(g.date)}` : t("ext_nogame");
+// one adapter per mode, so the drawing code is shared
+function exAdapter(S){
+  if (exT(S)){
+    const MT = EX_TM, [kx, ky] = exAx(S);
+    let rows = exTeamRows(S).map(r => ({...r, id: r.team, name: exTmName(r.team), short: exNick(exTmName(r.team))}));
+    if (S.ttonight) rows = rows.filter(r => r.nx && r.nx.date === dates[0]);
+    const fmtV = (k, v) => v == null ? "–" : MT[k].pct ? pct(v, MT[k].d) : ((["xgd","gd","gsax"].includes(k) && v > 0) ? "+" : "") + fmt(v, MT[k].d);
+    return {MT, kx, ky, P: EX_TP[S.tpreset] || null, rows, teams:true, fmtV, lbl: k => t("exmt_"+k), story: k => t("exts_"+k), seed: r => [...r.team].reduce((a,c)=>a*31+c.charCodeAt(0),7),
+      hit: r => S.q && (r.team.toLowerCase().includes(S.q) || r.name.toLowerCase().includes(S.q)),
+      cardSub: r => `${r.team} · ${t("ex_next")}: ${exNxTxt(r.team, r.nx)}`, tipHead: r => `${logo(r.team,18)} <b>${esc(r.name)}</b>`,
+      tipNext: r => exNxTxt(r.team, r.nx), click: t("ext_click"), open: exOpenTeam, cardLogo: r => logo(r.team, 22), count: n => t("ext_count",{n})};
+  }
+  const [kx, ky] = exAx(S);
+  return {MT: EX_M, kx, ky, P: EX_P[S.preset] || null, rows: exRows(S).map(r => ({...r, id: r.p.id, name: r.p.name})), teams:false, fmtV: exFmt,
+    lbl: k => t("exm_"+k), story: k => t("exs_"+k), seed: r => r.p.id, hit: r => S.q && r.p.name.toLowerCase().includes(S.q),
+    cardSub: r => `${r.p.team} · ${r.p.pos} · ${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} ${dayShort(r.nx.g.date)}`,
+    tipHead: r => `${logo(r.p.team,18)} <b>${esc(r.p.name)}</b> <span class="meta">${r.p.team} · ${r.p.pos}</span>`,
+    tipNext: r => `${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} · ${dayShort(r.nx.g.date)}`, click: t("ex_click"), open: exOpen, cardLogo: r => logo(r.p.team, 20), count: n => t("ex_count",{n})};
+}
 function exDraw(animate, first){
-  const S = state.ex, rows = exRows(S), box = $("#exchart"); if (!box) return;
+  const S = state.ex, A = exAdapter(S), rows = A.rows, box = $("#exchart"); if (!box) return;
+  const MT = A.MT, kx = A.kx, ky = A.ky, P_ = A.P, inv = !!P_?.inv;
   const narrow = innerWidth < 640, W = Math.max(320, Math.min(1100, box.clientWidth || 900)), H = narrow ? 380 : 520;
-  const L = narrow ? 40 : 56, R = 18, T = 18, B = narrow ? 40 : 46;
+  const L = narrow ? 40 : 56, R = A.teams ? 26 : 18, T = A.teams ? 24 : 18, B = narrow ? 40 : 46;
   const xs = rows.map(r => r.x), ys = rows.map(r => r.y);
-  const P_ = EX_P[S.preset] || null;
   const ext = (a, diag2) => { if (!a.length) return [0,1]; let lo = Math.min(...a), hi = Math.max(...a); if (diag2){ lo = Math.min(lo, ...diag2); hi = Math.max(hi, ...diag2); }
-    const pad = (hi - lo || 1) * 0.06; return [lo - pad, hi + pad]; };
+    const pad = (hi - lo || 1) * (A.teams ? 0.09 : 0.06); return [lo - pad, hi + pad]; };
   let [x0, x1] = ext(xs, P_?.diag ? ys : null), [y0, y1] = ext(ys, P_?.diag ? xs : null);
   if (P_?.diag){ const lo = Math.min(x0, y0), hi = Math.max(x1, y1); x0 = y0 = lo; x1 = y1 = hi; }
-  const sx = v => L + (W - L - R) * (v - x0) / (x1 - x0 || 1), sy = v => T + (H - T - B) * (1 - (v - y0) / (y1 - y0 || 1));
+  // inverted presets: lower is better on Y (goals against), so the best teams sit top-right
+  const sx = v => L + (W - L - R) * (v - x0) / (x1 - x0 || 1), sy = v => { const f = (v - y0) / (y1 - y0 || 1); return T + (H - T - B) * (inv ? f : 1 - f); };
   const nice = (a, b, n) => { const st = Math.pow(10, Math.floor(Math.log10((b - a) / n || 1))), m = [1,2,5,10].find(k => (b - a) / (st * k) <= n) * st; const out = []; for (let v = Math.ceil(a / m) * m; v <= b + 1e-9; v += m) out.push(+v.toFixed(6)); return out; };
-  const fx = v => EX_M[S.x].pct ? pct(v, 0) : fmt(v, Math.abs(x1 - x0) < 3 ? 1 : 0), fy = v => EX_M[S.y].pct ? pct(v, 0) : fmt(v, Math.abs(y1 - y0) < 3 ? 1 : 0);
+  const dec = (a, b) => Math.abs(b - a) < 0.3 ? 2 : Math.abs(b - a) < 3 ? 1 : 0;
+  const fx = v => MT[kx].pct ? pct(v, 0) : fmt(v, dec(x0, x1)), fy = v => MT[ky].pct ? pct(v, 0) : fmt(v, dec(y0, y1));
   const gx = nice(x0, x1, narrow ? 5 : 8).map(v => `<line x1="${sx(v)}" x2="${sx(v)}" y1="${T}" y2="${H-B}" class="exgl"/><text x="${sx(v)}" y="${H-B+16}" text-anchor="middle" class="extk">${fx(v)}</text>`).join("");
   const gy = nice(y0, y1, narrow ? 5 : 7).map(v => `<line x1="${L}" x2="${W-R}" y1="${sy(v)}" y2="${sy(v)}" class="exgl"/><text x="${L-8}" y="${sy(v)+4}" text-anchor="end" class="extk">${fy(v)}</text>`).join("");
   const mx = xs.length ? xs.reduce((a,b)=>a+b,0)/xs.length : 0, my = ys.length ? ys.reduce((a,b)=>a+b,0)/ys.length : 0;
   const avg = `<line x1="${sx(mx)}" x2="${sx(mx)}" y1="${T}" y2="${H-B}" class="exavg"/><line x1="${L}" x2="${W-R}" y1="${sy(my)}" y2="${sy(my)}" class="exavg"/>`;
   const diag = P_?.diag ? `<line x1="${sx(x0)}" y1="${sy(x0)}" x2="${sx(x1)}" y2="${sy(x1)}" class="exdiag"/>` : "";
-  const ql = P_?.q ? `<text x="${L+10}" y="${T+16}" class="exq hi">${t(P_.q[0])}</text><text x="${W-R-10}" y="${H-B-10}" text-anchor="end" class="exq lo">${t(P_.q[1])}</text>` : "";
-  // top 10 of the view
+  const ql = !P_?.q ? "" : inv
+    ? `<text x="${W-R-10}" y="${T+16}" text-anchor="end" class="exq hi">${t(P_.q[0])}</text><text x="${L+10}" y="${H-B-10}" class="exq lo">${t(P_.q[1])}</text>`
+    : `<text x="${L+10}" y="${T+16}" class="exq hi">${t(P_.q[0])}</text><text x="${W-R-10}" y="${H-B-10}" text-anchor="end" class="exq lo">${t(P_.q[1])}</text>`;
   const score = P_ ? (r => P_.top(r.x, r.y, r.p)) : (r => r.y);
-  const top = [...rows].sort((a,b) => score(b) - score(a)).slice(0, 10), topIds = new Set(top.map(r => r.p.id));
-  const q = S.q, hit = r => q && r.p.name.toLowerCase().includes(q);
-  const intX = EX_M[S.x].d === 0 && !EX_M[S.x].pct, intY = EX_M[S.y].d === 0 && !EX_M[S.y].pct;
+  const top = [...rows].sort((a,b) => score(b) - score(a)).slice(0, 10), topIds = new Set(top.map(r => r.id));
+  const q = S.q;
+  const intX = MT[kx].d === 0 && !MT[kx].pct, intY = MT[ky].d === 0 && !MT[ky].pct;
   const jit = (id, k) => { const v = Math.sin(id * (k ? 12.9898 : 78.233)) * 43758.5453; return (v - Math.floor(v)) - 0.5; };
-  const px = r => sx(r.x + (intX ? jit(r.p.id, 0) * 0.36 : 0)), py = r => sy(r.y + (intY ? jit(r.p.id, 1) * 0.36 : 0));
-  // labels for the top 10 / search hits, skipped when they'd collide with one already placed
+  const px = r => sx(r.x + (intX ? jit(A.seed(r), 0) * 0.36 : 0)), py = r => sy(r.y + (intY ? jit(A.seed(r), 1) * 0.36 : 0));
   const placed = [], canLabel = (x, y) => { if (placed.some(([a,b]) => Math.abs(a - x) < 70 && Math.abs(b - y) < 14)) return false; placed.push([x, y]); return true; };
-  const dots = rows.map((r, i) => { const tp = topIds.has(r.p.id), h = hit(r), cls = `exd ${r.p.posg === "D" ? "d" : "f"}${tp ? " top" : ""}${h ? " hl" : ""}${q && !h ? " dim" : ""}`;
-    return `<g class="${cls}" data-id="${r.p.id}" style="transform:translate(${px(r).toFixed(1)}px,${py(r).toFixed(1)}px);--d:${(i % 40) * 12}ms"><circle r="${tp || h ? 6.5 : 4.6}"/>${(tp || h) && canLabel(px(r), py(r)) ? `<text x="9" y="4" class="exlab">${esc(r.p.name.split(" ").slice(-1)[0])}</text>` : ""}</g>`; }).join("");
-  const axl = `<text x="${(L + W - R)/2}" y="${H-6}" text-anchor="middle" class="exax">${t("exm_"+S.x)}</text><text transform="translate(13 ${(T + H - B)/2}) rotate(-90)" text-anchor="middle" class="exax">${t("exm_"+S.y)}</text>`;
-  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="exsvg ${animate ? "exanim" : ""} ${first ? "exfirst" : ""}" role="img" aria-label="${esc(t("ex_title"))}">
+  let dots;
+  if (A.teams){
+    const sz = narrow ? 24 : 34;
+    dots = rows.map((r, i) => { const tp = topIds.has(r.id), h = A.hit(r), Lg = DATA.logos?.[r.team] || {}, s = tp || h ? sz * 1.12 : sz;
+      const img = Lg.dark || Lg.light ? `<image class="xl-d" href="${Lg.dark||Lg.light}" x="${-s*.62}" y="${-s*.62}" width="${s*1.24}" height="${s*1.24}"/><image class="xl-l" href="${Lg.light||Lg.dark}" x="${-s*.62}" y="${-s*.62}" width="${s*1.24}" height="${s*1.24}"/>` : `<text class="exlab" text-anchor="middle" y="4">${r.team}</text>`;
+      return `<g class="exd tm${tp ? " top" : ""}${h ? " hl" : ""}${q && !h ? " dim" : ""}" data-id="${r.id}" style="transform:translate(${px(r).toFixed(1)}px,${py(r).toFixed(1)}px);--d:${i * 22}ms"><g class="exti"><circle r="${s/2 + 2}" class="exring"/>${img}</g></g>`; }).join("");
+  } else {
+    dots = rows.map((r, i) => { const tp = topIds.has(r.id), h = A.hit(r), cls = `exd ${r.p.posg === "D" ? "d" : "f"}${tp ? " top" : ""}${h ? " hl" : ""}${q && !h ? " dim" : ""}`;
+      return `<g class="${cls}" data-id="${r.id}" style="transform:translate(${px(r).toFixed(1)}px,${py(r).toFixed(1)}px);--d:${(i % 40) * 12}ms"><circle r="${tp || h ? 6.5 : 4.6}"/>${(tp || h) && canLabel(px(r), py(r)) ? `<text x="9" y="4" class="exlab">${esc(r.p.name.split(" ").slice(-1)[0])}</text>` : ""}</g>`; }).join("");
+  }
+  const axl = `<text x="${(L + W - R)/2}" y="${H-6}" text-anchor="middle" class="exax">${A.lbl(kx)}</text><text transform="translate(13 ${(T + H - B)/2}) rotate(-90)" text-anchor="middle" class="exax">${A.lbl(ky)}</text>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="exsvg ${animate ? "exanim" : ""} ${first ? "exfirst" : ""}" role="img" aria-label="${esc(t(A.teams ? "ext_title" : "ex_title"))}">
     <defs><radialGradient id="exbg" cx="70%" cy="20%" r="90%"><stop offset="0" stop-color="var(--accent)" stop-opacity=".07"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
     <filter id="exglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
     <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" rx="10" fill="url(#exbg)" class="explot"/>${gx}${gy}${avg}${diag}${ql}${axl}<g class="exdots">${dots}</g></svg>`;
-  $("#excount").textContent = t("ex_count",{n:rows.length});
-  $("#exstory").innerHTML = P_ ? t("exs_"+S.preset) : t("ex_custom",{x:t("exm_"+S.x), y:t("exm_"+S.y)});
-  $("#extoph").innerHTML = P_ ? t(P_.tt) : t("ex_t_custom",{y:t("exm_"+S.y)});
-  $("#extop").innerHTML = top.length ? `<div class="extop">${top.map((r, i) => `<div class="exrow" data-id="${r.p.id}" role="button" tabindex="0" style="--d:${i*45}ms"><span class="exrk">${i+1}</span>${logo(r.p.team,20)}<span class="exnm"><b>${esc(r.p.name)}</b><small class="meta">${r.p.team} · ${r.p.pos} · ${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} ${dayShort(r.nx.g.date)}</small></span>
-      <span class="exv"><small>${t("exm_"+S.x)}</small><b>${exFmt(S.x, r.x)}</b></span><span class="exv"><small>${t("exm_"+S.y)}</small><b>${exFmt(S.y, r.y)}</b></span></div>`).join("")}</div>` : `<p class="meta">${t("ex_none")}</p>`;
-  // interactions
+  $("#excount").textContent = A.count(rows.length);
+  const pk = A.teams ? S.tpreset : S.preset;
+  $("#exstory").innerHTML = P_ ? A.story(pk) + (inv ? ` <span class="meta">${t("ext_inv")}</span>` : "") : t(A.teams ? "ext_custom" : "ex_custom",{x:A.lbl(kx), y:A.lbl(ky)});
+  $("#extoph").innerHTML = P_ ? t(P_.tt) : t("ex_t_custom",{y:A.lbl(ky)});
+  $("#extop").innerHTML = top.length ? `<div class="extop">${top.map((r, i) => `<div class="exrow" data-id="${r.id}" role="button" tabindex="0" style="--d:${i*45}ms"><span class="exrk">${i+1}</span>${A.cardLogo(r)}<span class="exnm"><b>${esc(r.short || r.name)}</b><small class="meta">${A.cardSub(r)}</small></span>
+      <span class="exv"><small>${A.lbl(kx)}</small><b>${A.fmtV(kx, r.x)}</b></span><span class="exv"><small>${A.lbl(ky)}</small><b>${A.fmtV(ky, r.y)}</b></span></div>`).join("")}</div>` : `<p class="meta">${t("ex_none")}</p>`;
   const tip = document.querySelector(".extip") || Object.assign(document.body.appendChild(document.createElement("div")), {className:"extip", hidden:true});
   const svg = box.querySelector("svg");
-  const show = (g, ev) => { const r = rows.find(z => String(z.p.id) === g.dataset.id); if (!r) return;
-    tip.innerHTML = `<div class="gth">${logo(r.p.team,18)} <b>${esc(r.p.name)}</b> <span class="meta">${r.p.team} · ${r.p.pos}</span></div>
-      <div class="nxr"><span>${t("exm_"+S.y)}</span><b>${exFmt(S.y, r.y)}</b></div><div class="nxr"><span>${t("exm_"+S.x)}</span><b>${exFmt(S.x, r.x)}</b></div>
-      <div class="nxr"><span>${t("ex_next")}</span><span>${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} · ${dayShort(r.nx.g.date)}</span></div><div class="nxf">${t("ex_click")}</div>`;
+  const find = id => rows.find(z => String(z.id) === id);
+  const show = (g) => { const r = find(g.dataset.id); if (!r) return;
+    let extra = "";
+    if (A.teams){ const rk = DATA.team_ranks?.teams?.[r.team] || {}, T_ = r.T;
+      extra = `<div class="nxr"><span>${t("ext_rec")}</span><span>${T_.gp} ${t("ext_gp")} · ${pct(T_.pts_pct ?? 0, 0)} ${t("ext_pts")}</span></div>` + (rk.att ? `<div class="nxr"><span>${t("ext_rk")}</span><span>${t("ext_rk_att")} ${rk.att.rk} · ${t("ext_rk_def")} ${rk.def?.rk ?? "–"}</span></div>` : ""); }
+    tip.innerHTML = `<div class="gth">${A.tipHead(r)}</div>
+      <div class="nxr"><span>${A.lbl(ky)}</span><b>${A.fmtV(ky, r.y)}</b></div><div class="nxr"><span>${A.lbl(kx)}</span><b>${A.fmtV(kx, r.x)}</b></div>${extra}
+      <div class="nxr"><span>${t("ex_next")}</span><span>${A.tipNext(r)}</span></div><div class="nxf">${A.click}</div>`;
     tip.hidden = false; const b = g.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
     let x = b.left + b.width/2 - w/2, y = b.top - h - 10; x = Math.max(8, Math.min(innerWidth - w - 8, x)); if (y < 8) y = b.bottom + 10; tip.style.left = x + "px"; tip.style.top = y + "px"; };
-  svg.onpointerover = e => { const g = e.target.closest(".exd"); if (g) show(g, e); };
+  svg.onpointerover = e => { const g = e.target.closest(".exd"); if (g) show(g); };
   svg.onpointerout = e => { const g = e.target.closest(".exd"); if (g && !g.contains(e.relatedTarget)) tip.hidden = true; };
-  svg.onclick = e => { const g = e.target.closest(".exd"); if (!g) return; if (e.pointerType === "touch" && tip.hidden){ show(g, e); return; } tip.hidden = true; exOpen(g.dataset.id); };
-  $("#extop").onclick = e => { const r = e.target.closest(".exrow"); if (r){ tip.hidden = true; exOpen(r.dataset.id); } };
+  svg.onclick = e => { const g = e.target.closest(".exd"); if (!g) return; if (e.pointerType === "touch" && tip.hidden){ show(g); return; } tip.hidden = true; A.open(g.dataset.id); };
+  $("#extop").onclick = e => { const r = e.target.closest(".exrow"); if (r){ tip.hidden = true; A.open(r.dataset.id); } };
   addEventListener("scroll", () => { tip.hidden = true; }, {passive:true, once:true});
 }
 // ------------------------------------------------------------ top props
@@ -4212,6 +4334,9 @@ en: `<h3>What the site does</h3>
   <h3>Players explorer</h3>
   <p>The <i>Explorer</i> tab puts every player with an upcoming game on one chart: pick any two stats for the axes, or a preset that tells a story. <i>Luck</i> (expected goals vs goals: far below the diagonal is unlucky), <i>Volume vs finishing</i> (shots per game vs shooting %), <i>Role</i> (ice time vs points), <i>Power play</i>, <i>Shots trend</i> (season vs last 10 games: who's shooting more lately) and <i>Tonight</i> (market vs model for 1+ point). Filter by position, team, games played or players in action today, search a name, hover a dot for his numbers and click to open his profile. The ten players the view is about are listed under the chart.</p>
 
+  <h3>Teams explorer</h3>
+  <p>Switch the Explorer to <i>Teams</i> to see all 32 teams on one chart, logos as dots. Presets: <i>Strength</i> (expected goals for vs against at 5-on-5), <i>Luck</i> (expected goal difference vs actual goal difference: above the diagonal, results better than the play), <i>Goaltending</i> (chances allowed vs goals saved above expected), <i>Pace &amp; totals</i> (both teams' expected goals per game vs how often their games go over 5.5), <i>Special teams</i> (power play vs penalty kill) and <i>Dangerous chances</i> (high-danger shots for vs against). Where lower is better the Y axis is flipped, so the best teams always sit top right. Hover a logo for the numbers and league ranks, click to open the team's next game. Free for everyone.</p>
+
   <h3>Shots on goal &amp; goalie saves</h3>
   <p>On every matchup the model projects each team's shots on goal and the total, from both teams' shot rates for and against this season and home ice, with the chance of going over the usual lines. The starting goalie's expected saves are the shots he's expected to face times his expected save rate, allowing for the times a goalie gets pulled early. Switch the goalie and the saves update. Tested on thousands of past games: team shots and saves were more accurate than simple averages at every line; for total shots the model is about as good as a simple average, so treat that one as context.</p>
 
@@ -4344,6 +4469,9 @@ sv: `<h3>Vad sajten gör</h3>
 
   <h3>Spelarutforskaren</h3>
   <p>Fliken <i>Utforska</i> visar alla spelare med en kommande match i ett diagram: välj två valfria mått för axlarna, eller en förinställning som berättar något. <i>Tur</i> (förväntade mål mot mål: långt under diagonalen är otur), <i>Volym mot effektivitet</i> (skott per match mot skottprocent), <i>Roll</i> (istid mot poäng), <i>Powerplay</i>, <i>Skottrend</i> (säsong mot senaste 10: vem som skjuter mer nu) och <i>I kväll</i> (marknad mot modell för 1+ poäng). Filtrera på position, lag, antal matcher eller spelare i kväll, sök ett namn, håll över en prick för siffrorna och klicka för att öppna profilen. De tio spelare vyn handlar om listas under diagrammet.</p>
+
+  <h3>Lagutforskaren</h3>
+  <p>Växla Utforska till <i>Lag</i> för att se alla 32 lag i ett diagram, med logotyper som punkter. Förval: <i>Styrka</i> (förväntade mål för och emot 5 mot 5), <i>Tur</i> (förväntad målskillnad mot faktisk: över diagonalen är resultaten bättre än spelet), <i>Målvakter</i> (insläppta chanser mot mål räddade över förväntat), <i>Tempo &amp; totaler</i> (båda lagens förväntade mål per match mot hur ofta matcherna går över 5,5), <i>Special teams</i> (powerplay mot boxplay) och <i>Farliga chanser</i> (farliga skott för och emot). Där lägre är bättre är Y-axeln vänd, så de bästa lagen hamnar alltid uppe till höger. Håll över en logotyp för siffror och ligaplacering, klicka för att öppna lagets nästa match. Gratis för alla.</p>
 
   <h3>Skott på mål &amp; målvaktsräddningar</h3>
   <p>På varje matchsida beräknar modellen varje lags skott på mål och totalen, utifrån båda lagens skott för och emot i år och hemmaplan, med chansen att gå över de vanliga linjerna. Startmålvaktens väntade räddningar är skotten han väntas möta gånger hans väntade räddningsprocent, med hänsyn till att målvakter ibland byts ut tidigt. Byt målvakt så uppdateras räddningarna. Testat på tusentals tidigare matcher: lagskott och räddningar var träffsäkrare än enkla snitt på alla linjer; för totalt antal skott är modellen ungefär lika bra som ett enkelt snitt, så se den som bakgrund.</p>

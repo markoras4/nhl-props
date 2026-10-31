@@ -55,6 +55,7 @@ Also planned for that release: 18+ check on the landing page again, Stripe check
 | Track record: results by triage grade | yes (public) | yes |
 | Tonight bar on the game-by-game chart (empty bar for the upcoming game + card) | the bar, and the card's "His side" and "Opponent" blocks (ice time, PP unit, luck, ranks) | plus the "Tonight" block: model chance, odds, EV, grade, season / last-10 views |
 | Players explorer (scatter of any two stats, presets, top-10 list) | all stat presets (Luck, Volume vs finishing, Role, Power play, Shots trend) and free choice of stats | plus the "Tonight" preset and the model / market axes |
+| Teams explorer (all 32 teams on two stats, six presets, top-10 list) | everything | – (free) |
 | Unlucky / hot tags, typical shots per goal, team news | yes | yes |
 | Hand-copied sportsbook prices (game markets in More markets) | yes (game level) | yes |
 | Hand-copied sportsbook player prices (shots, multi-point, PP points, blocks) | same rules as other player prices: open players; multi-point, PP and blocks are Pro | everyone |
