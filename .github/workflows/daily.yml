@@ -12,6 +12,8 @@ on:
     - cron: "15,45 0-8 * * *"
     - cron: "15 8 * * *"    # 09:15 Stockholm - morning results, after the late West Coast games
   workflow_dispatch:         # "Run workflow" button in the Actions tab
+  repository_dispatch:       # external 10-minute ticker (Supabase pg_cron): pre-game check + goalie watch
+    types: [pregame]
 
 permissions:
   contents: write
@@ -38,6 +40,7 @@ jobs:
         env:
           SCHED: ${{ github.event.schedule }}
         run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then python -m nhlprops pregame; exit 0; fi
           case "$SCHED" in
             "25,55 "*|"15,45 "*) python -m nhlprops pregame ;;
             *) echo "run=true" >> "$GITHUB_OUTPUT" ;;
