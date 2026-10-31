@@ -94,6 +94,14 @@ jobs:
           if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
           if [ ! -f site/app/index.html ]; then cp site/index.html site/app/index.html; fi
 
+      - name: Check the page scripts before publishing (a syntax error would show a blank site)
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          for f in site/app/index.html site/index.html; do
+            [ -f "$f" ] || continue
+            node -e "const s=require('fs').readFileSync('$f','utf8');const re=/<script>([\s\S]*?)<\/script>/g;let m,bad=0;while((m=re.exec(s))){try{new Function(m[1])}catch(e){console.error('$f:',e.message);bad=1}}process.exit(bad)"
+          done
+
       - name: Save prediction history to the repository
         if: steps.gate.outputs.run == 'true'
         run: |
