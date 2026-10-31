@@ -1,5 +1,5 @@
 Season 2026-2027. Fetching schedule from 2026-10-30 ...
-  48 upcoming games over 7 days
+  47 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -9,15 +9,15 @@ Fetching 721 skaters and 78 goalies (careers + game logs) ...
 Fetching 213 recent box scores (hits, blocks) ...
 News: 130 injuries, likely starters for 19 games (+26 backup reports), line combinations for 32/32 teams, game-day lineups for 18 teams (2026-10-30, updated 2026-10-30T21:22:37.646Z)
   shot maps: 213 games, 24326 attempts
-Model built: 48 games, 721 skaters (568 expected to play)
+Model built: 47 games, 721 skaters (567 expected to play)
 Odds: bookmaker prices for 10 games, 354 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  manual odds: 935 player prices added
+  manual odds: 627 player prices added
 Public betting: splits for 10 games
   season simulation: 10000 seasons, 1131 games left, top Cup: CAR 28%, COL 12%, VGK 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 28, points 28
   history: MoneyPuck xG for 2026: 6,470 player-games
   history: game-by-game files for 717 players (3 seasons)
   archive: 5 past dates published (2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29)
-Best picks record: 68 graded, 22 won, -0.47 units
+Best picks record: 70 graded, 22 won, -2.47 units
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-30.html
