@@ -565,7 +565,7 @@ body.has-cmp .slipfab{bottom:84px}
 .chip.tip{cursor:help}.hinfo{display:inline-flex;align-items:center;justify-content:center;color:var(--accent);margin-left:5px;text-transform:none;vertical-align:-2px;width:16px;height:16px;border-radius:50%;cursor:help;transition:color .2s,background .2s}
 .hinfo:hover,.hinfo:focus-visible{background:color-mix(in srgb,var(--accent) 16%,transparent)}
 .isvg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.isvg .dot{fill:currentColor;stroke:none}
-.howacc{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:22px}.howg{display:flex;flex-direction:column;gap:10px}
+.howacc{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:26px}.howchips{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:var(--hdr-h,64px);z-index:3;padding:8px 0;background:var(--bg)}.howchips button{all:unset;cursor:pointer;font:600 13px var(--f-ui);padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--text);transition:border-color .2s,color .2s}.howchips button:hover{border-color:var(--accent);color:var(--accent)}.hown{font:700 12px var(--f-ui);color:var(--mute);background:var(--chip);border-radius:99px;padding:2px 8px;vertical-align:3px;margin-left:4px}.howg{display:flex;flex-direction:column;gap:10px}
 .howgh{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:2px}.howgh h2{margin:0;font:800 20px var(--f-head,var(--f-ui))}.howgh .meta{margin:2px 0 0}
 .howall{all:unset;cursor:pointer;font:700 12px var(--f-ui);color:var(--accent);padding:6px 10px;border-radius:8px;white-space:nowrap}.howall:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .howl{display:flex;flex-direction:column;gap:8px}
@@ -1538,7 +1538,7 @@ Object.assign(I18N.en, {tc_pp2:"Not on the first power-play unit tonight: power-
   exmt_xgf60:"xG for / 60", exmt_xga60:"xG against / 60", exmt_xgd:"xG diff / game", exmt_gd:"Goal diff / game", exmt_gf_pg:"Goals for / game", exmt_ga_pg:"Goals against / game",
   exmt_pts:"Points %", exmt_gsax:"Goalies GSAx / game", exmt_pdo:"PDO (shooting + save %)", exmt_pace:"Total xG / game", exmt_o55:"Games over 5.5",
   exmt_pp:"PP xG for / 60", exmt_pk:"PK xG against / 60", exmt_hdf:"High-danger shots for / 60", exmt_hda:"High-danger shots against / 60", exmt_sa:"Shots against / game", exmt_pen:"Penalties taken / game",
-  nav_blog:"Blog", how_guide:"Guide", how_guide_sub:"How the site works, section by section. Tap a title to open it.", how_faq:"Questions", how_faq_sub:"Short answers to what people ask most.", how_expand:"Open all", how_collapse:"Close all",nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
+  how_explorer:"Explorer: players &amp; teams", how_account:"Your account &amp; settings", howc_basics:"The basics", howc_basics_sub:"What the numbers are, how they are built and tested, and the words used.", howc_site:"Using the site", howc_site_sub:"Every page and tool, one by one.", howc_smart:"Betting smarter", howc_smart_sub:"Triage grades and the public record of every pick.", howc_markets:"Markets", howc_markets_sub:"Shots, game markets, multi-point, power play, hits and blocks.", howc_account:"Account", howc_account_sub:"Your account, odds format and data.", nav_blog:"Blog", how_guide:"Guide", how_guide_sub:"How the site works, section by section. Tap a title to open it.", how_faq:"Questions", how_faq_sub:"Short answers to what people ask most.", how_expand:"Open all", how_collapse:"Close all",nav_explore:"Explorer", ex_title:"Players explorer", ex_sub:"Any two stats, every player. Spot who does what, then open his profile.",
   exp_luck:"Luck", exp_vol:"Volume vs finishing", exp_role:"Role", exp_pp:"Power play", exp_trend:"Shots trend", exp_tonight:"Tonight",
   ex_f:"Forwards", ex_d:"Defencemen", ex_top10:"Top 10 in this view", ex_min:"Minimum games", ex_minopt:"{n}+ games", ex_count:"{n} players", ex_next:"Next game", ex_click:"Click to open his profile", ex_none:"No players match these filters.",
   ex_foot:"This season's numbers (hits and blocks: last 10 games). 'Tonight' uses 1+ point: market chance with the margin removed vs the model. Players shown are those with an upcoming game.",
@@ -1605,7 +1605,7 @@ Object.assign(I18N.sv, {tc_pp2:"Inte i första powerplayfemman i kväll: powerpl
   exmt_xgf60:"xG för / 60", exmt_xga60:"xG emot / 60", exmt_xgd:"xG-skillnad / match", exmt_gd:"Målskillnad / match", exmt_gf_pg:"Gjorda mål / match", exmt_ga_pg:"Insläppta mål / match",
   exmt_pts:"Poäng-%", exmt_gsax:"Målvakter GSAx / match", exmt_pdo:"PDO (skott- + rädd-%)", exmt_pace:"Totalt xG / match", exmt_o55:"Matcher över 5,5",
   exmt_pp:"PP xG för / 60", exmt_pk:"BP xG emot / 60", exmt_hdf:"Farliga skott för / 60", exmt_hda:"Farliga skott emot / 60", exmt_sa:"Skott emot / match", exmt_pen:"Utvisningar / match",
-  nav_blog:"Blogg", how_guide:"Guide", how_guide_sub:"Så fungerar sajten, avsnitt för avsnitt. Tryck på en rubrik för att öppna den.", how_faq:"Frågor", how_faq_sub:"Korta svar på det folk frågar mest.", how_expand:"Öppna alla", how_collapse:"Stäng alla",nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
+  how_explorer:"Utforska: spelare &amp; lag", how_account:"Ditt konto &amp; inställningar", howc_basics:"Grunderna", howc_basics_sub:"Vad siffrorna är, hur de räknas fram och testas, och orden vi använder.", howc_site:"Använda sajten", howc_site_sub:"Varje sida och verktyg, ett i taget.", howc_smart:"Spela smartare", howc_smart_sub:"Triage-betyg och det öppna facit över varje spel.", howc_markets:"Marknader", howc_markets_sub:"Skott, matchspel, flera poäng, powerplay, tacklingar och blockeringar.", howc_account:"Konto", howc_account_sub:"Ditt konto, oddsformat och data.", nav_blog:"Blogg", how_guide:"Guide", how_guide_sub:"Så fungerar sajten, avsnitt för avsnitt. Tryck på en rubrik för att öppna den.", how_faq:"Frågor", how_faq_sub:"Korta svar på det folk frågar mest.", how_expand:"Öppna alla", how_collapse:"Stäng alla",nav_explore:"Utforska", ex_title:"Spelarutforskaren", ex_sub:"Vilka två statistikmått som helst, alla spelare. Se vem som gör vad och öppna profilen.",
   exp_luck:"Tur", exp_vol:"Volym mot effektivitet", exp_role:"Roll", exp_pp:"Powerplay", exp_trend:"Skottrend", exp_tonight:"I kväll",
   ex_f:"Forwards", ex_d:"Backar", ex_top10:"Topp 10 i vyn", ex_min:"Minst matcher", ex_minopt:"{n}+ matcher", ex_count:"{n} spelare", ex_next:"Nästa match", ex_click:"Klicka för att öppna profilen", ex_none:"Inga spelare matchar filtren.",
   ex_foot:"Säsongens siffror (tacklingar och blockeringar: senaste 10 matcherna). 'I kväll' gäller 1+ poäng: marknadens chans utan marginal mot modellen. Spelare med en kommande match visas.",
@@ -4597,10 +4597,7 @@ en: `<h3>What the site does</h3>
   <h3>Questions</h3>
   <details><summary>Is this a betting site?</summary><p>No. NHL Props Lab is an analysis tool. We don't take bets or hold money; you place bets with your own licensed sportsbook, if you want to.</p></details>
   <details><summary>Does a high percentage mean I should bet?</summary><p>Not on its own. What matters is the chance compared with the odds: a 60% chance at 1.50 loses money over time, a 30% chance at 4.00 makes money. That's what value and EV show.</p></details>
-  <details><summary>Why doesn't a hot player get a higher chance?</summary><p>Because streaks mostly don't continue. The model starts from his real level over a long stretch and gives recent form a little weight; in testing, that beat following the streak.</p></details>
-  <details><summary>Why did the numbers change during the day?</summary><p>New lineups, a confirmed goalie, an injury or new odds. Five minutes before the scheduled puck drop, everything about the game is locked: probabilities, odds, picks, lineups and player details stay as they were.</p></details>
   <details><summary>My sportsbook has different odds. What do I do?</summary><p>Type your odds in the odds box (decimal, American or fractional). The EV updates for your price.</p></details>
-  <details><summary>Can I look back at a game that's already been played?</summary><p>Yes, for the last 7 days: choose <i>Earlier</i> on the Games tab. Every game opens as it looked before puck drop, with ✓ / ✗ for what happened. Click any of a team's last 6 games or past meetings for a recap.</p></details>
   <details><summary>Can I follow a player for a later bet?</summary><p>Yes. Tap the bookmark next to any player (free account needed). He's listed under My picks with his next game, tonight's chance and odds, and a note if you want one; his game gets a marker on the Games tab, and you can get a push alert on game day.</p></details>
   <details><summary>What is “beat closing odds”?</summary><p>Your odds compared with the last price before puck drop. If you took 2.20 and it closed at 2.00, you got a better price than the market settled on. Doing that often is the clearest sign of good picks, even through losing runs. If the site has no price for your market, add the closing odds from your sportsbook yourself.</p></details>
   <details><summary>How do I delete my account or my data?</summary><p>Contact us and we'll delete it within 30 days. See the <a href="/legal.html#privacy">privacy policy</a>.</p></details>
@@ -4733,17 +4730,14 @@ sv: `<h3>Vad sajten gör</h3>
   <h3>Frågor</h3>
   <details><summary>Är det här en spelsajt?</summary><p>Nej. NHL Props Lab är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar; du spelar hos ditt eget licensierade spelbolag, om du vill.</p></details>
   <details><summary>Betyder en hög procent att jag ska spela?</summary><p>Inte i sig. Det som räknas är chansen jämfört med oddset: en chans på 60 % till 1,50 förlorar pengar över tid, en chans på 30 % till 4,00 vinner. Det är det värde och EV visar.</p></details>
-  <details><summary>Varför får inte en spelare i het form högre chans?</summary><p>För att sviter oftast inte håller i sig. Modellen utgår från hans verkliga nivå över en längre period och ger den senaste formen lite vikt; i testerna slog det att följa sviten.</p></details>
-  <details><summary>Varför ändrades siffrorna under dagen?</summary><p>Nya uppställningar, en bekräftad målvakt, en skada eller nya odds. Fem minuter före planerat nedsläpp låses allt om matchen: sannolikheter, odds, spel, uppställningar och spelardetaljer står kvar som de var.</p></details>
   <details><summary>Mitt spelbolag har andra odds. Vad gör jag?</summary><p>Skriv in ditt odds i oddsrutan (decimal, amerikanska eller bråk). EV uppdateras för ditt pris.</p></details>
-  <details><summary>Kan jag titta tillbaka på en match som redan är spelad?</summary><p>Ja, för de senaste 7 dagarna: välj <i>Tidigare</i> under Matcher. Varje match öppnas som den såg ut före nedsläpp, med ✓ / ✗ för vad som hände. Klicka på någon av ett lags senaste 6 matcher eller tidigare möten för en sammanfattning.</p></details>
   <details><summary>Kan jag följa en spelare inför ett senare spel?</summary><p>Ja. Tryck på bokmärket bredvid valfri spelare (gratis konto krävs). Han listas under Mina spel med nästa match, kvällens chans och odds och en anteckning om du vill; matchen markeras under Matcher, och du kan få en pushnotis på matchdagen.</p></details>
   <details><summary>Vad betyder ”slog stängningsoddset”?</summary><p>Ditt odds jämfört med det sista priset före nedsläpp. Tog du 2,20 och det stängde på 2,00 fick du ett bättre pris än marknaden landade på. Att göra det ofta är det tydligaste tecknet på bra spel, även genom förlustperioder. Saknar sajten pris för din marknad lägger du in stängningsoddset från ditt spelbolag själv.</p></details>
   <details><summary>Hur raderar jag mitt konto eller mina uppgifter?</summary><p>Kontakta oss så raderar vi dem inom 30 dagar. Se <a href="/legal.html#privacy">integritetspolicyn</a>.</p></details>
   <p>Läs <a href="/legal.html#terms">användarvillkoren</a>, <a href="/legal.html#disclaimer">ansvarsfriskrivningen</a> och <a href="/legal.html#privacy">integritetspolicyn</a>. Allt här är bedömningar, inte råd eller garantier. 18+, spela ansvarsfullt.</p>`
 };
 function howTab(){
-  // the guide as two accordions: every section folds open with motion, and the questions get their own group below
+  // the guide in a few categories (each section folds open with motion), and the common questions as their own group
   const src = document.createElement("div"); src.innerHTML = HOW[LANG] || HOW.en;
   const qRe = /^(Questions|Frågor)$/i, guide = [], faq = [];
   let cur = null, inQ = false;
@@ -4752,10 +4746,32 @@ function howTab(){
     if (inQ){ if (n.nodeType === 1 && n.tagName === "DETAILS"){ const sm = n.querySelector("summary"); const h = sm ? sm.innerHTML : ""; sm && sm.remove(); faq.push({h, body:[n.innerHTML]}); } continue; }
     if (cur) cur.body.push(n.nodeType === 1 ? n.outerHTML : (n.textContent.trim() ? `<p>${esc(n.textContent)}</p>` : ""));
   }
+  // section -> category, by its heading (English and Swedish); explorers and odds format fold into one section each
+  const CAT = [["basics", /^(What the site does|Vad sajten gör|How a probability|Hur en sannolikhet|Has it been tested|Har den testats|Always up to date|Alltid uppdaterat|Words used|Ord som används)/i],
+    ["smart", /^(Triage|Track record|Facit)/i],
+    ["markets", /^(Shots on goal|Skott på mål|More game markets|Fler spel|More player markets|Fler spelarspel|Hits|Tacklingar)/i],
+    ["zacc", /^(Your account|Ditt konto|Odds format|Oddsformat)/i]];
+  const catOf = h => (CAT.find(([, re]) => re.test(h.replace(/<[^>]+>/g, "").trim())) || ["site"])[0];
+  const merged = [];
+  for (const x of guide){
+    const plain = x.h.replace(/<[^>]+>/g, "");
+    if (/^(Teams explorer|Lagutforskaren)/i.test(plain)){ const pe = merged.find(y => /^(Players explorer|Spelarutforskaren)/i.test(y.h)); if (pe){ pe.h = t("how_explorer"); pe.body.push(...x.body); continue; } }
+    if (/^(Odds format|Oddsformat)/i.test(plain)){ const ac = merged.find(y => /^(Your account|Ditt konto)/i.test(y.h.replace(/<[^>]+>/g, ""))); if (ac){ ac.h = t("how_account"); ac.body.push(...x.body); continue; } x.later = true; }
+    merged.push(x);
+  }
+  // odds format before the account section in the source: attach it afterwards
+  merged.filter(x => x.later).forEach(x => { const ac = merged.find(y => /^(Your account|Ditt konto)/i.test(y.h.replace(/<[^>]+>/g, ""))); if (ac){ ac.h = t("how_account"); ac.body.push(...x.body); x.drop = true; } });
+  const items = merged.filter(x => !x.drop);
+  const order = ["basics", "site", "smart", "markets", "account"];
+  const cats = order.map(k => ({k, list: items.filter(x => catOf(x.h) === k || (k === "site" && catOf(x.h) === "zacc"))})).filter(c => c.list.length);
   const item = (x, k, i) => `<div class="clp howi" data-clk="${k}:${i}" style="--d:${i*35}ms"><button type="button" class="clph" aria-expanded="false"><span class="howh">${x.h}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${x.body.join("")}</div></div></div></div>`;
-  const group = (title, sub, list, k) => `<section class="howg"><div class="howgh"><div><h2>${title}</h2>${sub ? `<p class="meta">${sub}</p>` : ""}</div><button type="button" class="howall" data-howall="${k}">${t("how_expand")}</button></div>
+  const group = (title, sub, list, k) => `<section class="howg" id="howg-${k}"><div class="howgh"><div><h2>${title} <span class="hown">${list.length}</span></h2>${sub ? `<p class="meta">${sub}</p>` : ""}</div><button type="button" class="howall" data-howall="${k}">${t("how_expand")}</button></div>
     <div class="howl" data-howk="${k}">${list.map((x, i) => item(x, k, i)).join("")}</div></section>`;
-  $("#main").innerHTML = `<div class="how howacc">${group(t("how_guide"), t("how_guide_sub"), guide, "hg")}${faq.length ? group(t("how_faq"), t("how_faq_sub"), faq, "hq") : ""}<p class="foot">${t("footer")}</p></div>`;
+  const all = cats.map(c => ({k:"h_"+c.k, title:t("howc_"+c.k), sub:t("howc_"+c.k+"_sub"), list:c.list}));
+  if (faq.length) all.push({k:"hq", title:t("how_faq"), sub:t("how_faq_sub"), list:faq});
+  const chips = `<div class="howchips">${all.map(g => `<button type="button" data-howgo="${g.k}">${g.title}</button>`).join("")}</div>`;
+  $("#main").innerHTML = `<div class="how howacc">${chips}${all.map(g => group(g.title, g.sub, g.list, g.k)).join("")}<p class="foot">${t("footer")}</p></div>`;
+  $("#main").querySelectorAll("[data-howgo]").forEach(b => b.onclick = () => { const el = document.getElementById("howg-" + b.dataset.howgo); if (el) scrollTo({top: el.getBoundingClientRect().top + scrollY - 80, behavior: "smooth"}); });
   $("#main").querySelectorAll("[data-howall]").forEach(b => b.onclick = () => {
     const list = $("#main").querySelector(`[data-howk="${b.dataset.howall}"]`), items = [...list.querySelectorAll(".howi")], open = !items.every(x => x.classList.contains("open"));
     items.forEach((x, i) => setTimeout(() => { x.classList.toggle("open", open); x.querySelector(".clph").setAttribute("aria-expanded", open); }, i * 25));
