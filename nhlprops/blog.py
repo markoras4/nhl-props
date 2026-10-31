@@ -46,7 +46,7 @@ header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 8
 .card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 50%,var(--line));box-shadow:0 18px 44px rgba(0,0,0,.3)}
 .card .ph{aspect-ratio:16/9;background:var(--panel2);overflow:hidden}.card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.8,.2,1)}.card:hover .ph img{transform:scale(1.05)}
 .card .tx{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px}.card h3{font:800 21px/1.15 var(--f-disp);margin:0}.card p{margin:0;color:var(--mute);font-size:15px}
-.tag{display:inline-block;font:700 11px var(--f-disp);letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.tag{display:inline-block;align-self:flex-start;font:700 11px var(--f-disp);letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
 .tag.history{color:var(--gold);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--gold) 70%,transparent)}.tag.betting{color:var(--accent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 70%,transparent)}
 @keyframes up{from{opacity:0;transform:translateY(14px)}}
 /* article */
