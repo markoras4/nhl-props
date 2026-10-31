@@ -270,6 +270,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   .screens{grid-template-columns:1fr 1fr;gap:14px}
   .proof{gap:16px}
 }
+/* scroll reveal: each section's content rises in as it comes into view (only when JS runs) */
+.rvon .rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--rvd,0ms);will-change:opacity,transform}
+.rvon .rv.rvz{transform:translateY(18px) scale(.97)}
+.rvon .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -712,6 +716,26 @@ render();
   v.addEventListener("contextmenu", e => e.preventDefault());
   v.addEventListener("ended", () => { v.controls = false; btn.hidden = false; try { v.currentTime = 0; } catch(e){} v.load(); loaded = true; });
   document.querySelectorAll('a[href="#tour"]').forEach(a => a.addEventListener("click", () => setTimeout(() => start(true), 450)));
+})();
+</script>
+<script>
+(() => {
+  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const root = document.documentElement; root.classList.add("rvon");
+  const mark = (el, d, z) => { if (!el || el.classList.contains("rv")) return; el.classList.add("rv"); if (z) el.classList.add("rvz"); el.style.setProperty("--rvd", d + "ms"); };
+  // headings first, then the cards / devices one after another
+  document.querySelectorAll("main section, main .final").forEach(sec => {
+    let d = 0;
+    sec.querySelectorAll(":scope .sh, :scope .final > h2, :scope .final > .sub, :scope .final > .ctas").forEach(el => { mark(el, d); d += 90; });
+    const groups = sec.querySelectorAll(".fgrid, .plans, .steps, .screens, .about");
+    groups.forEach(g => [...g.children].forEach((c, i) => mark(c, d + i * 110, g.classList.contains("screens"))));
+    sec.querySelectorAll(".tourbox, .strip, .pgrid, .lrec, .scap, .also, .faq").forEach((el, i) => mark(el, d + 120 + i * 80, el.classList.contains("tourbox")));
+  });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), {rootMargin: "0px 0px -8% 0px", threshold: 0.08});
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+  // safety: never leave anything hidden (e.g. printing, odd browsers)
+  setTimeout(() => document.querySelectorAll(".rv:not(.in)").forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight) el.classList.add("in"); }), 1500);
+  addEventListener("beforeprint", () => document.querySelectorAll(".rv").forEach(el => el.classList.add("in")));
 })();
 </script>
 </body>
