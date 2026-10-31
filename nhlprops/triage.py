@@ -4,7 +4,8 @@ For a price with positive EV, the edge is re-checked with two other views of the
 his season average and his last 10 games (goals from his expected goals, so luck doesn't count twice). Cautions:
 shooting clearly down (overs) or up (unders) this season vs his previous 3 seasons, a depth forward on scoring
 markets, the opposing goalie not confirmed, the price drifting out since it opened, the sharp book disagreeing,
-a short NHL history. Grade:
+a short NHL history; for power-play points, his season and last-10 PP rate as the two views, an over on a player off
+the first PP unit, and a "no" on a player newly moved to the first unit. Grade:
   S (solid)    both views also show value, no caution, odds 1.30-7.99 (long shots and very short prices top out at lean)
   F (fragile)  neither view shows value, or 2+ cautions
   L (lean)     everything in between
@@ -72,6 +73,22 @@ def ratios(pl: dict) -> dict:
     return {k: {kk: (v[kk] / mod[kk] if mod[kk] > 0 else 1.0) for kk in v} for k, v in out.items()}
 
 
+def pp_ratios(pl: dict) -> dict:
+    """his season and last-10 power-play points per game vs the model's own PP rate (before tonight's opponent)"""
+    x = pl.get("x") or {}
+    lam = x.get("ppp_lam") or 0
+    out = {}
+    if lam <= 0:
+        return out
+    pp = x.get("pp") or {}
+    if (pp.get("gp") or 0) >= 5:
+        out["season"] = (pp.get("ppp") or 0) / pp["gp"] / lam
+    l10 = ((pl.get("form") or {}).get("games") or [])[:10]
+    if len(l10) >= 5:
+        out["l10"] = sum(g.get("pp") or 0 for g in l10) / len(l10) / lam
+    return out
+
+
 def usage_z(pl: dict) -> tuple[float, float]:
     w = pl.get("windows") or {}
     cur, base = w.get("cur") or {}, (w.get("prev3") or {}) if ((w.get("prev3") or {}).get("gp") or 0) >= 40 else (w.get("career") or {})
@@ -107,7 +124,19 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
             q = _p(m, lg * r["g"], la * r["a"], ls * r["s"] / SOG_CAL)
             if q is not None:
                 views[k] = round((q if side == "o" else 1 - q) * od - 1, 4)
+    if m == "ppp":
+        lp = (pr.get("base") or {}).get("ppp") or 0
+        for k, r in pp_ratios(pl).items():
+            q = 1 - math.exp(-lp * r)
+            views[k] = round((q if side == "o" else 1 - q) * od - 1, 4)
     caut, info = [], []
+    if m == "ppp":
+        unit = ((pl.get("mates") or {}).get("pp")) or ""
+        prev_min = ((pl.get("x") or {}).get("pp") or {}).get("min_pg_prev")
+        if side == "o" and unit != "pp1":
+            caut.append("pp2")          # overs on players off the first unit rarely land
+        if side == "n" and unit == "pp1" and (prev_min is None or prev_min < 1.5):
+            caut.append("pp_new")       # newly on the first unit: the market prices the new role before the model does
     zs, zx = usage_z(pl)
     if m in SCORING or m.startswith("s"):
         if side == "o" and (zs <= -2 or zx <= -2):

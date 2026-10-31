@@ -1262,6 +1262,12 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
     pp_tot = [v for (pid_, y_), v in ppf.items() if y_ == cur - 1]
     pp_lg = (sum(a for a, b in pp_tot) / sum(b for a, b in pp_tot)) if pp_tot and sum(b for a, b in pp_tot) else 4.0
     lg_pen_pg = (sum(pst["pens"].values()) / sum(pst["tgp"].values())) if sum(pst["tgp"].values()) else 3.3
+    # last season's power-play points per player-game across the league (every PP situation, from the game logs)
+    _pp_n = _pp_g = 0
+    for _lg in (raw.get("logs") or {}).values():
+        _lp = (_lg or {}).get("prev", []) or []
+        _pp_n += sum(g_.get("ppp", 0) for g_ in _lp); _pp_g += len(_lp)
+    lg_ppp_prev = _pp_n / _pp_g if _pp_g else 0.08
     for pid_, prof_ in profiles.items():
         me_ = sf[sf.pid == pid_]
         lg_ = raw["logs"].get(pid_, {}) or {}
@@ -1271,7 +1277,10 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
         # power play: last season's 5-on-4 scoring rate x PP time per game, updated with this season's PP points (K = 20 games)
         a_, h_ = ppf.get((pid_, cur - 1), (0.0, 0.0))
         gp_prev = float(prev_.get("gp", 0) or 0)
-        if h_ > 0 and gp_prev > 0:
+        if cfg.get("ppp_prior") == "all" and lp_:
+            # backtest_ppp: last season's actual PP points per game (5-on-3 and 4-on-3 included) beat the 5-on-4 rate
+            lam_prior = (sum(g_.get("ppp", 0) for g_ in lp_) + 10 * lg_ppp_prev * 0.6) / (len(lp_) + 10)
+        elif h_ > 0 and gp_prev > 0:
             lam_prior = shrink(a_, h_, pp_lg * 0.6, 6) * h_ / gp_prev
         else:
             lam_prior = 0.03
@@ -1607,8 +1616,14 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
                             "a2": tc("a2", lam_a, p_over_poisson(lam_a, 1.5))})
                 if xr:
                     opp_pen = team_pen_pg.get(opp, lg_pen_pg) / lg_pen_pg if lg_pen_pg else 1.0
-                    base["ppp"] = xr["ppp_lam"] * opp_pen ** cfg["ppp_opp_beta"]
-                    hbp["ppp"] = 1 - math.exp(-base["ppp"])
+                    lam_pp = xr["ppp_lam"] * opp_pen ** cfg["ppp_opp_beta"]
+                    p_pp = 1 - math.exp(-lam_pp)
+                    k0, kk = cfg.get("ppp_top", (1.0, 1.0))
+                    if p_pp > k0:      # backtest_ppp: chances above ~25% ran high (33.5% -> 30.2%, 43.7% -> 36.3%)
+                        p_pp = k0 + (p_pp - k0) * kk
+                        lam_pp = -math.log(1 - p_pp)
+                    base["ppp"] = lam_pp
+                    hbp["ppp"] = p_pp
                     base["pen"] = xr["pen60"] * hrs * cfg["pen_mult"]
                     hbp["pim0.5"] = p_over_nb(base["pen"], 0.5, cfg["pen_r"])
                     hbp["pim2.5"] = min(0.99, p_over_nb(base["pen"], 1.5, cfg["pen_r"]) * cfg["pim25_cal"])
