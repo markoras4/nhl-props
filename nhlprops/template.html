@@ -2944,6 +2944,9 @@ function nextTip(pid, gid, m){
     if (d.shots_per_goal) his += row(t("k_spg"), `<b>${fmt(d.shots_per_goal,1)}</b>`); }
   else { const f = p.form || {}; his += row(t("nx_l5"), `<b>${f.g||0}</b> ${t("h_g")} · <b>${f.a||0}</b> ${t("h_a")}`);
     if (p.role?.ppp5 != null && ppu) his += row(t("nx_ppp5"), `<b>${p.role.ppp5}</b>`); }
+  if (m !== "s" && ppu && pr.base?.ppp != null){   // power-play point chance tonight (players on a PP unit)
+    const qp = prob(pr, g, "ppp"), op_ = getOdds(g.id, pr.id, "ppp");
+    his += row(t("rb_pppch"), `<b>${pct(qp,1)}</b>${op_ ? ` <span class="meta">${oddsTxt(op_)}</span>` : ""}`, op_ ? `<span class="${qp*op_-1>0?"ev-pos":"ev-neg"}">${evTxt(qp*op_-1)}</span>` : ""); }
   // --- opponent
   const TR = DATA.team_ranks?.teams?.[opp] || {}, T = DATA.teams[opp] || {}, op = DATA.opp_pos?.[opp]?.[posGroup(p.pos)];
   const gk = G(state.goalie[g.id][opp]), st = g.starter_status?.[opp] || "";
