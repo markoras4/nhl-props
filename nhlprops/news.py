@@ -294,12 +294,12 @@ def fetch_news(src, teams: list[str], dates: list[str], log=print) -> dict:
     mp_starters: dict[int, list] = {}
     for d in dates:
         ymd = d.replace("-", "")
-        mp_starters.update(parse_moneypuck_day(src.text(MP_DAY_URL.format(ymd=ymd), f"news/mp_day_{ymd}.htm", 0.2)))
+        mp_starters.update(parse_moneypuck_day(src.text(MP_DAY_URL.format(ymd=ymd), f"news/mp_day_{ymd}.htm", 0.05)))
     goalies = {}
     for d in dates[:2]:  # backup source, today/tomorrow only
-        goalies[d] = parse_starting_goalies(src.text(GOALIES_URL.format(date=d), f"news/goalies_{d}.html", 0.2))
+        goalies[d] = parse_starting_goalies(src.text(GOALIES_URL.format(date=d), f"news/goalies_{d}.html", 0.05))
     lines = {t: parse_lines(src.text(LINES_URL.format(slug=slug(t)), f"news/lines_{t}.html", 4)) for t in teams}
-    nhl = parse_nhl_lineups(src.text(NHL_LINEUPS_URL, "news/nhl_lineups.html", 0.15))
+    nhl = parse_nhl_lineups(src.text(NHL_LINEUPS_URL, "news/nhl_lineups.html", 0.05))
     n_inj = sum(len(v) for v in injuries.values())
     n_g = sum(len(v) for v in goalies.values())
     n_l = sum(1 for v in lines.values() if v)
@@ -308,3 +308,20 @@ def fetch_news(src, teams: list[str], dates: list[str], log=print) -> dict:
         f"game-day lineups for {len(nhl['teams'])} teams ({nhl['date']}, updated {nhl['updated']})")
     return {"injuries": injuries, "goalies": goalies, "mp_starters": mp_starters, "lines": lines, "nhl": nhl,
             "status": {"injuries": n_inj > 0, "goalies": bool(mp_starters) or n_g > 0, "lines": n_l > 0}}
+
+
+def goalie_signature(src, date: str) -> dict:
+    """Every source's starting-goalie call for one day, fetched fresh (MoneyPuck, Daily Faceoff, NHL.com game-day
+    lineups): the pre-game gate rebuilds the site as soon as any of them changes (a goalie confirmed or swapped)."""
+    sig = {}
+    ymd = date.replace("-", "")
+    for gid, reps in parse_moneypuck_day(src.text(MP_DAY_URL.format(ymd=ymd), f"watch/mp_{ymd}.htm", 0.0)).items():
+        sig[f"mp|{gid}"] = sorted(f"{r['name']}|{r['status']}|{round(r['pct'] / 10)}" for r in reps)
+    for r in parse_starting_goalies(src.text(GOALIES_URL.format(date=date), f"watch/df_{date}.html", 0.0)):
+        sig[f"df|{r.get('team')}|{r['name']}"] = r["status"]
+    nhl = parse_nhl_lineups(src.text(NHL_LINEUPS_URL, "watch/nhl_lineups.html", 0.0))
+    if nhl.get("date") == date:
+        for t, v in (nhl.get("teams") or {}).items():
+            if v.get("goalies"):
+                sig[f"nhl|{t}"] = v["goalies"][0]
+    return sig

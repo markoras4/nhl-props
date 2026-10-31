@@ -863,9 +863,31 @@ def pregame(src: Source, state_file: Path, window: int) -> int:
         gs = sj.get("games") or []
         if gs and all(g.get("gameState") in ("OFF", "FINAL") for g in gs) and f"final|{d}" not in done:
             due.append(f"final|{d}")
+    # goalie watch: on game days, from ~7 hours before the first puck drop until the last one, every check fetches
+    # the starting-goalie sources and rebuilds as soon as any call changes (confirmed, swapped, likelihood moved)
+    watch_file = state_file.with_name("goalie_watch.json")
+    if starts:
+        first = min(dt.datetime.fromisoformat(s_.replace("Z", "+00:00")) for s_ in starts)
+        last = max(dt.datetime.fromisoformat(s_.replace("Z", "+00:00")) for s_ in starts)
+        if first - dt.timedelta(hours=7) <= now <= last:
+            try:
+                from .news import goalie_signature
+                sig = goalie_signature(src, today)
+                old = (json.loads(watch_file.read_text()) if watch_file.exists() else {}).get(today) or {}
+                if sig and sig != old:
+                    changed = sorted(k for k in set(sig) | set(old) if sig.get(k) != old.get(k))
+                    if not due:
+                        due.append("goalies")
+                    print(f"Goalie watch: {len(changed)} change(s): {', '.join(changed[:8])}")
+                else:
+                    print("Goalie watch: no change")
+                if sig and (due or sig != old):   # saved with every rebuild, so the next check compares with what's published
+                    watch_file.write_text(json.dumps({today: sig}))
+            except Exception as e:  # noqa: BLE001  (a source down must never block the normal refreshes)
+                print("Goalie watch skipped:", e)
     run = bool(due)
     if run:
-        state_file.write_text(json.dumps(sorted(set(done) | set(due))[-120:]))
+        state_file.write_text(json.dumps(sorted(set(done) | set(d_ for d_ in due if d_ != "goalies"))[-120:]))
     print(f"Pre-game check {now:%H:%M} UTC: starts today {sorted(starts)} -> {'refresh for ' + ', '.join(due) if run else 'nothing due'}")
     import os
     if os.environ.get("GITHUB_OUTPUT"):

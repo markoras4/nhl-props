@@ -6,9 +6,9 @@ on:
     - cron: "15 16 * * *"   # 17:15 - odds and lineups refresh
     - cron: "15 19 * * *"   # 20:15
     - cron: "15 22 * * *"   # 23:15 - just before most puck drops
-    - cron: "25,55 15-23 * * *"  # pre-game checks: rebuild ~1 hour before each puck drop
+    - cron: "25,55 12-23 * * *"  # pre-game checks: rebuild ~1 hour before each puck drop + goalie watch (rebuild when a starter is confirmed or changes)
     - cron: "25,55 0-8 * * *"    #   (only builds when a game starts within 75 minutes, or when a night's games are all final)
-    - cron: "15,45 15-23 * * *"  # last check ~15 min before each puck drop (goalies confirmed at warmups), before the 5-min lock
+    - cron: "15,45 12-23 * * *"  # last check ~15 min before each puck drop (goalies confirmed at warmups), before the 5-min lock
     - cron: "15,45 0-8 * * *"
     - cron: "15 8 * * *"    # 09:15 Stockholm - morning results, after the late West Coast games
   workflow_dispatch:         # "Run workflow" button in the Actions tab
@@ -100,6 +100,7 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/public data/bestpicks data/ledger data/last-build.log || true
           [ -f data/pregame.json ] && git add data/pregame.json || true
+          [ -f data/goalie_watch.json ] && git add data/goalie_watch.json || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
 
       - name: Save the archive on the "archive" branch (no history kept)
