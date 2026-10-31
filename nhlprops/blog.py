@@ -105,8 +105,12 @@ def fetch_img(url: str, name: str) -> str:
     cache = ROOT / "data" / "cache" / "blog_img" / (name + ext)   # kept between builds (actions cache), so Commons is asked once
     try:
         if not cache.exists():
+            import time
+            time.sleep(2.0)   # be gentle with Commons (it rate-limits bursts)
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=40) as r:
                 data = r.read()
+            if data[:3] != b"\xff\xd8\xff" and data[:4] != b"\x89PNG":
+                raise ValueError("not an image")
             cache.parent.mkdir(parents=True, exist_ok=True)
             cache.write_bytes(data)
         dst.parent.mkdir(parents=True, exist_ok=True)
