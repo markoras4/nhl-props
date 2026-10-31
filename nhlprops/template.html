@@ -947,8 +947,8 @@ body.has-cmp main{padding-bottom:110px}
 .lgtot td{border-top:1px solid var(--line)}.cnt{font-variant-numeric:tabular-nums}.lgtab td,.lgtab th{white-space:nowrap}
 .lgcbox{overflow:hidden}.lgwrap{position:relative}
 .lgchart{width:100%;height:auto;display:block;overflow:visible}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-dasharray:3 4}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
-.lgl{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
-@keyframes lgdraw{to{stroke-dashoffset:0}}
+.lgl{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
+@keyframes lgdraw{to{stroke-dashoffset:0px}}
 .lga{opacity:0;animation:lgfade 1s ease forwards;animation-delay:calc(.9s + var(--k)*.18s)}@keyframes lgfade{to{opacity:1}}
 .lgl.lg-S{stroke:var(--good)}.lgl.lg-L{stroke:#e3a33b}.lgl.lg-F{stroke:var(--bad)}
 .lgd,.lgp{opacity:0;animation:lgfade .4s ease forwards;animation-delay:calc(1.35s + var(--k)*.18s)}.lgd.lg-S,.lgp.lg-S{fill:var(--good)}.lgd.lg-L,.lgp.lg-L{fill:#e3a33b}.lgd.lg-F,.lgp.lg-F{fill:var(--bad)}
