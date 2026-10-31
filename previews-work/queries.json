@@ -1,5 +1,12 @@
 {
- "2026-10-30-njd-vgk": ["Jack Eichel Golden Knights", "Mitch Marner", "Mark Stone Golden Knights", "Jack Hughes Devils", "Nico Hischier", "Connor Hellebuyck"],
- "2026-10-30-wpg-fla": ["Matthew Tkachuk Panthers", "Sam Reinhart", "Carter Verhaeghe", "Brady Tkachuk", "Kyle Connor Jets", "Mark Scheifele"],
- "2026-10-30-sea-cgy": ["Scotiabank Saddledome hockey", "Mikael Backlund", "Seattle Kraken", "Matty Beniers", "Jordan Eberle Kraken", "Calgary Flames Saddledome"]
+ "2026-10-31-chi-bos": ["Connor Bedard Blackhawks", "David Pastrnak Bruins", "Charlie McAvoy Bruins", "Patrick Kane Blackhawks", "Boston Bruins TD Garden"],
+ "2026-10-31-stl-det": ["Robert Thomas Blues", "Dylan Larkin Red Wings", "Lucas Raymond Red Wings", "Alex DeBrincat Red Wings", "Moritz Seider", "St. Louis Blues at Detroit Red Wings"],
+ "2026-10-31-tbl-nsh": ["Nikita Kucherov Lightning", "Brayden Point Lightning", "Filip Forsberg Predators", "Roman Josi Predators", "Andrei Vasilevskiy", "Nashville Predators Bridgestone Arena"],
+ "2026-10-31-edm-nyi": ["Connor McDavid Oilers", "Leon Draisaitl Oilers", "Bo Horvat Islanders", "Ilya Sorokin Islanders", "New York Islanders UBS Arena"],
+ "2026-10-31-buf-lak": ["Tage Thompson Sabres", "Rasmus Dahlin Sabres", "Adrian Kempe Kings", "Buffalo Sabres at Los Angeles Kings", "Los Angeles Kings Crypto.com Arena"],
+ "2026-10-31-ott-sjs": ["Tim Stutzle Senators", "Brady Tkachuk Senators", "Macklin Celebrini Sharks", "Drake Batherson", "San Jose Sharks SAP Center"],
+ "2026-10-31-pit-mtl": ["Sidney Crosby Penguins", "Evgeni Malkin Penguins", "Cole Caufield Canadiens", "Lane Hutson Canadiens", "Montreal Canadiens Bell Centre"],
+ "2026-10-31-tor-van": ["Auston Matthews Maple Leafs", "William Nylander Maple Leafs", "Brock Boeser Canucks", "Toronto Maple Leafs at Vancouver Canucks", "Vancouver Canucks Rogers Arena"],
+ "2026-10-31-cbj-dal": ["Jason Robertson Stars", "Mikko Rantanen Stars", "Zach Werenski Blue Jackets", "Jake Oettinger Stars", "Columbus Blue Jackets at Dallas Stars"],
+ "2026-10-31-cgy-col": ["Nathan MacKinnon Avalanche", "Cale Makar Avalanche", "Martin Necas Avalanche", "Calgary Flames at Colorado Avalanche", "Colorado Avalanche Ball Arena"]
 }
