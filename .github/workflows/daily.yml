@@ -82,6 +82,7 @@ jobs:
           if [ -f output/alerts.json ]; then cp output/alerts.json site/data/alerts.json; fi
           if [ -f output/shots.json ]; then cp output/shots.json site/data/shots.json; fi
           if [ -f output/bestpicks.json ]; then cp output/bestpicks.json site/data/bestpicks.json; fi
+          if [ -f output/ledger.json ]; then cp output/ledger.json site/data/ledger.json; fi
           if [ -d output/gl ]; then mkdir -p site/data/gl && cp output/gl/*.json site/data/gl/ 2>/dev/null || true; fi
           if [ -d output/archive ]; then mkdir -p site/data/archive && cp output/archive/*.json site/data/archive/ 2>/dev/null || true; fi
           cp site-assets/sw.js site/sw.js 2>/dev/null || true
@@ -97,7 +98,7 @@ jobs:
         run: |
           git config user.name "nhl-props-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/public data/bestpicks data/last-build.log || true
+          git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/public data/bestpicks data/ledger data/last-build.log || true
           [ -f data/pregame.json ] && git add data/pregame.json || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true
 

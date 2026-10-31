@@ -944,6 +944,11 @@ body.has-cmp main{padding-bottom:110px}
 
 /* best picks record */
 .trksw{margin:2px 0 14px}.trksw .seg button{font-size:13px;padding:7px 14px}
+.lgintro{margin-bottom:12px;padding:12px 16px;max-width:none}.lgintro p{margin:0;max-width:880px;font-size:13.5px;line-height:1.5}
+.lgtot td{border-top:1px solid var(--line)}.lgtab td,.lgtab th{white-space:nowrap}
+.lgchart{width:100%;height:auto;display:block}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent)}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
+.lgl{fill:none;stroke-width:2.4;stroke-linejoin:round}.lgl.lg-S,.lgd.lg-S{stroke:var(--good);fill:var(--good)}.lgl.lg-S{fill:none}.lgl.lg-L,.lgd.lg-L{stroke:#e3a33b;fill:#e3a33b}.lgl.lg-L{fill:none}.lgl.lg-F,.lgd.lg-F{stroke:var(--bad);fill:var(--bad)}.lgl.lg-F{fill:none}
+.lgchart text.lgt{font-weight:700}.lgchart text.lg-S{fill:var(--good)}.lgchart text.lg-L{fill:#e3a33b}.lgchart text.lg-F{fill:var(--bad)}
 .rkctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
 .rkctl select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:inherit;font-size:13px}
 .rkstep{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
@@ -1489,7 +1494,13 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {ex_m_players:"Players", ex_m_teams:"Teams", ext_title:"Teams explorer", ext_sub:"Every team on two stats. Who controls games, who's lucky, whose goalie is carrying them.",
+Object.assign(I18N.en, {trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
+  lg_bets:"Bets", lg_hit:"Hit rate / model", lg_hit_tip:"How often the bets won, next to the average chance the model gave them.", lg_n_tip:"Graded bets (won or lost). Voids and games still in play aren't counted.",
+  lg_sh:"Edge vs sharp", lg_sh_tip:"Our price at the lock against the sharp book's fair price (margin removed) at the same moment, averaged. Positive means we beat the sharpest line in the market, the best early sign of a real edge. (n) = bets with a sharp price.",
+  lg_total:"All value bets", lg_chart:"Units by grade, cumulative", lg_fam_h:"ROI by market and grade", lg_fam_note:"Small numbers next to each ROI are the bets behind it. Small samples swing a lot.",
+  lg_intro:"Every value bet the model flagged, all three Triage grades, exactly as it stood at the lock 5 minutes before puck drop, 1 unit each at the sportsbook price then. Nothing is added or removed. This measures the model itself and whether the grades work: Solid should beat Lean, and Lean should beat Fragile. The best picks record is the curated version.",
+  lg_foot:"Since the first night of the site (25 Oct). Overs and unders, every market with a price (first goalscorer and faceoffs excluded). The same player often appears in several markets, so results are correlated: use 'One per player' to check. Under a few hundred bets per grade, profit is mostly luck; the edge against the sharp book shows sooner whether the edge is real.", lg_pend:"{n} bets still in play or waiting for the final box score.",
+  ex_m_players:"Players", ex_m_teams:"Teams", ext_title:"Teams explorer", ext_sub:"Every team on two stats. Who controls games, who's lucky, whose goalie is carrying them.",
   ext_playing:"Playing today", ext_search:"Search team", ext_count:"{n} teams", ext_click:"Click to open their next game", ext_nogame:"no game listed", ext_rec:"Season", ext_gp:"GP", ext_pts:"points", ext_rk:"League rank", ext_rk_att:"attack", ext_rk_def:"defence",
   ext_foot:"This season, 5-on-5 unless it says power play or penalty kill. Points % counts a win as 2, an overtime loss as 1. GSAx = goals saved above expected by their goalies.",
   ext_custom:"<b>{y}</b> against <b>{x}</b>. The dashed lines are the league averages of the teams shown.", ext_inv:"(Y axis flipped: lower is better, so the best teams sit top right.)",
@@ -1550,7 +1561,13 @@ Object.assign(I18N.en, {ex_m_players:"Players", ex_m_teams:"Teams", ext_title:"T
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {ex_m_players:"Spelare", ex_m_teams:"Lag", ext_title:"Lagutforskaren", ext_sub:"Alla lag på två mått. Vem styr matcherna, vem har tur, vems målvakt bär laget.",
+Object.assign(I18N.sv, {trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
+  lg_bets:"Spel", lg_hit:"Träff / modell", lg_hit_tip:"Hur ofta spelen vann, bredvid den genomsnittliga chans modellen gav dem.", lg_n_tip:"Rättade spel (vunna eller förlorade). Ogiltiga och pågående räknas inte.",
+  lg_sh:"Edge mot skarp", lg_sh_tip:"Vårt odds vid låsningen mot det skarpa spelbolagets rättvisa odds (utan marginal) i samma stund, i snitt. Positivt betyder att vi slog marknadens skarpaste linje, det bästa tidiga tecknet på en verklig edge. (n) = spel med skarpt odds.",
+  lg_total:"Alla värdespel", lg_chart:"Enheter per betyg, ackumulerat", lg_fam_h:"ROI per marknad och betyg", lg_fam_note:"De små talen bredvid varje ROI är antalet spel bakom. Små urval svänger mycket.",
+  lg_intro:"Varje värdespel modellen flaggade, alla tre Triage-betyg, exakt som det stod vid låsningen 5 minuter före nedsläpp, 1 enhet styck till spelbolagets odds då. Inget läggs till eller tas bort. Det här mäter själva modellen och om betygen fungerar: Solid ska slå Lean, och Lean ska slå Fragile. Bästa spelen är den utvalda versionen.",
+  lg_foot:"Sedan sajtens första kväll (25 okt). Över och under, varje marknad med odds (första målskytt och tekningar undantagna). Samma spelare finns ofta i flera marknader, så resultaten hänger ihop: använd 'En per spelare' för att kontrollera. Under några hundra spel per betyg är vinsten mest tur; edgen mot det skarpa spelbolaget visar tidigare om edgen är verklig.", lg_pend:"{n} spel pågår eller väntar på slutlig statistik.",
+  ex_m_players:"Spelare", ex_m_teams:"Lag", ext_title:"Lagutforskaren", ext_sub:"Alla lag på två mått. Vem styr matcherna, vem har tur, vems målvakt bär laget.",
   ext_playing:"Spelar i dag", ext_search:"Sök lag", ext_count:"{n} lag", ext_click:"Klicka för att öppna nästa match", ext_nogame:"ingen match listad", ext_rec:"Säsong", ext_gp:"M", ext_pts:"poäng", ext_rk:"Ligaplats", ext_rk_att:"anfall", ext_rk_def:"försvar",
   ext_foot:"Den här säsongen, 5 mot 5 om inget annat står (powerplay, boxplay). Poäng-% räknar vinst som 2 och förlust efter förlängning som 1. GSAx = mål räddade över förväntat av lagets målvakter.",
   ext_custom:"<b>{y}</b> mot <b>{x}</b>. De streckade linjerna är snittet för lagen som visas.", ext_inv:"(Y-axeln är vänd: lägre är bättre, så de bästa lagen hamnar uppe till höger.)",
@@ -1595,7 +1612,7 @@ Object.assign(I18N.sv, {ex_m_players:"Spelare", ex_m_teams:"Lag", ext_title:"Lag
 <p><b>Sedan varningstecknen:</b> djupforward på mål eller poäng, motståndarmålvakten inte bekräftad, marknaden går emot (oddset stiger, eller skarpa bookens rättvisa odds är högre än det erbjudna; tillsammans räknas de som en varning), skjuter klart mer eller mindre i år, kort NHL-historik.</p>
 <table class="trihow"><tr><td><span class="trib tr-S">Stabil</span></td><td>Alla tre vyerna visar värde, och inga varningstecken. Långskott (odds 8.00+) och mycket låga odds (under 1.30) kan som bäst bli Lutar.</td></tr><tr><td><span class="trib tr-L">Lutar</span></td><td>Värdet finns, men en vy håller inte med eller så finns en varning.</td></tr><tr><td><span class="trib tr-F">Skör</span></td><td>Bara modellen ser värde, eller så finns två eller fler varningar.</td></tr></table>
 <p class="trinote"><b>Skör betyder inte fel eller hoppa över.</b> Modellen har tålamod med spelare i svackor, och historiskt slår det tålamodet råa säsongssiffror. Skör betyder mycket osäkrare: du spelar helt på modellens bild. Spelar du dem, satsa mindre, och lägg de större insatserna på stabila spel.</p>
-<p class="meta">Varje bästa spel sparar sitt betyg, och resultatsidan visar hur varje betyg har gått över tid.</p>`,tri_tab:"Triage", tri_S:"Stabil", tri_L:"Lutar", tri_F:"Skör",
+<p class="meta">Varje bästa spel sparar sitt betyg, och resultatsidan visar hur varje betyg har gått över tid. <i>Triage-liggaren</i> under Resultat går längre: varje värdespel modellen flaggat sedan första kvällen, alla tre betyg, frysta vid låsningen och rättade med 1 enhet, med edgen mot det skarpa spelbolaget, så att du ser om Solid verkligen slår Lean och Fragile.</p>`,tri_tab:"Triage", tri_S:"Stabil", tri_L:"Lutar", tri_F:"Skör",
   tri_S_tip:"Stabil: hans säsongs- och senaste-10-siffror visar också värde till det här priset, och inget i kontrollerna talar emot.",
   tri_L_tip:"Lutar: verkligt värde, men en vy eller en varning stöder det inte.",
   tri_F_tip:"Skör: bara modellen ser värde här, eller så staplas flera varningar. Inte fel i sig, bara mycket osäkrare.",
@@ -4249,12 +4266,87 @@ document.addEventListener("mousemove", e => {
   const svg = wrap.querySelector("svg"), sx = svg.viewBox.baseVal.width / r.width;
   hov.setAttribute("x1", cx*sx); hov.setAttribute("x2", cx*sx); hov.style.opacity = 1;
 });
+
+// ------------------------------------------------------------ Triage ledger: every value bet at the lock, all three grades
+let LEDGER = null, LEDGER_LOADING = null;
+function loadLedger(){
+  if (LEDGER) return Promise.resolve(LEDGER);
+  if (!LEDGER_LOADING) LEDGER_LOADING = fetch(new URL("../data/ledger.json", location.href), {cache:"no-cache"}).then(r => r.ok ? r.json() : null)
+    .catch(() => null).then(js => { LEDGER = js; LEDGER_LOADING = null; return js; });
+  return LEDGER_LOADING;
+}
+const LG = () => (state.lg = state.lg || {per:"all", fam:"all", side:"all", one:false});
+const LG_FAMS = ["pts","multi","pp","s","h","b","pim"];
+const lgFam = m => { const g = mGroup(m); return g === "multi" ? "multi" : g; };
+function lgStats(rows){
+  const done = rows.filter(r => r.r==="w" || r.r==="l"), w = done.filter(r=>r.r==="w").length, u = done.reduce((a,r)=>a+r.u,0);
+  const sh = rows.filter(r => r.sf && (r.r==="w"||r.r==="l"||r.r==="p"));
+  return {n: done.length, w, u, roi: done.length ? u/done.length : null, exp: done.reduce((a,r)=>a+r.p,0),
+    odds: done.length ? done.reduce((a,r)=>a+r.od,0)/done.length : null, ev: done.length ? done.reduce((a,r)=>a+r.ev,0)/done.length : null,
+    sh: sh.length ? sh.reduce((a,r)=>a+(r.od/r.sf-1),0)/sh.length : null, shn: sh.length, pend: rows.filter(r=>r.r==="p").length};
+}
+function lgChart(rows){
+  const days = [...new Set(rows.filter(r=>r.r==="w"||r.r==="l").map(r=>r.d))].sort();
+  if (days.length < 2) return "";
+  const series = ["S","L","F"].map(g => { let c = 0; return {g, pts: days.map(d => { c += rows.filter(r=>r.d===d && r.gr===g && (r.r==="w"||r.r==="l")).reduce((a,r)=>a+r.u,0); return c; })}; });
+  const narrow = innerWidth < 640, W = narrow ? 440 : 920, H = narrow ? 230 : 260, L = 44, R = narrow ? 92 : 110, T = 16, B = 30, iw = W-L-R, ih = H-T-B;
+  const vals = series.flatMap(s=>s.pts).concat([0]); let lo = Math.min(...vals), hi = Math.max(...vals); const pad = Math.max(1,(hi-lo)*0.1); lo -= pad; hi += pad;
+  const X = i => L + iw * (days.length === 1 ? 0.5 : i/(days.length-1)), Y = v => T + ih*(hi-v)/(hi-lo);
+  const st = (hi-lo)>80?20:(hi-lo)>40?10:(hi-lo)>16?5:2; let grid = ""; for (let v = Math.ceil(lo/st)*st; v <= hi; v += st) grid += `<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" class="${v===0?"z":""}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${v>0?"+":""}${v}</text>`;
+  const xl = days.map((d,i) => (i===0||i===days.length-1||days.length<=8) ? `<text x="${X(i)}" y="${H-8}" text-anchor="middle">${dayShort(d)}</text>` : "").join("");
+  const lines = series.map(s => `<path class="lgl lg-${s.g}" d="${s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("")}"/><circle class="lgd lg-${s.g}" cx="${X(days.length-1)}" cy="${Y(s.pts[s.pts.length-1])}" r="3.5"/><text class="lgt lg-${s.g}" x="${X(days.length-1)+8}" y="${Y(s.pts[s.pts.length-1])+4}">${t("tri_"+s.g)} ${sgnU(s.pts[s.pts.length-1],1)}</text>`).join("");
+  return `<div class="box"><h4>${t("lg_chart")}</h4><svg viewBox="0 0 ${W} ${H}" class="lgchart">${grid}${xl}${lines}</svg></div>`;
+}
+function ledgerView(){
+  const box = $("#rkbody"); if (!box) return;
+  if (!LEDGER){ box.innerHTML = `<div class="card empty"><p class="meta">${t("rk_loading")}</p></div>`;
+    loadLedger().then(js => { if (state.tab==="track" && state.trk==="ledger"){ if (!js) $("#rkbody").innerHTML = `<div class="card empty"><p>${t("lg_none")}</p></div>`; else ledgerView(); } }); return; }
+  const S_ = LG(); let all = LEDGER.rows || [];
+  const dates = [...new Set(all.map(r=>r.d))].sort();
+  const keys = S_.per==="all" ? ["all"] : [...new Set(dates.map(d=>periodKey(d, S_.per)))].sort();
+  if (S_.per!=="all" && !keys.includes(S_.at)) S_.at = keys[keys.length-1];
+  let rows = all.filter(r => (S_.per==="all" || periodKey(r.d, S_.per)===S_.at) && (S_.fam==="all" || lgFam(r.m)===S_.fam) && (S_.side==="all" || r.s===S_.side));
+  if (S_.one){ const best = {}; rows.forEach(r => { const k = r.g+"|"+r.pid; if (!best[k] || r.ev > best[k].ev) best[k] = r; }); rows = Object.values(best); }
+  const famsAvail = LG_FAMS.filter(f => all.some(r => lgFam(r.m)===f));
+  const segB = (attr, cur, opts) => `<span class="seg olseg">${opts.map(([v,l])=>`<button type="button" data-${attr}="${v}" class="${cur===v?"on":""} ${cur===v && SEG_POP===attr+":"+v?"pop":""}">${l}</button>`).join("")}</span>`;
+  const ki = keys.indexOf(S_.at);
+  const stepper = S_.per==="all" ? "" : `<span class="rkstep"><button type="button" data-lgstep="-1" ${ki<=0?"disabled":""} aria-label="‹">‹</button><b>${periodLabel(S_.at, S_.per)}</b><button type="button" data-lgstep="1" ${ki>=keys.length-1?"disabled":""} aria-label="›">›</button></span>`;
+  const controls = `<div class="rkctl">${segB("lgper", S_.per, [["all",t("rk_all")],["month",t("rk_month")],["week",t("rk_week")],["day",t("rk_day")]])}${stepper}
+    <select id="lgfam" aria-label="${esc(t("rk_market"))}"><option value="all">${t("rk_allm")}</option>${famsAvail.map(f=>`<option value="${f}" ${S_.fam===f?"selected":""}>${t("mg_"+f)}</option>`).join("")}</select>
+    ${segB("lgside", S_.side, [["all",t("tri_all")],["o",t("lg_over")],["n",t("lg_under")]])}
+    <label class="toggle" title="${esc(t("lg_one_tip"))}"><input type="checkbox" id="lgone" ${S_.one?"checked":""}> ${t("lg_one")}</label></div>`;
+  const tr = (label, st, cls) => `<tr class="${cls||""}"><td>${label}</td><td class="n num">${st.n}</td><td class="n num">${st.w}–${st.n-st.w}</td>
+    <td class="n num">${st.n?pct(st.w/st.n,1):"–"} <small class="meta">/ ${st.n?pct(st.exp/st.n,1):"–"}</small></td><td class="n num hide-xs">${st.odds?oddsTxt(st.odds):"–"}</td>
+    <td class="n num ${uCls(st.u)}"><b>${sgnU(st.u,1)}</b></td><td class="n num ${uCls(st.roi||0)}">${sgnP(st.roi)}</td>
+    <td class="n num hide-sm ${st.sh==null?"":st.sh>0?"up":"dn"}">${st.sh==null?"–":sgnP(st.sh)} <small class="meta">${st.shn?"("+st.shn+")":""}</small></td></tr>`;
+  const head = `<thead><tr><th></th><th class="n tip" tabindex="0" data-tip="${esc(t("lg_n_tip"))}">${t("lg_bets")}</th><th class="n">${t("rk_record")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("lg_hit_tip"))}">${t("lg_hit")}</th><th class="n hide-xs">${t("rk_avgodds")}</th><th class="n">${t("rk_units")}</th><th class="n">ROI</th><th class="n hide-sm tip" tabindex="0" data-tip="${esc(t("lg_sh_tip"))}">${t("lg_sh")}</th></tr></thead>`;
+  const badge = g => `<span class="trib tr-${g}">${t("tri_"+g)}</span>`;
+  const byGr = ["S","L","F"].map(g => tr(badge(g), lgStats(rows.filter(r=>r.gr===g)))).join("") + tr(`<b>${t("lg_total")}</b>`, lgStats(rows), "lgtot");
+  const famT = famsAvail.filter(f => S_.fam==="all" || f===S_.fam).map(f => { const rs = rows.filter(r=>lgFam(r.m)===f); if (!rs.some(r=>r.r==="w"||r.r==="l")) return "";
+    const c = g => { const st = lgStats(rs.filter(r=>r.gr===g)); return `<td class="n num ${st.n?uCls(st.roi):""}">${st.n?sgnP(st.roi,0):"–"} <small class="meta">${st.n||""}</small></td>`; };
+    return `<tr><td>${t("mg_"+f)}</td>${c("S")}${c("L")}${c("F")}</tr>`; }).join("");
+  const pend = rows.filter(r=>r.r==="p").length;
+  box.innerHTML = `<div class="card prose lgintro"><p>${t("lg_intro")}</p></div>${controls}
+    <div class="card tablewrap"><table class="lgtab">${head}<tbody>${byGr}</tbody></table></div>
+    ${lgChart(rows)}
+    ${famT ? `<div class="box"><h4>${t("lg_fam_h")}</h4><div class="tablewrap"><table class="mini"><thead><tr><th>${t("rk_market")}</th><th class="n">${badge("S")}</th><th class="n">${badge("L")}</th><th class="n">${badge("F")}</th></tr></thead><tbody>${famT}</tbody></table></div><p class="meta">${t("lg_fam_note")}</p></div>` : ""}
+    <p class="foot">${t("lg_foot")}${pend ? " " + t("lg_pend",{n:pend}) : ""}</p>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-lgper],[data-lgside],[data-lgstep]"); if (!b) return;
+  const S_ = LG(), d = b.dataset;
+  if (d.lgper){ S_.per = d.lgper; S_.at = null; segPop("lgper:"+d.lgper); }
+  if (d.lgside){ S_.side = d.lgside; segPop("lgside:"+d.lgside); }
+  if (d.lgstep){ const keys = [...new Set((LEDGER?.rows||[]).map(r=>periodKey(r.d,S_.per)))].sort(); const i = keys.indexOf(S_.at) + (+d.lgstep); if (keys[i]) S_.at = keys[i]; }
+  ledgerView();
+});
+document.addEventListener("change", e => { if (e.target.id === "lgfam"){ LG().fam = e.target.value; ledgerView(); } if (e.target.id === "lgone"){ LG().one = e.target.checked; ledgerView(); } });
 function trackTab(){
   const k = state.trk || "bp";
-  const sw = `<div class="trksw"><span class="seg olseg">${[["bp",t("trk_bp")],["model",t("trk_model")]].map(([v,l])=>`<button type="button" data-trk="${v}" class="${k===v?"on":""} ${k===v && SEG_POP==="trk:"+v?"pop":""}">${l}</button>`).join("")}</span></div>`;
+  const sw = `<div class="trksw"><span class="seg olseg">${[["bp",t("trk_bp")],["ledger",t("trk_ledger")],["model",t("trk_model")]].map(([v,l])=>`<button type="button" data-trk="${v}" class="${k===v?"on":""} ${k===v && SEG_POP==="trk:"+v?"pop":""}">${l}</button>`).join("")}</span></div>`;
   if (k === "model"){ trackModel(); $("#main").insertAdjacentHTML("afterbegin", sw); return; }
   $("#main").innerHTML = sw + `<div id="rkbody"></div>`;
-  recordView();
+  if (k === "ledger") ledgerView(); else recordView();
 }
 
 // ------------------------------------------------------------ how it works
@@ -4329,7 +4421,7 @@ en: `<h3>What the site does</h3>
   <h3>Triage: how solid is a value bet?</h3>
   <p>Every value bet gets a grade: <b>Solid</b>, <b>Lean</b> or <b>Fragile</b>. The edge is re-checked with two other views of the player, both in tonight's matchup: his <i>season so far</i> and his <i>last 10 games</i> (for goals, the quality of his chances, so luck doesn't count twice). Then the warning signs: a depth forward on goals or points, the opposing goalie not confirmed, the market moving against it (price drifting out or the sharp book's fair price above the one on offer, counted as one warning), shooting clearly up or down this season, a short NHL history.</p>
   <ul><li><b>Solid:</b> all three views show value and no warning sign.</li><li><b>Lean:</b> value is there, but one view disagrees or there's one warning.</li><li><b>Fragile:</b> only the model sees value, or two or more warnings stack up.</li></ul>
-  <p>Long shots (odds 8.00+) and very short prices (under 1.30) can be Lean at best: the first lose for long stretches even when right, the second lose their edge to a small error. Fragile doesn't mean wrong, it means much less certain: if you play those, play them smaller. The <i>Triage</i> view in Props lists every value bet of the day, grouped by grade, with filters for game, market and overs/unders and a warning when several bets would win or lose together. Every best pick stores its grade, and the Track record shows how each grade has done.</p>
+  <p>Long shots (odds 8.00+) and very short prices (under 1.30) can be Lean at best: the first lose for long stretches even when right, the second lose their edge to a small error. Fragile doesn't mean wrong, it means much less certain: if you play those, play them smaller. The <i>Triage</i> view in Props lists every value bet of the day, grouped by grade, with filters for game, market and overs/unders and a warning when several bets would win or lose together. Every best pick stores its grade, and the Track record shows how each grade has done. The <i>Triage ledger</i> in Track record goes further: every value bet the model flagged since the first night, all three grades, frozen at the lock and graded at 1 unit, with the edge against the sharp book, so you can see whether Solid really beats Lean and Fragile.</p>
 
   <h3>Players explorer</h3>
   <p>The <i>Explorer</i> tab puts every player with an upcoming game on one chart: pick any two stats for the axes, or a preset that tells a story. <i>Luck</i> (expected goals vs goals: far below the diagonal is unlucky), <i>Volume vs finishing</i> (shots per game vs shooting %), <i>Role</i> (ice time vs points), <i>Power play</i>, <i>Shots trend</i> (season vs last 10 games: who's shooting more lately) and <i>Tonight</i> (market vs model for 1+ point). Filter by position, team, games played or players in action today, search a name, hover a dot for his numbers and click to open his profile. The ten players the view is about are listed under the chart.</p>

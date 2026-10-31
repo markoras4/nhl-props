@@ -759,6 +759,11 @@ def main(argv=None):
             bp_snapshot(slate, data_dir / "bestpicks")
         except Exception as e:  # never break the build
             print("Best picks snapshot skipped:", e)
+        try:   # every value bet with its Triage grade, as it stands now; the last refresh before the lock is official
+            from .ledger import snapshot as led_snapshot
+            led_snapshot(slate, data_dir / "ledger")
+        except Exception as e:  # never break the build
+            print("Triage ledger snapshot skipped:", e)
     if raw.get("pbp"):
         try:
             from .shots import player_file
@@ -795,6 +800,11 @@ def main(argv=None):
             bp_grade(src, data_dir / "bestpicks", ROOT / "output" / "bestpicks.json")
         except Exception as e:  # never break the build
             print("Best picks record skipped:", e)
+        try:   # the Triage ledger: every value bet at the lock, all grades, graded once final
+            from .ledger import grade as led_grade
+            led_grade(src, data_dir / "ledger", ROOT / "output" / "ledger.json")
+        except Exception as e:  # never break the build
+            print("Triage ledger skipped:", e)
     graded_path = hist_dir / "graded.json"
     graded = json.loads(graded_path.read_text()) if graded_path.exists() else None
     slate["logos"] = team_logos(src, slate, data_dir / ("demo_logos" if args.demo else "logos"))
