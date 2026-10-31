@@ -47,7 +47,7 @@ def rows_for_game(g: dict, odds: dict, players: dict) -> list[dict]:
                 pm = p if side == "o" else 1 - p
                 out.append({"pid": pr["id"], "n": pl.get("name"), "t": pr["team"], "op": pr["opp"], "m": m, "s": side,
                             "p": round(pm, 4), "od": od, "ev": round(pm * od - 1, 4), "gr": tg["gr"], "c": tg.get("c") or [],
-                            "sf": tg.get("sf"), "b": b.get("b") or "k"})
+                            "sf": tg.get("sf"), "b": b.get("b") or "k", "v": tg.get("views") or {}, "i": tg.get("i") or []})
     return out
 
 
