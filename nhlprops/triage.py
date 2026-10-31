@@ -139,6 +139,8 @@ def usage_z(pl: dict) -> tuple[float, float]:
 
 def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_status: str = "", book: dict | None = None,
           open_odds: float | None = None) -> dict:
+    if m[0] == "h" and m[1:2].isdigit():
+        return {}        # hits aren't graded: scorekeepers make them too random to trust a grade
     p = (pr.get("p") or {}).get(m)
     if not p or not od:
         return {}
@@ -160,8 +162,8 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
         for k, r in pp_ratios(pl).items():
             q = 1 - math.exp(-lp * r)
             views[k] = round((q if side == "o" else 1 - q) * od - 1, 4)
-    if m[0] in "hb" and m[1:2].isdigit():
-        k = "hit" if m[0] == "h" else "blk"
+    if m[0] == "b" and m[1:2].isdigit():
+        k = "blk"
         base = (pr.get("base") or {}).get(k) or 0
         try:
             from .config import CONFIG as _CF
