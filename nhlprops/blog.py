@@ -165,7 +165,7 @@ def build(log=print) -> int:
         page += (f'<main><section class="hero"><img src="{m["hero_src"]}" alt="{html.escape(m["hero"]["alt"])}"><div class="wrap in">'
                  f'<span class="tag {m["section"]}">{SECTIONS[m["section"]]}</span><h1>{html.escape(m["title"])}</h1><p class="deck">{html.escape(m["deck"])}</p>'
                  f'<span class="meta">{m["date_label"]} · {m["read_min"]} min read</span></div><span class="cr">{m["hero"]["credit"]}</span></section>'
-                 f'<article class="art">{m["body_out"]}{rg}<div class="note"><div class="credits"><b>Photos &amp; sources</b><ul>{credits}</ul></div></div></article>'
+                 f'<article class="art">{m["body_out"]}{rg}</article>'
                  + (f'<section class="more"><h3>More from the blog</h3><div class="grid">{"".join(card(o) for o in others)}</div></section>' if others else "")
                  + '</main>' + FOOT)
         (OUT / f'{m["slug"]}.html').write_text(page, encoding="utf-8")
