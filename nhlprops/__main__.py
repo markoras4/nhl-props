@@ -560,6 +560,7 @@ def main(argv=None):
     bt.add_argument("--schedule", action="store_true", help="test busy stretches, look-ahead and late-season stakes")
     bt.add_argument("--stakes", action="store_true", help="test late-season stakes against the player model")
     bt.add_argument("--ppp", action="store_true", help="test power-play points calibration")
+    bt.add_argument("--a1", action="store_true", help="test weighting primary assists more than secondary")
     bt.add_argument("--due", action="store_true", help="test whether unlucky ('due') players score more than the model says")
     bt.add_argument("--onice", action="store_true", help="test on-ice xGF (useful plus/minus) for assists and points")
     bt.add_argument("--tail", action="store_true", help="test multi-point / 2+ goal long-shot probabilities")
@@ -623,6 +624,10 @@ def main(argv=None):
         if args.ppp:
             from .backtest_ppp import run as run_ppp
             run_ppp(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.a1:
+            from .backtest_a1 import run as run_a1
+            run_a1(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.due:
             from .backtest_due import run as run_due
