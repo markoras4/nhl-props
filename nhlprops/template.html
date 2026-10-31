@@ -264,7 +264,7 @@ td.h{text-align:center;padding:4px}
 .trvl{font-size:11px;margin-top:3px;line-height:1.3}.trvl .ok{color:var(--good)}.trvl .no{color:var(--mute)}.tri_i.ok{color:var(--good)}
 .trc,.tri_i{display:block;font-size:11px;line-height:1.35}.trc{color:#e3a33b}.tri_i{color:var(--mute)}
 .trihow{border-collapse:collapse;margin:10px 0}.trihow td{padding:6px 10px 6px 0;vertical-align:middle;border:0}.trihow .trib{cursor:default}.trinote{border-left:3px solid #e3a33b;padding:8px 12px;background:color-mix(in srgb,#e3a33b 8%,transparent);border-radius:0 8px 8px 0}
-.trif{margin-top:10px}.trif summary{cursor:pointer;color:var(--mute);font-size:13px;padding:6px 0}
+.trif{margin-top:10px}.trif .clph{padding:6px 0}.trifh{flex:1;color:var(--mute);font-size:13px}.trif .clph:hover .trifh,.trif.open .trifh{color:var(--text)}
 .cell .evtag.tg-F{opacity:.55}.cell .evtag.tg-S{box-shadow:0 0 0 1.5px var(--good)}
 .cell .evtag{position:absolute;top:-7px;right:-5px;z-index:1;font-style:normal;font-size:9px;font-weight:700;line-height:1;padding:2px 4px;border-radius:5px;color:var(--good);background:var(--bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--good) 55%,transparent);pointer-events:none}
 .legend .evtag{font-style:normal;font-size:9px;font-weight:700;padding:2px 3px;border-radius:4px;color:var(--good);background:var(--panel2);margin-right:4px}
@@ -2422,7 +2422,7 @@ function triageList(){
     <div class="card trhow clp ${CL_OPEN("trihow")?"open":""}" data-clk="trihow"><button type="button" class="clph" aria-expanded="${CL_OPEN("trihow")}"><span class="trhh">${I_SVG}${t("tri_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${t("tri_how")}</div></div></div></div>
     <div class="box"><h4>${t("tri_title")} <span class="meta">${t("tri_sub")}</span></h4>${lk}
     ${rows.length ? `<div class="tablewrap"><table class="tritab">${head}<tbody>${good.map(row).join("")}</tbody></table></div>
-      ${bad.length ? `<details class="trif"><summary>${t("tri_fragile",{n:bad.length})}</summary><div class="tablewrap"><table class="tritab">${head}<tbody>${bad.map(row).join("")}</tbody></table></div></details>` : ""}` : `<p class="meta">${t("tri_none")}</p>`}
+      ${bad.length ? `<div class="trif clp ${CL_OPEN("trifrag")?"open":""}" data-clk="trifrag"><button type="button" class="clph" aria-expanded="${CL_OPEN("trifrag")}"><span class="trifh">${t("tri_fragile",{n:bad.length})}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="tablewrap"><table class="tritab">${head}<tbody>${bad.map(row).join("")}</tbody></table></div></div></div></div>` : ""}` : `<p class="meta">${t("tri_none")}</p>`}
     </div>`;
   $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); popBtn(`#psort [data-s="${b.dataset.s}"]`); } };
   $("#fday").onchange = e => { state.pday=e.target.value; state.trgame="all"; triageList(); };
