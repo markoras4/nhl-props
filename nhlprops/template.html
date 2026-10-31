@@ -3507,7 +3507,7 @@ const EX_M = {
   g_pg:{d:2, f:p => p.windows?.cur?.g_pg}, a_pg:{d:2, f:p => p.windows?.cur?.a_pg}, p_pg:{d:2, f:p => p.windows?.cur?.p_pg}, s_pg:{d:2, f:p => p.windows?.cur?.s_pg},
   xg_pg:{d:2, f:p => { const x = p.xg_windows?.cur; return x?.gp ? x.xg / x.gp : null; }},
   gmx:{d:1, f:p => { const x = p.xg_windows?.cur; return x ? x.g - x.xg : null; }},
-  sh:{d:1, pct:true, f:p => (p.windows?.cur?.s||0) >= 15 ? p.windows.cur.g / p.windows.cur.s : null}   // 15+ shots: fewer is just noise (0% / 100%), sht:{d:1, pct:true, f:p => p.rates?.career_sh},
+  sh:{d:1, pct:true, f:p => (p.windows?.cur?.s||0) >= 15 ? p.windows.cur.g / p.windows.cur.s : null /* 15+ shots: fewer is just noise */}, sht:{d:1, pct:true, f:p => p.rates?.career_sh},
   toi:{d:1, f:p => p.toi_season ?? p.toi_proj}, toi5:{d:1, f:p => p.role?.toi5},
   s60:{d:1, f:p => { const c = p.windows?.cur, t_ = p.toi_season; return c?.gp && t_ ? c.s / (c.gp * t_ / 60) : null; }},
   p60:{d:2, f:p => { const c = p.windows?.cur, t_ = p.toi_season; return c?.gp && t_ ? c.p / (c.gp * t_ / 60) : null; }},
