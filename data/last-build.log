@@ -1,25 +1,24 @@
 Season 2026-2027. Fetching schedule from 2026-10-31 ...
-  48 upcoming games over 7 days
+  44 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 724 skaters and 77 goalies (careers + game logs) ...
+Fetching 726 skaters and 77 goalies (careers + game logs) ...
 Fetching 216 recent box scores (hits, blocks) ...
 News: 132 injuries, likely starters for 21 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 26 teams (2026-10-31, updated 2026-10-31T19:04:52.193Z)
   shot maps: 216 games, 24640 attempts
-Model built: 48 games, 724 skaters (559 expected to play)
-Odds: bookmaker prices for 9 games, 176 players
-Odds: sharp-book prices for 5 games, 300 player markets
-  manual odds: 2496 player prices added
-Public betting: splits for 7 games
-Public betting: saved 2 locked splits (20 this season)
+Model built: 44 games, 726 skaters (565 expected to play)
+Odds: bookmaker prices for 9 games, 317 players
+Odds: sharp-book prices for 3 games, 164 player markets
+  manual odds: 1205 player prices added
+Public betting: splits for 9 games
   season simulation: 10000 seasons, 1128 games left, top Cup: CAR 27%, COL 12%, MIN 10%
-Futures odds: Cup 32, conference 32, division 32, playoffs 28, points 28
+Futures odds: Cup 32, conference 32, division 32, playoffs 21, points 20
   history: MoneyPuck xG for 2026: 6,558 player-games
-  history: game-by-game files for 720 players (3 seasons)
+  history: game-by-game files for 721 players (3 seasons)
   archive: 6 past dates published (2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30)
-Best picks record: 78 graded, 23 won, -6.87 units
-Triage ledger: S 205 bets +27.9u, L 786 bets -1.5u, F 588 bets -46.5u
+Best picks record: 82 graded, 24 won, -3.87 units
+Triage ledger: S 222 bets +36.9u, L 855 bets +8.8u, F 628 bets +120.5u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-31.html
