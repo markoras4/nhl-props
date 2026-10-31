@@ -157,7 +157,7 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 
 /* features */
 .lrec{margin-top:22px;border:1px solid var(--line);border-radius:18px;padding:20px 22px;background:radial-gradient(120% 140% at 0% 0%,rgba(var(--glow),.10),transparent 55%),linear-gradient(180deg,var(--panel2),var(--panel));display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr) auto;gap:18px 26px;align-items:center}
-.lrec h3{margin:0;font-family:var(--f-disp);font-size:19px}.lrec p{margin:4px 0 0;color:var(--mute);font-size:13.5px}
+.lrec h3{margin:0;font-family:var(--f-disp);font-size:19px;display:flex;align-items:center;gap:8px}.lrec .lrs{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:2px 9px}.lrec .lrk em{display:block;font-style:normal;font-size:11px;color:var(--mute);margin-top:1px}.lrec p{margin:4px 0 0;color:var(--mute);font-size:13.5px}
 .lrec .lrk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .lrec .lrk div{border-left:1px solid var(--line);padding-left:12px}.lrec .lrk small{display:block;font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .lrec .lrk b{display:block;font-family:var(--f-disp);font-size:24px;font-variant-numeric:tabular-nums}.lrec .up{color:var(--accent)}.lrec .dn{color:#ff6b6b}
@@ -475,7 +475,7 @@ const I18N = {
   feat_h:"Everything you need, nothing you don't", feat_sub:"Three views do most of the work.",
   f1h:"Every skater, every market", f1p:"Goals, assists, points, shots, hits, blocks, multi-point, power-play points, faceoffs and penalties for the whole lineup, with prices from two sportsbooks, one of them a sharp book, next to the model's.",
   f2h:"Two picks per game, ranked by edge", f2p:"The two strongest edges against the sportsbook in each game, on goals, assists, points, power-play points and shots on goal, with the facts behind them. They follow the odds through the day, lock 5 minutes before puck drop, and every one is graded in a public record, with a Triage grade (Solid, Lean or Fragile) showing how solid the edge is.",
-  lr_h:"Best picks record", lr_sub:"Every pick since {d}, as it stood at the lock, 1 unit each. Wins, losses and voids: nothing removed.", lr_picks:"Picks", lr_rec:"Record", lr_units:"Units", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"How much the price moved toward the pick between when it appeared and the lock.", lr_cta:"See every pick", lr_note:"Goals, assists, points, power-play points and shots on goal. Under about 300 picks the result is mostly luck.",
+  lr_solid:"Solid", lr_hit:"Hit rate", lr_exp:"model {e}%", lr_h:"record", lr_sub:"Every bet the model graded Solid since {d}, as it stood 5 minutes before puck drop, 1 unit each at the sportsbook price. Wins and losses: nothing removed.", lr_picks:"Bets", lr_rec:"Record", lr_units:"Units", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"How much the price moved toward the pick between when it appeared and the lock.", lr_cta:"See every bet", lr_note:"Solid = the edge holds in the model, his season and his last 10 games, with no warning signs. Overs and unders, every player market. Under a few hundred bets the result is mostly luck.",
   f3h:"The whole game in one view", f3p:"Win chance, total goals, puck line, 1st period, team shots and goalie saves, plus each team's last 6 games. Everything updates when the starting goalie changes.",
   scr_h:"Phone, tablet or desktop", scr_sub:"Built for every screen. Add it to your home screen and it opens like an app.",
   s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
@@ -533,7 +533,7 @@ const I18N = {
   feat_h:"Allt du behöver, inget du inte behöver", feat_sub:"Tre vyer gör det mesta av jobbet.",
   f1h:"Varje spelare, varje marknad", f1p:"Mål, assist, poäng, skott, tacklingar, blockeringar, flera poäng, PP-poäng, tekningar och utvisningar för hela uppställningen, med odds från två spelbolag, varav ett skarpt, bredvid modellens.",
   f2h:"Två spel per match, rankade efter edge", f2p:"De två största edgarna mot spelbolaget i varje match, på mål, assist, poäng, powerplaypoäng och skott på mål, med fakta bakom dem. De följer oddsen under dagen, låses 5 minuter före nedsläpp, och varje spel rättas i ett öppet facit, med ett triagebetyg (Stabil, Lutar eller Skör) som visar hur stabilt värdet är.",
-  lr_h:"Bästa spelen – facit", lr_sub:"Varje spel sedan {d}, som det stod vid låsningen, 1 enhet styck. Vinster, förluster och ogiltiga: inget borttaget.", lr_picks:"Spel", lr_rec:"Facit", lr_units:"Enheter", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"Hur mycket oddset rörde sig mot spelet mellan när det dök upp och låsningen.", lr_cta:"Se alla spel", lr_note:"Mål, assist, poäng, powerplaypoäng och skott på mål. Under ungefär 300 spel är resultatet mest tur.",
+  lr_solid:"Solid", lr_hit:"Träff", lr_exp:"modell {e}%", lr_h:"facit", lr_sub:"Varje spel modellen gav betyget Solid sedan {d}, som det stod 5 minuter före nedsläpp, 1 enhet styck till spelbolagets odds. Vinster och förluster: inget borttaget.", lr_picks:"Spel", lr_rec:"Facit", lr_units:"Enheter", lr_roi:"ROI", lr_clv:"CLV", lr_clv_tip:"Hur mycket oddset rörde sig mot spelet mellan när det dök upp och låsningen.", lr_cta:"Se alla spel", lr_note:"Solid = edgen håller i modellen, hans säsong och hans senaste 10 matcher, utan varningstecken. Över och under, alla spelarmarknader. Under några hundra spel är resultatet mest tur.",
   f3h:"Hela matchen i en vy", f3p:"Vinstchans, totalmål, puck line, första perioden, lagens skott och målvaktsräddningar, plus varje lags senaste 6 matcher. Allt uppdateras när startmålvakten ändras.",
   scr_h:"Mobil, surfplatta eller dator", scr_sub:"Byggd för alla skärmar. Lägg den på hemskärmen så öppnas den som en app.",
   s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
@@ -622,13 +622,13 @@ function plans(){
   $("#pro_list").innerHTML = t("pro_items").map(li).join("");
   $("#ab_do").innerHTML = t("ab_do").map(x => `<li><span>${x}</span></li>`).join("");
   $("#also").innerHTML = t("also").map(x => `<li>${x}</li>`).join("");
-  const R = LDATA && LDATA.record, lr = $("#lrec");
+  const R = LDATA && LDATA.solid, lr = $("#lrec");
   if (R && lr){ const sg = (x, d) => (x>0?"+":x<0?"−":"") + Math.abs(x).toFixed(d), cl = x => x>0.0001?"up":x<-0.0001?"dn":"";
     const since = new Date(R.since+"T12:00:00").toLocaleDateString(LANG==="sv"?"sv-SE":"en-GB",{day:"numeric",month:"short"});
-    lr.innerHTML = `<div><h3>${t("lr_h")}</h3><p>${t("lr_sub").replace("{d}", since)}</p></div>
-      <div class="lrk"><div><small>${t("lr_picks")}</small><b>${R.n}</b></div><div><small>${t("lr_rec")}</small><b>${R.w}–${R.n-R.w}</b></div>
-        <div><small>${t("lr_units")}</small><b class="${cl(R.u)}">${sg(R.u,2)}</b></div><div><small>${t("lr_roi")}</small><b class="${cl(R.roi)}">${sg(R.roi*100,1)}%</b></div></div>
-      <a class="btn2" href="APP_URL#record">${t("lr_cta")} →</a><p class="lrn">${t("lr_note")}</p>`;
+    lr.innerHTML = `<div><h3><span class="lrs">${t("lr_solid")}</span> ${t("lr_h")}</h3><p>${t("lr_sub").replace("{d}", since)}</p></div>
+      <div class="lrk"><div><small>${t("lr_picks")}</small><b>${R.n}</b></div><div><small>${t("lr_hit")}</small><b>${(R.hit*100).toFixed(1)}%</b><em>${t("lr_exp").replace("{e}", (R.exp*100).toFixed(1))}</em></div>
+        <div><small>${t("lr_units")}</small><b class="${cl(R.u)}">${sg(R.u,1)}</b></div><div><small>${t("lr_roi")}</small><b class="${cl(R.roi)}">${sg(R.roi*100,1)}%</b></div></div>
+      <a class="btn2" href="APP_URL#ledger">${t("lr_cta")} →</a><p class="lrn">${t("lr_note")}</p>`;
     lr.hidden = false; }
   const open = new Set([...document.querySelectorAll("#faqlist details[open]")].map(d => d.dataset.i));
   $("#faqlist").innerHTML = t("faq").map(([q,a],i) => `<details data-i="${i}"${open.has(String(i))?" open":""}><summary>${q}</summary><div class="a">${a}</div></details>`).join("");

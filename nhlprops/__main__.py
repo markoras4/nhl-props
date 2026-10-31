@@ -411,7 +411,20 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
                       "v": sum(1 for r in rows if r.get("k") == "all" and r.get("r") == "v")}
     except Exception:
         record = None
-    payload = clean({"date": day, "games": games, "previews": previews, "built": now, "record": record,
+    solid = None
+    try:   # Triage ledger: every bet graded Solid at the lock (the landing card shows this record)
+        rows = json.loads((out_dir / "ledger.json").read_text(encoding="utf-8")).get("rows") or []
+        sr = [r for r in rows if r.get("gr") == "S"]
+        done = [r for r in sr if r.get("r") in ("w", "l")]
+        if done:
+            u = sum(r["u"] for r in done)
+            sh = [r["od"] / r["sf"] - 1 for r in sr if r.get("sf") and r.get("r") in ("w", "l", "p")]
+            solid = {"n": len(done), "w": sum(r["r"] == "w" for r in done), "u": round(u, 2), "roi": round(u / len(done), 4),
+                     "hit": round(sum(r["r"] == "w" for r in done) / len(done), 4), "exp": round(sum(r["p"] for r in done) / len(done), 4),
+                     "sh": round(sum(sh) / len(sh), 4) if sh else None, "since": min(r["d"] for r in rows)}
+    except Exception:
+        solid = None
+    payload = clean({"date": day, "games": games, "previews": previews, "built": now, "record": record, "solid": solid,
                      "logos": {k: v for k, v in (slate.get("logos") or {}).items() if k in teams}})
     js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = LANDING.read_text(encoding="utf-8").replace("/*__DATA__*/null", js).replace("APP_URL", app_url)

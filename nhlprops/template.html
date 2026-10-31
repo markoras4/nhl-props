@@ -944,11 +944,31 @@ body.has-cmp main{padding-bottom:110px}
 
 /* best picks record */
 .trksw{margin:2px 0 14px}.trksw .seg button{font-size:13px;padding:7px 14px}
-.lgintro{margin-bottom:12px;padding:12px 16px;max-width:none}.lgintro p{margin:0;max-width:880px;font-size:13.5px;line-height:1.5}
 .lgtot td{border-top:1px solid var(--line)}.lgtab td,.lgtab th{white-space:nowrap}
-.lgchart{width:100%;height:auto;display:block}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent)}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
-.lgl{fill:none;stroke-width:2.4;stroke-linejoin:round}.lgl.lg-S,.lgd.lg-S{stroke:var(--good);fill:var(--good)}.lgl.lg-S{fill:none}.lgl.lg-L,.lgd.lg-L{stroke:#e3a33b;fill:#e3a33b}.lgl.lg-L{fill:none}.lgl.lg-F,.lgd.lg-F{stroke:var(--bad);fill:var(--bad)}.lgl.lg-F{fill:none}
-.lgchart text.lgt{font-weight:700}.lgchart text.lg-S{fill:var(--good)}.lgchart text.lg-L{fill:#e3a33b}.lgchart text.lg-F{fill:var(--bad)}
+.lgcbox{overflow:hidden}.lgwrap{position:relative}
+.lgchart{width:100%;height:auto;display:block;overflow:visible}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-dasharray:3 4}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
+.lgl{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
+@keyframes lgdraw{to{stroke-dashoffset:0}}
+.lga{opacity:0;animation:lgfade 1s ease forwards;animation-delay:calc(.9s + var(--k)*.18s)}@keyframes lgfade{to{opacity:1}}
+.lgl.lg-S{stroke:var(--good)}.lgl.lg-L{stroke:#e3a33b}.lgl.lg-F{stroke:var(--bad)}
+.lgd,.lgp{opacity:0;animation:lgfade .4s ease forwards;animation-delay:calc(1.35s + var(--k)*.18s)}.lgd.lg-S,.lgp.lg-S{fill:var(--good)}.lgd.lg-L,.lgp.lg-L{fill:#e3a33b}.lgd.lg-F,.lgp.lg-F{fill:var(--bad)}
+.lgp{transform-box:fill-box;transform-origin:center;animation:lgfade .4s ease forwards,lgpulse 2.2s ease-out infinite;animation-delay:calc(1.35s + var(--k)*.18s),calc(1.8s + var(--k)*.18s)}
+@keyframes lgpulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(3.2);opacity:0}}
+.lgchart text.lgt{font:700 12px var(--f-ui);opacity:0;animation:lgfade .5s ease forwards;animation-delay:calc(1.4s + var(--k)*.18s)}.lgchart text.lg-S{fill:var(--good)}.lgchart text.lg-L{fill:#e3a33b}.lgchart text.lg-F{fill:var(--bad)}
+.lgh{fill:transparent;cursor:crosshair}.lghov{stroke:var(--text)!important;stroke-opacity:.35;stroke-dasharray:3 3;opacity:0;transition:opacity .15s;pointer-events:none}
+.lgtip{position:absolute;top:6px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none;display:flex;flex-direction:column;gap:3px;min-width:130px;z-index:2}
+.lgtip[hidden]{display:none}.lgtip span{display:flex;align-items:center;gap:6px}.lgtip i{width:8px;height:8px;border-radius:50%;display:inline-block}.lgtip em{font-style:normal;font-weight:700;margin-left:auto}.lgtip .up{color:var(--good)}.lgtip .dn{color:var(--bad)}
+.lghist .lghh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.lghist h4{margin:0}
+.lgchips{position:relative;display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin;scroll-snap-type:x proximity}
+.lgchip{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);cursor:pointer;font:inherit;font-size:12px;scroll-snap-align:center;transition:border-color .2s,transform .2s}
+.lgchip span{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}.lgchip span.up{color:var(--good)}.lgchip span.dn{color:var(--bad)}
+.lgchip:hover{transform:translateY(-1px)}.lgchip.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.lgdsum{margin:4px 0 8px}.lgdsum .up{color:var(--good)}.lgdsum .dn{color:var(--bad)}
+.lgscroll{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:12px;scrollbar-width:thin}
+.lgtab2{width:100%;border-collapse:collapse;font-size:13px}.lgtab2 thead th{position:sticky;top:0;background:var(--panel2);z-index:1;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);padding:8px 10px;text-align:left}
+.lgtab2 th.n,.lgtab2 td.n{text-align:right}.lgtab2 td{padding:7px 10px;border-top:1px solid var(--line);vertical-align:middle}.lgtab2 td .meta{font-size:11.5px}.lgtab2 .up{color:var(--good)}.lgtab2 .dn{color:var(--bad)}
+@media (max-width:600px){.lgtab2{font-size:12px}.lgtab2 td,.lgtab2 thead th{padding:6px 7px}}.lgr{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}.lgr.w{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}.lgr.l{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}.lgr.v,.lgr.p{background:var(--chip);color:var(--mute)}
+@media (prefers-reduced-motion: reduce){.lgl{stroke-dashoffset:0;animation:none}.lga,.lgd,.lgt,.lgchart text.lgt{opacity:1;animation:none}.lgp{display:none}}
 .rkctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
 .rkctl select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:inherit;font-size:13px}
 .rkstep{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
@@ -1494,7 +1514,7 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
+Object.assign(I18N.en, {lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet at the lock, margin removed. Our price above it (green) = we beat the sharpest line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
   lg_bets:"Bets", lg_hit:"Hit rate / model", lg_hit_tip:"How often the bets won, next to the average chance the model gave them.", lg_n_tip:"Graded bets (won or lost). Voids and games still in play aren't counted.",
   lg_sh:"Edge vs sharp", lg_sh_tip:"Our price at the lock against the sharp book's fair price (margin removed) at the same moment, averaged. Positive means we beat the sharpest line in the market, the best early sign of a real edge. (n) = bets with a sharp price.",
   lg_total:"All value bets", lg_chart:"Units by grade, cumulative", lg_fam_h:"ROI by market and grade", lg_fam_note:"Small numbers next to each ROI are the bets behind it. Small samples swing a lot.",
@@ -1561,7 +1581,7 @@ Object.assign(I18N.en, {trk_ledger:"Triage ledger", lg_none:"The ledger couldn't
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
+Object.assign(I18N.sv, {lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel vid låsningen, utan marginal. Vårt odds över det (grönt) = vi slog den skarpaste linjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
   lg_bets:"Spel", lg_hit:"Träff / modell", lg_hit_tip:"Hur ofta spelen vann, bredvid den genomsnittliga chans modellen gav dem.", lg_n_tip:"Rättade spel (vunna eller förlorade). Ogiltiga och pågående räknas inte.",
   lg_sh:"Edge mot skarp", lg_sh_tip:"Vårt odds vid låsningen mot det skarpa spelbolagets rättvisa odds (utan marginal) i samma stund, i snitt. Positivt betyder att vi slog marknadens skarpaste linje, det bästa tidiga tecknet på en verklig edge. (n) = spel med skarpt odds.",
   lg_total:"Alla värdespel", lg_chart:"Enheter per betyg, ackumulerat", lg_fam_h:"ROI per marknad och betyg", lg_fam_note:"De små talen bredvid varje ROI är antalet spel bakom. Små urval svänger mycket.",
@@ -4275,38 +4295,75 @@ function loadLedger(){
     .catch(() => null).then(js => { LEDGER = js; LEDGER_LOADING = null; return js; });
   return LEDGER_LOADING;
 }
-const LG = () => (state.lg = state.lg || {per:"all", fam:"all", side:"all", one:false});
+const LG = () => (state.lg = state.lg || {per:"all", fam:"all", side:"all", one:false, hg:"S", hd:null});
 const LG_FAMS = ["pts","multi","pp","s","h","b","pim"];
 const lgFam = m => { const g = mGroup(m); return g === "multi" ? "multi" : g; };
+const lgFam2 = m => { const f = lgFam(m); return f === "multi" ? "pts" : f; };      // same family for the "safer option" rule
+// one bet per player per game, chosen the way Best picks chooses: the biggest edge, or the more likely option in the
+// same family when its edge is within 3 points
+function lgOnePer(rows){
+  const by = {}; rows.forEach(r => (by[r.g+"|"+r.pid] = by[r.g+"|"+r.pid] || []).push(r));
+  return Object.values(by).map(rs => { const top = rs.reduce((a,b) => b.ev > a.ev ? b : a);
+    const safer = rs.filter(r => lgFam2(r.m) === lgFam2(top.m) && r.p > top.p && r.ev >= top.ev - 0.03).sort((a,b) => b.p - a.p);
+    return safer[0] || top; });
+}
 function lgStats(rows){
   const done = rows.filter(r => r.r==="w" || r.r==="l"), w = done.filter(r=>r.r==="w").length, u = done.reduce((a,r)=>a+r.u,0);
   const sh = rows.filter(r => r.sf && (r.r==="w"||r.r==="l"||r.r==="p"));
   return {n: done.length, w, u, roi: done.length ? u/done.length : null, exp: done.reduce((a,r)=>a+r.p,0),
-    odds: done.length ? done.reduce((a,r)=>a+r.od,0)/done.length : null, ev: done.length ? done.reduce((a,r)=>a+r.ev,0)/done.length : null,
+    odds: done.length ? done.reduce((a,r)=>a+r.od,0)/done.length : null,
     sh: sh.length ? sh.reduce((a,r)=>a+(r.od/r.sf-1),0)/sh.length : null, shn: sh.length, pend: rows.filter(r=>r.r==="p").length};
 }
+const LG_COL = {S:"var(--good)", L:"#e3a33b", F:"var(--bad)"};
 function lgChart(rows){
   const days = [...new Set(rows.filter(r=>r.r==="w"||r.r==="l").map(r=>r.d))].sort();
   if (days.length < 2) return "";
-  const series = ["S","L","F"].map(g => { let c = 0; return {g, pts: days.map(d => { c += rows.filter(r=>r.d===d && r.gr===g && (r.r==="w"||r.r==="l")).reduce((a,r)=>a+r.u,0); return c; })}; });
-  const narrow = innerWidth < 640, W = narrow ? 440 : 920, H = narrow ? 230 : 260, L = 44, R = narrow ? 92 : 110, T = 16, B = 30, iw = W-L-R, ih = H-T-B;
-  const vals = series.flatMap(s=>s.pts).concat([0]); let lo = Math.min(...vals), hi = Math.max(...vals); const pad = Math.max(1,(hi-lo)*0.1); lo -= pad; hi += pad;
-  const X = i => L + iw * (days.length === 1 ? 0.5 : i/(days.length-1)), Y = v => T + ih*(hi-v)/(hi-lo);
+  const series = ["S","L","F"].map(g => { let c = 0; return {g, day:[], pts: days.map(d => { const rs = rows.filter(r=>r.d===d && r.gr===g && (r.r==="w"||r.r==="l")); const u = rs.reduce((a,r)=>a+r.u,0); c += u; return c; })}; });
+  const narrow = innerWidth < 640, W = narrow ? 440 : 920, H = narrow ? 240 : 280, L = 44, R = narrow ? 92 : 112, T = 18, B = 30, iw = W-L-R, ih = H-T-B;
+  const vals = series.flatMap(s=>s.pts).concat([0]); let lo = Math.min(...vals), hi = Math.max(...vals); const pad = Math.max(1,(hi-lo)*0.12); lo -= pad; hi += pad;
+  const X = i => L + iw * i/(days.length-1), Y = v => T + ih*(hi-v)/(hi-lo);
   const st = (hi-lo)>80?20:(hi-lo)>40?10:(hi-lo)>16?5:2; let grid = ""; for (let v = Math.ceil(lo/st)*st; v <= hi; v += st) grid += `<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" class="${v===0?"z":""}"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end">${v>0?"+":""}${v}</text>`;
-  const xl = days.map((d,i) => (i===0||i===days.length-1||days.length<=8) ? `<text x="${X(i)}" y="${H-8}" text-anchor="middle">${dayShort(d)}</text>` : "").join("");
-  const lines = series.map(s => `<path class="lgl lg-${s.g}" d="${s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("")}"/><circle class="lgd lg-${s.g}" cx="${X(days.length-1)}" cy="${Y(s.pts[s.pts.length-1])}" r="3.5"/><text class="lgt lg-${s.g}" x="${X(days.length-1)+8}" y="${Y(s.pts[s.pts.length-1])+4}">${t("tri_"+s.g)} ${sgnU(s.pts[s.pts.length-1],1)}</text>`).join("");
-  return `<div class="box"><h4>${t("lg_chart")}</h4><svg viewBox="0 0 ${W} ${H}" class="lgchart">${grid}${xl}${lines}</svg></div>`;
+  const every = Math.ceil(days.length / (narrow ? 5 : 9));
+  const xl = days.map((d,i) => (i % every === 0 || i === days.length-1) ? `<text x="${X(i)}" y="${H-8}" text-anchor="middle">${dayShort(d)}</text>` : "").join("");
+  const defs = `<defs>${series.map(s => `<linearGradient id="lgg-${s.g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${LG_COL[s.g]}" stop-opacity=".22"/><stop offset="1" stop-color="${LG_COL[s.g]}" stop-opacity="0"/></linearGradient>`).join("")}
+    <filter id="lgglow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+  const path = s => s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("");
+  const areas = series.map((s,k) => `<path class="lga" style="--k:${k}" fill="url(#lgg-${s.g})" d="${path(s)}L${X(days.length-1).toFixed(1)} ${Y(0).toFixed(1)}L${X(0).toFixed(1)} ${Y(0).toFixed(1)}Z"/>`).join("");
+  const lines = series.map((s,k) => { const last = s.pts[s.pts.length-1];
+    return `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" filter="url(#lgglow)" d="${path(s)}"/><circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><text class="lgt lg-${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan>${sgnU(last,1)}</tspan></text>`; }).join("");
+  const hits = days.map((d,i) => `<rect class="lgh" x="${X(i) - iw/(days.length-1)/2}" y="${T}" width="${iw/(days.length-1)}" height="${ih}" data-i="${i}"/>`).join("");
+  window.__lgc = {days, series};
+  return `<div class="box lgcbox"><h4>${t("lg_chart")}</h4><div class="lgwrap"><svg viewBox="0 0 ${W} ${H}" class="lgchart">${defs}${grid}${xl}${areas}${lines}<line class="lghov" x1="0" x2="0" y1="${T}" y2="${T+ih}"/>${hits}</svg><div class="lgtip" hidden></div></div></div>`;
+}
+const lgRes = r => r.r==="w" ? `<span class="lgr w">${t("rk_w")}</span>` : r.r==="l" ? `<span class="lgr l">${t("rk_l")}</span>` : r.r==="v" ? `<span class="lgr v">${t("rk_v")}</span>` : `<span class="lgr p">${t("rk_p")}</span>`;
+function lgHistory(rows, S_){
+  const gr = S_.hg, rs = rows.filter(r => gr === "all" || r.gr === gr);
+  const days = [...new Set(rs.map(r=>r.d))].sort().reverse();
+  if (!days.length) return "";
+  if (!days.includes(S_.hd)) S_.hd = days[0];
+  const dayRows = rs.filter(r => r.d === S_.hd).sort((a,b) => a.g - b.g || b.ev - a.ev);
+  const dstat = d => lgStats(rs.filter(r => r.d === d));
+  const chips = days.map(d => { const st = dstat(d); return `<button type="button" class="lgchip ${d===S_.hd?"on":""}" data-lgd="${d}"><b>${dayShort(d)}</b><span class="${st.n?uCls(st.u):""}">${st.n?sgnU(st.u,1):"…"}</span></button>`; }).join("");
+  const st = dstat(S_.hd);
+  const tabs = [["S",t("tri_S")],["L",t("tri_L")],["F",t("tri_F")],["all",t("tri_all")]].map(([v,l]) => `<button type="button" data-lghg="${v}" class="${gr===v?"on":""} ${gr===v && SEG_POP==="lghg:"+v?"pop":""}">${l}</button>`).join("");
+  const body = dayRows.map(r => `<tr><td>${gr==="all"?`<span class="trib tr-${r.gr}">${t("tri_"+r.gr)}</span> `:""}<b>${esc(r.n||"")}</b><div class="meta">${r.t} ${r.t===r.h?"vs":"@"} ${r.op}</div></td>
+    <td>${esc(triMkt(r.m, r.s))}</td><td class="n num hide-xs">${pct(r.p,0)}</td><td class="n num">${oddsTxt(r.od)}</td><td class="n num ev-pos hide-xs">${evTxt(r.ev)}</td>
+    <td class="n num hide-sm ${r.sf?(r.od/r.sf>1.001?"up":r.od/r.sf<0.999?"dn":""):""}">${r.sf?oddsTxt(r.sf):"–"}</td><td>${lgRes(r)}</td><td class="n num ${r.u!=null?uCls(r.u):""}">${r.u!=null?sgnU(r.u,2):"–"}</td></tr>`).join("");
+  return `<div class="box lghist"><div class="lghh"><h4>${t("lg_hist")}</h4><span class="seg olseg">${tabs}</span></div>
+    <div class="lgchips" id="lgchips">${chips}</div>
+    <p class="meta lgdsum">${dayLabel(S_.hd)} · ${t("lg_dsum",{n:dayRows.length, w:st.w, l:st.n-st.w})} · <b class="${uCls(st.u)}">${sgnU(st.u,2)}</b> ${t("rk_units").toLowerCase()}</p>
+    <div class="lgscroll"><table class="lgtab2"><thead><tr><th>${t("h_player")}</th><th>${t("h_market")}</th><th class="n hide-xs">${t("model")}</th><th class="n">${t("h_odds")}</th><th class="n hide-xs">EV</th><th class="n hide-sm tip" tabindex="0" data-tip="${esc(t("lg_sf_tip"))}">${t("lg_sf")}</th><th>${t("lg_res")}</th><th class="n">${t("rk_units")}</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
 }
 function ledgerView(){
   const box = $("#rkbody"); if (!box) return;
   if (!LEDGER){ box.innerHTML = `<div class="card empty"><p class="meta">${t("rk_loading")}</p></div>`;
     loadLedger().then(js => { if (state.tab==="track" && state.trk==="ledger"){ if (!js) $("#rkbody").innerHTML = `<div class="card empty"><p>${t("lg_none")}</p></div>`; else ledgerView(); } }); return; }
-  const S_ = LG(); let all = LEDGER.rows || [];
+  const S_ = LG(); const all = LEDGER.rows || [];
   const dates = [...new Set(all.map(r=>r.d))].sort();
   const keys = S_.per==="all" ? ["all"] : [...new Set(dates.map(d=>periodKey(d, S_.per)))].sort();
   if (S_.per!=="all" && !keys.includes(S_.at)) S_.at = keys[keys.length-1];
   let rows = all.filter(r => (S_.per==="all" || periodKey(r.d, S_.per)===S_.at) && (S_.fam==="all" || lgFam(r.m)===S_.fam) && (S_.side==="all" || r.s===S_.side));
-  if (S_.one){ const best = {}; rows.forEach(r => { const k = r.g+"|"+r.pid; if (!best[k] || r.ev > best[k].ev) best[k] = r; }); rows = Object.values(best); }
+  if (S_.one) rows = lgOnePer(rows);
   const famsAvail = LG_FAMS.filter(f => all.some(r => lgFam(r.m)===f));
   const segB = (attr, cur, opts) => `<span class="seg olseg">${opts.map(([v,l])=>`<button type="button" data-${attr}="${v}" class="${cur===v?"on":""} ${cur===v && SEG_POP===attr+":"+v?"pop":""}">${l}</button>`).join("")}</span>`;
   const ki = keys.indexOf(S_.at);
@@ -4326,21 +4383,38 @@ function ledgerView(){
     const c = g => { const st = lgStats(rs.filter(r=>r.gr===g)); return `<td class="n num ${st.n?uCls(st.roi):""}">${st.n?sgnP(st.roi,0):"–"} <small class="meta">${st.n||""}</small></td>`; };
     return `<tr><td>${t("mg_"+f)}</td>${c("S")}${c("L")}${c("F")}</tr>`; }).join("");
   const pend = rows.filter(r=>r.r==="p").length;
-  box.innerHTML = `<div class="card prose lgintro"><p>${t("lg_intro")}</p></div>${controls}
+  const how = `<div class="card trhow clp ${CL_OPEN("lghow")?"open":""}" data-clk="lghow"><button type="button" class="clph" aria-expanded="${CL_OPEN("lghow")}"><span class="trhh">${I_SVG}${t("lg_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose"><p>${t("lg_intro")}</p><p>${t("lg_foot")}</p></div></div></div></div>`;
+  box.innerHTML = `${how}${controls}
     <div class="card tablewrap"><table class="lgtab">${head}<tbody>${byGr}</tbody></table></div>
     ${lgChart(rows)}
+    ${lgHistory(rows, S_)}
     ${famT ? `<div class="box"><h4>${t("lg_fam_h")}</h4><div class="tablewrap"><table class="mini"><thead><tr><th>${t("rk_market")}</th><th class="n">${badge("S")}</th><th class="n">${badge("L")}</th><th class="n">${badge("F")}</th></tr></thead><tbody>${famT}</tbody></table></div><p class="meta">${t("lg_fam_note")}</p></div>` : ""}
-    <p class="foot">${t("lg_foot")}${pend ? " " + t("lg_pend",{n:pend}) : ""}</p>`;
+    ${pend ? `<p class="foot">${t("lg_pend",{n:pend})}</p>` : ""}`;
+  const ch = $("#lgchips .on"), cw = $("#lgchips"); if (ch && cw) cw.scrollLeft = ch.offsetLeft - cw.clientWidth/2 + ch.offsetWidth/2;
 }
 document.addEventListener("click", e => {
-  const b = e.target.closest("[data-lgper],[data-lgside],[data-lgstep]"); if (!b) return;
+  const b = e.target.closest("[data-lgper],[data-lgside],[data-lgstep],[data-lghg],[data-lgd]"); if (!b) return;
   const S_ = LG(), d = b.dataset;
-  if (d.lgper){ S_.per = d.lgper; S_.at = null; segPop("lgper:"+d.lgper); }
+  if (d.lgper){ S_.per = d.lgper; S_.at = null; S_.hd = null; segPop("lgper:"+d.lgper); }
   if (d.lgside){ S_.side = d.lgside; segPop("lgside:"+d.lgside); }
-  if (d.lgstep){ const keys = [...new Set((LEDGER?.rows||[]).map(r=>periodKey(r.d,S_.per)))].sort(); const i = keys.indexOf(S_.at) + (+d.lgstep); if (keys[i]) S_.at = keys[i]; }
-  ledgerView();
+  if (d.lgstep){ const keys = [...new Set((LEDGER?.rows||[]).map(r=>periodKey(r.d,S_.per)))].sort(); const i = keys.indexOf(S_.at) + (+d.lgstep); if (keys[i]){ S_.at = keys[i]; S_.hd = null; } }
+  if (d.lghg){ S_.hg = d.lghg; segPop("lghg:"+d.lghg); }
+  if (d.lgd){ S_.hd = d.lgd; const y = scrollY; ledgerView(); scrollTo(0, y); return; }
+  const y = scrollY; ledgerView(); if (d.lghg) scrollTo(0, y);
 });
 document.addEventListener("change", e => { if (e.target.id === "lgfam"){ LG().fam = e.target.value; ledgerView(); } if (e.target.id === "lgone"){ LG().one = e.target.checked; ledgerView(); } });
+// chart hover: a guide line and each grade's running units that day
+document.addEventListener("pointermove", e => {
+  const h = e.target.closest?.(".lgh"), wrap = e.target.closest?.(".lgwrap"); if (!wrap) return;
+  const tip = wrap.querySelector(".lgtip"), hov = wrap.querySelector(".lghov"), C = window.__lgc;
+  if (!h || !C){ tip.hidden = true; hov.style.opacity = 0; return; }
+  const i = +h.dataset.i, x = +h.getAttribute("x") + +h.getAttribute("width")/2;
+  hov.setAttribute("x1", x); hov.setAttribute("x2", x); hov.style.opacity = 1;
+  tip.innerHTML = `<b>${dayLabel(C.days[i])}</b>` + C.series.map(s => `<span><i style="background:${LG_COL[s.g]}"></i>${t("tri_"+s.g)} <em class="${uCls(s.pts[i])}">${sgnU(s.pts[i],1)}</em></span>`).join("");
+  tip.hidden = false; const r = wrap.getBoundingClientRect(), svg = wrap.querySelector("svg"), sc = r.width / svg.viewBox.baseVal.width;
+  tip.style.left = Math.max(70, Math.min(r.width - 70, x * sc)) + "px";
+});
+document.addEventListener("pointerleave", e => { const w = e.target.closest?.(".lgwrap"); if (w){ w.querySelector(".lgtip").hidden = true; w.querySelector(".lghov").style.opacity = 0; } }, true);
 function trackTab(){
   const k = state.trk || "bp";
   const sw = `<div class="trksw"><span class="seg olseg">${[["bp",t("trk_bp")],["ledger",t("trk_ledger")],["model",t("trk_model")]].map(([v,l])=>`<button type="button" data-trk="${v}" class="${k===v?"on":""} ${k===v && SEG_POP==="trk:"+v?"pop":""}">${l}</button>`).join("")}</span></div>`;
@@ -5361,6 +5435,7 @@ function startApp(){
   if (!ARCH){ pollScores(); setInterval(pollScores, 60e3); }
   { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) state.game = m[1]; }
   if (location.hash === "#record"){ state.tab = "track"; state.trk = "bp"; history.replaceState(null,"",location.pathname); }
+  if (location.hash === "#ledger"){ state.tab = "track"; state.trk = "ledger"; state.lg = {per:"all", fam:"all", side:"all", one:false, hg:"S", hd:null}; history.replaceState(null,"",location.pathname); }
   render();
 }
 if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){
