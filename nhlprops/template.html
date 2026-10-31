@@ -944,7 +944,7 @@ body.has-cmp main{padding-bottom:110px}
 
 /* best picks record */
 .trksw{margin:2px 0 14px}.trksw .seg button{font-size:13px;padding:7px 14px}
-.lgtot td{border-top:1px solid var(--line)}.lgtab td,.lgtab th{white-space:nowrap}
+.lgtot td{border-top:1px solid var(--line)}.cnt{font-variant-numeric:tabular-nums}.lgtab td,.lgtab th{white-space:nowrap}
 .lgcbox{overflow:hidden}.lgwrap{position:relative}
 .lgchart{width:100%;height:auto;display:block;overflow:visible}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-dasharray:3 4}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
 .lgl{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
@@ -4330,7 +4330,7 @@ function lgChart(rows){
   const path = s => s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("");
   const areas = series.map((s,k) => `<path class="lga" style="--k:${k}" fill="url(#lgg-${s.g})" d="${path(s)}L${X(days.length-1).toFixed(1)} ${Y(0).toFixed(1)}L${X(0).toFixed(1)} ${Y(0).toFixed(1)}Z"/>`).join("");
   const lines = series.map((s,k) => { const last = s.pts[s.pts.length-1];
-    return `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" filter="url(#lgglow)" d="${path(s)}"/><circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><text class="lgt lg-${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan>${sgnU(last,1)}</tspan></text>`; }).join("");
+    return `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" filter="url(#lgglow)" d="${path(s)}"/><circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><text class="lgt lg-${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan data-cn="${last}" data-cf="u1" data-cd="${1350 + k*180}">${sgnU(last,1)}</tspan></text>`; }).join("");
   const hits = days.map((d,i) => `<rect class="lgh" x="${X(i) - iw/(days.length-1)/2}" y="${T}" width="${iw/(days.length-1)}" height="${ih}" data-i="${i}"/>`).join("");
   window.__lgc = {days, series};
   return `<div class="box lgcbox"><h4>${t("lg_chart")}</h4><div class="lgwrap"><svg viewBox="0 0 ${W} ${H}" class="lgchart">${defs}${grid}${xl}${areas}${lines}<line class="lghov" x1="0" x2="0" y1="${T}" y2="${T+ih}"/>${hits}</svg><div class="lgtip" hidden></div></div></div>`;
@@ -4343,7 +4343,7 @@ function lgHistory(rows, S_){
   if (!days.includes(S_.hd)) S_.hd = days[0];
   const dayRows = rs.filter(r => r.d === S_.hd).sort((a,b) => a.g - b.g || b.ev - a.ev);
   const dstat = d => lgStats(rs.filter(r => r.d === d));
-  const chips = days.map(d => { const st = dstat(d); return `<button type="button" class="lgchip ${d===S_.hd?"on":""}" data-lgd="${d}"><b>${dayShort(d)}</b><span class="${st.n?uCls(st.u):""}">${st.n?sgnU(st.u,1):"…"}</span></button>`; }).join("");
+  const chips = days.map(d => { const st = dstat(d); return `<button type="button" class="lgchip ${d===S_.hd?"on":""}" data-lgd="${d}"><b>${dayShort(d)}</b><span class="${st.n?uCls(st.u):""}"${st.n?` data-cn="${st.u}" data-cf="u1"`:""}>${st.n?sgnU(st.u,1):"…"}</span></button>`; }).join("");
   const st = dstat(S_.hd);
   const tabs = [["S",t("tri_S")],["L",t("tri_L")],["F",t("tri_F")],["all",t("tri_all")]].map(([v,l]) => `<button type="button" data-lghg="${v}" class="${gr===v?"on":""} ${gr===v && SEG_POP==="lghg:"+v?"pop":""}">${l}</button>`).join("");
   const body = dayRows.map(r => `<tr><td>${gr==="all"?`<span class="trib tr-${r.gr}">${t("tri_"+r.gr)}</span> `:""}<b>${esc(r.n||"")}</b><div class="meta">${r.t} ${r.t===r.h?"vs":"@"} ${r.op}</div></td>
@@ -4351,8 +4351,22 @@ function lgHistory(rows, S_){
     <td class="n num hide-sm ${r.sf?(r.od/r.sf>1.001?"up":r.od/r.sf<0.999?"dn":""):""}">${r.sf?oddsTxt(r.sf):"–"}</td><td>${lgRes(r)}</td><td class="n num ${r.u!=null?uCls(r.u):""}">${r.u!=null?sgnU(r.u,2):"–"}</td></tr>`).join("");
   return `<div class="box lghist"><div class="lghh"><h4>${t("lg_hist")}</h4><span class="seg olseg">${tabs}</span></div>
     <div class="lgchips" id="lgchips">${chips}</div>
-    <p class="meta lgdsum">${dayLabel(S_.hd)} · ${t("lg_dsum",{n:dayRows.length, w:st.w, l:st.n-st.w})} · <b class="${uCls(st.u)}">${sgnU(st.u,2)}</b> ${t("rk_units").toLowerCase()}</p>
+    <p class="meta lgdsum">${dayLabel(S_.hd)} · ${t("lg_dsum",{n:dayRows.length, w:st.w, l:st.n-st.w})} · <b class="${uCls(st.u)}" data-cn="${st.u}" data-cf="u2">${sgnU(st.u,2)}</b> ${t("rk_units").toLowerCase()}</p>
     <div class="lgscroll"><table class="lgtab2"><thead><tr><th>${t("h_player")}</th><th>${t("h_market")}</th><th class="n hide-xs">${t("model")}</th><th class="n">${t("h_odds")}</th><th class="n hide-xs">EV</th><th class="n hide-sm tip" tabindex="0" data-tip="${esc(t("lg_sf_tip"))}">${t("lg_sf")}</th><th>${t("lg_res")}</th><th class="n">${t("rk_units")}</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
+}
+// fast count-up for the ledger numbers (each row a little after the one above)
+const LG_FMT = {i: v => String(Math.round(v)), u1: v => sgnU(v,1), u2: v => sgnU(v,2), p1: v => sgnP(v,1), p0: v => sgnP(v,0), pc1: v => pct(v,1), od: v => oddsTxt(Math.max(1.01, v))};
+function lgCount(root, dur = 850){
+  if (!root || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const els = [...root.querySelectorAll("[data-cn]")]; if (!els.length) return;
+  const rows = new Map(); els.forEach(el => { const tr = el.closest("tr,p,div"); if (!rows.has(tr)) rows.set(tr, rows.size); });
+  const t0 = performance.now();
+  els.forEach(el => { const to = parseFloat(el.dataset.cn), f = LG_FMT[el.dataset.cf] || LG_FMT.i, final = el.textContent;
+    const from = el.dataset.cf === "od" ? 1 : 0, delay = el.dataset.cd ? +el.dataset.cd : Math.min(6, rows.get(el.closest("tr,p,div"))) * 70;
+    el.classList.add("cnt");
+    const tick = now => { const k = Math.min(1, Math.max(0, (now - t0 - delay) / dur)), e = 1 - Math.pow(1 - k, 4);
+      el.textContent = k >= 1 ? final : f(from + (to - from) * e); if (k < 1) requestAnimationFrame(tick); else el.classList.remove("cnt"); };
+    el.textContent = f(from); requestAnimationFrame(tick); });
 }
 function ledgerView(){
   const box = $("#rkbody"); if (!box) return;
@@ -4372,15 +4386,16 @@ function ledgerView(){
     <select id="lgfam" aria-label="${esc(t("rk_market"))}"><option value="all">${t("rk_allm")}</option>${famsAvail.map(f=>`<option value="${f}" ${S_.fam===f?"selected":""}>${t("mg_"+f)}</option>`).join("")}</select>
     ${segB("lgside", S_.side, [["all",t("tri_all")],["o",t("lg_over")],["n",t("lg_under")]])}
     <label class="toggle" title="${esc(t("lg_one_tip"))}"><input type="checkbox" id="lgone" ${S_.one?"checked":""}> ${t("lg_one")}</label></div>`;
-  const tr = (label, st, cls) => `<tr class="${cls||""}"><td>${label}</td><td class="n num">${st.n}</td><td class="n num">${st.w}–${st.n-st.w}</td>
-    <td class="n num">${st.n?pct(st.w/st.n,1):"–"} <small class="meta">/ ${st.n?pct(st.exp/st.n,1):"–"}</small></td><td class="n num hide-xs">${st.odds?oddsTxt(st.odds):"–"}</td>
-    <td class="n num ${uCls(st.u)}"><b>${sgnU(st.u,1)}</b></td><td class="n num ${uCls(st.roi||0)}">${sgnP(st.roi)}</td>
-    <td class="n num hide-sm ${st.sh==null?"":st.sh>0?"up":"dn"}">${st.sh==null?"–":sgnP(st.sh)} <small class="meta">${st.shn?"("+st.shn+")":""}</small></td></tr>`;
+  const N = (v, f, txt) => v==null ? (txt ?? "–") : `<span data-cn="${v}" data-cf="${f}">${txt}</span>`;
+  const tr = (label, st, cls) => `<tr class="${cls||""}"><td>${label}</td><td class="n num">${N(st.n,"i",st.n)}</td><td class="n num">${N(st.w,"i",st.w)}–${N(st.n-st.w,"i",st.n-st.w)}</td>
+    <td class="n num">${st.n?N(st.w/st.n,"pc1",pct(st.w/st.n,1)):"–"} <small class="meta">/ ${st.n?N(st.exp/st.n,"pc1",pct(st.exp/st.n,1)):"–"}</small></td><td class="n num hide-xs">${st.odds?N(st.odds,"od",oddsTxt(st.odds)):"–"}</td>
+    <td class="n num ${uCls(st.u)}"><b>${N(st.u,"u1",sgnU(st.u,1))}</b></td><td class="n num ${uCls(st.roi||0)}">${st.roi==null?"–":N(st.roi,"p1",sgnP(st.roi))}</td>
+    <td class="n num hide-sm ${st.sh==null?"":st.sh>0?"up":"dn"}">${st.sh==null?"–":N(st.sh,"p1",sgnP(st.sh))} <small class="meta">${st.shn?"("+st.shn+")":""}</small></td></tr>`;
   const head = `<thead><tr><th></th><th class="n tip" tabindex="0" data-tip="${esc(t("lg_n_tip"))}">${t("lg_bets")}</th><th class="n">${t("rk_record")}</th><th class="n tip" tabindex="0" data-tip="${esc(t("lg_hit_tip"))}">${t("lg_hit")}</th><th class="n hide-xs">${t("rk_avgodds")}</th><th class="n">${t("rk_units")}</th><th class="n">ROI</th><th class="n hide-sm tip" tabindex="0" data-tip="${esc(t("lg_sh_tip"))}">${t("lg_sh")}</th></tr></thead>`;
   const badge = g => `<span class="trib tr-${g}">${t("tri_"+g)}</span>`;
   const byGr = ["S","L","F"].map(g => tr(badge(g), lgStats(rows.filter(r=>r.gr===g)))).join("") + tr(`<b>${t("lg_total")}</b>`, lgStats(rows), "lgtot");
   const famT = famsAvail.filter(f => S_.fam==="all" || f===S_.fam).map(f => { const rs = rows.filter(r=>lgFam(r.m)===f); if (!rs.some(r=>r.r==="w"||r.r==="l")) return "";
-    const c = g => { const st = lgStats(rs.filter(r=>r.gr===g)); return `<td class="n num ${st.n?uCls(st.roi):""}">${st.n?sgnP(st.roi,0):"–"} <small class="meta">${st.n||""}</small></td>`; };
+    const c = g => { const st = lgStats(rs.filter(r=>r.gr===g)); return `<td class="n num ${st.n?uCls(st.roi):""}">${st.n?`<span data-cn="${st.roi}" data-cf="p0">${sgnP(st.roi,0)}</span>`:"–"} <small class="meta">${st.n||""}</small></td>`; };
     return `<tr><td>${t("mg_"+f)}</td>${c("S")}${c("L")}${c("F")}</tr>`; }).join("");
   const pend = rows.filter(r=>r.r==="p").length;
   const how = `<div class="card trhow clp ${CL_OPEN("lghow")?"open":""}" data-clk="lghow"><button type="button" class="clph" aria-expanded="${CL_OPEN("lghow")}"><span class="trhh">${I_SVG}${t("lg_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose"><p>${t("lg_intro")}</p><p>${t("lg_foot")}</p></div></div></div></div>`;
@@ -4390,6 +4405,7 @@ function ledgerView(){
     ${lgHistory(rows, S_)}
     ${famT ? `<div class="box"><h4>${t("lg_fam_h")}</h4><div class="tablewrap"><table class="mini"><thead><tr><th>${t("rk_market")}</th><th class="n">${badge("S")}</th><th class="n">${badge("L")}</th><th class="n">${badge("F")}</th></tr></thead><tbody>${famT}</tbody></table></div><p class="meta">${t("lg_fam_note")}</p></div>` : ""}
     ${pend ? `<p class="foot">${t("lg_pend",{n:pend})}</p>` : ""}`;
+  if (S_.cnt !== false) lgCount(box); S_.cnt = true;
   const ch = $("#lgchips .on"), cw = $("#lgchips"); if (ch && cw) cw.scrollLeft = ch.offsetLeft - cw.clientWidth/2 + ch.offsetWidth/2;
 }
 document.addEventListener("click", e => {
@@ -4399,7 +4415,7 @@ document.addEventListener("click", e => {
   if (d.lgside){ S_.side = d.lgside; segPop("lgside:"+d.lgside); }
   if (d.lgstep){ const keys = [...new Set((LEDGER?.rows||[]).map(r=>periodKey(r.d,S_.per)))].sort(); const i = keys.indexOf(S_.at) + (+d.lgstep); if (keys[i]){ S_.at = keys[i]; S_.hd = null; } }
   if (d.lghg){ S_.hg = d.lghg; segPop("lghg:"+d.lghg); }
-  if (d.lgd){ S_.hd = d.lgd; const y = scrollY; ledgerView(); scrollTo(0, y); return; }
+  if (d.lgd){ S_.hd = d.lgd; S_.cnt = false; const y = scrollY; ledgerView(); scrollTo(0, y); lgCount(document.querySelector(".lgdsum"), 600); return; }
   const y = scrollY; ledgerView(); if (d.lghg) scrollTo(0, y);
 });
 document.addEventListener("change", e => { if (e.target.id === "lgfam"){ LG().fam = e.target.value; ledgerView(); } if (e.target.id === "lgone"){ LG().one = e.target.checked; ledgerView(); } });
