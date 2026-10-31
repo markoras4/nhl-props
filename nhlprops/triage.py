@@ -89,6 +89,37 @@ def pp_ratios(pl: dict) -> dict:
     return out
 
 
+def hb_ratios(pl: dict, k: str) -> dict:
+    """his season and last-10 hits ('hit') or blocks ('blk') per game vs the model's own rate (before tonight's context)"""
+    r = (pl.get("rates") or {}).get(k + "60") or 0
+    toi = pl.get("toi_proj") or 0
+    mod = r * toi / 60
+    out = {}
+    if mod <= 0:
+        return out
+    hs = pl.get("hb_season") or {}
+    if (hs.get("gp") or 0) >= 5:
+        out["season"] = (hs.get(k) or 0) / hs["gp"] / mod
+    l10 = (pl.get("hb_games") or [])[:10]
+    if len(l10) >= 5:
+        out["l10"] = sum(g.get(k) or 0 for g in l10) / len(l10) / mod
+    return out
+
+
+def _nb_over(mu: float, line: float, r: float) -> float:
+    """P(X > line) for a negative binomial with mean mu and size r (the site's hits / blocks distribution)"""
+    if mu <= 0:
+        return 0.0
+    p = r / (r + mu)
+    k_max = int(math.floor(line))
+    term = p ** r
+    cdf = term
+    for k in range(1, k_max + 1):
+        term *= (k - 1 + r) / k * (1 - p)
+        cdf += term
+    return max(0.0, 1 - cdf)
+
+
 def usage_z(pl: dict) -> tuple[float, float]:
     w = pl.get("windows") or {}
     cur, base = w.get("cur") or {}, (w.get("prev3") or {}) if ((w.get("prev3") or {}).get("gp") or 0) >= 40 else (w.get("career") or {})
@@ -129,6 +160,17 @@ def grade(pl: dict, pr: dict, m: str, od: float, side: str = "o", opp_goalie_sta
         for k, r in pp_ratios(pl).items():
             q = 1 - math.exp(-lp * r)
             views[k] = round((q if side == "o" else 1 - q) * od - 1, 4)
+    if m[0] in "hb" and m[1:2].isdigit():
+        k = "hit" if m[0] == "h" else "blk"
+        base = (pr.get("base") or {}).get(k) or 0
+        try:
+            from .config import CONFIG as _CF
+            disp = float(_CF.get("hb_dispersion", 6.0))
+        except Exception:  # noqa: BLE001
+            disp = 6.0
+        for kk, rr in hb_ratios(pl, k).items():
+            q = _nb_over(base * rr, float(m[1:]), disp)
+            views[kk] = round((q if side == "o" else 1 - q) * od - 1, 4)
     caut, info = [], []
     if m == "ppp":
         unit = ((pl.get("mates") or {}).get("pp")) or ""

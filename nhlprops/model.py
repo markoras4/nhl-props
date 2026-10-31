@@ -1332,6 +1332,9 @@ def build_slate(raw: dict, cfg: dict, log=print) -> dict:
             if r_:
                 row[9], row[10] = r_["hit"], r_["blk"]
         prof_["hb_games"] = [{"d": r_["date"], "o": r_["opp"], "h": r_["home"], "hit": r_["hit"], "blk": r_["blk"]} for r_ in rows_]
+        # this season's hits and blocks per game (Triage's season view for hits / blocks)
+        prof_["hb_season"] = {"gp": len(rows_all), "hit": int(sum(r_["hit"] for r_ in rows_all)), "blk": int(sum(r_["blk"] for r_ in rows_all)),
+                              "toi": round(sum(r_["toi"] for r_ in rows_all), 1)}
         w5, w10 = rows_[:5], rows_
         prof_["hr"]["hbn"] = [len(w5), len(w10)]
         for L in cfg["hit_lines"]:
