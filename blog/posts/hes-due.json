@@ -1,0 +1,15 @@
+{
+ "slug": "hes-due",
+ "section": "betting",
+ "title": "“He's Due”: The Most Expensive Idea in Betting",
+ "deck": "A star hasn't scored in weeks, his chances keep piling up, and every instinct says tonight is the night. Here's why that instinct is half right, and why the half that's wrong costs bettors the most money.",
+ "date": "2026-10-31",
+ "date_label": "October 31, 2026",
+ "read_min": 6,
+ "hero": {"src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Madison_Square_Garden_sold-out_%284905954113%29.jpg/1920px-Madison_Square_Garden_sold-out_%284905954113%29.jpg",
+          "alt": "A sold-out Madison Square Garden", "credit": "Madison Square Garden, 2010 · Emmanuel Milou · CC BY-SA 2.0"},
+ "credits": [
+  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Madison_Square_Garden_sold-out_(4905954113).jpg\" rel=\"noopener\">Madison Square Garden sold-out</a> by Emmanuel Milou, CC BY-SA 2.0",
+  "Player numbers: NHL Props Lab model and data before the games of October 30, 2026. Odds: the prices on offer that afternoon. Backtests: NHL Props Lab, five NHL seasons. Charts: NHL Props Lab."
+ ]
+}

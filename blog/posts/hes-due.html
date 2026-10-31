@@ -1,0 +1,72 @@
+<p>Every bettor has felt it. A big name hasn't scored in weeks. He's still shooting, still getting chances, still on the top power-play unit. The goals have to come eventually. So tonight, at a price that looks generous, you back him to score.</p>
+
+<p>It's the most natural thought in sports betting, and it hides a mistake that quietly drains more money than almost any other. Not because the player won't start scoring again. He probably will. The mistake is in what that means for <em>tonight</em>.</p>
+
+<h2>A real example</h2>
+
+<p>On October 30, Timo Meier of the New Jersey Devils was the most unlucky shooter on the slate. Thirteen games into the season, he had one goal. His shot quality said he should have had about four. He had taken 47 shots and converted 2.1% of them, against a true shooting level of around 10%.</p>
+
+<div class="viz reveal"><h4>Timo Meier before October 30</h4><p>His shooting this season against his true level. The gap is the "bad luck" every bettor can see.</p>
+<svg viewBox="0 0 700 170" role="img" aria-label="Shooting percentage this season versus true level">
+<g font-family="Exo 2,sans-serif" font-size="13" fill="#8796a8"><text x="0" y="52">This season</text><text x="0" y="122">True level</text></g>
+<rect x="150" y="34" width="520" height="26" rx="8" fill="#22303f" opacity=".5"/><rect class="bar" style="transform-origin:left;animation-name:growx" x="150" y="34" width="73" height="26" rx="8" fill="#e3a33b"/>
+<rect x="150" y="104" width="520" height="26" rx="8" fill="#22303f" opacity=".5"/><rect class="bar" style="transform-origin:left;animation-name:growx;animation-delay:.15s" x="150" y="104" width="354" height="26" rx="8" fill="#3ddc97"/>
+<g font-family="Oxanium,sans-serif" font-weight="800" font-size="16" fill="currentColor"><text x="234" y="53">2.1%</text><text x="515" y="123">10.2%</text></g>
+<style>@keyframes growx{from{transform:scaleX(0)}}</style></svg></div>
+
+<p>That evening, a sportsbook offered him to score at <b>3.70</b>. That price implies a 27% chance. Plenty of bettors looked at the gap above and thought: he's due, and 3.70 is a gift.</p>
+
+<p>Our model gave him <b>22.2%</b>. Fair odds of about 4.50. No value at 3.70, and not a little: about −18% per bet.</p>
+
+<h2>Regression is real. “Due” isn't.</h2>
+
+<p>Here's the half that's right: Meier's shooting will almost certainly move back toward his true level. Two percent is not who he is. Over the rest of the season, his goals will track his chances much more closely.</p>
+
+<p>Here's the half that costs money: moving back toward his level is not the same as scoring <em>extra</em> to make up for the goals he missed. The puck has no memory. Last week's posts and great saves don't create a debt that tonight has to repay. Going forward, Meier scores at his normal rate. Not above it.</p>
+
+<blockquote>Regression means he goes back to normal. It doesn't mean he gets paid back.</blockquote>
+
+<p>And the crucial part: <b>a good model already prices him at normal</b>. Ours doesn't build his number from his one goal. It builds it from his shots and the quality of his chances over several seasons, with his true finishing level. That's where the 22% comes from: it's the number for <em>normal Meier</em>. The model is already betting on his regression. There is nothing extra left to collect.</p>
+
+<h2>What “he's due” actually costs</h2>
+
+<p>Say you believe in the bounce-back and back him at 3.70 for his next ten games, €10 each time.</p>
+
+<div class="viz reveal"><h4>Ten bets at 3.70 on a 22% chance</h4><p>What you stake against what you can expect back. You'll probably see him score, maybe twice, and still lose.</p>
+<svg viewBox="0 0 700 220" role="img" aria-label="Stake versus expected return">
+<line x1="60" y1="190" x2="680" y2="190" stroke="#22303f"/>
+<rect class="bar" x="170" y="40" width="130" height="150" rx="8" fill="#8796a8" opacity=".55"/>
+<rect class="bar" style="animation-delay:.15s" x="420" y="68" width="130" height="122" rx="8" fill="#e3a33b"/>
+<g font-family="Oxanium,sans-serif" font-weight="800" font-size="22" fill="currentColor" text-anchor="middle"><text x="235" y="30">€100</text><text x="485" y="58">€81</text></g>
+<g font-family="Exo 2,sans-serif" font-size="13" fill="#8796a8" text-anchor="middle"><text x="235" y="210">Staked</text><text x="485" y="210">Expected back (2.2 wins × €37)</text></g>
+</svg></div>
+
+<p>About €19 gone on bets that felt smart every single time. That's the trap: the story is true (he will score again), so the bet feels true. But the price already knew the story.</p>
+
+<h2>Why the market is even shorter on stars</h2>
+
+<p>Mitch Marner was another name on the same slate with fewer goals than his chances deserved: 2 goals from 30 shots and about 3.2 expected goals. The model had him at 23.8% to score, fair odds 4.20. One sportsbook offered 3.50. Another offered 2.95, a 34% chance.</p>
+
+<p>Two forces push star prices short:</p>
+<ul>
+<li><b>The margin.</b> Anytime-scorer prices carry a big built-in margin. A 3.50 with the margin taken out is closer to a 25–26% chance.</li>
+<li><b>The star tax.</b> Casual bettors pile onto famous names to score, and especially onto famous names who are "due". Books know it, and shorten the price. That's not information. It's demand.</li>
+</ul>
+
+<p>So the "he's due" crowd isn't just making a reasoning mistake. They're making it in exactly the market where prices are already pulled against them.</p>
+
+<h2>When the bounce-back <em>is</em> value</h2>
+
+<p>None of this means cold players are never worth backing. The value appears in one situation: when the <b>price</b> treats the player as if his bad run were his real level. If a book hangs Meier at 4.80 or 5.00 because he's "slumping", the same model that says no at 3.70 says yes. That's the edge: not the slump itself, but a price that overreacts to it.</p>
+
+<p>There's also a difference between luck and a real change. In our five-season backtests, a jump in a player's shot <em>quality</em> mostly held up in later games, while finishing streaks didn't. A player who's suddenly getting more and better chances (new linemates, more ice time, a power-play promotion) has changed. A player whose shots just aren't going in hasn't.</p>
+
+<h2>The checklist</h2>
+<ul>
+<li><b>Ask what's already in the price.</b> If the model builds from chances, not goals, his bad luck is already counted.</li>
+<li><b>Compare the price, not the story.</b> Value is the chance against the odds, nothing else.</li>
+<li><b>Be extra careful with stars.</b> Their prices carry the most margin and the most public money.</li>
+<li><b>Separate luck from change.</b> More chances is a signal. Fewer goals from the same chances is noise.</li>
+</ul>
+
+<p>On the site, players running cold carry an <em>unlucky</em> tag. It isn't a tip. It's a reminder that his chances are already counted, and that bad luck alone is never a reason to bet.</p>

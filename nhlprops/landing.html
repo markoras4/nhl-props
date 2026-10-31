@@ -284,6 +284,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
       <a href="#plans" data-t="nav_plans"></a>
       <a href="#about" data-t="nav_about"></a>
       <a href="#faq" data-t="nav_faq"></a>
+      <a href="blog" data-t="nav_blog"></a>
     </nav>
     <div class="hright">
       <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
@@ -448,7 +449,7 @@ const LDATA = /*__DATA__*/null;
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const I18N = {
  en:{
-  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans", nav_about:"About", nav_faq:"FAQ",
+  nav_tonight:"Tonight", nav_previews:"Previews", nav_features:"Features", nav_plans:"Plans", nav_about:"About", nav_faq:"FAQ", nav_blog:"Blog",
   ab_eye:"About us", ab_h:"Built by people who use it",
   ab_p1:"We're a small team that comes from data analysis and investing, not gambling. We know the NHL inside out, and we know how the betting market works and how it prices a game. So we built the tool we wanted for ourselves: one that turns every NHL game into honest probabilities and shows exactly how each one is made.",
   ab_p2:"We use it ourselves, the same version you see. Subscriptions pay for the data, the servers and the testing, but they aren't why we built it. We built it because good information should be easy to read, and because we'd rather show our work than ask you to trust us.",
@@ -506,7 +507,7 @@ const I18N = {
   ]
  },
  sv:{
-  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer", nav_about:"Om oss", nav_faq:"Frågor",
+  nav_tonight:"I kväll", nav_previews:"Förhandstittar", nav_features:"Funktioner", nav_plans:"Planer", nav_about:"Om oss", nav_faq:"Frågor", nav_blog:"Blogg",
   ab_eye:"Om oss", ab_h:"Byggt av människor som använder det",
   ab_p1:"Vi är ett litet team som kommer från dataanalys och investering, inte spel. Vi kan NHL på djupet, och vi vet hur spelmarknaden fungerar och hur den prissätter en match. Så vi byggde verktyget vi själva ville ha: ett som gör varje NHL-match till ärliga sannolikheter och visar exakt hur varje siffra tas fram.",
   ab_p2:"Vi använder det själva, samma version som du ser. Prenumerationerna betalar data, servrar och tester, men de är inte skälet till att vi byggde det. Vi byggde det för att bra information ska vara lätt att läsa, och för att vi hellre visar hur vi räknar än ber dig lita på oss.",
