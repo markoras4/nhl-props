@@ -6,10 +6,13 @@
  "date": "2026-10-31",
  "date_label": "October 31, 2026",
  "read_min": 6,
- "hero": {"src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Madison_Square_Garden_sold-out_%284905954113%29.jpg/1920px-Madison_Square_Garden_sold-out_%284905954113%29.jpg",
-          "alt": "A sold-out Madison Square Garden", "credit": "Madison Square Garden, 2010 · Emmanuel Milou · CC BY-SA 2.0"},
+ "hero": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Chicago_Blackhawks_%40_Madison_Square_Garden_%2815925804871%29.jpg/1920px-Chicago_Blackhawks_%40_Madison_Square_Garden_%2815925804871%29.jpg",
+  "alt": "An NHL game between the Rangers and the Chicago Blackhawks at Madison Square Garden",
+  "credit": "Rangers vs Blackhawks, Madison Square Garden · Schen Photography · CC BY 2.0"
+ },
  "credits": [
-  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Madison_Square_Garden_sold-out_(4905954113).jpg\" rel=\"noopener\">Madison Square Garden sold-out</a> by Emmanuel Milou, CC BY-SA 2.0",
+  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Chicago_Blackhawks_@_Madison_Square_Garden_(15925804871).jpg\" rel=\"noopener\">Chicago Blackhawks @ Madison Square Garden</a> by Schen Photography, CC BY 2.0",
   "Player numbers: NHL Props Lab model and data before the games of October 30, 2026. Odds: the prices on offer that afternoon. Backtests: NHL Props Lab, five NHL seasons. Charts: NHL Props Lab."
  ]
 }

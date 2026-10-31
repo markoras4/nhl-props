@@ -101,6 +101,8 @@ def fetch_img(url: str, name: str) -> str:
     if not url or not url.startswith("http"):
         return url
     ext = ".jpg" if ".jp" in url.lower() else (".png" if ".png" in url.lower() else ".jpg")
+    import hashlib
+    name = f"{name}-{hashlib.md5(url.encode()).hexdigest()[:6]}"   # a new photo URL never reuses an old cached file
     dst = OUT / "img" / (name + ext)
     cache = ROOT / "data" / "cache" / "blog_img" / (name + ext)   # kept between builds (actions cache), so Commons is asked once
     try:
