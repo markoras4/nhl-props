@@ -5,20 +5,18 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 721 skaters and 78 goalies (careers + game logs) ...
+Fetching 724 skaters and 77 goalies (careers + game logs) ...
 Fetching 216 recent box scores (hits, blocks) ...
-News: 132 injuries, likely starters for 19 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 12 teams (2026-10-31, updated 2026-10-31T06:03:10.397Z)
-Shot maps: downloading play-by-play for 1 new games ...
+News: 132 injuries, likely starters for 30 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 12 teams (2026-10-31, updated 2026-10-31T06:03:10.397Z)
   shot maps: 216 games, 24640 attempts
-Model built: 48 games, 721 skaters (562 expected to play)
-Odds: bookmaker prices for 10 games, 354 players
+Model built: 48 games, 724 skaters (563 expected to play)
+Odds: bookmaker prices for 10 games, 355 players
 Odds: sharp-book prices for 8 games, 249 player markets
 Public betting: splits for 10 games
-  season simulation: 10000 seasons, 1128 games left, top Cup: CAR 27%, COL 12%, VGK 10%
+  season simulation: 10000 seasons, 1128 games left, top Cup: CAR 27%, COL 12%, MIN 10%
 Futures odds: Cup 32, conference 32, division 32, playoffs 26, points 26
-  history: MoneyPuck xG for 2026: 6,526 player-games
-  history: 1 box scores for hits/blocks (2026)
-  history: game-by-game files for 717 players (3 seasons)
+  history: MoneyPuck xG for 2026: 6,558 player-games
+  history: game-by-game files for 720 players (3 seasons)
   archive: 6 past dates published (2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30)
 Best picks record: 74 graded, 22 won, -6.47 units
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-10-31.html
