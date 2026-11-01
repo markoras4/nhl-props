@@ -6,17 +6,19 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 726 skaters and 77 goalies (careers + game logs) ...
-Fetching 226 recent box scores (hits, blocks) ...
-News: 131 injuries, likely starters for 20 games (+18 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-11-01, updated 2026-11-01T20:27:03.964Z)
-  shot maps: 226 games, 25784 attempts
+Fetching 227 recent box scores (hits, blocks) ...
+News: 130 injuries, likely starters for 20 games (+18 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-11-01, updated 2026-11-01T20:27:03.964Z)
+Shot maps: downloading play-by-play for 1 new games ...
+  shot maps: 227 games, 25913 attempts
 Model built: 49 games, 726 skaters (570 expected to play)
 Odds: bookmaker prices for 6 games, 214 players
 Odds: sharp-book prices for 2 games, 104 player markets
-  manual odds: 1042 player prices added
+  manual odds: 1043 player prices added
 Public betting: splits for 6 games
-  season simulation: 10000 seasons, 1118 games left, top Cup: CAR 27%, COL 14%, VGK 9%
-Futures odds: Cup 32, conference 32, division 32, playoffs 30, points 30
+  season simulation: 10000 seasons, 1117 games left, top Cup: CAR 31%, COL 14%, MIN 9%
+Futures odds: Cup 32, conference 32, division 32, playoffs 26, points 26
   history: MoneyPuck xG for 2026: 6,863 player-games
+  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 722 players (3 seasons)
   archive: 7 past dates published (2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31)
 Best picks record: 96 graded, 27 won, -3.45 units
