@@ -188,7 +188,13 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 .plan .badge{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;background:var(--accent);color:var(--accent-ink);padding:3px 9px;border-radius:999px}
 .price{font-family:var(--f-disp);font-size:34px;font-weight:800;line-height:1}
 .price small{font-size:14px;color:var(--mute);font-weight:600}
-.plan ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:14.5px;flex:1}
+.plan ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:14.5px}
+.plist{flex:1;display:flex;flex-direction:column;gap:10px}.plist ul:empty{display:none}
+.pmorew{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1),opacity .35s;opacity:0}.pmorew>div{overflow:hidden;min-height:0}
+.plan.open .pmorew{grid-template-rows:1fr;opacity:1}.pmorew ul{padding-bottom:2px}.plist:not(:has(#free_more li)):not(:has(#pro_more li)) .pmorebtn{display:none}
+.pmorebtn{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--accent);font:700 13.5px var(--f-ui);padding:4px 0;cursor:pointer}
+.pmorebtn::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .3s}
+.plan.open .pmorebtn::after{transform:rotate(225deg) translate(-2px,0)}.pmorebtn:hover{text-decoration:underline;text-underline-offset:3px}
 .plan li{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start}
 .plan li svg{width:18px;height:18px;margin-top:3px;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .plan li.y svg{stroke:var(--accent)}
@@ -414,13 +420,15 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
         <div class="plan">
           <h3 data-t="free_n"></h3>
           <div class="price"><span data-t="free_price"></span> <small data-t="per_month"></small></div>
-          <ul id="free_list"></ul>
+          <div class="plist"><ul id="free_list"></ul><div class="pmorew"><div><ul id="free_more"></ul></div></div><ul id="free_tail"></ul>
+          <button type="button" class="pmorebtn" data-pm="free" aria-expanded="false"></button></div>
           <a class="btn ghost" href="APP_URL" data-t="cta_free"></a>
         </div>
         <div class="plan pro">
           <h3><span data-t="pro_n"></span><span class="badge" data-t="pro_badge"></span></h3>
           <div class="price" data-t="pro_price" data-html></div>
-          <ul id="pro_list"></ul>
+          <div class="plist"><ul id="pro_list"></ul><div class="pmorew"><div><ul id="pro_more"></ul></div></div><ul id="pro_tail"></ul>
+          <button type="button" class="pmorebtn" data-pm="pro" aria-expanded="false"></button></div>
           <a class="btn pri" href="APP_URL" data-t="cta_pro"></a>
         </div>
       </div>
@@ -524,7 +532,7 @@ const I18N = {
   scr_h:"Phone, tablet or desktop", scr_sub:"Built for every screen. Add it to your home screen and it opens like an app.",
   s1:"iPhone & Android", s2:"iPad & tablets", s3:"Mac & PC",
   plans_h:"Start free. Upgrade when it pays.", plans_sub:"A free account shows how it works. Pro unlocks every player and every edge.",
-  free_n:"Free", free_price:"$0", per_month:"/ month", pro_n:"Pro", pro_badge:"Full access", pro_price:"– <small>price at launch</small>",
+  free_n:"Free", free_price:"$0", pm_more:"Show all ({n} more)", pm_less:"Show less", per_month:"/ month", pro_n:"Pro", pro_badge:"Full access", pro_price:"– <small>price at launch</small>",
   free_items:[["y","Every game: projected score, win chance, total goals, puck line and more markets"],["y","Previews, lineups, starting goalies and injuries"],["y","Team ranks, what each defence allows, team shots"],["y","One forward and one defenceman per team, fully open"],["y","Player pages: last 10 games, streaks and milestones"],["y","Game recaps: every goal and player line from past games"],["y","Playoff and Stanley Cup chances for every team"],["y","My picks: automatic grading, profit and closing-odds check"],["y","Watchlist: follow up to 3 players"],["y","Best picks record: every past pick, graded"],["y","Players & teams explorer: any two stats, with suggested pairs"],["y","Triage grades on the open players"],["y","Triage track record: every value bet since day one, by grade, with units and ROI"],["y","Starting goalies checked every 10 minutes on game nights"],["n","Every player in every market"],["n","Today's best picks and value against the market"]],
   pro_items:[["y","Everything in Free"],["y","Every player: goals, points, shots, hits, blocks and more"],["y","Today's best picks, live until the lock, and value against the market on every prop"],["y","Triage: every value bet graded Solid, Lean or Fragile, with the reasons, power-play points and blocked shots included"],["y","Tonight's card on every player: chance, odds, value and grade, his power-play point chance, next to his form and the opponent"],["y","First goalscorer, multi-point, power play, faceoffs, penalties"],["y","Full hit rates, matchups and shot maps"],["y","Compare up to 4 players side by side, with a plain-language Quick read"],["y","7-day archive: every game as it looked before puck drop, with what happened"],["y","Futures value: playoffs, division, conference, Cup and season points vs the odds"],["y","Sharp-book prices, odds movement and alerts"],["y","Public betting: where the tickets and the money are on every game"],["y","Unlimited watchlist with game-day alerts"],["y","How every number is built"],["s","AI analysis in Compare: a written breakdown of the players you're comparing"]],
   soon:"Coming soon",
@@ -582,7 +590,7 @@ const I18N = {
   scr_h:"Mobil, surfplatta eller dator", scr_sub:"Byggd för alla skärmar. Lägg den på hemskärmen så öppnas den som en app.",
   s1:"iPhone & Android", s2:"iPad & surfplattor", s3:"Mac & PC",
   plans_h:"Börja gratis. Uppgradera när det lönar sig.", plans_sub:"Ett gratiskonto visar hur det fungerar. Pro låser upp varje spelare och varje edge.",
-  free_price:"0 kr", free_n:"Gratis", per_month:"/ månad", pro_n:"Pro", pro_badge:"Full tillgång", pro_price:"– <small>pris vid lansering</small>",
+  free_price:"0 kr", pm_more:"Visa alla ({n} till)", pm_less:"Visa färre", free_n:"Gratis", per_month:"/ månad", pro_n:"Pro", pro_badge:"Full tillgång", pro_price:"– <small>pris vid lansering</small>",
   free_items:[["y","Varje match: beräknat resultat, vinstchans, totalmål, puck line och fler spel"],["y","Förhandstittar, uppställningar, startmålvakter och skador"],["y","Lagrankning, vad varje försvar släpper till, lagens skott"],["y","En forward och en back per lag, helt öppna"],["y","Spelarsidor: senaste 10 matcherna, sviter och milstolpar"],["y","Matchsammanfattningar: alla mål och spelarrader från tidigare matcher"],["y","Chanser till slutspel och Stanley Cup för varje lag"],["y","Mina spel: automatisk rättning, vinst och koll mot stängningsodds"],["y","Bevakning: följ upp till 3 spelare"],["y","Facit för bästa spelen: varje tidigare spel, rättat"],["y","Spelar- och lagutforskaren: vilka två mått som helst, med föreslagna par"],["y","Triagebetyg på de öppna spelarna"],["y","Triagefacit: varje värdespel sedan första dagen, per betyg, med enheter och ROI"],["y","Startmålvakter kollas var 10:e minut på matchkvällar"],["n","Varje spelare i varje spel"],["n","Dagens bästa spel och värde mot marknaden"]],
   pro_items:[["y","Allt i Gratis"],["y","Varje spelare: mål, poäng, skott, tacklingar, blockeringar med mera"],["y","Dagens bästa spel, live fram till låsningen, och värde mot marknaden på varje spel"],["y","Triage: varje värdespel betygsatt som Stabil, Lutar eller Skör, med skälen, även powerplaypoäng och blockerade skott"],["y","Kvällens kort på varje spelare: chans, odds, värde och betyg, hans chans till powerplaypoäng, bredvid hans form och motståndet"],["y","Första målskytt, flera poäng, powerplay, tekningar, utvisningar"],["y","Full träffprocent, matchups och skottkartor"],["y","Jämför upp till 4 spelare sida vid sida, med en snabbläsning i klartext"],["y","7 dagars arkiv: varje match som den såg ut före nedsläpp, med vad som hände"],["y","Värde i långtidsspel: slutspel, division, konferens, cup och säsongspoäng mot oddsen"],["y","Skarpa spelbolagets odds, oddsrörelser och aviseringar"],["y","Spelfördelning: var spelen och pengarna ligger i varje match"],["y","Obegränsad bevakning med notis på matchdagen"],["y","Hur varje siffra byggs"],["s","AI-analys i Jämför: en skriven genomgång av spelarna du jämför"]],
   soon:"Kommer snart",
@@ -662,8 +670,13 @@ function plans(){
   const ico = { y:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>', n:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
     s:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>' };
   const li = ([k,txt]) => `<li class="${k}">${ico[k]}<span>${k==="s"?`<b class="soon">${esc(t("soon"))}</b> `:""}${esc(txt)}</span></li>`;
-  $("#free_list").innerHTML = t("free_items").map(li).join("");
-  $("#pro_list").innerHTML = t("pro_items").map(li).join("");
+  // long plan lists: the first few, the rest behind "Show all"; locked and coming-soon lines always stay in view
+  ["free","pro"].forEach(k => { const items = t(k+"_items"), main = items.filter(x => x[0]==="y"), tail = items.filter(x => x[0]!=="y"), SHOW = 6;
+    $("#"+k+"_list").innerHTML = main.slice(0, SHOW).map(li).join("");
+    $("#"+k+"_more").innerHTML = main.slice(SHOW).map(li).join("");
+    $("#"+k+"_tail").innerHTML = tail.map(li).join("");
+    const b = document.querySelector(`[data-pm="${k}"]`), open = b.closest(".plan").classList.contains("open");
+    b.textContent = open ? t("pm_less") : t("pm_more").replace("{n}", main.length - SHOW); b.setAttribute("aria-expanded", open); });
   $("#ab_do").innerHTML = t("ab_do").map(x => `<li><span>${x}</span></li>`).join("");
   $("#also").innerHTML = t("also").map(x => `<li>${x}</li>`).join("");
   const R = LDATA && LDATA.solid, lr = $("#lrec");
@@ -684,6 +697,7 @@ function render(){
   strip(); previews(); plans();
   $("#yr").textContent = new Date().getFullYear();
 }
+document.addEventListener("click", e => { const b = e.target.closest("[data-pm]"); if (!b) return; const pl = b.closest(".plan"); pl.classList.toggle("open"); plans(); });
 $("#lang").addEventListener("click", e => { const b = e.target.closest("button[data-l]"); if (!b) return; LANG = b.dataset.l; store.set("set:lang", LANG); render(); });
 document.querySelectorAll(".themebtn").forEach(btn => btn.addEventListener("click", () => { const nx = currentTheme()==="light" ? "dark" : "light"; store.set("set:theme", nx); applyTheme(nx); }));
 addEventListener("scroll", () => $("#hdr").classList.toggle("scrolled", scrollY > 8), {passive:true});
