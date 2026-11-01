@@ -5596,17 +5596,17 @@ if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){
     rink:  {en:"Rink",  sv:"Rink",  c:"#3ddc97", bg:"#111821", d:null, l:null},
     ember: {en:"Ember", sv:"Glöd",  c:"#ff8a3d", bg:"#1a1410",
       d:{bg:"#110d0a",bg2:"#15100c",panel:"#1a1410",panel2:"#231a14",line:"#35281e",text:"#f5ede5",mute:"#a9988b",chip:"#271d16",
-         accent:"#ff8a3d","accent-ink":"#2a1100",heat:"255,138,61",glow:"255,138,61",pc1:"#ff8a3d",pc3:"#2ee6c5",line2:"#ffc27a",hit:"#ff8a3d",accent2:"#f2c99a",pc2:"#f2c99a"},
+         accent:"#ff8a3d","accent-ink":"#2a1100",heat:"255,138,61",glow:"255,138,61",pc1:"#ff8a3d",pc3:"#2ee6c5",line2:"#ffc27a",hit:"#ff8a3d",accent2:"#f2c99a",pc2:"#f2c99a",good:"#ff8a3d",bad:"#ff4d6d"},
       l:{bg:"#faf5ef",bg2:"#f3ebe2",panel:"#ffffff",panel2:"#f7efe6",line:"#eadccd",text:"#1e1611",mute:"#76655a",chip:"#f3e8dc",
-         accent:"#c2560e","accent-ink":"#ffffff",heat:"194,86,14",glow:"194,86,14",pc1:"#c2560e",pc3:"#0b8f7b",line2:"#b8661a",hit:"#d9681c",accent2:"#8a5a32",pc2:"#8a5a32"}},
+         accent:"#c2560e","accent-ink":"#ffffff",heat:"194,86,14",glow:"194,86,14",pc1:"#c2560e",pc3:"#0b8f7b",line2:"#b8661a",hit:"#d9681c",accent2:"#8a5a32",pc2:"#8a5a32",good:"#c2560e",bad:"#c8203f"}},
     neon:  {en:"Neon",  sv:"Neon",  c:"#ff4fa8", bg:"#1a111d",
       d:{bg:"#100a12",bg2:"#140c17",panel:"#1a111d",panel2:"#241827",line:"#37253b",text:"#f7ebf4",mute:"#aa93a5",chip:"#27192b",
-         accent:"#ff4fa8","accent-ink":"#2b0016",heat:"255,79,168",glow:"255,79,168",pc1:"#ff4fa8",pc4:"#a78bfa",line2:"#ff9ad5",hit:"#ff4fa8",accent2:"#b794ff",pc2:"#b794ff"},
+         accent:"#ff4fa8","accent-ink":"#2b0016",heat:"255,79,168",glow:"255,79,168",pc1:"#ff4fa8",pc4:"#a78bfa",line2:"#ff9ad5",hit:"#ff4fa8",accent2:"#b794ff",pc2:"#b794ff",good:"#ff4fa8",bad:"#ff6a3d"},
       l:{bg:"#fbf4f8",bg2:"#f5e9f0",panel:"#ffffff",panel2:"#f8edf3",line:"#ecd8e3",text:"#1d1219",mute:"#75616d",chip:"#f5e5ee",
-         accent:"#c21d78","accent-ink":"#ffffff",heat:"194,29,120",glow:"194,29,120",pc1:"#c21d78",pc4:"#6a48d6",line2:"#b0337f",hit:"#d6328c",accent2:"#7a4fd6",pc2:"#7a4fd6"}}
+         accent:"#c21d78","accent-ink":"#ffffff",heat:"194,29,120",glow:"194,29,120",pc1:"#c21d78",pc4:"#6a48d6",line2:"#b0337f",hit:"#d6328c",accent2:"#7a4fd6",pc2:"#7a4fd6",good:"#c21d78",bad:"#c43d12"}}
   };
   const OLD = {green:"rink", blue:"rink", mint:"rink", violet:"neon", pink:"neon", gold:"ember"};
-  const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc2","pc3","pc4","line2","hit","accent2"];
+  const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc2","pc3","pc4","line2","hit","accent2","good","bad"];
   const get = () => { try { let v = localStorage.getItem("set:accent"); if (OLD[v]) { v = OLD[v]; localStorage.setItem("set:accent", v); } return A[v] ? v : "rink"; } catch(e){ return "rink"; } };
   const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
   const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
