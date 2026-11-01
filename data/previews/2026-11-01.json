@@ -1,0 +1,353 @@
+{
+ "date": "2026-11-01",
+ "written": "2026-11-01T07:51+01:00",
+ "previews": [
+  {
+   "id": 2026020227,
+   "slug": "2026-11-01-wpg-car",
+   "photo": {
+    "src": "assets/previews/2026-11-01-wpg-car.webp",
+    "alt": "Sebastian Aho and the Hurricanes in a faceoff",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Carolina_Hurricanes_at_Seattle_Kraken_-_October_17,_2022_-_Andr%C3%A9_Burakovsky,_Teuvo_Ter%C3%A4v%C3%A4inen,_Sebastian_Aho,_and_Brett_Pesce_(52438255289).jpg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Jets at Hurricanes",
+    "title": "Winnipeg brings an eight-game skid into Kochetkov's building",
+    "deck": "Carolina owns the league's best record at 11-2-2, and Pyotr Kochetkov has won all nine of his starts. Winnipeg has lost eight straight, scored 2.0 goals a game over its last five and is playing without Connor Hellebuyck after trading him to New Jersey. The model makes the Hurricanes clear favourites, but less clear than the market does.",
+    "news": [
+     "The Jets traded Hellebuyck to the Devils on Oct. 23. Stuart Skinner is the likely starter, with Nico Daws as his backup.",
+     "Coach Scott Arniel has been openly frustrated with mental errors during the slide, and TSN's Craig Button has said management may look elsewhere if the coaches cannot fix it.",
+     "Winnipeg is still without Josh Morrissey, Nick Bjugstad, Garrett Brown and Vladislav Namestnikov. The Jets did not practise Saturday after a 5-2 loss in Florida.",
+     "Carolina is expected to use the same lineup as in Thursday's 3-2 win over Columbus. Taylor Hall and Jordan Staal remain out."
+    ],
+    "records": [
+     "Kochetkov's 9-0 start is a Hurricanes record for wins to open a season and ties Felix Potvin (1993-94) for the third-longest such streak in NHL history.",
+     "The reigning Stanley Cup champions have won 11 of their last 13 games.",
+     "Kyle Connor has 11 goals in 14 games, a bright spot in a Jets season that has gone from 4-1-1 to 4-7-3.",
+     "Mark Jankowski has seven goals in his last eight games."
+    ],
+    "betting": [
+     "Market: Hurricanes 1.36, Jets 3.30, about 71–29 without the margin. The model has Carolina at 64%, so it gives the Jets more of a chance than the price does.",
+     "Total: the market prices over 5.5 at 1.70 (about 56%). The model says 58%, close to the market, and the last seven meetings averaged 5.4 goals.",
+     "Player chances (model): Aho 1+ point 66%, Svechnikov 1+ point 58%, Kyle Connor goal 37% (the 2.85 price implies about 35%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Jets mot Hurricanes",
+    "title": "Winnipeg tar med åtta raka förluster till Kochetkovs hemmaplan",
+    "deck": "Carolina har ligans bästa facit på 11-2-2, och Pyotr Kochetkov har vunnit alla sina nio starter. Winnipeg har förlorat åtta raka, gjort 2,0 mål per match de senaste fem och spelar utan Connor Hellebuyck sedan han tradades till New Jersey. Modellen ser Hurricanes som klara favoriter, men inte lika klara som marknaden gör.",
+    "news": [
+     "Jets tradade Hellebuyck till Devils den 23 oktober. Stuart Skinner väntas starta, med Nico Daws som reserv.",
+     "Tränaren Scott Arniel har öppet visat sin frustration över mentala misstag under svackan, och TSN:s Craig Button har sagt att ledningen kan se sig om efter andra lösningar om tränarna inte vänder det.",
+     "Winnipeg saknar fortfarande Josh Morrissey, Nick Bjugstad, Garrett Brown och Vladislav Namestnikov. Jets tränade inte i lördags efter 2-5 i Florida.",
+     "Carolina väntas ställa upp med samma lag som i torsdagens 3-2 mot Columbus. Taylor Hall och Jordan Staal är fortfarande borta."
+    ],
+    "records": [
+     "Kochetkovs 9-0-inledning är klubbrekord för raka segrar i säsongsstarten och tangerar Felix Potvin (1993-94) som den tredje längsta sådana sviten i NHL:s historia.",
+     "De regerande Stanley Cup-mästarna har vunnit 11 av sina 13 senaste matcher.",
+     "Kyle Connor har 11 mål på 14 matcher, en ljuspunkt i en Jets-säsong som gått från 4-1-1 till 4-7-3.",
+     "Mark Jankowski har sju mål på sina åtta senaste matcher."
+    ],
+    "betting": [
+     "Marknaden: Hurricanes 1,36, Jets 3,30, ungefär 71–29 utan marginal. Modellen har Carolina på 64 %, så den ger Jets större chans än oddsen gör.",
+     "Totalt: marknaden har över 5,5 på 1,70 (cirka 56 %). Modellen säger 58 %, nära marknaden, och de sju senaste mötena hade i snitt 5,4 mål.",
+     "Spelarchanser (modellen): Aho 1+ poäng 66 %, Svechnikov 1+ poäng 58 %, Kyle Connor mål 37 % (oddset 2,85 motsvarar cirka 35 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Jets at Hurricanes projected lineups",
+     "url": "https://www.nhl.com/news/winnipeg-jets-carolina-hurricanes-game-preview-november-1-2026"
+    },
+    {
+     "name": "NHL.com: Kochetkov wins ninth straight",
+     "url": "https://www.nhl.com/news/columbus-blue-jackets-carolina-hurricanes-game-recap-october-29-2026"
+    },
+    {
+     "name": "TSN: Arniel after seventh straight loss",
+     "url": "https://www.tsn.ca/nhl/article/jets-coach-arniel-fumes-after-seventh-straight-loss-youre-pro-hockey-players-you-have-a-job-to-do/"
+    },
+    {
+     "name": "AP via KSAT: Devils acquire Hellebuyck",
+     "url": "https://www.ksat.com/sports/2026/10/23/devils-acquire-us-olympic-goalie-connor-hellebuyck-in-a-trade-with-the-jets/"
+    }
+   ]
+  },
+  {
+   "id": 2026020228,
+   "slug": "2026-11-01-min-wsh",
+   "photo": {
+    "src": "assets/previews/2026-11-01-min-wsh.webp",
+    "alt": "Joel Eriksson Ek and Kirill Kaprizov of the Minnesota Wild",
+    "author": "Jenn G",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Joel_Eriksson_Ek_and_Kirill_Kaprizov.jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Wild at Capitals",
+    "title": "Kaprizov's 14-goal start meets a Capitals team chasing four straight",
+    "deck": "Washington has won three in a row for the first time this season and plays 11 of its first 15 games at home. Minnesota arrives at 9-3-3 with Kirill Kaprizov scoring nearly a goal a game and Jesper Wallstedt confirmed in net. Model and market both see this as a coin flip.",
+    "news": [
+     "Joel Eriksson Ek practised Saturday and is expected to play after getting hurt in Thursday's 4-3 overtime loss to the Islanders.",
+     "The Wild are still missing Brock Faber, Jared Spurgeon, Marcus and Nick Foligno, and Filip Gustavsson, who is out at least another month after hip surgery.",
+     "Logan Thompson is the likely starter for Washington. Rasmus Sandin, recovering from a torn ACL, joined the start of practice in a non-contact jersey.",
+     "Rookie defenceman Cole Hutson scored twice in Nashville and leads all rookie defencemen with seven points."
+    ],
+    "records": [
+     "Kaprizov has 14 goals and 24 points in 15 games.",
+     "Alex Tuch has 10 goals in 12 games, and the model flags his finishing as running hot. Alex Ovechkin has one goal in 12 games.",
+     "Ten of Washington's 12 games have gone over 5.5 goals, against 7 of Minnesota's 15.",
+     "Minnesota went 5-3-2 in 10 October road games."
+    ],
+    "betting": [
+     "Market: Capitals 1.90, Wild 1.94, about 50–50 without the margin. The model has Washington at 52%, so the two agree.",
+     "Total: the market prices over 5.5 at 1.64 (about 58%). The model says 56%, a touch lower. The last six meetings averaged 6.2 goals.",
+     "Player chances (model): Kaprizov 1+ point 70% and goal 45% (his 1.98 price implies about 51%), Quinn Hughes 1+ point 66%, Tuch goal 36% (3.20 implies about 31%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Wild mot Capitals",
+    "title": "Kaprizovs 14 mål möter ett Capitals på jakt efter fjärde raka",
+    "deck": "Washington har vunnit tre raka för första gången i år och spelar 11 av sina 15 första matcher hemma. Minnesota kommer med 9-3-3, en Kirill Kaprizov som gör nästan ett mål per match och Jesper Wallstedt bekräftad i målet. Både modellen och marknaden ser en ren slantsingling.",
+    "news": [
+     "Joel Eriksson Ek tränade i lördags och väntas spela efter skadan i torsdagens 3-4 efter förlängning mot Islanders.",
+     "Wild saknar fortfarande Brock Faber, Jared Spurgeon, Marcus och Nick Foligno samt Filip Gustavsson, som är borta minst en månad till efter en höftoperation.",
+     "Logan Thompson väntas starta för Washington. Rasmus Sandin, som är på väg tillbaka från en korsbandsskada, var med i början av träningen i icke-kontakttröja.",
+     "Rookiebacken Cole Hutson gjorde två mål i Nashville och leder bland rookiebackar med sju poäng."
+    ],
+    "records": [
+     "Kaprizov har 14 mål och 24 poäng på 15 matcher.",
+     "Alex Tuch har 10 mål på 12 matcher, och modellen flaggar att hans avslut går varmt. Alex Ovechkin har ett mål på 12 matcher.",
+     "Tio av Washingtons 12 matcher har gått över 5,5 mål, mot 7 av Minnesotas 15.",
+     "Minnesota gick 5-3-2 på tio bortamatcher i oktober."
+    ],
+    "betting": [
+     "Marknaden: Capitals 1,90, Wild 1,94, ungefär 50–50 utan marginal. Modellen har Washington på 52 %, så de är överens.",
+     "Totalt: marknaden har över 5,5 på 1,64 (cirka 58 %). Modellen säger 56 %, en aning lägre. De sex senaste mötena hade i snitt 6,2 mål.",
+     "Spelarchanser (modellen): Kaprizov 1+ poäng 70 % och mål 45 % (oddset 1,98 motsvarar cirka 51 %), Quinn Hughes 1+ poäng 66 %, Tuch mål 36 % (3,20 motsvarar cirka 31 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Wild at Capitals projected lineups",
+     "url": "https://www.nhl.com/news/minnesota-wild-washington-capitals-game-preview-november-1-2026"
+    },
+    {
+     "name": "Capitals: Caps get Wild to start November",
+     "url": "https://www.nhl.com/capitals/news/caps-get-wild-to-start-november"
+    }
+   ]
+  },
+  {
+   "id": 2026020229,
+   "slug": "2026-11-01-uta-phi",
+   "photo": {
+    "src": "assets/previews/2026-11-01-uta-phi.webp",
+    "alt": "The Flyers' arena in South Philadelphia before a game",
+    "author": "Wildcat7176",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Wells_Fargo_Center_in_2019.jpg",
+    "pos": "center 50%"
+   },
+   "en": {
+    "kicker": "Mammoth at Flyers",
+    "title": "Flyers try to stop another slide against a Utah team that never loses twice",
+    "deck": "Philadelphia opened with nine straight losses, won three in a row, and has now dropped three again while allowing 14 goals. Utah has not lost back-to-back games all season and comes off Logan Cooley's hat trick in Pittsburgh. The model sees a closer game than the market.",
+    "news": [
+     "Cooley tied Thursday's game in Pittsburgh with one second left in regulation, and Mikhail Sergachev won it in overtime.",
+     "Flyers captain Sean Couturier said the team has been soft at times this season.",
+     "Philadelphia is without Travis Konecny, Owen Tippett, Rasmus Ristolainen and Nikita Grebenkin, all on injured reserve. Dan Vladar is the likely starter.",
+     "Utah is missing John Marino, Michael Carcone and Maveric Lamoureux. Karel Vejmelka is the likely starter."
+    ],
+    "records": [
+     "Utah has won all four meetings with Philadelphia since the franchise moved to Utah.",
+     "The Flyers have scored more than three goals only once in 15 games and average 1.9 goals a game.",
+     "Trevor Zegras has a six-game point streak with three goals and seven assists.",
+     "Matvei Michkov has 9 goals on 21 shots, and the model flags his finishing as running hot."
+    ],
+    "betting": [
+     "Market: Mammoth 1.62, Flyers 2.35, about 59–41 without the margin. The model has Utah at 54%, warmer on the Flyers than the price.",
+     "Total: the market prices over 5.5 at 1.72 (about 55%). The model agrees at 55%. Utah's games have gone over 5.5 eleven times in 14, Philadelphia's only five times in 15.",
+     "Player chances (model): Keller 1+ point 59%, Cooley goal 29% (the 2.70 price implies about 37%), Zegras 1+ point 55%, Michkov goal 27% (3.05 implies about 33%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Mammoth mot Flyers",
+    "title": "Flyers försöker bryta en ny svacka mot ett Utah som aldrig förlorar två raka",
+    "deck": "Philadelphia inledde med nio raka förluster, vann sedan tre raka och har nu förlorat tre igen med 14 insläppta mål. Utah har inte förlorat två matcher i rad på hela säsongen och kommer från Logan Cooleys hattrick i Pittsburgh. Modellen ser en jämnare match än marknaden.",
+    "news": [
+     "Cooley kvitterade torsdagens match i Pittsburgh en sekund före full tid, och Mikhail Sergachev avgjorde i förlängningen.",
+     "Flyers lagkapten Sean Couturier sa att laget har varit mjukt ibland den här säsongen.",
+     "Philadelphia saknar Travis Konecny, Owen Tippett, Rasmus Ristolainen och Nikita Grebenkin, alla på skadelistan. Dan Vladar väntas starta.",
+     "Utah saknar John Marino, Michael Carcone och Maveric Lamoureux. Karel Vejmelka väntas starta."
+    ],
+    "records": [
+     "Utah har vunnit alla fyra möten med Philadelphia sedan klubben flyttade till Utah.",
+     "Flyers har gjort fler än tre mål bara en gång på 15 matcher och snittar 1,9 mål per match.",
+     "Trevor Zegras har gjort poäng i sex raka matcher, med tre mål och sju assist.",
+     "Matvei Michkov har 9 mål på 21 skott, och modellen flaggar att hans avslut går varmt."
+    ],
+    "betting": [
+     "Marknaden: Mammoth 1,62, Flyers 2,35, ungefär 59–41 utan marginal. Modellen har Utah på 54 %, alltså mer för Flyers än oddsen.",
+     "Totalt: marknaden har över 5,5 på 1,72 (cirka 55 %). Modellen håller med på 55 %. Utahs matcher har gått över 5,5 elva gånger på 14, Philadelphias bara fem gånger på 15.",
+     "Spelarchanser (modellen): Keller 1+ poäng 59 %, Cooley mål 29 % (oddset 2,70 motsvarar cirka 37 %), Zegras 1+ poäng 55 %, Michkov mål 27 % (3,05 motsvarar cirka 33 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "Field Level Media: Flyers spiraling again",
+     "url": "https://fieldlevelmedia.com/news/flyers-spiraling-again-as-they-host-inconsistent-mammoth/"
+    },
+    {
+     "name": "Northeast Times: Flyers weekend preview",
+     "url": "https://northeasttimes.com/2026/10/30/flyers-weekend-preview-utah-mammoth-sunday-november-1-2026/"
+    }
+   ]
+  },
+  {
+   "id": 2026020230,
+   "slug": "2026-11-01-edm-nyr",
+   "photo": {
+    "src": "assets/previews/2026-11-01-edm-nyr.webp",
+    "alt": "Connor McDavid of the Edmonton Oilers carrying the puck",
+    "author": "All-Pro Reels",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Connor_McDavid_of_the_Edmonton_Oilers.jpg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Oilers at Rangers",
+    "title": "McDavid's 14-game point streak arrives at the Garden with Tomkins in goal",
+    "deck": "Edmonton is 10-2-2 and on the second night of a back-to-back after a 4-0 win on Long Island. Matt Tomkins makes his first start for the Oilers and his first NHL appearance since April 2024. The Rangers have lost three straight and won one of their last six, and the model makes them slight favourites.",
+    "news": [
+     "With Frederik Andersen and Devon Levi hurt, Tomkins is expected to start, with Tristan Jarry as backup.",
+     "Isaac Howard was hurt early in Saturday's win and will not play. Zach Hyman remains out.",
+     "The Rangers have not played since a 6-3 home loss to the Kings on Oct. 26. Dylan Garand, in net since Igor Shesterkin's season-ending knee injury, is the likely starter.",
+     "Sean Durzi (undisclosed) and Braden Schneider (illness) missed Saturday's practice and are day to day. Defenceman Matthew Robertson was recalled from Hartford."
+    ],
+    "records": [
+     "McDavid has stretched his season-opening point streak to 14 games.",
+     "Leon Draisaitl has 12 goals in 13 games.",
+     "Garand was 4-2-1 with a .925 save percentage before Shesterkin got hurt and stood at 4-5-1 with a .899 after his last game.",
+     "Alexis Lafrenière has nine goals, and the model flags his finishing as running hot."
+    ],
+    "betting": [
+     "Market: Rangers 1.82, Oilers 2.02, about 53–47 without the margin. The model has New York at 54%, so it agrees with the market despite the Rangers' slump.",
+     "Total: the market prices over 5.5 at 1.55 (about 61%). The model says 56%, lower than the market, and the last six meetings averaged 5.2 goals.",
+     "Player chances (model): McDavid 1+ point 83%, Draisaitl goal 47% (the 2.04 price implies about 49%), Zibanejad 1+ point 61%."
+    ]
+   },
+   "sv": {
+    "kicker": "Oilers mot Rangers",
+    "title": "McDavids poängsvit på 14 matcher kommer till Garden med Tomkins i mål",
+    "deck": "Edmonton har 10-2-2 och spelar andra matchen på två kvällar efter 4-0 på Long Island. Matt Tomkins gör sin första start för Oilers och sin första NHL-match sedan april 2024. Rangers har förlorat tre raka och vunnit en av sex, och modellen gör dem till små favoriter.",
+    "news": [
+     "Med Frederik Andersen och Devon Levi skadade väntas Tomkins starta, med Tristan Jarry som reserv.",
+     "Isaac Howard skadade sig tidigt i lördagens seger och spelar inte. Zach Hyman är fortfarande borta.",
+     "Rangers har inte spelat sedan 3-6 hemma mot Kings den 26 oktober. Dylan Garand, som stått sedan Igor Shesterkins säsongsavslutande knäskada, väntas starta.",
+     "Sean Durzi och Braden Schneider (sjuk) missade lördagens träning och är osäkra. Backen Matthew Robertson har kallats upp från Hartford."
+    ],
+    "records": [
+     "McDavid har förlängt sin poängsvit från säsongsstarten till 14 matcher.",
+     "Leon Draisaitl har 12 mål på 13 matcher.",
+     "Garand hade 4-2-1 och 92,5 % räddningar innan Shesterkin skadades, och låg på 4-5-1 och 89,9 % efter sin senaste match.",
+     "Alexis Lafrenière har nio mål, och modellen flaggar att hans avslut går varmt."
+    ],
+    "betting": [
+     "Marknaden: Rangers 1,82, Oilers 2,02, ungefär 53–47 utan marginal. Modellen har New York på 54 %, alltså överens med marknaden trots Rangers svacka.",
+     "Totalt: marknaden har över 5,5 på 1,55 (cirka 61 %). Modellen säger 56 %, lägre än marknaden, och de sex senaste mötena hade i snitt 5,2 mål.",
+     "Spelarchanser (modellen): McDavid 1+ poäng 83 %, Draisaitl mål 47 % (oddset 2,04 motsvarar cirka 49 %), Zibanejad 1+ poäng 61 %."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Oilers at Rangers projected lineups",
+     "url": "https://www.nhl.com/news/edmonton-oilers-new-york-rangers-game-preview-november-1-2026"
+    },
+    {
+     "name": "Forever Blueshirts: Garand notebook",
+     "url": "https://www.foreverblueshirts.com/new-york-rangers-news/notebook-garand-trying-really-hard"
+    }
+   ]
+  },
+  {
+   "id": 2026020231,
+   "slug": "2026-11-01-ott-ana",
+   "photo": {
+    "src": "assets/previews/2026-11-01-ott-ana.webp",
+    "alt": "Cutter Gauthier of the Anaheim Ducks skating with the puck",
+    "author": "Sewageboy",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Ducks_scrimmage_2024_-_Gauthier,_Cutter.jpg",
+    "pos": "center 30%"
+   },
+   "en": {
+    "kicker": "Senators at Ducks",
+    "title": "Stützle's record October meets a Ducks defence leaking goals",
+    "deck": "Ottawa is on a back-to-back after a 5-1 win in San Jose that capped a record October for Tim Stützle. Anaheim has won once in eight games, blowing four multi-goal leads along the way, and has allowed 21 goals in its last four. The market has it even; the model leans to the rested Ducks.",
+    "news": [
+     "Samuel Ersson made 22 saves in San Jose for his first win with Ottawa. Linus Ullmark is out one to two weeks, and William Eklund is out 10 to 12 weeks after ankle surgery.",
+     "Hayden Hodgson is serving a two-game suspension for boarding.",
+     "Ducks coach Joel Quenneville said about five players have been inconsistent and urged the team to keep it simple after Thursday's 7-6 loss to Buffalo, in which Anaheim led 3-1.",
+     "Troy Terry is getting close but is not expected back yet, and Ryan Poehling is out with a knee injury."
+    ],
+    "records": [
+     "Stützle's 21 October points are the most by a Senator in any October. He and Drake Batherson each scored nine October goals, one shy of Bob Kudelski's club record.",
+     "Batherson has a seven-game point streak with six goals and six assists.",
+     "Anaheim is 1-4-1 at Honda Center. Leo Carlsson has three straight multi-point games, and all four of Cutter Gauthier's goals have come on the power play.",
+     "The last six meetings averaged only 4.8 goals, but 10 of Anaheim's 13 games this season have gone over 5.5."
+    ],
+    "betting": [
+     "Market: Ducks 1.92, Senators 1.92, 50–50 without the margin. The model has Anaheim at 54%, warmer on the Ducks partly because Ottawa played last night.",
+     "Total: the market prices over 5.5 at 1.49 (about 64%). The model says 61%, slightly lower, while the head-to-head history leans under.",
+     "Player chances (model): Stützle 1+ point 67%, Batherson goal 32% (the 2.50 price implies about 40%), Carlsson 1+ point 61%, Sennecke goal 34% (2.55 implies about 39%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Senators mot Ducks",
+    "title": "Stützles rekordoktober möter ett läckande Ducks-försvar",
+    "deck": "Ottawa spelar andra matchen på två kvällar efter 5-1 i San Jose, som avslutade en rekordoktober för Tim Stützle. Anaheim har vunnit en av åtta och tappat fyra ledningar med minst två mål under tiden, och har släppt in 21 mål på de fyra senaste. Marknaden ser det som jämnt, modellen lutar åt de utvilade Ducks.",
+    "news": [
+     "Samuel Ersson gjorde 22 räddningar i San Jose och tog sin första seger för Ottawa. Linus Ullmark är borta en till två veckor och William Eklund tio till tolv veckor efter en fotledsoperation.",
+     "Hayden Hodgson avtjänar en avstängning på två matcher för en tackling bakifrån.",
+     "Ducks tränare Joel Quenneville sa att ungefär fem spelare varit ojämna och bad laget hålla det enkelt efter torsdagens 6-7 mot Buffalo, där Anaheim ledde med 3-1.",
+     "Troy Terry närmar sig comeback men väntas inte vara tillbaka än, och Ryan Poehling är borta med en knäskada."
+    ],
+    "records": [
+     "Stützles 21 poäng i oktober är flest av en Senators-spelare under någon oktober. Han och Drake Batherson gjorde nio oktobermål var, ett från Bob Kudelskis klubbrekord.",
+     "Batherson har gjort poäng i sju raka matcher, med sex mål och sex assist.",
+     "Anaheim har 1-4-1 i Honda Center. Leo Carlsson har tre raka matcher med flera poäng, och alla fyra av Cutter Gauthiers mål har kommit i powerplay.",
+     "De sex senaste mötena hade i snitt bara 4,8 mål, men 10 av Anaheims 13 matcher i år har gått över 5,5."
+    ],
+    "betting": [
+     "Marknaden: Ducks 1,92, Senators 1,92, 50–50 utan marginal. Modellen har Anaheim på 54 %, mer för Ducks delvis för att Ottawa spelade i går.",
+     "Totalt: marknaden har över 5,5 på 1,49 (cirka 64 %). Modellen säger 61 %, något lägre, medan de inbördes mötena talar för under.",
+     "Spelarchanser (modellen): Stützle 1+ poäng 67 %, Batherson mål 32 % (oddset 2,50 motsvarar cirka 40 %), Carlsson 1+ poäng 61 %, Sennecke mål 34 % (2,55 motsvarar cirka 39 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Senators score four straight, pull away from Sharks",
+     "url": "https://www.nhl.com/news/ottawa-senators-san-jose-sharks-game-recap-october-31-2026"
+    },
+    {
+     "name": "Sporting Tribune: Sabres continue Ducks home woes",
+     "url": "https://www.thesportingtribune.com/2026/10/29/anaheim-ducks-buffalo-sabres-tage-thompson-cutter-gauthier"
+    },
+    {
+     "name": "The Hockeynomist: NHL picks, Nov. 1",
+     "url": "https://hockeconomics.substack.com/p/nhl-picks-sunday-november-1-2026"
+    }
+   ]
+  }
+ ]
+}
