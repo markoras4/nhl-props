@@ -348,8 +348,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
         </div>
       </div>
       <div class="devices" aria-hidden="true">
-        <div class="laptop"><div class="scr"><img src="assets/desk-game.webp" alt="" loading="eager"></div><div class="base"></div></div>
-        <div class="phone"><img src="assets/phone-game.webp" alt="" loading="eager"></div>
+        <div class="laptop"><div class="scr"><img data-shot="desk-game" src="assets/desk-game.webp" alt="" loading="eager"></div><div class="base"></div></div>
+        <div class="phone"><img data-shot="phone-game" src="assets/phone-game.webp" alt="" loading="eager"></div>
       </div>
     </div>
   </div>
@@ -382,9 +382,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
     <div class="wrap">
       <div class="sh"><div><h2 data-t="feat_h"></h2><p class="sub" data-t="feat_sub"></p></div></div>
       <div class="fgrid">
-        <div class="fcard"><div class="fshot"><img src="assets/el-props.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f1h"></h3><p data-t="f1p"></p></div></div>
-        <div class="fcard"><div class="fshot"><img src="assets/el-picks.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f2h"></h3><p data-t="f2p"></p></div></div>
-        <div class="fcard"><div class="fshot"><img src="assets/el-grid.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f3h"></h3><p data-t="f3p"></p></div></div>
+        <div class="fcard"><div class="fshot"><img data-shot="el-props" src="assets/el-props.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f1h"></h3><p data-t="f1p"></p></div></div>
+        <div class="fcard"><div class="fshot"><img data-shot="el-picks" src="assets/el-picks.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f2h"></h3><p data-t="f2p"></p></div></div>
+        <div class="fcard"><div class="fshot"><img data-shot="el-grid" src="assets/el-grid.webp" alt="" loading="lazy"></div><div class="ftext"><h3 data-t="f3h"></h3><p data-t="f3p"></p></div></div>
       </div>
       <div class="lrec" id="lrec" hidden></div>
       <div class="also"><span class="also-h" data-t="also_h"></span><ul id="also"></ul></div>
@@ -395,9 +395,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
     <div class="wrap">
       <div class="sh" style="justify-content:center;text-align:center"><div><h2 data-t="scr_h"></h2><p class="sub" data-t="scr_sub" style="margin-inline:auto"></p></div></div>
       <div class="screens" aria-hidden="true">
-        <div class="tablet"><img src="assets/tablet-roster.webp" alt="" loading="lazy"></div>
-        <div class="laptop"><div class="scr"><img src="assets/desk-games.webp" alt="" loading="lazy"></div><div class="base"></div></div>
-        <div class="phone"><img src="assets/phone-props.webp" alt="" loading="lazy"></div>
+        <div class="tablet"><img data-shot="tablet-roster" src="assets/tablet-roster.webp" alt="" loading="lazy"></div>
+        <div class="laptop"><div class="scr"><img data-shot="desk-games" src="assets/desk-games.webp" alt="" loading="lazy"></div><div class="base"></div></div>
+        <div class="phone"><img data-shot="phone-props" src="assets/phone-props.webp" alt="" loading="lazy"></div>
       </div>
       <div class="scap">
         <span><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/></svg><span data-t="s1"></span></span>
@@ -699,23 +699,24 @@ render();
     rink:  {en:"Rink",  sv:"Rink",  c:"#3ddc97", bg:"#111821", d:null, l:null},
     ember: {en:"Ember", sv:"Glöd",  c:"#ff8a3d", bg:"#1a1410",
       d:{bg:"#110d0a",bg2:"#15100c",panel:"#1a1410",panel2:"#231a14",line:"#35281e",text:"#f5ede5",mute:"#a9988b",chip:"#271d16",
-         accent:"#ff8a3d","accent-ink":"#2a1100",heat:"255,138,61",glow:"255,138,61",pc1:"#ff8a3d",pc3:"#2ee6c5",line2:"#ffc27a"},
+         accent:"#ff8a3d","accent-ink":"#2a1100",heat:"255,138,61",glow:"255,138,61",pc1:"#ff8a3d",pc3:"#2ee6c5",line2:"#ffc27a",hit:"#ff8a3d",accent2:"#f2c99a",pc2:"#f2c99a"},
       l:{bg:"#faf5ef",bg2:"#f3ebe2",panel:"#ffffff",panel2:"#f7efe6",line:"#eadccd",text:"#1e1611",mute:"#76655a",chip:"#f3e8dc",
-         accent:"#c2560e","accent-ink":"#ffffff",heat:"194,86,14",glow:"194,86,14",pc1:"#c2560e",pc3:"#0b8f7b",line2:"#b8661a"}},
+         accent:"#c2560e","accent-ink":"#ffffff",heat:"194,86,14",glow:"194,86,14",pc1:"#c2560e",pc3:"#0b8f7b",line2:"#b8661a",hit:"#d9681c",accent2:"#8a5a32",pc2:"#8a5a32"}},
     neon:  {en:"Neon",  sv:"Neon",  c:"#ff4fa8", bg:"#1a111d",
       d:{bg:"#100a12",bg2:"#140c17",panel:"#1a111d",panel2:"#241827",line:"#37253b",text:"#f7ebf4",mute:"#aa93a5",chip:"#27192b",
-         accent:"#ff4fa8","accent-ink":"#2b0016",heat:"255,79,168",glow:"255,79,168",pc1:"#ff4fa8",pc4:"#a78bfa",line2:"#ff9ad5"},
+         accent:"#ff4fa8","accent-ink":"#2b0016",heat:"255,79,168",glow:"255,79,168",pc1:"#ff4fa8",pc4:"#a78bfa",line2:"#ff9ad5",hit:"#ff4fa8",accent2:"#b794ff",pc2:"#b794ff"},
       l:{bg:"#fbf4f8",bg2:"#f5e9f0",panel:"#ffffff",panel2:"#f8edf3",line:"#ecd8e3",text:"#1d1219",mute:"#75616d",chip:"#f5e5ee",
-         accent:"#c21d78","accent-ink":"#ffffff",heat:"194,29,120",glow:"194,29,120",pc1:"#c21d78",pc4:"#6a48d6",line2:"#b0337f"}}
+         accent:"#c21d78","accent-ink":"#ffffff",heat:"194,29,120",glow:"194,29,120",pc1:"#c21d78",pc4:"#6a48d6",line2:"#b0337f",hit:"#d6328c",accent2:"#7a4fd6",pc2:"#7a4fd6"}}
   };
   const OLD = {green:"rink", blue:"rink", mint:"rink", violet:"neon", pink:"neon", gold:"ember"};
-  const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc3","pc4","line2"];
+  const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc2","pc3","pc4","line2","hit","accent2"];
   const get = () => { try { let v = localStorage.getItem("set:accent"); if (OLD[v]) { v = OLD[v]; localStorage.setItem("set:accent", v); } return A[v] ? v : "rink"; } catch(e){ return "rink"; } };
   const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
   const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
   function apply(){
     const k = get(), v = A[k][theme()==="light" ? "l" : "d"], st = document.documentElement.style;
     VARS.forEach(p => st.removeProperty("--" + p));
+    document.querySelectorAll("img[data-shot]").forEach(im => { const src = "assets/" + im.dataset.shot + (k === "rink" ? "" : "-" + k) + ".webp"; if (im.getAttribute("src") !== src) im.setAttribute("src", src); });
     if (v) Object.entries(v).forEach(([p, x]) => st.setProperty("--" + p, x));
     const mc = document.querySelector('meta[name="theme-color"]'); if (mc){ if (!mc.dataset.c0) mc.dataset.c0 = mc.getAttribute("content") || ""; mc.setAttribute("content", v ? v.bg : mc.dataset.c0); }
     document.documentElement.dataset.accent = k;
