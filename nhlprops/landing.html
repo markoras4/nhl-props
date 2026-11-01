@@ -43,9 +43,9 @@ button{font:inherit;color:inherit;cursor:pointer}
   box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.02) inset,0 0 60px rgba(var(--glow),.08)}
 .tourbox video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#0a0e13}
 .tourplay{position:absolute;inset:0;display:grid;place-items:center;border:0;padding:0;background:linear-gradient(180deg,rgba(10,14,19,0) 40%,rgba(10,14,19,.35));cursor:pointer}
-.tourplay span{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:rgba(61,220,151,.95);box-shadow:0 12px 40px rgba(0,0,0,.45),0 0 0 10px rgba(61,220,151,.18);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.tourplay span{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:rgba(var(--glow),.95);box-shadow:0 12px 40px rgba(0,0,0,.45),0 0 0 10px rgba(var(--glow),.18);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
 .tourplay svg{width:34px;height:34px;margin-left:5px;fill:#04170d}
-.tourplay:hover span,.tourplay:focus-visible span{transform:scale(1.07);box-shadow:0 14px 44px rgba(0,0,0,.5),0 0 0 14px rgba(61,220,151,.22)}
+.tourplay:hover span,.tourplay:focus-visible span{transform:scale(1.07);box-shadow:0 14px 44px rgba(0,0,0,.5),0 0 0 14px rgba(var(--glow),.22)}
 .tourplay[hidden]{display:none}
 @media (max-width:640px){.tourplay span{width:62px;height:62px}.tourplay svg{width:26px;height:26px}}
 .tourbtn{display:inline-flex;align-items:center;gap:8px}.tourbtn svg{width:15px;height:15px;fill:currentColor}
