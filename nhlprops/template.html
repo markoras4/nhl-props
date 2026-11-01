@@ -3111,20 +3111,20 @@ function hitStrip(pr, g, m, line){
   const H = hr[mk]; if (!H) return "";
   if (m==="h" || m==="b"){
     const n = hr.hbn || [0,0], pm_ = prob(pr, g, mk), b_ = book(g.id, pr.id, mk), mk_ = noVig(b_) ?? (b_?.o ? 1/b_.o : null);
-    const c_ = (lbl, h, nn) => { if (!nn) return ""; const r = h/nn, c = nn>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : ""; return `<span class="hr ${c}"><small>${lbl}</small><b>${h}/${nn}</b></span>`; };
+    const c_ = (lbl, h, nn) => { if (!nn) return ""; const r = h/nn, c = nn>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : ""; return `<span class="hr ${c}"><small>${lbl}</small><b><span data-cn="${h}" data-cf="i">${h}</span>/${nn}</b></span>`; };
     return `<div class="hrstrip"><div class="hrt">${t(m==="h"?"hr_over_h":"hr_over_b",{l:L})}</div><div class="hrc">
-      ${c_("L5",H[0],n[0])}${c_("L10",H[1],n[1])}<span class="hr hr-model"><small>${t("hr_model")}</small><b>${pct(pm_)}</b></span>
-      ${mk_!=null?`<span class="hr"><small>${t("hr_market")}</small><b>${pct(mk_)}</b></span>`:""}</div></div>`;
+      ${c_("L5",H[0],n[0])}${c_("L10",H[1],n[1])}<span class="hr hr-model"><small>${t("hr_model")}</small><b ${pm_!=null?`data-cn="${pm_}" data-cf="pc0"`:""}>${pct(pm_)}</b></span>
+      ${mk_!=null?`<span class="hr"><small>${t("hr_market")}</small><b data-cn="${mk_}" data-cf="pc0">${pct(mk_)}</b></span>`:""}</div></div>`;
   }
   const cell = (lbl, h, n) => { if (!n) return ""; const r = h/n, c = n>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : "";
-    return `<span class="hr ${c}"><small>${lbl}</small><b>${h}/${n}</b></span>`; };
+    return `<span class="hr ${c}"><small>${lbl}</small><b><span data-cn="${h}" data-cf="i">${h}</span>/${n}</b></span>`; };
   const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), mkt = noVig(b) ?? (b?.o ? 1/b.o : null);
   const name = m==="s" ? t("hr_over_s",{l:L}) : m==="g" ? t("hr_g") : m==="a" ? t("hr_a") : t("hr_p");
   return `<div class="hrstrip"><div class="hrt">${name}</div><div class="hrc">
-      ${cell("L5",H[0],hr.n[0])}${cell("L10",H[1],hr.n[1])}${cell("L20",H[2],hr.n[2])}${hr.n[3]?`<span class="hr ${hr.n[3]>=5?(H[3]/hr.n[3]>=0.6?"hr-hi":H[3]/hr.n[3]<=0.4?"hr-lo":""):""}"><small>${t("hr_season")}</small><b>${pct(H[3]/hr.n[3])}</b></span>`:""}
+      ${cell("L5",H[0],hr.n[0])}${cell("L10",H[1],hr.n[1])}${cell("L20",H[2],hr.n[2])}${hr.n[3]?`<span class="hr ${hr.n[3]>=5?(H[3]/hr.n[3]>=0.6?"hr-hi":H[3]/hr.n[3]<=0.4?"hr-lo":""):""}"><small>${t("hr_season")}</small><b data-cn="${H[3]/hr.n[3]}" data-cf="pc0">${pct(H[3]/hr.n[3])}</b></span>`:""}
       ${hv && hv.n ? cell(t("hr_vs",{t:pr.opp}), hv[mk], hv.n) : `<span class="hr"><small>${t("hr_vs",{t:pr.opp})}</small><b>–</b></span>`}
-      <span class="hr hr-model"><small>${t("hr_model")}</small><b>${pct(pm)}</b></span>
-      ${mkt!=null?`<span class="hr"><small>${t("hr_market")}</small><b>${pct(mkt)}</b></span>`:""}</div></div>`;
+      <span class="hr hr-model"><small>${t("hr_model")}</small><b ${pm!=null?`data-cn="${pm}" data-cf="pc0"`:""}>${pct(pm)}</b></span>
+      ${mkt!=null?`<span class="hr"><small>${t("hr_market")}</small><b data-cn="${mkt}" data-cf="pc0">${pct(mkt)}</b></span>`:""}</div></div>`;
 }
 document.addEventListener("click", e => {
   const lb = e.target.closest("[data-l10line]");
@@ -3146,11 +3146,11 @@ document.addEventListener("click", e => {
     if (!e.target.closest("[data-l10line],[data-l10]")){ const box = document.querySelector(".l10box");
       if (box){ const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); } return; } }
   if (lb){ const box = lb.closest(".l10box"); state.l10line = state.l10line || {}; state.l10line[state.l10m||"s"] = lb.dataset.l10line==="" ? null : +lb.dataset.l10line; state.l10anim = true; segPop("ln:" + lb.dataset.l10line);
-    const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr) box.innerHTML = l10Chart(pr, g); return; }
+    const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid); if (pr){ box.innerHTML = l10Chart(pr, g); lgCount(box.querySelector(".hrstrip"), 700, 0); } return; }
   const b = e.target.closest("[data-l10]"); if (!b) return;
   const box = b.closest(".l10box"); state.l10m = b.dataset.l10; state.l10anim = true; segPop("l10:" + b.dataset.l10);
   const g = gameById[box.dataset.gid]; const pr = g && g.props.find(x => String(x.id) === box.dataset.pid);
-  if (pr) box.innerHTML = l10Chart(pr, g);
+  if (pr){ box.innerHTML = l10Chart(pr, g); lgCount(box.querySelector(".hrstrip"), 700, 0); }
 });
 
 // ------------------------------------------------------------ shot profile + shot map (every game this season)
