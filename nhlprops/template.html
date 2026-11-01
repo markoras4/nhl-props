@@ -402,6 +402,7 @@ td.h{text-align:center;padding:4px}
 .hits i.gtg{cursor:pointer}
 .l10lines{pointer-events:none}
 .newsprev{margin:6px 0 0;font-size:12.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.newsbox.open .newsprev{display:none}
+.exsug{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-4px 0 2px;min-height:4px}.exsl{font-size:12px;color:var(--mute);margin-right:2px}.exsc{all:unset;cursor:pointer;font:600 12px var(--f-ui);padding:4px 11px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent);background:transparent;transition:background .2s,transform .2s}.exsc:hover{transform:translateY(-1px);background:color-mix(in srgb,var(--accent) 10%,transparent)}.exsc.on{background:color-mix(in srgb,var(--accent) 16%,transparent)}
 .exwrap{display:flex;flex-direction:column;gap:12px}.exhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}.exh2{font:800 22px var(--f-head,var(--f-ui));margin:0 0 2px;letter-spacing:.01em}
 .exctl{flex-wrap:wrap}.exsel{display:inline-flex;align-items:center;gap:6px}.exsel>span{font:800 11px var(--f-ui);color:var(--accent);letter-spacing:.06em}
 .exbox{padding:12px 12px 10px;overflow:hidden}.exchart{width:100%}.exsvg{width:100%;height:auto;display:block}
@@ -1515,7 +1516,7 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {tc_pp2:"Not on the first power-play unit tonight: power-play points mostly come from PP1", tc_pp_new:"Newly on the first power-play unit: the market prices the new role before the model catches up", lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet at the lock, margin removed. Our price above it (green) = we beat the sharpest line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
+Object.assign(I18N.en, {ex_sug:"Good pairs for {y}:", ex_sug_tip:"Plot {y} against {x}", tc_pp2:"Not on the first power-play unit tonight: power-play points mostly come from PP1", tc_pp_new:"Newly on the first power-play unit: the market prices the new role before the model catches up", lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet at the lock, margin removed. Our price above it (green) = we beat the sharpest line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
   lg_bets:"Bets", lg_hit:"Hit rate / model", lg_hit_tip:"How often the bets won, next to the average chance the model gave them.", lg_n_tip:"Graded bets (won or lost). Voids and games still in play aren't counted.",
   lg_sh:"Edge vs sharp", lg_sh_tip:"Our price at the lock against the sharp book's fair price (margin removed) at the same moment, averaged. Positive means we beat the sharpest line in the market, the best early sign of a real edge. (n) = bets with a sharp price.",
   lg_total:"All value bets", lg_chart:"Units by grade, cumulative", lg_fam_h:"ROI by market and grade", lg_fam_note:"Small numbers next to each ROI are the bets behind it. Small samples swing a lot.",
@@ -1582,7 +1583,7 @@ Object.assign(I18N.en, {tc_pp2:"Not on the first power-play unit tonight: power-
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {tc_pp2:"Inte i första powerplayfemman i kväll: powerplaypoäng kommer mest från PP1", tc_pp_new:"Nyss flyttad till första powerplayfemman: marknaden prisar den nya rollen innan modellen hinner ikapp", lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel vid låsningen, utan marginal. Vårt odds över det (grönt) = vi slog den skarpaste linjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
+Object.assign(I18N.sv, {ex_sug:"Bra par för {y}:", ex_sug_tip:"Visa {y} mot {x}", tc_pp2:"Inte i första powerplayfemman i kväll: powerplaypoäng kommer mest från PP1", tc_pp_new:"Nyss flyttad till första powerplayfemman: marknaden prisar den nya rollen innan modellen hinner ikapp", lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel vid låsningen, utan marginal. Vårt odds över det (grönt) = vi slog den skarpaste linjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
   lg_bets:"Spel", lg_hit:"Träff / modell", lg_hit_tip:"Hur ofta spelen vann, bredvid den genomsnittliga chans modellen gav dem.", lg_n_tip:"Rättade spel (vunna eller förlorade). Ogiltiga och pågående räknas inte.",
   lg_sh:"Edge mot skarp", lg_sh_tip:"Vårt odds vid låsningen mot det skarpa spelbolagets rättvisa odds (utan marginal) i samma stund, i snitt. Positivt betyder att vi slog marknadens skarpaste linje, det bästa tidiga tecknet på en verklig edge. (n) = spel med skarpt odds.",
   lg_total:"Alla värdespel", lg_chart:"Enheter per betyg, ackumulerat", lg_fam_h:"ROI per marknad och betyg", lg_fam_note:"De små talen bredvid varje ROI är antalet spel bakom. Små urval svänger mycket.",
@@ -3544,6 +3545,19 @@ const EX_TP = {
   special:{x:"pp", y:"pk", inv:true, q:["ext_q_st_good","ext_q_st_bad"], top:(x,y)=>x-y, tt:"ext_t_special"},
   danger:{x:"hdf", y:"hda", inv:true, q:["ext_q_dom","ext_q_weak"], top:(x,y)=>x-y, tt:"ext_t_danger"},
 };
+// suggested X axes for each Y: pairs that answer a real question (shown as outline chips under the menus)
+const EX_PAIRS = {gp:["g","p"], g:["xg","s","sh","toi"], a:["p","toi","ppmin"], p:["toi","a","xg"], s:["toi","xg","sh"], xg:["g","s","toi"],
+  g_pg:["xg_pg","s_pg","sh"], a_pg:["toi","ppmin","p_pg"], p_pg:["toi","p60","ppmin"], s_pg:["l10s","sh","toi","s60"], xg_pg:["g_pg","s_pg"],
+  gmx:["xg","sh","sht"], sh:["sht","s_pg","xg_pg"], sht:["sh","s_pg"], toi:["p_pg","s_pg","toi5"], toi5:["toi","p_pg"], s60:["toi","s_pg"], p60:["toi","p_pg"],
+  ppmin:["ppp_pg","p_pg"], ppp_pg:["ppmin","p_pg"], l10s:["s_pg","o25"], o25:["l10s","s_pg"], hit:["blk","toi"], blk:["toi","hit"], mkt:["mod"], mod:["mkt"]};
+const EX_TPAIRS = {xgf60:["xga60","gf_pg","hdf"], xga60:["xgf60","ga_pg","gsax","hda"], xgd:["gd","pts"], gd:["xgd","pdo","pts"], gf_pg:["xgf60","pdo"],
+  ga_pg:["xga60","gsax"], pts:["xgd","gd","pdo"], gsax:["xga60","ga_pg"], pdo:["gd","pts"], pace:["o55","xgf60"], o55:["pace"], pp:["pk"], pk:["pp","pen"],
+  hdf:["hda","xgf60"], hda:["hdf","xga60"], sa:["xga60","gsax"], pen:["pk"]};
+function exSuggest(){
+  const S = state.ex, box = $("#exsug"); if (!S || !box) return;
+  const TM = exT(S), [x, y] = exAx(S), list = ((TM ? EX_TPAIRS : EX_PAIRS)[y] || []).filter(k => k !== y && (TM ? EX_TM : EX_M)[k]);
+  box.innerHTML = list.length ? `<span class="exsl">${t("ex_sug",{y: exLbl(S, y)})}</span>${list.map(k => `<button type="button" class="exsc ${k === x ? "on" : ""}" data-exsx="${k}" title="${esc(t("ex_sug_tip",{y: exLbl(S, y), x: exLbl(S, k)}))}">${exLbl(S, k)}</button>`).join("")}` : "";
+}
 let EX_NEXT = null;
 function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
   for (const g of [...DATA.games].sort((a,b)=>(a.start||"").localeCompare(b.start||""))){ if (g.state && !["FUT","PRE"].includes(g.state)) continue;
@@ -3598,11 +3612,12 @@ function exploreTab(){
       <label class="exsel"><span>Y</span><select id="exy">${opt(ay)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(ax)}</select></label>
       ${filters}
       <input type="search" id="exq" placeholder="${TM ? t("ext_search") : t("search")}" value="${esc(S.q)}"></div>
+    <div class="exsug" id="exsug"></div>
     <div class="box exbox"><div class="exstory" id="exstory"></div><div class="exchart" id="exchart"></div>
       <div class="exleg">${leg}</div></div>
     <div class="box"><h4 id="extoph"></h4><div id="extop"></div></div>
     <p class="foot">${t(TM ? "ext_foot" : "ex_foot")}</p></div>`;
-  const re = () => exDraw(true);
+  const re = () => { exSuggest(); exDraw(true); };
   const setAx = (x, y) => { if (TM){ S.tx = x; S.ty = y; } else { S.x = x; S.y = y; } };
   const clearPre = () => { if (TM) S.tpreset = null; else S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); };
   $("#exmode").onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === S.mode) return; S.mode = b.dataset.k; exploreTab(); popBtn(`#exmode [data-k="${b.dataset.k}"]`); };
@@ -3618,6 +3633,8 @@ function exploreTab(){
     $("#extn").onchange = e => { S.tonight = e.target.checked; re(); };
   }
   $("#exq").oninput = e => { S.q = e.target.value.toLowerCase(); exDraw(false); };
+  $("#exsug").onclick = e => { const b = e.target.closest("[data-exsx]"); if (!b) return; const [, y] = exAx(S); setAx(b.dataset.exsx, y); clearPre(); $("#exx").value = b.dataset.exsx; exSuggest(); re(); };
+  exSuggest();
   exDraw(true, true);
 }
 function exOpen(id){ const nx = exNext()[id]; if (!nx) return; go({tab:"games", game:nx.g.id, side: nx.pr.team}); state.open = id; render(); revealPlayer(id, {force:true}); }
