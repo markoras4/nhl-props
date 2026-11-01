@@ -4383,14 +4383,14 @@ function lgHistory(rows, S_){
     <div class="lgscroll"><table class="lgtab2"><thead><tr><th>${t("h_player")}</th><th>${t("h_market")}</th><th class="n hide-xs">${t("model")}</th><th class="n">${t("h_odds")}</th><th class="n hide-xs">EV</th><th class="n hide-sm tip" tabindex="0" data-tip="${esc(t("lg_sf_tip"))}">${t("lg_sf")}</th><th>${t("lg_res")}</th><th class="n">${t("rk_units")}</th></tr></thead><tbody>${body}</tbody></table></div></div>`;
 }
 // fast count-up for the ledger numbers (each row a little after the one above)
-const LG_FMT = {i: v => String(Math.round(v)), u1: v => sgnU(v,1), u2: v => sgnU(v,2), p1: v => sgnP(v,1), p0: v => sgnP(v,0), pc1: v => pct(v,1), od: v => oddsTxt(Math.max(1.01, v))};
-function lgCount(root, dur = 850){
+const LG_FMT = {pc0: v => pct(v,0), i: v => String(Math.round(v)), u1: v => sgnU(v,1), u2: v => sgnU(v,2), p1: v => sgnP(v,1), p0: v => sgnP(v,0), pc1: v => pct(v,1), od: v => oddsTxt(Math.max(1.01, v))};
+function lgCount(root, dur = 850, step = 70, maxRows = 6){
   if (!root || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const els = [...root.querySelectorAll("[data-cn]")]; if (!els.length) return;
   const rows = new Map(); els.forEach(el => { const tr = el.closest("tr,p,div"); if (!rows.has(tr)) rows.set(tr, rows.size); });
   const t0 = performance.now();
   els.forEach(el => { const to = parseFloat(el.dataset.cn), f = LG_FMT[el.dataset.cf] || LG_FMT.i, final = el.textContent;
-    const from = el.dataset.cf === "od" ? 1 : 0, delay = el.dataset.cd ? +el.dataset.cd : Math.min(6, rows.get(el.closest("tr,p,div"))) * 70;
+    const from = el.dataset.cf === "od" ? 1 : 0, delay = el.dataset.cd ? +el.dataset.cd : Math.min(maxRows, rows.get(el.closest("tr,p,div"))) * step;
     el.classList.add("cnt");
     const tick = now => { const k = Math.min(1, Math.max(0, (now - t0 - delay) / dur)), e = 1 - Math.pow(1 - k, 4);
       el.textContent = k >= 1 ? final : f(from + (to - from) * e); if (k < 1) requestAnimationFrame(tick); else el.classList.remove("cnt"); };
@@ -5362,11 +5362,11 @@ function futuresTab(){
   const topSet = new Set(evs.sort((a, b) => b[1] - a[1]).slice(0, FUT_TOP).map(x => x[0]));
   const cell = (tm, v, k) => { const p = v[k]; const od = futBook(F, k, tm); const ev = od ? p * od - 1 : null;
     const strong = p >= 0.5 ? "hi" : p >= 0.15 ? "mid" : "lo";
-    return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
-  const ptsCell = (tm, v) => { const P_ = F.odds?.points?.[tm]; if (!P_) return `<td class="n hide-sm"><b>${fmt(v.pts,0)}</b><small>${t("fu_proj")}</small></td>`;
+    return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b${(k === "playoffs" || k === "cup") && p >= 0.005 && p < 0.995 ? ` data-cn="${p}" data-cf="pc0"` : ""}>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
+  const ptsCell = (tm, v) => { const P_ = F.odds?.points?.[tm]; if (!P_) return `<td class="n hide-sm"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t("fu_proj")}</small></td>`;
     const po = ptsOver(v, P_.line), ev = po!=null && P_.over ? po * P_.over - 1 : null, evu = po!=null && P_.under ? (1-po) * P_.under - 1 : null;
     const best = ev!=null && evu!=null ? (ev >= evu ? ["o", ev, P_.over] : ["u", evu, P_.under]) : null;
-    return `<td class="n hide-sm fucell"><b>${fmt(v.pts,0)}</b><small>${t("fu_line",{l:P_.line})} · ${t("fu_over")} ${pct(po,0)}${best && best[1]>=FUT_VALUE ? ` · <span class="bk pos">${t(best[0]==="o"?"fu_v_over":"fu_v_under",{o:oddsTxt(best[2])})}</span>` : ""}</small></td>`; };
+    return `<td class="n hide-sm fucell"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t("fu_line",{l:P_.line})} · ${t("fu_over")} ${pct(po,0)}${best && best[1]>=FUT_VALUE ? ` · <span class="bk pos">${t(best[0]==="o"?"fu_v_over":"fu_v_under",{o:oddsTxt(best[2])})}</span>` : ""}</small></td>`; };
   const head = `<tr><th>${t("fu_team")}</th>${FUT_COLS.map(([k,l])=>`<th class="n s ${sortK===k?"on":""}" data-fs="${k}"><span class="tip" tabindex="0" data-tip="${esc(t(l+"_tip"))}">${t(l)}</span></th>`).join("")}<th class="n s hide-sm ${sortK==="luck"?"on":""}" data-fs="luck"><span class="tip" tabindex="0" data-tip="${esc(t("fu_luck_tip"))}">${t("fu_luck")}</span></th><th class="n s hide-sm ${sortK==="pts"?"on":""}" data-fs="pts"><span class="tip" tabindex="0" data-tip="${esc(t("fu_pts_tip"))}">${t("fu_pts")}</span></th></tr>`;
   const body = rows.map(([tm, v]) => `<tr><td><div class="futeam">${logo(tm,24)}<div><b class="hide-xs">${esc(v.name||tm)}</b><b class="show-xs">${tm}</b><div class="sub">${v.div_name||""} · ${t("fu_now",{p:fmt(v.pts_now,0), gp:v.gp})}</div></div></div></td>${FUT_COLS.map(([k])=>cell(tm, v, k)).join("")}<td class="n hide-sm fucell"><b>${fmt(v.pts_now,0)} <small class="meta">/ ${v.xpts!=null?fmt(v.xpts,1):"–"}</small></b><small>${luckTag(v, true)}</small></td>${ptsCell(tm, v)}</tr>`).join("");
   const filters = [["all","fu_all"],["East","fu_east"],["West","fu_west"],["Atlantic","Atlantic"],["Metropolitan","Metropolitan"],["Central","Central"],["Pacific","Pacific"]];
@@ -5375,8 +5375,9 @@ function futuresTab(){
     <div class="card tablewrap futab"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span><span><small>2.38</small> ${t("fu_lg_fair")}</span><span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span></div>
     <p class="foot">${t("fu_foot")}</p>`;
+  if (state.fucnt !== false) lgCount($("#main").querySelector(".futab"), 550, 22, 32); state.fucnt = true;   // count up when the view opens or the filter changes (not on sort)
   $("#fuf").onclick = e => { const b = e.target.closest("[data-f]"); if (b){ state.fuf = b.dataset.f; futuresTab(); } };
-  $("#main").querySelector("thead").onclick = e => { const th = e.target.closest("[data-fs]"); if (th){ state.fus = th.dataset.fs; futuresTab(); } };
+  $("#main").querySelector("thead").onclick = e => { const th = e.target.closest("[data-fs]"); if (th){ state.fus = th.dataset.fs; state.fucnt = false; futuresTab(); } };
 }
 // what's at stake in one game: playoff chance now, if they win, if they lose
 // a team's goals vs expected goals this season (all situations), with the same luck test as lines and pairs
