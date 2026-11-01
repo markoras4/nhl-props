@@ -17,10 +17,13 @@ from pathlib import Path
 from .sources import NHL
 
 KIND = {"goal": "G", "shot-on-goal": "S", "missed-shot": "M", "blocked-shot": "B"}
+# shot type, one letter: wrist, snap, slap, backhand, tip-in, deflected, wrap-around, other (bat, poke, between legs, cradle)
+STYPE = {"wrist": "w", "snap": "n", "slap": "l", "backhand": "b", "tip-in": "t", "deflected": "d", "wrap-around": "r"}
+VER = 2   # games stored with an older version are downloaded once more
 
 
 def extract(pbp: dict) -> dict | None:
-    """Compact shot list for one game: [player id, x, y, kind, team abbrev]."""
+    """Compact shot list for one game: [player id, x, y, kind, team abbrev, period, seconds into period, shot type, strength]."""
     if not pbp or pbp.get("gameState") not in ("OFF", "FINAL"):
         return None
     home = pbp.get("homeTeam") or {}
@@ -52,7 +55,23 @@ def extract(pbp: dict) -> dict | None:
             flip = (x < 0) if (zone == "O" or k != "B") else (x > 0)
         if flip:
             x, y = -x, -y
-        out.append([int(pid), int(x), int(y), k, abbr.get(shooter_team) or ""])
+        per = int((pl.get("periodDescriptor") or {}).get("number") or 0)
+        try:
+            mm, ss = str(pl.get("timeInPeriod") or "0:00").split(":")
+            sec = int(mm) * 60 + int(ss)
+        except ValueError:
+            sec = 0
+        st = (d.get("shotType") or "").lower()
+        typ = STYPE.get(st, "o" if st else "")
+        sc = str(pl.get("situationCode") or "")
+        stg = ""
+        # situationCode: away goalie, away skaters, home skaters, home goalie
+        if len(sc) == 4 and sc[0] == "1" and sc[3] == "1" and sc[1] != sc[2]:   # both goalies in, uneven skaters
+            more = (shooter_team == hid and sc[2] > sc[1]) or (shooter_team == aid and sc[1] > sc[2])
+            stg = "P" if more else "H"
+        elif len(sc) == 4 and ((shooter_team == hid and sc[0] == "0") or (shooter_team == aid and sc[3] == "0")):
+            stg = "E"                                   # opponent's net empty
+        out.append([int(pid), int(x), int(y), k, abbr.get(shooter_team) or "", per, sec, typ, stg])
     # goals with assists and strength (power play = more skaters, both goalies in), faceoffs, penalties per team
     goals, fo, pens = [], [], {}
     for pl in pbp.get("plays") or []:
@@ -68,7 +87,7 @@ def extract(pbp: dict) -> dict | None:
         elif k == "penalty" and (d.get("duration") or 0) in (2, 4, 5):
             t = abbr.get(d.get("eventOwnerTeamId")) or ""
             pens[t] = pens.get(t, 0) + 1
-    return {"d": str(pbp.get("gameDate") or "")[:10], "s": out, "gl": goals, "fo": fo, "pen": pens,
+    return {"v": VER, "d": str(pbp.get("gameDate") or "")[:10], "s": out, "gl": goals, "fo": fo, "pen": pens,
             "h": abbr.get(hid) or "", "a": abbr.get(aid) or ""}
 
 
@@ -78,7 +97,7 @@ def collect(src, league_games, season: int, store_dir: Path, workers: int, log=p
     games = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
     lg = league_games[(league_games.season == season) & (league_games.final)]
     # games stored before goals / faceoffs were added are fetched once more
-    todo = [int(i) for i in lg.id if str(int(i)) not in games or "gl" not in games[str(int(i))]]
+    todo = [int(i) for i in lg.id if str(int(i)) not in games or (games[str(int(i))].get("v") or 1) < VER]
     if todo:
         log(f"Shot maps: downloading play-by-play for {len(todo)} new games ...")
 
@@ -98,14 +117,19 @@ def collect(src, league_games, season: int, store_dir: Path, workers: int, log=p
 
 
 def player_file(games: dict, out: Path) -> None:
-    """Per player: dates of his games with attempts, and his attempts [x, y, kind, date index, opponent?]."""
+    """Per player: dates of his games with attempts, the opponent in each ("@" in front when away),
+    and his attempts [x, y, kind, date index, period, seconds into period, shot type, strength]."""
     by: dict[int, dict] = {}
     for gid, g in sorted(games.items(), key=lambda kv: kv[1]["d"]):
-        for pid, x, y, k, team in g["s"]:
-            p = by.setdefault(pid, {"d": [], "s": []})
+        for row in g["s"]:
+            pid, x, y, k, team = row[:5]
+            extra = list(row[5:9]) if len(row) >= 9 else []
+            p = by.setdefault(pid, {"d": [], "o": [], "s": []})
             if not p["d"] or p["d"][-1] != g["d"]:
                 p["d"].append(g["d"])
-            p["s"].append([x, y, k, len(p["d"]) - 1])
+                home = team == g.get("h")
+                p["o"].append((g.get("a") if home else "@" + (g.get("h") or "")) or "")
+            p["s"].append([x, y, k, len(p["d"]) - 1] + extra)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({str(k): v for k, v in by.items()}, separators=(",", ":")), encoding="utf-8")
 

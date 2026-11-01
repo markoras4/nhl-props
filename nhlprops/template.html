@@ -628,6 +628,8 @@ tr[data-spd]{cursor:pointer}tr[data-spd]:hover td{background:var(--panel2)}tr.sp
 .rk-crease{fill:color-mix(in srgb,#3b9cd8 22%,transparent);stroke:#d84b4b;stroke-width:1;opacity:.8}
 .rk-net{fill:none;stroke:var(--mute);stroke-width:1.5}.rk-circle{fill:none;stroke:#d84b4b;stroke-width:1;opacity:.35}.rk-dot{fill:#d84b4b;opacity:.5}
 .rk-slot{fill:none;stroke:var(--mute);stroke-width:1;stroke-dasharray:3 4;opacity:.6}
+.spdot{cursor:pointer}.sphit{fill:transparent}.spdot .spg,.spdot .sps,.spdot .spm,.spdot .spb{transition:transform .15s,opacity .15s;transform-box:fill-box;transform-origin:center}.spdot.hot .spg,.spdot.hot .sps,.spdot.hot .spm,.spdot.hot .spb{transform:scale(1.55);opacity:1}.spdot.hot .spm{stroke:var(--text)}.spdot.hot .spb{stroke:var(--text)}
+.sptip{position:fixed;z-index:60;pointer-events:none;display:flex;flex-direction:column;gap:2px;max-width:240px;padding:8px 11px;border-radius:10px;background:var(--text);color:var(--bg);font:500 12px/1.4 var(--f-ui);box-shadow:0 10px 28px rgba(0,0,0,.35);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}.sptip.on{opacity:1;transform:none}.sptip b{font-weight:700;font-size:12.5px}.sptip span{opacity:.82}
 .spg{fill:var(--good);stroke:var(--panel);stroke-width:1.5}.sps{fill:var(--accent2);opacity:.55}.spm{fill:none;stroke:var(--mute);stroke-width:1.2;opacity:.75}.spb{stroke:var(--mute);stroke-width:1.3;opacity:.5}
 .spleg{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:12px;color:var(--mute);margin-top:6px}
 .spleg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;font-style:normal}
@@ -1516,7 +1518,7 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {ex_sug:"Good pairs for {y}:", ex_sug_tip:"Plot {y} against {x}", tc_pp2:"Not on the first power-play unit tonight: power-play points mostly come from PP1", tc_pp_new:"Newly on the first power-play unit: the market prices the new role before the model catches up", lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet at the lock, margin removed. Our price above it (green) = we beat the sharpest line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
+Object.assign(I18N.en, {sp_ty_w:"Wrist shot", sp_ty_n:"Snap shot", sp_ty_l:"Slap shot", sp_ty_b:"Backhand", sp_ty_t:"Tip-in", sp_ty_d:"Deflection", sp_ty_r:"Wraparound", sp_ty_o:"Other shot", sp_ot:"OT", sp_st_P:"Power play", sp_st_H:"Shorthanded", sp_st_E:"Empty net", sp_tip_ft:"{n} ft from the net", sp_tip_blk:"Blocked {n} ft from the net", ex_sug:"Good pairs for {y}:", ex_sug_tip:"Plot {y} against {x}", tc_pp2:"Not on the first power-play unit tonight: power-play points mostly come from PP1", tc_pp_new:"Newly on the first power-play unit: the market prices the new role before the model catches up", lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet at the lock, margin removed. Our price above it (green) = we beat the sharpest line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
   lg_bets:"Bets", lg_hit:"Hit rate / model", lg_hit_tip:"How often the bets won, next to the average chance the model gave them.", lg_n_tip:"Graded bets (won or lost). Voids and games still in play aren't counted.",
   lg_sh:"Edge vs sharp", lg_sh_tip:"Our price at the lock against the sharp book's fair price (margin removed) at the same moment, averaged. Positive means we beat the sharpest line in the market, the best early sign of a real edge. (n) = bets with a sharp price.",
   lg_total:"All value bets", lg_chart:"Units by grade, cumulative", lg_fam_h:"ROI by market and grade", lg_fam_note:"Small numbers next to each ROI are the bets behind it. Small samples swing a lot.",
@@ -1583,7 +1585,7 @@ Object.assign(I18N.en, {ex_sug:"Good pairs for {y}:", ex_sug_tip:"Plot {y} again
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {ex_sug:"Bra par för {y}:", ex_sug_tip:"Visa {y} mot {x}", tc_pp2:"Inte i första powerplayfemman i kväll: powerplaypoäng kommer mest från PP1", tc_pp_new:"Nyss flyttad till första powerplayfemman: marknaden prisar den nya rollen innan modellen hinner ikapp", lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel vid låsningen, utan marginal. Vårt odds över det (grönt) = vi slog den skarpaste linjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
+Object.assign(I18N.sv, {sp_ty_w:"Handledsskott", sp_ty_n:"Snapshot", sp_ty_l:"Slagskott", sp_ty_b:"Backhand", sp_ty_t:"Tippning", sp_ty_d:"Styrning", sp_ty_r:"Runt målet", sp_ty_o:"Annat skott", sp_ot:"Förl.", sp_st_P:"Powerplay", sp_st_H:"Boxplay", sp_st_E:"Tom kasse", sp_tip_ft:"{n} fot från mål", sp_tip_blk:"Blockerat {n} fot från mål", ex_sug:"Bra par för {y}:", ex_sug_tip:"Visa {y} mot {x}", tc_pp2:"Inte i första powerplayfemman i kväll: powerplaypoäng kommer mest från PP1", tc_pp_new:"Nyss flyttad till första powerplayfemman: marknaden prisar den nya rollen innan modellen hinner ikapp", lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel vid låsningen, utan marginal. Vårt odds över det (grönt) = vi slog den skarpaste linjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
   lg_bets:"Spel", lg_hit:"Träff / modell", lg_hit_tip:"Hur ofta spelen vann, bredvid den genomsnittliga chans modellen gav dem.", lg_n_tip:"Rättade spel (vunna eller förlorade). Ogiltiga och pågående räknas inte.",
   lg_sh:"Edge mot skarp", lg_sh_tip:"Vårt odds vid låsningen mot det skarpa spelbolagets rättvisa odds (utan marginal) i samma stund, i snitt. Positivt betyder att vi slog marknadens skarpaste linje, det bästa tidiga tecknet på en verklig edge. (n) = spel med skarpt odds.",
   lg_total:"Alla värdespel", lg_chart:"Enheter per betyg, ackumulerat", lg_fam_h:"ROI per marknad och betyg", lg_fam_note:"De små talen bredvid varje ROI är antalet spel bakom. Små urval svänger mycket.",
@@ -3144,14 +3146,29 @@ function loadShots(){
     document.querySelectorAll(".spbox").forEach(b=>{ const p = P(b.dataset.pid); if (p) b.innerHTML = shotProfile(p); }); return js; });
   return SHOTS_LOADING;
 }
-function rinkSVG(shots){
+// tooltip text for one attempt: result and shot type, the game, period and clock, strength, distance from the net
+function shotTipText(sh, S){
+  const [x, y, k, di, per, sec, typ, stg] = sh;
+  const res = {G:t("sp_k_g"), S:t("sp_k_s"), M:t("sp_k_m"), B:t("sp_k_b")}[k];
+  const l1 = res + (typ ? " · " + t("sp_ty_" + typ) : "");
+  const d = S && S.d ? S.d[di] : null, o = S && S.o ? S.o[di] : null;
+  const gm = d ? dayLabel(d) + (o ? (o[0]==="@" ? " @ " + o.slice(1) : " " + t("r6_vs") + " " + o) : "") : "";
+  const clock = per ? (per > 3 ? t("sp_ot") : "P" + per) + " " + Math.floor(sec/60) + ":" + String(sec%60).padStart(2,"0") : "";
+  const l2 = [gm, clock, stg ? t("sp_st_" + stg) : ""].filter(Boolean).join(" · ");
+  const ft = Math.round(Math.hypot(89 - x, y));
+  const l3 = k === "B" ? t("sp_tip_blk", {n: ft}) : t("sp_tip_ft", {n: ft});
+  return [l1, l2, l3].filter(Boolean).join("\n");
+}
+function rinkSVG(shots, S){
   // offensive zone, net at the top. NHL coordinates: x 25 (blue line) .. 100 (end boards), y -42.5 .. 42.5
   const W = 340, H = 300, X = y => W/2 + y*(W/85), Y = x => 12 + (100-x)*((H-12)/75);
-  const dot = ([x,y,k]) => { const cx = X(-y).toFixed(1), cy = Y(Math.min(99,Math.max(25,x))).toFixed(1);
+  const mark = (k, cx, cy) => {
     if (k==="G") return `<circle cx="${cx}" cy="${cy}" r="5.2" class="spg"/>`;
     if (k==="S") return `<circle cx="${cx}" cy="${cy}" r="3.6" class="sps"/>`;
     if (k==="M") return `<circle cx="${cx}" cy="${cy}" r="3.4" class="spm"/>`;
     return `<path d="M${cx-2.8} ${cy-2.8}l5.6 5.6M${cx-2.8} ${+cy+2.8}l5.6 -5.6" class="spb"/>`; };
+  const dot = sh => { const [x,y,k] = sh, cx = X(-y).toFixed(1), cy = Y(Math.min(99,Math.max(25,x))).toFixed(1);
+    return `<g class="spdot" data-spt="${esc(shotTipText(sh, S))}"><circle cx="${cx}" cy="${cy}" r="8" class="sphit"/>${mark(k, cx, cy)}</g>`; };
   const order = {B:0,M:1,S:2,G:3};
   return `<svg viewBox="0 0 ${W} ${H}" class="rink" role="img" aria-label="${t("sp_map")}">
     <path d="M2 ${H} V${Y(100)+28} Q2 ${Y(100)} 30 ${Y(100)} H${W-30} Q${W-2} ${Y(100)} ${W-2} ${Y(100)+28} V${H}" class="rk-board"/>
@@ -3214,12 +3231,12 @@ function shotProfile(p){
       ${kpi(t("sp_goals"), String(G_), onNet ? t("sp_shpct",{p:pct(G_/onNet)}) : "", t("sp_goals_tip"))}
       ${!l10 && xgps!=null ? kpi(t("sp_xg"), fmt(xgps,3), pv && pv.xg!=null ? lastY(pv.xg, x=>fmt(x,3), "xg") : "", t("sp_xg_tip"), T("xg", xgps, (cur?.s||0)>=15 && att>=30)) : ""}
     </div>
-    <div class="spmap">${rinkSVG(shots)}
+    <div class="spmap">${rinkSVG(shots, S)}
       <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
   </div><p class="note">${t("sp_note",{n:gp})}</p>`;
 }
 // one game: the map and plain counts (no percentages: one game is far too small a sample)
-function oneGame(p, gm, shots){
+function oneGame(p, gm, shots, S){
   const n = k => shots.filter(x=>x[2]===k).length;
   const G_ = n("G"), S_ = n("S"), M_ = n("M"), B_ = n("B");
   const close = shots.filter(x=>x[2]!=="B" && x[0]<=89 && Math.hypot(89-x[0], x[1])<=20).length;
@@ -3227,10 +3244,25 @@ function oneGame(p, gm, shots){
   return `<div class="spgrid"><div class="spkpis">
       ${kpi(t("sp_g_att"), shots.length)}${kpi(t("sp_g_sog"), G_ + S_)}${kpi(t("sp_k_m"), M_)}${kpi(t("sp_k_b"), B_)}${kpi(t("sp_g_close"), close)}${kpi(t("sp_goals"), G_)}
       ${gm ? kpi(t("toi"), fmt(gm.t,1)) : ""}${gm ? kpi(t("sp_g_pts"), `${gm.g} + ${gm.a}`) : ""}
-    </div><div class="spmap">${shots.length ? rinkSVG(shots) : `<p class="meta">${t("sp_g_none")}</p>`}
+    </div><div class="spmap">${shots.length ? rinkSVG(shots, S) : `<p class="meta">${t("sp_g_none")}</p>`}
       <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
   </div><p class="note">${t("sp_g_note",{d:gm?dayLabel(gm.d):"", o:gm?(gm.h?t("r6_vs")+" ":"@ ")+gm.o:""})}</p>`;
 }
+// shot map tooltip: hover on desktop, tap on phones; one floating box for the whole page
+const spTip = (() => { let el = null, cur = null;
+  const hide = () => { if (el) el.classList.remove("on"); if (cur) cur.classList.remove("hot"); cur = null; };
+  const show = g => { if (!el){ el = document.createElement("div"); el.className = "sptip"; el.setAttribute("role","tooltip"); document.body.appendChild(el); }
+    if (cur) cur.classList.remove("hot"); cur = g; g.classList.add("hot");
+    const [a, ...rest] = g.dataset.spt.split("\n");
+    el.innerHTML = `<b>${esc(a)}</b>${rest.map(x=>`<span>${esc(x)}</span>`).join("")}`;
+    const r = g.getBoundingClientRect(), w = el.offsetWidth || 180, h = el.offsetHeight || 60;
+    let left = r.left + r.width/2 - w/2; left = Math.max(8, Math.min(innerWidth - w - 8, left));
+    const above = r.top - h - 10 > 8, top = above ? r.top - h - 10 : r.bottom + 10;
+    el.style.left = left + "px"; el.style.top = top + "px"; el.classList.toggle("below", !above); el.classList.add("on"); };
+  document.addEventListener("mouseover", e => { const g = e.target.closest && e.target.closest(".spdot"); if (g && g !== cur) show(g); else if (!g && cur && !e.target.closest(".sptip")) hide(); });
+  document.addEventListener("click", e => { const g = e.target.closest && e.target.closest(".spdot"); if (g) show(g); else if (cur && !e.target.closest(".sptip")) hide(); }, true);
+  addEventListener("scroll", hide, {passive:true}); addEventListener("resize", hide);
+  return {hide}; })();
 function spRender(box){ const p = box && P(box.dataset.pid); if (p) box.innerHTML = shotProfile(p);
   const det = box && box.closest(".detail"); if (det) det.querySelectorAll("tr[data-spd]").forEach(r=>r.classList.toggle("spsel", state.spw==="g:"+r.dataset.spd)); }
 document.addEventListener("click", e => {

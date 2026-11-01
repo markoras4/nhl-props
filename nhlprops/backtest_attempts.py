@@ -63,7 +63,7 @@ def season_rows(src, season, cfg, log=print):
     shots = collect(src, lg, season, Path("data/cache/shots_bt"), cfg["workers"], log)
     att = {}
     for gid, g in shots.items():
-        for pid, x, y, k, team in g["s"]:
+        for pid, x, y, k, team, *_ in g["s"]:
             att[(int(gid), pid)] = att.get((int(gid), pid), 0) + 1
     per, pos = priors(src, season)
     if not pos:

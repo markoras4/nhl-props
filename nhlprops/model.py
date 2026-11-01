@@ -1026,7 +1026,7 @@ def shot_tiers(sf: pd.DataFrame, pbp: dict, cur: int) -> dict:
     d = sf[sf.season == cur].groupby(["pid", "posg"], as_index=False)[["gp", "att", "s", "xg"]].sum()
     close: dict[int, list] = {}
     for g in (pbp or {}).values():
-        for pid, x, y, k, _t in g.get("s") or []:
+        for pid, x, y, k, _t, *_ in g.get("s") or []:
             if k == "B":
                 continue
             c = close.setdefault(int(pid), [0, 0]); c[1] += 1
@@ -1085,7 +1085,7 @@ def game_ixg(pbp: dict) -> dict:
     rows = []
     for g in (pbp or {}).values():
         d = g.get("d")
-        for pid, x, y, k, team in g.get("s") or []:
+        for pid, x, y, k, team, *_ in g.get("s") or []:
             if k in ("G", "S", "M"):
                 dist = math.hypot(89 - x, y)
                 ang = math.degrees(math.atan2(abs(y), max(89 - x, 0.5))) if x < 89 else 90.0

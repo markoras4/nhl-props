@@ -40,7 +40,7 @@ def frames(src, seasons, cfg, log):
         ixg = game_ixg(shots)
         att = {}
         for gid, g in shots.items():
-            for pid, x, y, k, team in g["s"]:
+            for pid, x, y, k, team, *_ in g["s"]:
                 att[(int(gid), int(pid))] = att.get((int(gid), int(pid)), 0) + 1
         df = predict(sk, pri, games, go, season, cfg, prior_beta=1.0)
         df["xg"] = [ixg.get((int(p), str(d)), 0.0) for p, d in zip(df.pid, df.date)]
