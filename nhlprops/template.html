@@ -1657,8 +1657,23 @@ const LOCALE = () => LANG==="sv" ? "sv-SE" : "en-GB";
 function t(key, vars){
   let s = (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key] ?? key;
   if (vars) s = s.replace(/\{(\w+)\}/g, (m,k)=> vars[k]!=null ? vars[k] : m);
+  return typeof s === "string" ? themeWords(s) : s;
+}
+// colour words in help texts follow the theme ("green = top 8" reads "orange = top 8" in Ember)
+function themeKey(){ try { const v = localStorage.getItem("set:accent"); return ({ember:"ember", gold:"ember", neon:"neon", pink:"neon", violet:"neon"})[v] || "rink"; } catch(e){ return "rink"; } }
+const THEME_WORDS = {
+  ember: {good:{en:"orange", sv:"orange"}, bad:null},
+  neon:  {good:{en:"pink", sv:"rosa"}, bad:{en:"orange", sv:"orange"}}
+};
+function themeWords(s){
+  const T = THEME_WORDS[themeKey()]; if (!T || !/green|gr\u00f6n/i.test(s)) return s;
+  const cap = (w, src) => src[0] === src[0].toUpperCase() ? w[0].toUpperCase() + w.slice(1) : w;
+  const g = T.good, b = T.bad;
+  s = s.replace(/\b(green)\b/gi, m => cap(g.en, m)).replace(/(?<![a-z\u00e5\u00e4\u00f6])(gr\u00f6n(?:t|a)?)(?![a-z\u00e5\u00e4\u00f6])/gi, m => cap(g.sv, m));
+  if (b) s = s.replace(/\b(red)\b/gi, m => cap(b.en, m)).replace(/(?<![a-z\u00e5\u00e4\u00f6])(r\u00f6(?:d|tt|da))(?![a-z\u00e5\u00e4\u00f6])/gi, m => cap(b.sv, m));
   return s;
 }
+addEventListener("nhl:theme", () => { try { render(); } catch(e){} });
 // words that arrive in the data (injury reports, goalie reports)
 const SV_WORDS = {
   "out":"Ute", "day-to-day":"Dag till dag", "injured reserve":"Skadelistan (IR)", "long-term injured reserve":"Långtidsskadelistan (LTIR)",
@@ -4787,7 +4802,7 @@ sv: `<h3>Vad sajten gör</h3>
 };
 function howTab(){
   // the guide in a few categories (each section folds open with motion), and the common questions as their own group
-  const src = document.createElement("div"); src.innerHTML = HOW[LANG] || HOW.en;
+  const src = document.createElement("div"); src.innerHTML = themeWords(HOW[LANG] || HOW.en);
   const qRe = /^(Questions|Frågor)$/i, guide = [], faq = [];
   let cur = null, inQ = false;
   for (const n of [...src.childNodes]){
@@ -5647,7 +5662,7 @@ if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){
       return;
     }
     const o = e.target.closest("[data-acc]");
-    if (o){ set(o.dataset.acc); apply(); close(); return; }
+    if (o){ set(o.dataset.acc); apply(); close(); dispatchEvent(new Event("nhl:theme")); return; }
     if (!e.target.closest("#accpop")) close();
   }, true);
   addEventListener("keydown", e => { if (e.key === "Escape") close(); });
