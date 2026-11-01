@@ -1,12 +1,7 @@
 {
- "2026-10-31-chi-bos": ["Connor Bedard Blackhawks", "David Pastrnak Bruins", "Charlie McAvoy Bruins", "Patrick Kane Blackhawks", "Boston Bruins TD Garden"],
- "2026-10-31-stl-det": ["Robert Thomas Blues", "Dylan Larkin Red Wings", "Lucas Raymond Red Wings", "Alex DeBrincat Red Wings", "Moritz Seider", "St. Louis Blues at Detroit Red Wings"],
- "2026-10-31-tbl-nsh": ["Nikita Kucherov Lightning", "Brayden Point Lightning", "Filip Forsberg Predators", "Roman Josi Predators", "Andrei Vasilevskiy", "Nashville Predators Bridgestone Arena"],
- "2026-10-31-edm-nyi": ["Connor McDavid Oilers", "Leon Draisaitl Oilers", "Bo Horvat Islanders", "Ilya Sorokin Islanders", "New York Islanders UBS Arena"],
- "2026-10-31-buf-lak": ["Tage Thompson Sabres", "Rasmus Dahlin Sabres", "Adrian Kempe Kings", "Buffalo Sabres at Los Angeles Kings", "Los Angeles Kings Crypto.com Arena"],
- "2026-10-31-ott-sjs": ["Tim Stutzle Senators", "Brady Tkachuk Senators", "Macklin Celebrini Sharks", "Drake Batherson", "San Jose Sharks SAP Center"],
- "2026-10-31-pit-mtl": ["Sidney Crosby Penguins", "Evgeni Malkin Penguins", "Cole Caufield Canadiens", "Lane Hutson Canadiens", "Montreal Canadiens Bell Centre"],
- "2026-10-31-tor-van": ["Auston Matthews Maple Leafs", "William Nylander Maple Leafs", "Brock Boeser Canucks", "Toronto Maple Leafs at Vancouver Canucks", "Vancouver Canucks Rogers Arena"],
- "2026-10-31-cbj-dal": ["Jason Robertson Stars", "Mikko Rantanen Stars", "Zach Werenski Blue Jackets", "Jake Oettinger Stars", "Columbus Blue Jackets at Dallas Stars"],
- "2026-10-31-cgy-col": ["Nathan MacKinnon Avalanche", "Cale Makar Avalanche", "Martin Necas Avalanche", "Calgary Flames at Colorado Avalanche", "Colorado Avalanche Ball Arena"]
+ "2026-11-01-wpg-car": ["Sebastian Aho Hurricanes", "Andrei Svechnikov Hurricanes", "Kyle Connor Jets", "Mark Scheifele Jets", "Carolina Hurricanes Winnipeg Jets"],
+ "2026-11-01-min-wsh": ["Kirill Kaprizov Wild", "Alex Ovechkin Capitals", "Matt Boldy Wild", "Tom Wilson Capitals", "Minnesota Wild Washington Capitals"],
+ "2026-11-01-uta-phi": ["Clayton Keller", "Logan Cooley", "Dylan Guenther", "Matvei Michkov Flyers", "Trevor Zegras Flyers", "Philadelphia Flyers Wells Fargo Center"],
+ "2026-11-01-edm-nyr": ["Connor McDavid Oilers", "Leon Draisaitl Oilers", "Mika Zibanejad Rangers", "Adam Fox Rangers", "Edmonton Oilers New York Rangers"],
+ "2026-11-01-ott-ana": ["Tim Stutzle Senators", "Brady Tkachuk Senators", "Leo Carlsson Ducks", "Cutter Gauthier Ducks", "Anaheim Ducks Honda Center"]
 }
