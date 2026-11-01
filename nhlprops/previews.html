@@ -219,20 +219,28 @@ render();
    meaning colours (green = good/value, red = bad, amber = warning) never change */
 (function(){
   const A = {
-    green:  {en:"Rink Green", sv:"Isgrön",   c:"#3ddc97", d:null, l:null},
-    blue:   {en:"Ice Blue",   sv:"Isblå",    c:"#5ab8ff", d:["#5ab8ff","#03121f","90,184,255"],  l:["#1f74c4","#ffffff","31,116,196"]},
-    mint:   {en:"Mint",       sv:"Mint",     c:"#2ee6c5", d:["#2ee6c5","#03201a","46,230,197"],  l:["#0b8f7b","#ffffff","11,143,123"]},
-    violet: {en:"Violet",     sv:"Violett",  c:"#a78bfa", d:["#a78bfa","#150933","167,139,250"], l:["#6a48d6","#ffffff","106,72,214"]},
-    pink:   {en:"Pink",       sv:"Rosa",     c:"#f27ac0", d:["#f27ac0","#2a0619","242,122,192"], l:["#b8327a","#ffffff","184,50,122"]},
-    gold:   {en:"Gold",       sv:"Guld",     c:"#f2b544", d:["#f2b544","#241600","242,181,68"],  l:["#9a6a08","#ffffff","154,106,8"]}
+    rink:  {en:"Rink",  sv:"Rink",  c:"#3ddc97", bg:"#111821", d:null, l:null},
+    ember: {en:"Ember", sv:"Glöd",  c:"#ff8a3d", bg:"#1a1410",
+      d:{bg:"#110d0a",bg2:"#15100c",panel:"#1a1410",panel2:"#231a14",line:"#35281e",text:"#f5ede5",mute:"#a9988b",chip:"#271d16",
+         accent:"#ff8a3d","accent-ink":"#2a1100",heat:"255,138,61",glow:"255,138,61",pc1:"#ff8a3d",pc3:"#2ee6c5",line2:"#ffc27a"},
+      l:{bg:"#faf5ef",bg2:"#f3ebe2",panel:"#ffffff",panel2:"#f7efe6",line:"#eadccd",text:"#1e1611",mute:"#76655a",chip:"#f3e8dc",
+         accent:"#c2560e","accent-ink":"#ffffff",heat:"194,86,14",glow:"194,86,14",pc1:"#c2560e",pc3:"#0b8f7b",line2:"#b8661a"}},
+    neon:  {en:"Neon",  sv:"Neon",  c:"#ff4fa8", bg:"#1a111d",
+      d:{bg:"#100a12",bg2:"#140c17",panel:"#1a111d",panel2:"#241827",line:"#37253b",text:"#f7ebf4",mute:"#aa93a5",chip:"#27192b",
+         accent:"#ff4fa8","accent-ink":"#2b0016",heat:"255,79,168",glow:"255,79,168",pc1:"#ff4fa8",pc4:"#a78bfa",line2:"#ff9ad5"},
+      l:{bg:"#fbf4f8",bg2:"#f5e9f0",panel:"#ffffff",panel2:"#f8edf3",line:"#ecd8e3",text:"#1d1219",mute:"#75616d",chip:"#f5e5ee",
+         accent:"#c21d78","accent-ink":"#ffffff",heat:"194,29,120",glow:"194,29,120",pc1:"#c21d78",pc4:"#6a48d6",line2:"#b0337f"}}
   };
-  const get = () => { try { const v = localStorage.getItem("set:accent"); return A[v] ? v : "green"; } catch(e){ return "green"; } };
+  const OLD = {green:"rink", blue:"rink", mint:"rink", violet:"neon", pink:"neon", gold:"ember"};
+  const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc3","pc4","line2"];
+  const get = () => { try { let v = localStorage.getItem("set:accent"); if (OLD[v]) { v = OLD[v]; localStorage.setItem("set:accent", v); } return A[v] ? v : "rink"; } catch(e){ return "rink"; } };
   const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
   const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
   function apply(){
     const k = get(), v = A[k][theme()==="light" ? "l" : "d"], st = document.documentElement.style;
-    ["--accent","--accent-ink","--heat","--glow","--pc1"].forEach(p => st.removeProperty(p));
-    if (v){ st.setProperty("--accent", v[0]); st.setProperty("--accent-ink", v[1]); st.setProperty("--heat", v[2]); st.setProperty("--glow", v[2]); st.setProperty("--pc1", v[0]); }
+    VARS.forEach(p => st.removeProperty("--" + p));
+    if (v) Object.entries(v).forEach(([p, x]) => st.setProperty("--" + p, x));
+    const mc = document.querySelector('meta[name="theme-color"]'); if (mc){ if (!mc.dataset.c0) mc.dataset.c0 = mc.getAttribute("content") || ""; mc.setAttribute("content", v ? v.bg : mc.dataset.c0); }
     document.documentElement.dataset.accent = k;
   }
   apply();
@@ -256,7 +264,7 @@ render();
       const sv = (document.documentElement.lang||"").startsWith("sv");
       const r = b.getBoundingClientRect(), p = document.createElement("div");
       p.id = "accpop"; p.setAttribute("role", "menu");
-      p.innerHTML = `<div class="ah">${sv ? "Färg" : "Colour"}</div>` + Object.entries(A).map(([k,x]) => `<button type="button" role="menuitemradio" aria-checked="${get()===k}" data-acc="${k}" class="${get()===k?"on":""}"><i style="background:${x.c}"></i><span>${sv ? x.sv : x.en}</span></button>`).join("");
+      p.innerHTML = `<div class="ah">${sv ? "Tema" : "Theme"}</div>` + Object.entries(A).map(([k,x]) => `<button type="button" role="menuitemradio" aria-checked="${get()===k}" data-acc="${k}" class="${get()===k?"on":""}"><i style="background:linear-gradient(135deg,${x.bg} 0 50%,${x.c} 50% 100%);box-shadow:0 0 0 1.5px ${x.c}"></i><span>${sv ? x.sv : x.en}</span></button>`).join("");
       document.body.appendChild(p);
       const w = p.offsetWidth;
       p.style.top = (r.bottom + 8 + scrollY) + "px";
