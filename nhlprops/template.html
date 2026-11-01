@@ -418,7 +418,7 @@ td.h{text-align:center;padding:4px}
 @keyframes exin{from{opacity:0}to{opacity:1}}
 .exfirst .exd circle{animation:expop .6s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d)}@keyframes expop{from{r:0}}
 .exleg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mute);margin-top:6px;align-items:center}.exdot{display:inline-block;flex:none;width:9px;min-width:9px;height:9px;box-sizing:border-box;border-radius:50%;margin-right:5px;vertical-align:-1px}
-.exdot.f{background:var(--accent)}.exdot.d{background:#6aa8ff}.exdot.top{background:transparent;border:2px solid var(--text)}
+.exdot.f{background:var(--accent)}.exdot.d{background:#6aa8ff}.exdot.ring{background:transparent;border:2px solid var(--text)}
 .exmode button{min-width:78px}
 .exd.tm .exti{transition:transform .25s cubic-bezier(.3,1.6,.5,1)}.exd.tm:hover .exti{transform:scale(1.25)}
 .exd.tm .exring{fill:var(--panel);fill-opacity:.82;stroke:var(--line);stroke-width:1}.exd.tm.top .exring{stroke:var(--accent);stroke-width:2;filter:url(#exglow)}
@@ -3602,8 +3602,8 @@ function exploreTab(){
       <select id="exteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${S.team===x?"selected":""}>${x}</option>`).join("")}</select>
       <select id="exmin" aria-label="${t("ex_min")}">${[1,5,10,20].map(v=>`<option value="${v}" ${S.min===v?"selected":""}>${t("ex_minopt",{n:v})}</option>`).join("")}</select>
       <label class="toggle"><input type="checkbox" id="extn" ${S.tonight?"checked":""}> ${t("ll_tonight")}</label>`;
-  const leg = TM ? `<span><i class="exdot top"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`
-    : `<span><i class="exdot f"></i>${t("ex_f")}</span><span><i class="exdot d"></i>${t("ex_d")}</span><span><i class="exdot top"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`;
+  const leg = TM ? `<span><i class="exdot ring"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`
+    : `<span><i class="exdot f"></i>${t("ex_f")}</span><span><i class="exdot d"></i>${t("ex_d")}</span><span><i class="exdot ring"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`;
   $("#main").innerHTML = `<div class="exwrap">
     <div class="exhead"><div><h2 class="exh2">${t(TM ? "ext_title" : "ex_title")}</h2><p class="meta">${t(TM ? "ext_sub" : "ex_sub")}</p></div>
       <div class="seg olseg exmode" id="exmode"><button data-k="players" class="${TM?"":"on"}">${t("ex_m_players")}</button><button data-k="teams" class="${TM?"on":""}">${t("ex_m_teams")}</button></div></div>
