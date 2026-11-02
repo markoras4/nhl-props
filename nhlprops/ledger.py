@@ -51,8 +51,31 @@ def rows_for_game(g: dict, odds: dict, players: dict) -> list[dict]:
     return out
 
 
+EARLY_FROM = "2026-11-02"    # from this date each bet is kept at the first price it was flagged at (see snapshot)
+
+
+def _close_side(odds: dict, pid, m, side):
+    """the book's current price for one side, and the sharp book's fair price for it (margin removed)"""
+    po = ((odds or {}).get("players") or {})
+    b = po.get(pid) or po.get(str(pid)) or {}
+    v = b.get(m)
+    if not isinstance(v, dict):
+        return None, None
+    c = v.get(side)
+    sf = None
+    so, sn = v.get("p"), v.get("pn")
+    if so and sn:
+        q = (1 / so) / (1 / so + 1 / sn)
+        sf = round(1 / (q if side == "o" else 1 - q), 3)
+    return c, sf
+
+
 def snapshot(slate: dict, led_dir: Path, now: dt.datetime | None = None) -> None:
-    """Refresh the value bets of every game that isn't locked; locked games keep their last rows."""
+    """Value bets of every game that isn't locked.
+    From EARLY_FROM: a bet is stored the first time it is flagged, with that price, grade and time, and is never
+    changed or removed afterwards (an early bettor gets exactly that); later builds only record where its price and
+    the sharp fair price close, for the CLV. Bets that become value later in the day are added at their own first
+    price. Before EARLY_FROM the rows were refreshed until the lock."""
     led_dir.mkdir(parents=True, exist_ok=True)
     now = now or dt.datetime.now(dt.timezone.utc)
     stamp = now.isoformat(timespec="minutes")
@@ -68,8 +91,26 @@ def snapshot(slate: dict, led_dir: Path, now: dt.datetime | None = None) -> None
             odds = odds_all.get(g["id"]) or odds_all.get(str(g["id"]))
             if not odds or not odds.get("players"):
                 continue
-            store[str(g["id"])] = {"home": g["home"], "away": g["away"], "start": g.get("start"), "at": stamp,
-                                   "rows": rows_for_game(g, odds, slate["players"])}
+            fresh = rows_for_game(g, odds, slate["players"])
+            gid = str(g["id"])
+            if d < EARLY_FROM:
+                store[gid] = {"home": g["home"], "away": g["away"], "start": g.get("start"), "at": stamp, "rows": fresh}
+                continue
+            rec = store.get(gid) or {"home": g["home"], "away": g["away"], "start": g.get("start"), "rows": [], "early": True}
+            rec["early"] = True
+            rec["start"] = g.get("start")
+            have = {(str(r["pid"]), r["m"], r["s"]) for r in rec["rows"]}
+            for r in fresh:
+                if (str(r["pid"]), r["m"], r["s"]) not in have:
+                    rec["rows"].append({**r, "at": stamp})
+            for r in rec["rows"]:                      # closing price and sharp fair price follow the market
+                c, sf = _close_side(odds, r["pid"], r["m"], r["s"])
+                if c:
+                    r["cl"] = c
+                if sf:
+                    r["csf"] = sf
+            rec["at"] = stamp
+            store[gid] = rec
         f.write_text(json.dumps(store, separators=(",", ":")), encoding="utf-8")
 
 
@@ -126,6 +167,12 @@ def grade(src, led_dir: Path, out_path: Path, log=print) -> int:
             for x in rec.get("rows") or []:
                 row = {"d": d, "g": int(gid), "h": rec["home"], "a": rec["away"], **{k: x[k] for k in ("pid", "n", "t", "op", "m", "s", "p", "od", "ev", "gr", "sf", "b")},
                        "c": len(x.get("c") or [])}
+                if rec.get("early"):      # bet at the first price; CLV against where the book and the sharp book closed
+                    row["e"] = 1
+                    if x.get("csf"):
+                        row["sf"] = x["csf"]
+                    if x.get("cl"):
+                        row["cl"] = x["cl"]
                 if not final:
                     row["r"] = "p"
                 else:

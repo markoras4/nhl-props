@@ -78,8 +78,20 @@ def choose(g: dict, odds: dict, players: dict, markets: list[str], n: int = 2) -
     return cands[:n]
 
 
+# From this date the card is frozen the first time a game has picks (the price a user could get by betting early);
+# later builds only record the price each pick closes at, for the CLV. Earlier dates kept the last refresh before the lock.
+EARLY_FROM = "2026-11-02"
+
+
+def _price(odds: dict, pid, m):
+    b = ((odds or {}).get("players") or {}).get(pid) or ((odds or {}).get("players") or {}).get(str(pid)) or {}
+    v = b.get(m)
+    return v.get("o") if isinstance(v, dict) else None
+
+
 def snapshot(slate: dict, bp_dir: Path, now: dt.datetime | None = None) -> None:
-    """Refresh the picks of every game that isn't locked; locked games keep their last picks."""
+    """Picks of every game that isn't locked. From EARLY_FROM the first card is kept (frozen) and only the closing
+    prices move; before that, the picks were refreshed until the lock."""
     bp_dir.mkdir(parents=True, exist_ok=True)
     now = now or dt.datetime.now(dt.timezone.utc)
     stamp = now.isoformat(timespec="minutes")
@@ -97,6 +109,15 @@ def snapshot(slate: dict, bp_dir: Path, now: dt.datetime | None = None) -> None:
             if not odds or not odds.get("players"):
                 continue
             rec = store.get(gid) or {"seen": {}}
+            if d >= EARLY_FROM and rec.get("early") and rec.get("picks"):
+                for kind in ("all", "multi"):          # frozen card: only the closing price follows the market
+                    for p in rec["picks"].get(kind) or []:
+                        c = _price(odds, p["pid"], p["m"])
+                        if c:
+                            p["c"] = c
+                rec["at_close"] = stamp
+                store[gid] = rec
+                continue
             seen = rec.get("seen") or {}
             out = {}
             for kind, mk in (("all", ALL), ("multi", MULTI)):
@@ -105,9 +126,9 @@ def snapshot(slate: dict, bp_dir: Path, now: dt.datetime | None = None) -> None:
                     key = f"{p['pid']}|{p['m']}"
                     seen.setdefault(key, {"o": p["o"], "at": stamp})
                 out[kind] = [{"pid": p["pid"], "name": p["name"], "team": p["team"], "opp": p["opp"], "m": p["m"],
-                              "p": round(p["p"], 4), "o": p["o"], "ev": round(p["ev"], 4), "tg": p.get("tg")} for p in picks]
+                              "p": round(p["p"], 4), "o": p["o"], "c": p["o"], "ev": round(p["ev"], 4), "tg": p.get("tg")} for p in picks]
             store[gid] = {"home": g["home"], "away": g["away"], "start": g.get("start"), "at": stamp,
-                          "picks": out, "seen": seen}
+                          "picks": out, "seen": seen, **({"early": True} if d >= EARLY_FROM and (out.get("all") or out.get("multi")) else {})}
         f.write_text(json.dumps(store, separators=(",", ":")), encoding="utf-8")
 
 
@@ -176,11 +197,18 @@ def grade(src, bp_dir: Path, out_path: Path, log=print) -> int:
             gp_ = pbp.get(str(gid)) or {}
             for kind in ("all", "multi"):
                 for rk, p in enumerate((rec.get("picks") or {}).get(kind) or [], 1):
-                    first = ((rec.get("seen") or {}).get(f"{p['pid']}|{p['m']}") or {}).get("o") or p["o"]
-                    row = {"d": d, "g": int(gid), "h": rec["home"], "a": rec["away"], "k": kind, "rk": rk,
-                           "pid": p["pid"], "n": p["name"], "t": p["team"], "o": p["opp"], "m": p["m"],
-                           "od": p["o"], "p": p["p"], "ev": p["ev"], "f": first, "tg": p.get("tg"),
-                           "clv": round(first / p["o"] - 1, 4) if p["o"] else 0.0}
+                    if rec.get("early"):      # frozen early card: bet at the first price, CLV against the closing price
+                        first, close = p["o"], p.get("c") or p["o"]
+                        row = {"d": d, "g": int(gid), "h": rec["home"], "a": rec["away"], "k": kind, "rk": rk,
+                               "pid": p["pid"], "n": p["name"], "t": p["team"], "o": p["opp"], "m": p["m"],
+                               "od": first, "p": p["p"], "ev": p["ev"], "f": first, "cl": close, "tg": p.get("tg"), "e": 1,
+                               "clv": round(first / close - 1, 4) if close else 0.0}
+                    else:
+                        first = ((rec.get("seen") or {}).get(f"{p['pid']}|{p['m']}") or {}).get("o") or p["o"]
+                        row = {"d": d, "g": int(gid), "h": rec["home"], "a": rec["away"], "k": kind, "rk": rk,
+                               "pid": p["pid"], "n": p["name"], "t": p["team"], "o": p["opp"], "m": p["m"],
+                               "od": p["o"], "p": p["p"], "ev": p["ev"], "f": first, "tg": p.get("tg"),
+                               "clv": round(first / p["o"] - 1, 4) if p["o"] else 0.0}
                     if not final:
                         row["r"] = "p"            # in play / not final yet
                     else:
