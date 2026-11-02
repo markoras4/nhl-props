@@ -650,6 +650,8 @@ tr[data-spd]{cursor:pointer}tr[data-spd]:hover td{background:var(--panel2)}tr.sp
 .appfoot>*{max-width:760px}.appfoot a{color:inherit;text-decoration:underline;text-underline-offset:2px}.appfoot .age{flex:none;display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid var(--mute);border-radius:50%;font-weight:800;font-size:11px;color:var(--text)}
 @media (max-width:760px){.appfoot{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
 .au18{display:flex!important;gap:9px;align-items:flex-start;font-weight:500!important;font-size:13px;line-height:1.4;margin-top:12px}.au18 input{margin-top:2px;width:auto!important}
+.tip.tipjs:hover::after,.tip.tipjs:hover::before,.tip.tipjs:focus::after,.tip.tipjs:focus::before{display:none!important}
+#tipfloat{position:fixed;z-index:80;pointer-events:none;max-width:260px;width:max-content;padding:8px 10px;border-radius:8px;background:var(--tipbg);color:var(--tipfg);border:1px solid var(--tipbd);box-shadow:var(--tipsh);font:500 12px/1.4 var(--f-ui);white-space:pre-line;text-align:left;opacity:0;transform:translateY(3px);transition:opacity .12s,transform .12s}#tipfloat.on{opacity:1;transform:none}
 .tip{position:relative;cursor:help;outline:none}
 .tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:260px;white-space:normal;text-align:left;background:var(--tipbg);color:var(--tipfg);border:1px solid var(--tipbd);font:500 12px/1.4 var(--f-ui);letter-spacing:0;text-transform:none;padding:8px 10px;border-radius:8px;z-index:30;pointer-events:none;box-shadow:var(--tipsh)}
 .tip:hover::before,.tip:focus::before{content:"";position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--tipbg);border-bottom:0;z-index:30}
@@ -3346,6 +3348,21 @@ const spTip = (() => { let el = null, cur = null;
   document.addEventListener("click", e => { const g = e.target.closest && e.target.closest(".spdot"); if (g) show(g); else if (cur && !e.target.closest(".sptip")) hide(); }, true);
   addEventListener("scroll", hide, {passive:true}); addEventListener("resize", hide);
   return {hide}; })();
+// tooltips inside scrolling boxes (tables) would be cut off by the box edge: those float above the page instead
+(() => { let box = null, cur = null;
+  const clipped = el => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) { const cs = getComputedStyle(p);
+    if (/(auto|scroll|hidden|clip)/.test(cs.overflowX + cs.overflowY)) return true; } return false; };
+  const hide = () => { if (box) box.classList.remove("on"); cur = null; };
+  const show = el => { if (!box){ box = document.createElement("div"); box.id = "tipfloat"; box.setAttribute("role","tooltip"); document.body.appendChild(box); }
+    cur = el; box.textContent = el.dataset.tip; const r = el.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;
+    let left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width/2 - w/2)); const top = r.top - h - 8 > 8 ? r.top - h - 8 : r.bottom + 8;
+    box.style.left = left + "px"; box.style.top = top + "px"; box.classList.add("on"); };
+  const enter = e => { const el = e.target.closest && e.target.closest(".tip[data-tip]"); if (!el || el === cur) return;
+    if (el.classList.contains("tipjs") || clipped(el)) { el.classList.add("tipjs"); show(el); } };
+  document.addEventListener("mouseover", e => { enter(e); const el = e.target.closest && e.target.closest(".tip[data-tip]"); if (!el && cur) hide(); });
+  document.addEventListener("focusin", enter); document.addEventListener("focusout", hide);
+  addEventListener("scroll", hide, {passive:true, capture:true}); addEventListener("resize", hide);
+})();
 function spRender(box){ const p = box && P(box.dataset.pid); if (p) box.innerHTML = shotProfile(p);
   const det = box && box.closest(".detail"); if (det) det.querySelectorAll("tr[data-spd]").forEach(r=>r.classList.toggle("spsel", state.spw==="g:"+r.dataset.spd)); }
 document.addEventListener("click", e => {
