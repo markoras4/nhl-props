@@ -72,10 +72,11 @@ def _close_side(odds: dict, pid, m, side):
 
 def snapshot(slate: dict, led_dir: Path, now: dt.datetime | None = None) -> None:
     """Value bets of every game that isn't locked.
-    From EARLY_FROM: a bet is stored the first time it is flagged, with that price, grade and time, and is never
-    changed or removed afterwards (an early bettor gets exactly that); later builds only record where its price and
-    the sharp fair price close, for the CLV. Bets that become value later in the day are added at their own first
-    price. Before EARLY_FROM the rows were refreshed until the lock."""
+    From EARLY_FROM: a Solid bet is locked the moment it is graded Solid (price, grade, time) and never changes again.
+    Lean and Fragile bets follow the market: every build re-grades them with the same three checks, they drop out if
+    the value goes, and they lock as Solid the moment they qualify; whatever they are at the game's lock is recorded.
+    Every row also keeps where the book price and the sharp fair price close, for the CLV.
+    Before EARLY_FROM all rows were refreshed until the lock."""
     led_dir.mkdir(parents=True, exist_ok=True)
     now = now or dt.datetime.now(dt.timezone.utc)
     stamp = now.isoformat(timespec="minutes")
@@ -99,10 +100,22 @@ def snapshot(slate: dict, led_dir: Path, now: dt.datetime | None = None) -> None
             rec = store.get(gid) or {"home": g["home"], "away": g["away"], "start": g.get("start"), "rows": [], "early": True}
             rec["early"] = True
             rec["start"] = g.get("start")
-            have = {(str(r["pid"]), r["m"], r["s"]) for r in rec["rows"]}
-            for r in fresh:
-                if (str(r["pid"]), r["m"], r["s"]) not in have:
-                    rec["rows"].append({**r, "at": stamp})
+            key = lambda r: (str(r["pid"]), r["m"], r["s"])
+            now_rows = {key(r): r for r in fresh}
+            kept = []
+            for r in rec["rows"]:
+                if r.get("lk") or (r.get("gr") == "S" and "lk" not in r and "fl" not in r):
+                    r["lk"] = 1                              # Solid: locked at the price and time it became Solid
+                    kept.append(r)
+            locked = {key(r) for r in kept}
+            for k, r in now_rows.items():                    # Lean / Fragile follow the market; turning Solid locks them
+                if k in locked:
+                    continue
+                if r["gr"] == "S":
+                    kept.append({**r, "at": stamp, "lk": 1})
+                else:
+                    kept.append({**r, "at": stamp, "fl": 1})
+            rec["rows"] = kept
             for r in rec["rows"]:                      # closing price and sharp fair price follow the market
                 c, sf = _close_side(odds, r["pid"], r["m"], r["s"])
                 if c:
@@ -167,8 +180,11 @@ def grade(src, led_dir: Path, out_path: Path, log=print) -> int:
             for x in rec.get("rows") or []:
                 row = {"d": d, "g": int(gid), "h": rec["home"], "a": rec["away"], **{k: x[k] for k in ("pid", "n", "t", "op", "m", "s", "p", "od", "ev", "gr", "sf", "b")},
                        "c": len(x.get("c") or [])}
-                if rec.get("early"):      # bet at the first price; CLV against where the book and the sharp book closed
+                if rec.get("early"):      # Solid: locked when it became Solid; Lean/Fragile: last price before the lock
                     row["e"] = 1
+                    if x.get("lk"):
+                        row["lk"] = 1
+                        row["at"] = x.get("at")
                     if x.get("csf"):
                         row["sf"] = x["csf"]
                     if x.get("cl"):
