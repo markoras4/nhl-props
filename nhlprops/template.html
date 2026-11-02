@@ -424,6 +424,20 @@ td.h{text-align:center;padding:4px}
 .exd.tm .exring{fill:var(--panel);fill-opacity:.82;stroke:var(--line);stroke-width:1}.exd.tm.top .exring{stroke:var(--accent);stroke-width:2;filter:url(#exglow)}
 .exd.tm.hl .exring{stroke:#ffd166;stroke-width:2.5}.exfirst .exd.tm .exti{animation:extin .7s cubic-bezier(.3,1.5,.5,1) both;animation-delay:var(--d)}@keyframes extin{from{transform:scale(0)}}
 .exstory{font-size:13px;color:var(--text);margin:0 4px 6px;line-height:1.45}.exstory b{color:var(--accent)}
+.fuhead2{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}.pjctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.pjex{all:unset;cursor:pointer;margin-left:auto;color:var(--accent);font:700 13px var(--f-ui)}.pjex:hover{text-decoration:underline}
+.pjgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}.pjgrid .card{padding:14px 16px}.pjtab h4,.pjcard h4,.pjbox h4{margin:0 0 10px}
+.pjtab table{width:100%}.pjtab td,.pjtab th{padding:8px 9px}.pjr{cursor:pointer}.pjr:hover td{background:var(--panel2)}.pjr.sel td{background:color-mix(in srgb,var(--accent) 9%,transparent)}.pjr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.pjsub{display:block;font-size:11.5px}.pjv b{font:800 16px var(--f-disp)}.pjrng{position:relative;display:inline-block;width:110px;height:6px;border-radius:3px;background:var(--panel2);margin-left:9px;vertical-align:middle}.pjrng i{position:absolute;top:0;bottom:0;border-radius:3px;background:color-mix(in srgb,var(--accent) 45%,transparent)}.pjrng s{position:absolute;top:-3px;width:3px;height:12px;border-radius:2px;background:var(--accent)}
+.pjhi{color:var(--accent);font-weight:700}.pjrk{color:var(--accent);font-weight:700}
+.pjbig{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.pjbig b{font:800 50px/1 var(--f-disp)}.pjbig span{color:var(--mute);font-weight:600}.pjbox .pjbig b{font-size:36px}.pjline{margin:6px 0 0}
+.pjhist{display:flex;align-items:flex-end;gap:2px;margin:14px 0 4px}.pjhist i{flex:1;border-radius:2px 2px 0 0;background:color-mix(in srgb,var(--accent) 28%,transparent);transform-origin:bottom;animation:pjbar .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d)}.pjhist i.r{background:color-mix(in srgb,var(--accent) 55%,transparent)}.pjhist i.m{background:var(--accent)}
+@keyframes pjbar{from{transform:scaleY(0)}to{transform:none}}.pjax{display:flex;justify-content:space-between;color:var(--mute);font-size:11.5px}
+.pjms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.pjms div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 8px;text-align:center}.pjms small{display:block;color:var(--mute);font-size:11px;font-weight:600}.pjms b{font:800 17px var(--f-disp)}.pjms .hi b{color:var(--accent)}
+.pjkv{margin-top:10px}.pjkv div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}.pjkv span{color:var(--mute)}.pjodds{margin:12px 0 0;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;color:var(--mute);font-size:12.5px}
+.pjbox .pjhist{max-width:640px}.pjall{all:unset;cursor:pointer;float:right;color:var(--accent);font:700 12px var(--f-ui);text-transform:none;letter-spacing:0}.pjall:hover{text-decoration:underline}
+.pjtab td{white-space:nowrap}@media (max-width:640px){.pjrng{display:none}}@media (max-width:900px){.pjgrid{grid-template-columns:1fr}.pjrng{width:60px;margin-left:6px}.pjtab td,.pjtab th{padding:8px 6px}}
+.exhr{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.exwh line{stroke-width:1.6;stroke-linecap:round;opacity:.55}.exwh.f line{stroke:var(--accent)}.exwh.d line{stroke:var(--accent2)}
+.exlist table{width:100%}.exlist th.s{cursor:pointer;white-space:nowrap}.exlist th.s.on{color:var(--accent)}.exlist td,.exlist th{padding:9px 10px}.exlrk{width:34px;color:var(--mute);font-weight:700}.exlr{cursor:pointer;animation:exrow .45s ease both;animation-delay:var(--d)}.exlr:hover td{background:var(--panel2)}.exlr.hl td{background:color-mix(in srgb,var(--accent) 10%,transparent)}.exlnm{display:inline-flex;align-items:center;gap:9px}.exlnm small{display:block}.exlist .up{color:var(--good)}.exlist .dn{color:var(--bad)}.exlmore{all:unset;cursor:pointer;display:block;margin:12px auto 2px;color:var(--accent);font:700 13px var(--f-ui)}.exlmore:hover{text-decoration:underline}
 .extop{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
 .exrow{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:var(--panel2);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;animation:exrow .5s ease both;animation-delay:var(--d)}
 .exrow:hover{transform:translateY(-2px);box-shadow:0 0 0 1.5px var(--accent)}@keyframes exrow{from{opacity:0;transform:translateY(6px)}}
@@ -1588,7 +1602,7 @@ const I18N = {
     footer:"Uppdateras under dagen och igen före varje nedsläpp. Statistik: MoneyPuck.com. För personligt, icke-kommersiellt bruk. Spela ansvarsfullt. Stödlinjen: <span style=\"white-space:nowrap\">020-81 91 00</span>.",
   }
 };
-Object.assign(I18N.en, {sp_ty_w:"Wrist shot", sp_ty_n:"Snap shot", sp_ty_l:"Slap shot", sp_ty_b:"Backhand", sp_ty_t:"Tip-in", sp_ty_d:"Deflection", sp_ty_r:"Wraparound", sp_ty_o:"Other shot", sp_ot:"OT", sp_st_P:"Power play", sp_st_H:"Shorthanded", sp_st_E:"Empty net", sp_tip_ft:"{n} ft from the net", sp_tip_blk:"Blocked {n} ft from the net", ex_sug:"Good pairs for {y}:", ex_sug_tip:"Plot {y} against {x}", tc_pp2:"Not on the first power-play unit tonight: power-play points mostly come from PP1", tc_pp_new:"Newly on the first power-play unit: the market prices the new role before the model catches up", lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet when the game locked, margin removed. Our price above it = we beat the sharpest closing line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
+Object.assign(I18N.en, {pj_title:"Player projections", pj_sub:"Every skater's season, simulated 10,000 times game by game from his rates, ice time and the games left, including the chance of missing games. The range is where 8 of 10 seasons end: tested on three past seasons, it held the real total 79% of the time.", pj_p:"points", pj_g:"goals", pj_a:"assists", pj_tp:"Points", pj_tg:"Goals", pj_ta:"Assists", pj_rookies:"Rookies", pj_rookie:"rookie", pj_explore:"Open in Explorer", pj_leaders:"Projected leaders · {k}", pj_now_h:"Now", pj_proj_h:"Projected {k} · range", pj_card:"Player card · {n}", pj_proj:"projected points · {g} G, {a} A", pj_now:"Now {p} in {gp} games. 8 seasons in 10 end between {lo} and {hi} points.", pj_axis:"points at the end of the season", pj_ar:"Art Ross (most points)", pj_rr:"Rocket Richard (most goals)", pj_pace:"Pace now → projection", pj_odds:"When a sportsbook offers award or season-points markets, the book price and the model's value show here.", pj_box:"Season projection", pj_all:"All projections", pj_foot:"Projections update every day. They use the same true-talent rates as tonight's numbers, so hot and cold streaks count for little. A player who is injured or out of the lineup only keeps what he has.", exm_pace:"Points pace (per 82)", exm_proj_p:"Projected season points", exm_proj_g:"Projected season goals", exm_proj_a:"Projected season assists", exm_ar:"Art Ross chance", exm_rr:"Rocket Richard chance", exm_m_g30:"30+ goals chance", exm_m_p100:"100+ points chance", exp_proj:"Pace vs projection", exs_proj:"<b>Points pace vs the model's season projection.</b> On the dashed diagonal the projection matches his pace. Far below it: a hot start the model expects to cool off. Above it: a slow start it expects to pick up. The lines through the top 10 show where 8 seasons in 10 end.", ex_t_proj:"Biggest gaps between pace and projection", ex_q_pick:"Picking up", ex_q_cool:"Cooling off", ex_proj_line:"Season projection", pts_short:"pts", ex_view_chart:"Chart", ex_view_list:"List", ex_l_gap:"Gap", ex_l_range:"Range (8 in 10)", ex_l_player:"Player", ex_l_more:"Show all {n}", ex_l_less:"Show fewer", sp_ty_w:"Wrist shot", sp_ty_n:"Snap shot", sp_ty_l:"Slap shot", sp_ty_b:"Backhand", sp_ty_t:"Tip-in", sp_ty_d:"Deflection", sp_ty_r:"Wraparound", sp_ty_o:"Other shot", sp_ot:"OT", sp_st_P:"Power play", sp_st_H:"Shorthanded", sp_st_E:"Empty net", sp_tip_ft:"{n} ft from the net", sp_tip_blk:"Blocked {n} ft from the net", ex_sug:"Good pairs for {y}:", ex_sug_tip:"Plot {y} against {x}", tc_pp2:"Not on the first power-play unit tonight: power-play points mostly come from PP1", tc_pp_new:"Newly on the first power-play unit: the market prices the new role before the model catches up", lg_how_h:"How the Triage ledger works", lg_hist:"Bet history", lg_dsum:"{n} bets · {w}–{l}", lg_sf:"Sharp fair", lg_sf_tip:"The sharp book's fair price for the same bet when the game locked, margin removed. Our price above it = we beat the sharpest closing line.", lg_res:"Result", trk_ledger:"Triage ledger", lg_none:"The ledger couldn't be loaded right now.", lg_over:"Over / yes", lg_under:"Under / no", lg_one:"One per player", lg_one_tip:"Only the biggest-edge bet for each player in each game, so one big night for a player can't count several times.",
   lg_bets:"Bets", lg_hit:"Hit rate / model", lg_hit_tip:"How often the bets won, next to the average chance the model gave them.", lg_n_tip:"Graded bets (won or lost). Voids and games still in play aren't counted.",
   lg_sh:"Edge vs sharp", lg_sh_tip:"Our recorded price against the sharp book's fair price (margin removed) when the game locked, averaged. Positive means we beat the sharpest closing line, the best early sign of a real edge. (n) = bets with a sharp price.",
   lg_total:"All value bets", lg_chart:"Units by grade, cumulative", lg_fam_h:"ROI by market and grade", lg_fam_note:"Small numbers next to each ROI are the bets behind it. Small samples swing a lot.",
@@ -1655,7 +1669,7 @@ Object.assign(I18N.en, {sp_ty_w:"Wrist shot", sp_ty_n:"Snap shot", sp_ty_l:"Slap
   tri_fragile:"Fragile ({n})", tri_linked:"{t}: {n} picks on the same side of one team tonight. They tend to win and lose together, so treat them as one bigger bet.",
   tri_note:"A grade is a confidence check, not a tip. Solid edges hold up however you look at the player; fragile ones rest on the model alone (often because it regresses a hot start harder than his raw numbers do). Every best pick stores its grade, and the track record shows how each grade has done.",
   tri_su:"Under {l} shots", tri_so:"Over {l} shots", tri_no:"No: {m}", tri_linked2:"Linked (they win and lose together, so treat each group as one bigger bet):", tri_lk_n:"players under/no", tri_lk_o:"players over/yes", tri_views:"Views", tri_checks:"Checks", rk_tg:"By triage grade", rk_tg_none:"Grades are stored from today on."});
-Object.assign(I18N.sv, {sp_ty_w:"Handledsskott", sp_ty_n:"Snapshot", sp_ty_l:"Slagskott", sp_ty_b:"Backhand", sp_ty_t:"Tippning", sp_ty_d:"Styrning", sp_ty_r:"Runt målet", sp_ty_o:"Annat skott", sp_ot:"Förl.", sp_st_P:"Powerplay", sp_st_H:"Boxplay", sp_st_E:"Tom kasse", sp_tip_ft:"{n} fot från mål", sp_tip_blk:"Blockerat {n} fot från mål", ex_sug:"Bra par för {y}:", ex_sug_tip:"Visa {y} mot {x}", tc_pp2:"Inte i första powerplayfemman i kväll: powerplaypoäng kommer mest från PP1", tc_pp_new:"Nyss flyttad till första powerplayfemman: marknaden prisar den nya rollen innan modellen hinner ikapp", lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel när matchen låstes, utan marginal. Vårt odds över det = vi slog den skarpaste stängningslinjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
+Object.assign(I18N.sv, {pj_title:"Spelarprognoser", pj_sub:"Varje spelares säsong, simulerad 10 000 gånger match för match från hans takt, istid och matcherna kvar, inklusive risken att missa matcher. Spannet är där 8 av 10 säsonger slutar: testat på tre tidigare säsonger höll det det verkliga utfallet 79 % av gångerna.", pj_p:"poäng", pj_g:"mål", pj_a:"assist", pj_tp:"Poäng", pj_tg:"Mål", pj_ta:"Assist", pj_rookies:"Rookies", pj_rookie:"rookie", pj_explore:"Öppna i Utforskaren", pj_leaders:"Beräknade ledare · {k}", pj_now_h:"Nu", pj_proj_h:"Beräknat {k} · spann", pj_card:"Spelarkort · {n}", pj_proj:"beräknade poäng · {g} M, {a} A", pj_now:"Nu {p} på {gp} matcher. 8 säsonger av 10 slutar mellan {lo} och {hi} poäng.", pj_axis:"poäng när säsongen är slut", pj_ar:"Art Ross (flest poäng)", pj_rr:"Rocket Richard (flest mål)", pj_pace:"Takt nu → prognos", pj_odds:"När ett spelbolag erbjuder pris- eller säsongspoängspel visas oddset och modellens värde här.", pj_box:"Säsongsprognos", pj_all:"Alla prognoser", pj_foot:"Prognoserna uppdateras varje dag. De bygger på samma verkliga nivå som kvällens siffror, så heta och kalla sviter väger lite. En skadad spelare eller en som står utanför laget behåller bara det han har.", exm_pace:"Poängtakt (per 82)", exm_proj_p:"Beräknade säsongspoäng", exm_proj_g:"Beräknade säsongsmål", exm_proj_a:"Beräknade säsongsassist", exm_ar:"Chans till Art Ross", exm_rr:"Chans till Rocket Richard", exm_m_g30:"Chans till 30+ mål", exm_m_p100:"Chans till 100+ poäng", exp_proj:"Takt mot prognos", exs_proj:"<b>Poängtakt mot modellens säsongsprognos.</b> På diagonalen stämmer prognosen med takten. Långt under: en het start som modellen tror svalnar. Över: en trög start som modellen tror tar fart. Linjerna genom topp 10 visar var 8 säsonger av 10 slutar.", ex_t_proj:"Störst skillnad mellan takt och prognos", ex_q_pick:"Tar fart", ex_q_cool:"Svalnar", ex_proj_line:"Säsongsprognos", pts_short:"p", ex_view_chart:"Diagram", ex_view_list:"Lista", ex_l_gap:"Skillnad", ex_l_range:"Spann (8 av 10)", ex_l_player:"Spelare", ex_l_more:"Visa alla {n}", ex_l_less:"Visa färre", sp_ty_w:"Handledsskott", sp_ty_n:"Snapshot", sp_ty_l:"Slagskott", sp_ty_b:"Backhand", sp_ty_t:"Tippning", sp_ty_d:"Styrning", sp_ty_r:"Runt målet", sp_ty_o:"Annat skott", sp_ot:"Förl.", sp_st_P:"Powerplay", sp_st_H:"Boxplay", sp_st_E:"Tom kasse", sp_tip_ft:"{n} fot från mål", sp_tip_blk:"Blockerat {n} fot från mål", ex_sug:"Bra par för {y}:", ex_sug_tip:"Visa {y} mot {x}", tc_pp2:"Inte i första powerplayfemman i kväll: powerplaypoäng kommer mest från PP1", tc_pp_new:"Nyss flyttad till första powerplayfemman: marknaden prisar den nya rollen innan modellen hinner ikapp", lg_how_h:"Så fungerar Triage-liggaren", lg_hist:"Spelhistorik", lg_dsum:"{n} spel · {w}–{l}", lg_sf:"Skarpt rättvist", lg_sf_tip:"Det skarpa spelbolagets rättvisa odds för samma spel när matchen låstes, utan marginal. Vårt odds över det = vi slog den skarpaste stängningslinjen.", lg_res:"Utfall", trk_ledger:"Triage-liggaren", lg_none:"Liggaren kunde inte laddas just nu.", lg_over:"Över / ja", lg_under:"Under / nej", lg_one:"En per spelare", lg_one_tip:"Bara spelet med störst edge för varje spelare i varje match, så att en stor kväll för en spelare inte räknas flera gånger.",
   lg_bets:"Spel", lg_hit:"Träff / modell", lg_hit_tip:"Hur ofta spelen vann, bredvid den genomsnittliga chans modellen gav dem.", lg_n_tip:"Rättade spel (vunna eller förlorade). Ogiltiga och pågående räknas inte.",
   lg_sh:"Edge mot skarp", lg_sh_tip:"Vårt sparade odds mot det skarpa spelbolagets rättvisa odds (utan marginal) när matchen låstes, i snitt. Positivt betyder att vi slog marknadens skarpaste stängningslinje, det bästa tidiga tecknet på en verklig edge. (n) = spel med skarpt odds.",
   lg_total:"Alla värdespel", lg_chart:"Enheter per betyg, ackumulerat", lg_fam_h:"ROI per marknad och betyg", lg_fam_note:"De små talen bredvid varje ROI är antalet spel bakom. Små urval svänger mycket.",
@@ -2973,6 +2987,7 @@ function detail(pr, g){
       <tbody>${p.form.games.map(x=>`<tr data-spd="${x.d}" class="${state.spw==="g:"+x.d?"spsel":""}" title="${esc(t("sp_row_tip"))}"><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
     ${p.form.games.length ? `<div class="box l10box" data-pid="${pr.id}" data-gid="${g.id}">${l10Chart(pr, g)}</div>` : ""}</div>
     ${roleBox(pr, g, p)}${matesBox(pr, p)}
+    ${DATA.proj?.[pr.id] ? `<div class="box pjbox"><h4>${t("pj_box")} <button type="button" class="pjall" data-pjgo="${pr.id}">${t("pj_all")} →</button></h4>${pjCard(pr.id, false)}</div>` : ""}
     <div class="box spbox" data-pid="${pr.id}">${shotProfile(p)}</div>
     ${statsBox(p)}
   </div></div>`;
@@ -3333,6 +3348,7 @@ function oneGame(p, gm, shots, S){
       <div class="spleg"><span><i class="lg-g"></i>${t("sp_k_g")} ${G_}</span><span><i class="lg-s"></i>${t("sp_k_s")} ${S_}</span><span><i class="lg-m"></i>${t("sp_k_m")} ${M_}</span><span><i class="lg-b">×</i>${t("sp_k_b")} ${B_}</span></div></div>
   </div><p class="note">${t("sp_g_note",{d:gm?dayLabel(gm.d):"", o:gm?(gm.h?t("r6_vs")+" ":"@ ")+gm.o:""})}</p>`;
 }
+document.addEventListener("click", e => { const b = e.target.closest("[data-pjgo]"); if (!b) return; state.fuv = "players"; state.fup = b.dataset.pjgo; state.fupk = "p"; state.fupos = "all"; go({tab:"futures", game:null}); });
 // shot map tooltip: hover on desktop, tap on phones; one floating box for the whole page
 const spTip = (() => { let el = null, cur = null;
   const hide = () => { if (el) el.classList.remove("on"); if (cur) cur.classList.remove("hot"); cur = null; };
@@ -3651,15 +3667,23 @@ const EX_M = {
   blk:{d:2, f:p => { const gs = (p.hb_games||[]).slice(0,10); return gs.length >= 5 ? gs.reduce((a,x)=>a+x.blk,0)/gs.length : null; }},
   mkt:{d:0, pct:true, tonight:true, f:(p, nx) => { if (!nx) return null; const b = book(nx.g.id, nx.pr.id, "pt"); return noVig(b) ?? (b?.o ? 1/b.o : null); }},
   mod:{d:0, pct:true, tonight:true, f:(p, nx) => nx && getOdds(nx.g.id, nx.pr.id, "pt") ? prob(nx.pr, nx.g, "pt") : null},
+  // season projections (simulated daily): median, with the 10-90% range for the whiskers
+  pace:{d:0, f:p => DATA.proj?.[p.id]?.pace}, proj_p:{d:0, rng:"p", f:p => DATA.proj?.[p.id]?.p?.[1]},
+  proj_g:{d:0, rng:"g", f:p => DATA.proj?.[p.id]?.g?.[1]}, proj_a:{d:0, rng:"a", f:p => DATA.proj?.[p.id]?.a?.[1]},
+  ar:{d:1, pct:true, f:p => DATA.proj?.[p.id]?.ar}, rr:{d:1, pct:true, f:p => DATA.proj?.[p.id]?.rr},
+  m_g30:{d:0, pct:true, f:p => DATA.proj?.[p.id]?.m?.g30}, m_p100:{d:0, pct:true, f:p => DATA.proj?.[p.id]?.m?.p100},
 };
 const EX_P = {
-  luck:{x:"xg", y:"g", diag:true, q:["ex_q_luck_hi","ex_q_luck_lo"], top:(x,y)=>x-y, tt:"ex_t_luck"},
+  luck:{x:"xg", y:"g", diag:true, q:["ex_q_luck_hi","ex_q_luck_lo"], top:(x,y)=>x-y, tt:"ex_t_luck", gap:true},
+  proj:null,
   vol:{x:"s_pg", y:"sh", q:null, top:(x,y,p)=>(EX_M.s_pg.f(p)||0) * ((p.rates?.career_sh||0) - (y||0)), tt:"ex_t_vol"},
   role:{x:"toi", y:"p_pg", top:(x,y,p)=>EX_M.p60.f(p)||0, tt:"ex_t_role"},
   pp:{x:"ppmin", y:"ppp_pg", top:(x,y)=> x > 0.5 ? y / x : -1, tt:"ex_t_pp"},
-  trend:{x:"s_pg", y:"l10s", diag:true, q:["ex_q_up","ex_q_down"], top:(x,y)=>y-x, tt:"ex_t_trend"},
+  trend:{x:"s_pg", y:"l10s", diag:true, q:["ex_q_up","ex_q_down"], top:(x,y)=>y-x, tt:"ex_t_trend", gap:true},
   tonight:{x:"mkt", y:"mod", diag:true, q:["ex_q_val","ex_q_noval"], top:(x,y)=>y-x, tt:"ex_t_tonight"},
 };
+EX_P.proj = {x:"pace", y:"proj_p", diag:true, q:["ex_q_pick","ex_q_cool"], top:(x,y)=>Math.abs(x-y), tt:"ex_t_proj", gap:true};
+if (!DATA.proj) delete EX_P.proj;
 const EX_TM = {
   xgf60:{d:2, f:T => T.xgf5}, xga60:{d:2, f:T => T.xga5},
   xgd:{d:2, f:T => T.gp ? (T.s_xgf - T.s_xga) / T.gp : null}, gd:{d:2, f:T => T.gp ? (T.s_gf - T.s_ga) / T.gp : null},
@@ -3681,7 +3705,8 @@ const EX_TP = {
 const EX_PAIRS = {gp:["g","p"], g:["xg","s","sh","toi"], a:["p","toi","ppmin"], p:["toi","a","xg"], s:["toi","xg","sh"], xg:["g","s","toi"],
   g_pg:["xg_pg","s_pg","sh"], a_pg:["toi","ppmin","p_pg"], p_pg:["toi","p60","ppmin"], s_pg:["l10s","sh","toi","s60"], xg_pg:["g_pg","s_pg"],
   gmx:["xg","sh","sht"], sh:["sht","s_pg","xg_pg"], sht:["sh","s_pg"], toi:["p_pg","s_pg","toi5"], toi5:["toi","p_pg"], s60:["toi","s_pg"], p60:["toi","p_pg"],
-  ppmin:["ppp_pg","p_pg"], ppp_pg:["ppmin","p_pg"], l10s:["s_pg","o25"], o25:["l10s","s_pg"], hit:["blk","toi"], blk:["toi","hit"], mkt:["mod"], mod:["mkt"]};
+  ppmin:["ppp_pg","p_pg"], ppp_pg:["ppmin","p_pg"], l10s:["s_pg","o25"], o25:["l10s","s_pg"], hit:["blk","toi"], blk:["toi","hit"], mkt:["mod"], mod:["mkt"],
+  proj_p:["pace","p","xg","toi","ar"], pace:["proj_p","p_pg"], proj_g:["g","xg","sh","rr"], proj_a:["a","toi","ar"], ar:["proj_p","pace"], rr:["proj_g","g"], m_g30:["proj_g","g"], m_p100:["proj_p","pace"]};
 const EX_TPAIRS = {xgf60:["xga60","gf_pg","hdf"], xga60:["xgf60","ga_pg","gsax","hda"], xgd:["gd","pts"], gd:["xgd","pdo","pts"], gf_pg:["xgf60","pdo"],
   ga_pg:["xga60","gsax"], pts:["xgd","gd","pdo"], gsax:["xga60","ga_pg"], pdo:["gd","pts"], pace:["o55","xgf60"], o55:["pace"], pp:["pk"], pk:["pp","pen"],
   hdf:["hda","xgf60"], hda:["hdf","xga60"], sa:["xga60","gsax"], pen:["pk"]};
@@ -3698,6 +3723,7 @@ function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
 const exVal = (k, p) => { const m = EX_M[k], v = m.f(p, exNext()[p.id]); return v == null || !isFinite(v) ? null : v; };
 const exFmt = (k, v) => v == null ? "–" : EX_M[k].pct ? pct(v, EX_M[k].d) : (k === "gmx" && v > 0 ? "+" : "") + fmt(v, EX_M[k].d);
 function exState(){ const S = state.ex = state.ex || {mode:"players", preset:"luck", pos:"all", team:"all", tonight:false, min:5, q:"", tpreset:"strength"};
+  if (!S.view) S.view = store.get("ex_view") === "list" ? "list" : "chart";
   S.mode = S.mode || "players"; S.tpreset = S.tpreset === undefined ? "strength" : S.tpreset;
   if (S.mode === "teams"){ if (S.tpreset && EX_TP[S.tpreset]){ S.tx = EX_TP[S.tpreset].x; S.ty = EX_TP[S.tpreset].y; } }
   else if (S.preset && EX_P[S.preset]){ S.x = EX_P[S.preset].x; S.y = EX_P[S.preset].y; }
@@ -3728,7 +3754,7 @@ function exRows(S){
 function exploreTab(){
   const S = exState(), TM = exT(S), MT = exMT(S), PT = exPT(S), [ax, ay] = exAx(S), pre = exPre(S);
   const teams = [...new Set(Object.values(DATA.players).map(p => p.team))].filter(Boolean).sort();
-  const opt = k => Object.keys(MT).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
+  const opt = k => Object.keys(MT).filter(m => TM || !MT[m].rng && !["pace","ar","rr","m_g30","m_p100"].includes(m) || DATA.proj).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
   const filters = TM ? `<label class="toggle"><input type="checkbox" id="extn" ${S.ttonight?"checked":""}> ${t("ext_playing")}</label>`
     : `<div class="seg olseg" id="expos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")]].map(([k,l])=>`<button data-k="${k}" class="${S.pos===k?"on":""}">${l}</button>`).join("")}</div>
       <select id="exteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${S.team===x?"selected":""}>${x}</option>`).join("")}</select>
@@ -3738,7 +3764,8 @@ function exploreTab(){
     : `<span><i class="exdot f"></i>${t("ex_f")}</span><span><i class="exdot d"></i>${t("ex_d")}</span><span><i class="exdot ring"></i>${t("ex_top10")}</span><span class="meta" id="excount"></span>`;
   $("#main").innerHTML = `<div class="exwrap">
     <div class="exhead"><div><h2 class="exh2">${t(TM ? "ext_title" : "ex_title")}</h2><p class="meta">${t(TM ? "ext_sub" : "ex_sub")}</p></div>
-      <div class="seg olseg exmode" id="exmode"><button data-k="players" class="${TM?"":"on"}">${t("ex_m_players")}</button><button data-k="teams" class="${TM?"on":""}">${t("ex_m_teams")}</button></div></div>
+      <div class="exhr"><div class="seg olseg exview" id="exview"><button data-k="chart" class="${S.view==="list"?"":"on"}">${t("ex_view_chart")}</button><button data-k="list" class="${S.view==="list"?"on":""}">${t("ex_view_list")}</button></div>
+      <div class="seg olseg exmode" id="exmode"><button data-k="players" class="${TM?"":"on"}">${t("ex_m_players")}</button><button data-k="teams" class="${TM?"on":""}">${t("ex_m_teams")}</button></div></div></div>
     <div class="controls"><div class="seg olseg" id="expre">${Object.keys(PT).map(k=>`<button data-k="${k}" class="${pre===k?"on":""}">${t((TM?"extp_":"exp_")+k)}</button>`).join("")}</div></div>
     <div class="controls exctl">
       <label class="exsel"><span>Y</span><select id="exy">${opt(ay)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(ax)}</select></label>
@@ -3752,6 +3779,8 @@ function exploreTab(){
   const re = () => { exSuggest(); exDraw(true); };
   const setAx = (x, y) => { if (TM){ S.tx = x; S.ty = y; } else { S.x = x; S.y = y; } };
   const clearPre = () => { if (TM) S.tpreset = null; else S.preset = null; $("#expre").querySelectorAll("button").forEach(x => x.classList.remove("on")); };
+  $("#exview").onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === (S.view || "chart")) return; S.view = b.dataset.k; store.set("ex_view", S.view);
+    $("#exview").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#exview [data-k="${b.dataset.k}"]`); exDraw(true); };
   $("#exmode").onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === S.mode) return; S.mode = b.dataset.k; exploreTab(); popBtn(`#exmode [data-k="${b.dataset.k}"]`); };
   $("#expre").onclick = e => { const b = e.target.closest("button"); if (!b) return; const P_ = PT[b.dataset.k]; if (TM) S.tpreset = b.dataset.k; else S.preset = b.dataset.k; setAx(P_.x, P_.y);
     $("#expre").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expre [data-k="${b.dataset.k}"]`); $("#exx").value = P_.x; $("#exy").value = P_.y; re(); };
@@ -3795,8 +3824,37 @@ function exAdapter(S){
     tipHead: r => `${logo(r.p.team,18)} <b>${esc(r.p.name)}</b> <span class="meta">${r.p.team} · ${r.p.pos}</span>`,
     tipNext: r => `${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} · ${dayShort(r.nx.g.date)}`, click: t("ex_click"), open: exOpen, cardLogo: r => logo(r.p.team, 20), count: n => t("ex_count",{n})};
 }
+// the same players and filters as the chart, as a sortable table (Chart | List switch)
+function exList(S, A, box){
+  const MT = A.MT, kx = A.kx, ky = A.ky, P_ = A.P, rows = A.rows.slice();
+  const prj = !A.teams && DATA.proj && (MT[ky]?.rng || MT[kx]?.rng);
+  const cols = [{k:"y", l:A.lbl(ky), v:r => r.y, f:r => A.fmtV(ky, r.y)}, {k:"x", l:A.lbl(kx), v:r => r.x, f:r => A.fmtV(kx, r.x)}];
+  if (P_?.diag || P_?.gap) cols.push({k:"gap", l:t("ex_l_gap"), v:r => r.y - r.x, f:r => { const d = r.y - r.x, dd = MT[ky].pct ? pct(Math.abs(d), MT[ky].d) : fmt(Math.abs(d), Math.max(MT[ky].d, MT[kx].d)); return `<span class="${d > 0 ? "up" : d < 0 ? "dn" : ""}">${d > 0 ? "+" : d < 0 ? "−" : ""}${dd}</span>`; }});
+  if (prj){ const rk = MT[ky]?.rng || MT[kx]?.rng;
+    cols.push({k:"rng", l:t("ex_l_range"), v:r => DATA.proj[r.id]?.[rk]?.[2] - DATA.proj[r.id]?.[rk]?.[0], f:r => { const R_ = DATA.proj[r.id]?.[rk]; return R_ ? `${R_[0]}–${R_[2]}` : "–"; }});
+    cols.push({k:"ar", l:t("exm_ar"), v:r => DATA.proj[r.id]?.ar || 0, f:r => pct(DATA.proj[r.id]?.ar || 0, 1)}); }
+  const score = P_ ? (r => P_.top(r.x, r.y, r.p)) : (r => r.y);
+  const so = S.lsort && cols.some(c => c.k === S.lsort.k) ? S.lsort : null;
+  const val = so ? cols.find(c => c.k === so.k).v : score;
+  rows.sort((a, b) => ((val(b) ?? -1e9) - (val(a) ?? -1e9)) * (so && so.dir === "asc" ? -1 : 1));
+  const shown = S.lall ? rows : rows.slice(0, 50);
+  const head = `<tr><th class="exlrk">#</th><th>${t(A.teams ? "fu_team" : "ex_l_player")}</th>${cols.map(c => `<th class="n s ${so && so.k === c.k ? "on" : ""}" data-lsort="${c.k}">${esc(c.l)}${so && so.k === c.k ? (so.dir === "asc" ? " ▲" : " ▼") : ""}</th>`).join("")}</tr>`;
+  const body = shown.map((r, i) => `<tr class="exlr ${A.hit(r) ? "hl" : ""}" data-id="${r.id}" tabindex="0" style="--d:${Math.min(i, 20) * 18}ms"><td class="exlrk">${i + 1}</td>
+    <td><span class="exlnm">${A.cardLogo(r)}<span><b>${esc(r.short || r.name)}</b><small class="meta">${A.teams ? exNxTxt(r.team, r.nx) : `${r.p.team} · ${r.p.pos}`}</small></span></span></td>
+    ${cols.map(c => `<td class="n num">${c.f(r)}</td>`).join("")}</tr>`).join("");
+  box.innerHTML = `<div class="tablewrap exlist"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
+    ${rows.length > 50 ? `<button type="button" class="exlmore" data-lall="1">${S.lall ? t("ex_l_less") : t("ex_l_more",{n:rows.length})}</button>` : ""}`;
+  $("#excount").textContent = A.count(rows.length);
+  const pk = A.teams ? S.tpreset : S.preset;
+  $("#exstory").innerHTML = P_ ? A.story(pk) : t(A.teams ? "ext_custom" : "ex_custom",{x:A.lbl(kx), y:A.lbl(ky)});
+  box.onclick = e => { const th = e.target.closest("[data-lsort]"); if (th){ const k = th.dataset.lsort; S.lsort = S.lsort && S.lsort.k === k ? {k, dir: S.lsort.dir === "desc" ? "asc" : "desc"} : {k, dir:"desc"}; exList(S, A, box); return; }
+    if (e.target.closest("[data-lall]")){ S.lall = !S.lall; exList(S, A, box); return; }
+    const tr = e.target.closest(".exlr"); if (tr) A.open(tr.dataset.id); };
+}
 function exDraw(animate, first){
   const S = state.ex, A = exAdapter(S), rows = A.rows, box = $("#exchart"); if (!box) return;
+  const topBox = $("#extop")?.closest(".box"); if (topBox) topBox.hidden = S.view === "list";
+  if (S.view === "list") return exList(S, A, box);
   const MT = A.MT, kx = A.kx, ky = A.ky, P_ = A.P, inv = !!P_?.inv;
   const narrow = innerWidth < 640, W = Math.max(320, Math.min(1100, box.clientWidth || 900)), H = narrow ? 380 : 520;
   const L = narrow ? 40 : 56, R = A.teams ? 26 : 18, T = A.teams ? 24 : 18, B = narrow ? 40 : 46;
@@ -3835,11 +3893,17 @@ function exDraw(animate, first){
     dots = rows.map((r, i) => { const tp = topIds.has(r.id), h = A.hit(r), cls = `exd ${r.p.posg === "D" ? "d" : "f"}${tp ? " top" : ""}${h ? " hl" : ""}${q && !h ? " dim" : ""}`;
       return `<g class="${cls}" data-id="${r.id}" style="transform:translate(${px(r).toFixed(1)}px,${py(r).toFixed(1)}px);--d:${(i % 40) * 12}ms"><circle r="${tp || h ? 6.5 : 4.6}"/>${(tp || h) && canLabel(px(r), py(r)) ? `<text x="9" y="4" class="exlab">${esc(r.p.name.split(" ").slice(-1)[0])}</text>` : ""}</g>`; }).join("");
   }
+  // projection ranges: the 10-90% line through the top-10 (and searched) dots when a projected stat is on an axis
+  const rngK = !A.teams && DATA.proj && (MT[ky]?.rng ? ["y", MT[ky].rng] : MT[kx]?.rng ? ["x", MT[kx].rng] : null);
+  const whisk = !rngK ? "" : rows.filter(r => topIds.has(r.id) || A.hit(r)).map(r => { const R_ = DATA.proj[r.id]?.[rngK[1]]; if (!R_) return "";
+    const c = r.p.posg === "D" ? "d" : "f";
+    if (rngK[0] === "y"){ const x = px(r), a1 = sy(R_[0]), a2 = sy(R_[2]); return `<g class="exwh ${c}"><line x1="${x}" x2="${x}" y1="${a1}" y2="${a2}"/><line x1="${x-4}" x2="${x+4}" y1="${a1}" y2="${a1}"/><line x1="${x-4}" x2="${x+4}" y1="${a2}" y2="${a2}"/></g>`; }
+    const y = py(r), b1 = sx(R_[0]), b2 = sx(R_[2]); return `<g class="exwh ${c}"><line y1="${y}" y2="${y}" x1="${b1}" x2="${b2}"/><line y1="${y-4}" y2="${y+4}" x1="${b1}" x2="${b1}"/><line y1="${y-4}" y2="${y+4}" x1="${b2}" x2="${b2}"/></g>`; }).join("");
   const axl = `<text x="${(L + W - R)/2}" y="${H-6}" text-anchor="middle" class="exax">${A.lbl(kx)}</text><text transform="translate(13 ${(T + H - B)/2}) rotate(-90)" text-anchor="middle" class="exax">${A.lbl(ky)}</text>`;
   box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="exsvg ${animate ? "exanim" : ""} ${first ? "exfirst" : ""}" role="img" aria-label="${esc(t(A.teams ? "ext_title" : "ex_title"))}">
     <defs><radialGradient id="exbg" cx="70%" cy="20%" r="90%"><stop offset="0" stop-color="var(--accent)" stop-opacity=".07"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
     <filter id="exglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-    <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" rx="10" fill="url(#exbg)" class="explot"/>${gx}${gy}${avg}${diag}${ql}${axl}<g class="exdots">${dots}</g></svg>`;
+    <rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" rx="10" fill="url(#exbg)" class="explot"/>${gx}${gy}${avg}${diag}${ql}${axl}<g class="exwhs">${whisk}</g><g class="exdots">${dots}</g></svg>`;
   $("#excount").textContent = A.count(rows.length);
   const pk = A.teams ? S.tpreset : S.preset;
   $("#exstory").innerHTML = P_ ? A.story(pk) + (inv ? ` <span class="meta">${t("ext_inv")}</span>` : "") : t(A.teams ? "ext_custom" : "ex_custom",{x:A.lbl(kx), y:A.lbl(ky)});
@@ -3853,6 +3917,7 @@ function exDraw(animate, first){
     let extra = "";
     if (A.teams){ const rk = DATA.team_ranks?.teams?.[r.team] || {}, T_ = r.T;
       extra = `<div class="nxr"><span>${t("ext_rec")}</span><span>${T_.gp} ${t("ext_gp")} · ${pct(T_.pts_pct ?? 0, 0)} ${t("ext_pts")}</span></div>` + (rk.att ? `<div class="nxr"><span>${t("ext_rk")}</span><span>${t("ext_rk_att")} ${rk.att.rk} · ${t("ext_rk_def")} ${rk.def?.rk ?? "–"}</span></div>` : ""); }
+    if (!A.teams && DATA.proj?.[r.id]){ const pj = DATA.proj[r.id]; extra += `<div class="nxr"><span>${t("ex_proj_line")}</span><span><b>${pj.p[1]}</b> ${t("pts_short")} (${pj.p[0]}–${pj.p[2]})</span></div>`; }
     tip.innerHTML = `<div class="gth">${A.tipHead(r)}</div>
       <div class="nxr"><span>${A.lbl(ky)}</span><b>${A.fmtV(ky, r.y)}</b></div><div class="nxr"><span>${A.lbl(kx)}</span><b>${A.fmtV(kx, r.x)}</b></div>${extra}
       <div class="nxr"><span>${t("ex_next")}</span><span>${A.tipNext(r)}</span></div><div class="nxf">${A.click}</div>`;
@@ -5500,6 +5565,7 @@ const luckTag = (v, short) => { const L = luckOf(v); if (!L) return "";
 function futuresTab(){
   const F = DATA.futures;
   if (!F || !F.teams){ $("#main").innerHTML = `<div class="card empty">${t("fu_none")}</div>`; return; }
+  if (state.fuv === "players" && DATA.proj) return fuPlayers();
   const flt = state.fuf || "all", sortK = state.fus || "cup";
   let rows = Object.entries(F.teams).filter(([tm, v]) => flt === "all" || v.conf === flt || v.div_name === flt);
   const val = (tm, v, k) => k === "pts" ? v.pts : k === "luck" ? (luckOf(v)?.d ?? 0) : v[k];
@@ -5519,14 +5585,71 @@ function futuresTab(){
   const head = `<tr><th>${t("fu_team")}</th>${FUT_COLS.map(([k,l])=>`<th class="n s ${sortK===k?"on":""}" data-fs="${k}"><span class="tip" tabindex="0" data-tip="${esc(t(l+"_tip"))}">${t(l)}</span></th>`).join("")}<th class="n s hide-sm ${sortK==="luck"?"on":""}" data-fs="luck"><span class="tip" tabindex="0" data-tip="${esc(t("fu_luck_tip"))}">${t("fu_luck")}</span></th><th class="n s hide-sm ${sortK==="pts"?"on":""}" data-fs="pts"><span class="tip" tabindex="0" data-tip="${esc(t("fu_pts_tip"))}">${t("fu_pts")}</span></th></tr>`;
   const body = rows.map(([tm, v]) => `<tr><td><div class="futeam">${logo(tm,24)}<div><b class="hide-xs">${esc(v.name||tm)}</b><b class="show-xs">${tm}</b><div class="sub">${v.div_name||""} · ${t("fu_now",{p:fmt(v.pts_now,0), gp:v.gp})}</div></div></div></td>${FUT_COLS.map(([k])=>cell(tm, v, k)).join("")}<td class="n hide-sm fucell"><b>${fmt(v.pts_now,0)} <small class="meta">/ ${v.xpts!=null?fmt(v.xpts,1):"–"}</small></b><small>${luckTag(v, true)}</small></td>${ptsCell(tm, v)}</tr>`).join("");
   const filters = [["all","fu_all"],["East","fu_east"],["West","fu_west"],["Atlantic","Atlantic"],["Metropolitan","Metropolitan"],["Central","Central"],["Pacific","Pacific"]];
-  $("#main").innerHTML = `<div class="fuhead"><h2>${t("fu_title")}</h2><p class="meta">${t("fu_sub",{n:(F.sims||0).toLocaleString(LOCALE()), g:F.remaining||0})}</p></div>
+  $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("fu_title")}</h2><p class="meta">${t("fu_sub",{n:(F.sims||0).toLocaleString(LOCALE()), g:F.remaining||0})}</p></div>${fuSwitch()}</div>
     <div class="controls"><div class="seg mgrp" id="fuf">${filters.map(([k,l])=>`<button data-f="${k}" class="${flt===k?"on":""}">${l.startsWith("fu_")?t(l):l}</button>`).join("")}</div></div>
     <div class="card tablewrap futab"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span><span><small>2.38</small> ${t("fu_lg_fair")}</span><span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span></div>
     <p class="foot">${t("fu_foot")}</p>`;
   if (state.fucnt !== false) lgCount($("#main").querySelector(".futab"), 550, 22, 32); state.fucnt = true;   // count up when the view opens or the filter changes (not on sort)
   $("#fuf").onclick = e => { const b = e.target.closest("[data-f]"); if (b){ state.fuf = b.dataset.f; futuresTab(); } };
+  fuSwitchBind();
   $("#main").querySelector("thead").onclick = e => { const th = e.target.closest("[data-fs]"); if (th){ state.fus = th.dataset.fs; state.fucnt = false; futuresTab(); } };
+}
+// ---- Futures → Players: season projections (leaderboard + player card)
+const fuSwitch = () => DATA.proj ? `<div class="seg olseg" id="fuv"><button data-k="teams" class="${state.fuv==="players"?"":"on"}">${t("ex_m_teams")}</button><button data-k="players" class="${state.fuv==="players"?"on":""}">${t("ex_m_players")}</button></div>` : "";
+function fuSwitchBind(){ const el = $("#fuv"); if (!el) return; el.onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === (state.fuv || "teams")) return; state.fuv = b.dataset.k; state.fucnt = true; futuresTab(); popBtn(`#fuv [data-k="${b.dataset.k}"]`); }; }
+// the three milestones closest to a coin flip (the interesting ones for this player)
+function pjMiles(pj){ const L = {g:t("pj_g"), a:t("pj_a"), p:t("pj_p")};
+  return Object.entries(pj.m || {}).filter(([, v]) => v >= 0.03 && v <= 0.985).sort((a, b) => Math.abs(a[1] - 0.55) - Math.abs(b[1] - 0.55)).slice(0, 3)
+    .sort((a, b) => b[1] - a[1]).map(([k, v]) => ({k, v, l: `${k.slice(1)}+ ${L[k[0]]}`})); }
+function pjHist(pj, h = 120){ const H_ = pj.h || [], mx = Math.max(1, ...H_);
+  return `<div class="pjhist" style="height:${h}px">${H_.map((v, i) => { const lo = pj.h0 + i * pj.hw, hi = lo + pj.hw - 1, inR = hi >= pj.p[0] && lo <= pj.p[2], med = pj.p[1] >= lo && pj.p[1] <= hi;
+    return `<i class="${med ? "m" : inR ? "r" : ""}" style="height:${Math.max(2, v / mx * 100)}%;--d:${i * 14}ms" title="${lo}${pj.hw > 1 ? "–" + hi : ""}"></i>`; }).join("")}</div>
+    <div class="pjax"><span>${pj.h0}</span><span>${t("pj_axis")}</span><span>${pj.h0 + H_.length * pj.hw - 1}</span></div>`; }
+function pjCard(pid, big){ const pj = DATA.proj?.[pid], p = P(pid); if (!pj || !p) return "";
+  const ms = pjMiles(pj);
+  return `<div class="pjbig"><b data-cn="${pj.p[1]}" data-cf="i">${pj.p[1]}</b><span>${t("pj_proj",{g:pj.g[1], a:pj.a[1]})}</span></div>
+    <p class="meta pjline">${t("pj_now",{p:(p.windows?.cur?.p ?? 0), gp:pj.gp, lo:pj.p[0], hi:pj.p[2]})}</p>
+    ${pjHist(pj, big ? 130 : 84)}
+    ${ms.length ? `<div class="pjms">${ms.map(m => `<div class="${m.v >= 0.5 ? "hi" : ""}"><small>${m.l}</small><b data-cn="${m.v}" data-cf="pc0">${pct(m.v, 0)}</b></div>`).join("")}</div>` : ""}
+    ${big ? `<div class="pjkv"><div><span>${t("pj_ar")}</span><b>${pct(pj.ar, pj.ar < 0.1 ? 1 : 0)}</b></div><div><span>${t("pj_rr")}</span><b>${pct(pj.rr, pj.rr < 0.1 ? 1 : 0)}</b></div>
+      ${pj.pace != null ? `<div><span>${t("pj_pace")}</span><b>${fmt(pj.pace, 0)} → ${pj.p[1]}</b></div>` : ""}</div>
+      <p class="pjodds">${t("pj_odds")}</p>` : ""}`; }
+function fuPlayers(){
+  const K = state.fupk || "p", pos = state.fupos || "all";
+  let rows = Object.entries(DATA.proj).map(([id, pj]) => ({id, pj, p: P(id)})).filter(r => r.p && r.p.active !== false);
+  if (pos === "F" || pos === "D") rows = rows.filter(r => r.p.posg === pos); else if (pos === "rk") rows = rows.filter(r => r.pj.rk);
+  rows.sort((a, b) => b.pj[K][1] - a.pj[K][1] || b.pj.p[1] - a.pj.p[1]);
+  rows = rows.slice(0, 50);
+  if (!state.fup || !rows.some(r => r.id === state.fup)) state.fup = rows[0]?.id;
+  const lo = Math.min(...rows.slice(0, 15).map(r => r.pj[K][0])), hi = Math.max(...rows.slice(0, 15).map(r => r.pj[K][2]));
+  const sc = v => Math.max(0, Math.min(100, (v - lo + 3) / (hi - lo + 6) * 100));
+  const lbl = {p:t("pj_p"), g:t("pj_g"), a:t("pj_a")}[K];
+  const body = rows.map((r, i) => { const R_ = r.pj[K], c = r.p.windows?.cur || {};
+    return `<tr class="pjr ${r.id === state.fup ? "sel" : ""}" data-pj="${r.id}" tabindex="0"><td class="exlrk">${i + 1}</td>
+      <td><span class="exlnm">${logo(r.p.team, 20)}<span><b>${esc(r.p.name)}</b><small class="meta">${r.p.team} · ${r.p.pos}${r.pj.rk ? ` · <span class="pjrk">${t("pj_rookie")}</span>` : ""}</small></span></span></td>
+      <td class="n num hide-sm pjnow">${c.g ?? 0}–${c.a ?? 0}–${c.p ?? 0}<small class="meta pjsub">${c.gp ?? 0} ${t("ext_gp")}</small></td>
+      <td class="n num pjv"><b data-cn="${R_[1]}" data-cf="i">${R_[1]}</b><span class="pjrng"><i style="left:${sc(R_[0])}%;width:${sc(R_[2]) - sc(R_[0])}%"></i><s style="left:${sc(R_[1])}%"></s></span><small class="meta pjsub">${R_[0]}–${R_[2]}</small></td>
+      <td class="n num hide-sm">${K === "g" ? r.pj.p[1] : r.pj.g[1]}<small class="meta pjsub">${K === "g" ? t("pj_p") : t("pj_g")}</small></td>
+      <td class="n num ${r.pj.ar >= 0.1 ? "pjhi" : ""}">${pct(r.pj.ar, 0)}</td><td class="n num hide-sm ${r.pj.rr >= 0.1 ? "pjhi" : ""}">${pct(r.pj.rr, 0)}</td></tr>`; }).join("");
+  const sel = rows.find(r => r.id === state.fup);
+  $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("pj_title")}</h2><p class="meta">${t("pj_sub")}</p></div>${fuSwitch()}</div>
+    <div class="controls pjctl"><div class="seg olseg" id="pjk">${[["p",t("pj_tp")],["g",t("pj_tg")],["a",t("pj_ta")]].map(([k, l]) => `<button data-k="${k}" class="${K === k ? "on" : ""}">${l}</button>`).join("")}</div>
+      <div class="seg olseg" id="pjpos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")],["rk",t("pj_rookies")]].map(([k, l]) => `<button data-k="${k}" class="${pos === k ? "on" : ""}">${l}</button>`).join("")}</div>
+      <button type="button" class="pjex" id="pjex">${t("pj_explore")} →</button></div>
+    <div class="pjgrid"><div class="card tablewrap pjtab"><h4>${t("pj_leaders",{k:lbl})}</h4><table><thead><tr><th class="exlrk"></th><th>${t("ex_l_player")}</th><th class="n hide-sm">${t("pj_now_h")}</th><th class="n">${t("pj_proj_h",{k:lbl})}</th><th class="n hide-sm">${K === "g" ? t("pj_p") : t("pj_g")}</th><th class="n">Art Ross</th><th class="n hide-sm">Rocket</th></tr></thead><tbody>${body}</tbody></table></div>
+      <div class="card pjcard" id="pjcard">${sel ? `<h4>${t("pj_card",{n:esc(sel.p.name)})}</h4>${pjCard(sel.id, true)}` : ""}</div></div>
+    <p class="foot">${t("pj_foot")}</p>`;
+  if (state.fucnt !== false) lgCount($("#main").querySelector(".pjtab"), 550, 22, 30); state.fucnt = true;
+  lgCount($("#pjcard"), 700, 0);
+  fuSwitchBind();
+  $("#pjk").onclick = e => { const b = e.target.closest("button"); if (b){ state.fupk = b.dataset.k; fuPlayers(); } };
+  $("#pjpos").onclick = e => { const b = e.target.closest("button"); if (b){ state.fupos = b.dataset.k; state.fup = null; fuPlayers(); } };
+  $("#pjex").onclick = () => { const S = exState(); S.mode = "players"; S.preset = "proj"; S.x = "pace"; S.y = "proj_p"; go({tab:"explore", game:null}); };
+  $("#main").querySelector(".pjtab").onclick = e => { const tr = e.target.closest("[data-pj]"); if (!tr) return; state.fup = tr.dataset.pj;
+    $("#main").querySelectorAll(".pjr").forEach(x => x.classList.toggle("sel", x === tr)); const sl = rows.find(r => r.id === state.fup);
+    $("#pjcard").innerHTML = `<h4>${t("pj_card",{n:esc(sl.p.name)})}</h4>${pjCard(sl.id, true)}`; lgCount($("#pjcard"), 700, 0);
+    if (innerWidth < 900) $("#pjcard").scrollIntoView({behavior:"smooth", block:"start"}); };
 }
 // what's at stake in one game: playoff chance now, if they win, if they lose
 // a team's goals vs expected goals this season (all situations), with the same luck test as lines and pairs

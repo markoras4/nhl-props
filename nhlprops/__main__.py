@@ -816,6 +816,14 @@ def main(argv=None):
                 print("Futures odds unavailable:", e)
         except Exception as e:  # never break the build
             print("Season simulation skipped:", e)
+        try:   # every skater's season simulated: ranges, milestones, trophy chances (Futures, Explorer, profiles)
+            from .proj import project
+            tgp = {t: v.get("gp", 0) for t, v in ((slate.get("futures") or {}).get("teams") or {}).items()}
+            if tgp:
+                slate["proj"] = project(slate["players"], tgp)
+                print(f"Player projections: {len(slate['proj'])} skaters")
+        except Exception as e:  # never break the build
+            print("Player projections skipped:", e)
     if not args.demo:
         try:   # three seasons of game-by-game history per player (loaded by the site on demand)
             from .history import build as build_history
