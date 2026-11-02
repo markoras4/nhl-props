@@ -1,7 +1,32 @@
 {
- "2026-11-01-wpg-car": ["Sebastian Aho Hurricanes", "Andrei Svechnikov Hurricanes", "Kyle Connor Jets", "Mark Scheifele Jets", "Carolina Hurricanes Winnipeg Jets"],
- "2026-11-01-min-wsh": ["Kirill Kaprizov Wild", "Alex Ovechkin Capitals", "Matt Boldy Wild", "Tom Wilson Capitals", "Minnesota Wild Washington Capitals"],
- "2026-11-01-uta-phi": ["Clayton Keller", "Logan Cooley", "Dylan Guenther", "Matvei Michkov Flyers", "Trevor Zegras Flyers", "Philadelphia Flyers Wells Fargo Center"],
- "2026-11-01-edm-nyr": ["Connor McDavid Oilers", "Leon Draisaitl Oilers", "Mika Zibanejad Rangers", "Adam Fox Rangers", "Edmonton Oilers New York Rangers"],
- "2026-11-01-ott-ana": ["Tim Stutzle Senators", "Brady Tkachuk Senators", "Leo Carlsson Ducks", "Cutter Gauthier Ducks", "Anaheim Ducks Honda Center"]
+ "2026-11-02-vgk-bos": [
+  "David Pastrnak Bruins",
+  "Jeremy Swayman Bruins",
+  "Jack Eichel Golden Knights",
+  "Mark Stone Golden Knights",
+  "Mitch Marner Golden Knights",
+  "Boston Bruins Vegas Golden Knights"
+ ],
+ "2026-11-02-det-fla": [
+  "Matthew Tkachuk Panthers",
+  "Sam Reinhart Panthers",
+  "Lucas Raymond Red Wings",
+  "Alex DeBrincat Red Wings",
+  "Moritz Seider Red Wings",
+  "Florida Panthers Detroit Red Wings"
+ ],
+ "2026-11-02-col-chi": [
+  "Nathan MacKinnon Avalanche",
+  "Cale Makar Avalanche",
+  "Connor Bedard Blackhawks",
+  "Patrick Kane Blackhawks",
+  "Colorado Avalanche Chicago Blackhawks"
+ ],
+ "2026-11-02-cgy-sjs": [
+  "Macklin Celebrini Sharks",
+  "Will Smith Sharks",
+  "Dustin Wolf Flames",
+  "Mikael Backlund Flames",
+  "Calgary Flames San Jose Sharks"
+ ]
 }
