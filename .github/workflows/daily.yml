@@ -11,7 +11,7 @@ on:
   # pre-game checks + goalie watch come from Supabase pg_cron (every 10-15 min, 14:00-08:30 Stockholm), because
   # GitHub's own schedule delays or skips runs on busy days
   repository_dispatch:       # external ticker (Supabase pg_cron): pre-game check + goalie watch
-    types: [pregame]
+    types: [pregame, stx]   # stx: new Stoiximan prices pushed from the browser script -> full build
 
 permissions:
   contents: write
@@ -38,6 +38,7 @@ jobs:
         env:
           SCHED: ${{ github.event.schedule }}
         run: |
+          if [ "${{ github.event.action }}" = "stx" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then python -m nhlprops pregame; exit 0; fi
           case "$SCHED" in
             "25,55 "*|"15,45 "*) python -m nhlprops pregame ;;
@@ -107,7 +108,7 @@ jobs:
         run: |
           git config user.name "nhl-props-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/public data/bestpicks data/ledger data/last-build.log || true
+          git add data/history data/frozen data/lineups data/odds_open data/logos data/shots data/public data/bestpicks data/ledger data/manual_odds data/last-build.log || true
           [ -f data/pregame.json ] && git add data/pregame.json || true
           [ -f data/goalie_watch.json ] && git add data/goalie_watch.json || true
           git diff --cached --quiet || git commit -m "Predictions $(date -u +%F)" && git push || true

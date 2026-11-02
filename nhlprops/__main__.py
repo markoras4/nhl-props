@@ -752,6 +752,12 @@ def main(argv=None):
             merge_second(slate["odds"], fetch_pinnacle(src, slate["games"], raw["skaters"]))
         except Exception as e:
             print("Sharp-book odds unavailable:", e)
+        if not args.demo:
+            try:   # newest Stoiximan prices pushed from the owner's browser (written as a manual-odds file)
+                from .stx import pull as stx_pull
+                stx_pull(data_dir, slate["games"], slate["players"])
+            except Exception as e:  # never break the build
+                print("Stoiximan sync skipped:", e)
         try:   # prices copied by hand from another sportsbook fill the markets the feeds lack
             from .odds import merge_manual
             merge_manual(slate["odds"], data_dir, slate["games"])
