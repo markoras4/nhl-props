@@ -63,6 +63,12 @@ def project(players: dict, team_gp: dict, season_games: int = 82, seed: int = 7)
         lead = (M == top)
         return (lead / lead.sum(axis=0)).mean(axis=1)
     ar, rr, am = share_lead(P), share_lead(G), share_lead(A)
+    # award stand-ins: most points among rookies (Calder) and among defencemen (Norris), same simulated seasons
+    sub_lead = {}
+    for key, mask in (("rl", np.array([r[8] for r in rows])), ("dl", np.array([r[1].get("posg") == "D" for r in rows]))):
+        if mask.sum() >= 2:
+            idx = np.flatnonzero(mask)
+            sub_lead[key] = dict(zip(idx.tolist(), share_lead(P[idx]).tolist()))
     pct = lambda x: [int(np.percentile(x, 10)), int(round(float(np.median(x)))), int(np.percentile(x, 90))]
     for j, (pid, p, g0, a0, gp, left, lg, la, rookie) in enumerate(rows):
         g, a, pt = G[j], A[j], P[j]
@@ -76,5 +82,63 @@ def project(players: dict, team_gp: dict, season_games: int = 82, seed: int = 7)
                "h": [int(round(x / hm * 99)) for x in h], "h0": lo, "hw": width}
         if rookie:
             rec["rk"] = 1
+        for key, d in sub_lead.items():
+            if j in d:
+                rec[key] = round(float(d[j]), 4)
         out[pid] = rec
+    return out
+
+
+# ---- goalies: saved goals above expected (GSAx) to the end of the season, for the Vezina view
+G_SD = 0.035      # uncertainty in a goalie's true goals-against / expected-goals ratio
+G_PRIOR = 10      # games of his three-season shot-quality-faced rate blended into this season's
+VEZ_MIN_GP = 40   # a goalie needs a real workload to be a Vezina candidate
+
+
+def project_goalies(goalies: dict, team_gp: dict, season_games: int = 82, seed: int = 9) -> dict:
+    """Per goalie: final GSAx [10th, median, 90th], final games, and the chance of finishing first in GSAx among
+    goalies with 40+ games (a stand-in for the Vezina, which general managers vote on)."""
+    rng = np.random.default_rng(seed)
+    by_team: dict[str, list] = {}
+    for gid, g in (goalies or {}).items():
+        if g.get("team") and g.get("raw_ratio") is not None:
+            by_team.setdefault(g["team"], []).append((str(gid), g))
+    rows = []
+    for tm, gs in by_team.items():
+        T = int(team_gp.get(tm, 0))
+        left = max(0, season_games - T)
+        # share of the team's remaining starts: this season's split, pulled toward a 60/40 starter/backup split
+        raw = [((g.get("cur") or {}).get("gp") or 0) for _, g in gs]
+        order = sorted(range(len(gs)), key=lambda i: -raw[i])
+        prior = [0.0] * len(gs)
+        for rank, i in enumerate(order[:2]):
+            prior[i] = 0.6 if rank == 0 else 0.4
+        sh = [(raw[i] + 8 * prior[i]) / (T + 8) if T + 8 else prior[i] for i in range(len(gs))]
+        tot = sum(sh) or 1
+        for i, (gid, g) in enumerate(gs):
+            cur, l3 = g.get("cur") or {}, g.get("last3") or {}
+            l3pg = (l3.get("xga") or 0) / l3["gp"] if l3.get("gp") else 2.9
+            gp0 = int(cur.get("gp") or 0)
+            xpg = ((cur.get("xga") or 0) + G_PRIOR * l3pg) / (gp0 + G_PRIOR)
+            rows.append((gid, g, gp0, float(cur.get("gsax") or 0), left, sh[i] / tot, xpg, float(g["raw_ratio"])))
+    if not rows:
+        return {}
+    n = len(rows)
+    S = np.zeros((n, SIMS)); GP = np.zeros((n, SIMS), np.int32)
+    for j, (_, g, gp0, gs0, left, share, xpg, ratio) in enumerate(rows):
+        share = float(np.clip(share, 0.01, 0.95))
+        sh = rng.beta(share * 8, (1 - share) * 8, SIMS)
+        starts = rng.binomial(left, sh) if left else np.zeros(SIMS, int)
+        xga = starts * xpg
+        r = np.clip(rng.normal(ratio, G_SD, SIMS), 0.75, 1.3)
+        S[j] = gs0 + xga - rng.poisson(xga * r)
+        GP[j] = gp0 + starts
+    elig = np.where(GP >= VEZ_MIN_GP, S, -1e9)
+    top = elig.max(axis=0)
+    lead = (elig == top) & (top > -1e9)
+    vz = (lead / np.maximum(1, lead.sum(axis=0))).mean(axis=1)
+    out = {}
+    for j, (gid, g, gp0, gs0, left, share, xpg, ratio) in enumerate(rows):
+        out[gid] = {"gsax": [round(float(np.percentile(S[j], q)), 1) for q in (10, 50, 90)], "gp": int(np.median(GP[j])),
+                    "gp0": gp0, "vz": round(float(vz[j]), 4), "q": round(float((GP[j] >= VEZ_MIN_GP).mean()), 3)}
     return out

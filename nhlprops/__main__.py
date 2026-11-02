@@ -822,8 +822,19 @@ def main(argv=None):
             if tgp:
                 slate["proj"] = project(slate["players"], tgp)
                 print(f"Player projections: {len(slate['proj'])} skaters")
+                from .proj import project_goalies
+                slate["gproj"] = project_goalies(slate.get("goalies") or {}, tgp)
+                print(f"Goalie projections: {len(slate['gproj'])} goalies")
         except Exception as e:  # never break the build
             print("Player projections skipped:", e)
+        try:   # season-award prices (Stoiximan), shown against the model's chances in Futures -> Awards
+            from .stx import awards as stx_awards
+            aw = stx_awards(data_dir, slate["players"], slate.get("goalies"))
+            if aw:
+                slate["awards"] = aw
+                print(f"Award prices: {', '.join(f'{k} {len(v)}' for k, v in aw['m'].items())}")
+        except Exception as e:  # never break the build
+            print("Award prices skipped:", e)
     if not args.demo:
         try:   # three seasons of game-by-game history per player (loaded by the site on demand)
             from .history import build as build_history

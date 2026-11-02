@@ -1,14 +1,15 @@
 // ==UserScript==
 // @name         NHL Props Lab · Stoiximan sync
 // @namespace    nhl-props-lab
-// @version      1.0
-// @description  Reads Stoiximan's NHL prices on a schedule and sends them to NHL Props Lab (first and closing prices for the Triage record).
+// @version      1.1
+// @description  Reads Stoiximan's NHL prices on a schedule and sends them to NHL Props Lab (first and closing prices for the Triage record, plus the season-award prices).
 // @match        https://www.stoiximan.gr/*
 // @run-at       document-idle
 // @grant        none
 // ==/UserScript==
 /* Schedule: every hour; every 15 min in the 2 hours before the first puck drop; and once ~12 min before each game
    (the closing price, just before the site's lock at 5 min). Only one Stoiximan tab does the work.
+   Season awards (Hart, Norris, Rocket Richard, Vezina, Calder, Jack Adams) are read every 3 hours with the regular check.
    Click the badge (bottom left) to run a check now. Keep this tab open (pinning it is easiest). */
 (function () {
   "use strict";
@@ -33,7 +34,7 @@
   async function events() {
     const st = await state(LEAGUE); if (!st) throw new Error("league page not readable");
     const out = new Map(); const walk = (o, d) => { if (!o || typeof o !== "object" || d > 14) return;
-      if (typeof o.url === "string" && o.url.startsWith("/apodoseis/") && o.startTime) out.set(o.url, +o.startTime); for (const k in o) walk(o[k], d + 1); };
+      if (typeof o.url === "string" && o.url.startsWith("/apodoseis/") && o.startTime && !/vraveia|awards/i.test(o.url)) out.set(o.url, +o.startTime); for (const k in o) walk(o[k], d + 1); };
     walk(st, 0); return [...out].map(([url, start]) => ({ url, start }));
   }
 
@@ -70,6 +71,22 @@
     return { key: base, start: ev.start, home, markets: mk, totals: tot, players: P };
   }
 
+  // ---- season awards: the awards event linked from the league page's awards tab
+  async function awards() {
+    let url = LS.get("nhlsync_awurl", null);
+    try { const st = await state(LEAGUE + "?bt=awards"); let found = null;
+      const walk = (o, d) => { if (found || !o || typeof o !== "object" || d > 14) return;
+        if (typeof o.url === "string" && /^\/apodoseis\/vraveia/.test(o.url)) { found = o.url; return; } for (const k in o) walk(o[k], d + 1); };
+      walk(st, 0); if (found) { url = found; LS.set("nhlsync_awurl", url); } } catch (e) {}
+    if (!url) return null;
+    const st = await state(url); if (!st) return null; const out = {};
+    for (const m of markets(st)) { if (!Array.isArray(m.selections) || !m.selections.length) continue;
+      const seen = new Set(), rows = [];
+      for (const x of m.selections) { const n = clean(x.name), pr = +x.price; if (n && pr > 1 && !seen.has(n)) { seen.add(n); rows.push([n, pr]); } }
+      if (rows.length) out[m.name] = rows; }
+    return Object.keys(out).length ? out : null;
+  }
+
   // ---- one check
   let busy = false;
   async function run(kind) {
@@ -77,11 +94,13 @@
     try {
       const now = Date.now(); const evs = (await events()).filter(e => e.start > now - 10 * 60e3 && e.start < now + 30 * 3600e3);
       const games = []; for (const e of evs) { try { games.push(await readGame(e)); } catch (err) { console.warn("[nhl-sync]", e.url, err); } }
-      if (!games.length) { LS.set("nhlsync_last", { ts: Date.now(), ok: true, kind, games: 0, prices: 0, note: "no games listed" }); badge(); return; }
-      const r = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "x-stx-token": TOKEN }, body: JSON.stringify({ kind, games }) });
+      let aw = null; const awLast = LS.get("nhlsync_awts", 0);
+      if (kind === "manual" || Date.now() - awLast > 3 * 3600e3) { try { aw = await awards(); if (aw) LS.set("nhlsync_awts", Date.now()); } catch (err) { console.warn("[nhl-sync] awards", err); } }
+      if (!games.length && !aw) { LS.set("nhlsync_last", { ts: Date.now(), ok: true, kind, games: 0, prices: 0, note: "no games listed" }); badge(); return; }
+      const r = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "x-stx-token": TOKEN }, body: JSON.stringify({ kind, games, awards: aw }) });
       const js = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(js.error || ("HTTP " + r.status));
-      LS.set("nhlsync_last", { ts: Date.now(), ok: true, kind, games: js.games, prices: js.prices });
+      LS.set("nhlsync_last", { ts: Date.now(), ok: true, kind, games: js.games, prices: js.prices, awards: js.awards || LS.get("nhlsync_last", {}).awards || 0 });
     } catch (err) { LS.set("nhlsync_last", { ts: Date.now(), ok: false, kind, err: String(err && err.message || err) }); console.warn("[nhl-sync]", err); }
     finally { busy = false; badge(); }
   }
@@ -110,7 +129,7 @@
       el.onclick = () => run("manual"); document.body.appendChild(el); }
     const L = LS.get("nhlsync_last", null), t = d => new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     let dot = "#8796a8", txt = msg || "waiting for the first check";
-    if (!msg && L) { dot = L.ok ? "#3ddc97" : "#ff6b6b"; txt = L.ok ? `last check ${t(L.ts)} · ${L.games} games · ${L.prices} prices` : `last check ${t(L.ts)} failed: ${L.err}`; }
+    if (!msg && L) { dot = L.ok ? "#3ddc97" : "#ff6b6b"; txt = L.ok ? `last check ${t(L.ts)} · ${L.games} games · ${L.prices} prices${L.awards ? ` · ${L.awards} award prices` : ""}` : `last check ${t(L.ts)} failed: ${L.err}`; }
     if (mode === "run") dot = "#ffb547";
     el.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${dot};margin-right:7px"></span>NHL Props sync · ${txt}`;
   }

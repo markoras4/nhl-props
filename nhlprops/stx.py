@@ -17,7 +17,8 @@ from pathlib import Path
 
 URL = "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/stx-sync"
 # Stoiximan writes a few names in Greek letters
-ALIAS = {"Ράσμους Άντερσον": "Rasmus Andersson", "Κόνορ Μέρφι": "Connor Murphy"}
+ALIAS = {"Ράσμους Άντερσον": "Rasmus Andersson", "Κόνορ Μέρφι": "Connor Murphy", "Tim Stuetzle": "Tim Stützle",
+         "Ukko-Pekka Luukonen": "Ukko-Pekka Luukkonen"}
 LIVE = "00-stx-live.json"
 
 
@@ -92,8 +93,70 @@ def convert(feed: dict, games: list[dict], players: dict) -> tuple[dict, list]:
     return out, miss
 
 
+AWARDS_FILE = "awards/stx.json"
+AWARD_KEYS = (("hart", "hart"), ("norris", "norris"), ("rocket", "rocket"), ("richard", "rocket"), ("vezina", "vezina"),
+              ("calder", "calder"), ("adams", "adams"), ("art ross", "artross"), ("selke", "selke"), ("ted lindsay", "lindsay"))
+
+
+def _save_awards(data_dir: Path, feed: dict, log=print) -> None:
+    """keep the newest award prices on disk, so builds without a fresh push still show them"""
+    aw = feed.get("awards") if feed else None
+    if not aw:
+        return
+    f = Path(data_dir) / AWARDS_FILE
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps({"fetched": feed.get("awards_fetched"), "markets": aw}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    log(f"  Stoiximan awards: {', '.join(f'{k} {len(v)}' for k, v in aw.items())}")
+
+
+def awards(data_dir: Path, players: dict, goalies: dict | None, log=print) -> dict | None:
+    """saved award prices -> {fetched, book, m: {key: [[name, odds, pid or None, fair chance], ...]}}
+    fair chance = 1/odds scaled so the market adds up to 100% (outright books carry a large margin)"""
+    f = Path(data_dir) / AWARDS_FILE
+    if not f.exists():
+        return None
+    try:
+        raw = json.loads(f.read_text(encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001
+        log(f"  awards file unreadable: {e}")
+        return None
+    idx: dict[str, list] = {}
+    for pool in (players or {}, goalies or {}):
+        for pid, p in pool.items():
+            idx.setdefault(_norm(p.get("name", "")), []).append(str(pid))
+    def games(pid):   # two players with one name (Elias Pettersson): the award candidate is the established one
+        p = (players or {}).get(pid) or (players or {}).get(int(pid)) if str(pid).isdigit() else None
+        return (((p or {}).get("windows") or {}).get("career") or {}).get("gp") or 0
+    for k, l in idx.items():
+        if len(l) > 1:
+            l.sort(key=games, reverse=True)
+            if games(l[0]) > 3 * max(1, games(l[1])):
+                idx[k] = l[:1]
+    out, miss = {}, []
+    for name, rows in (raw.get("markets") or {}).items():
+        key = next((k for w, k in AWARD_KEYS if w in name.lower()), None)
+        if not key or not rows:
+            continue
+        tot = sum(1 / o for _, o in rows if o and o > 1) or 1
+        lst = []
+        for nm, o in rows:
+            nm2 = ALIAS.get(nm, nm)
+            ids = idx.get(_norm(nm2)) if key != "adams" else None
+            if key != "adams" and (not ids or len(ids) != 1):
+                last, first = _norm(nm2.split()[-1]) if nm2.split() else "", _norm(nm2)[:1]
+                ids = [i for n2, l in idx.items() for i in l if last and n2.endswith(last) and n2[:1] == first] or ids
+                if not ids or len(ids) != 1:
+                    miss.append(nm2)
+            lst.append([nm2, o, ids[0] if ids and len(ids) == 1 else None, round(1 / o / tot, 4)])
+        out[key] = lst
+    if miss:
+        log(f"  awards: no player match for {', '.join(sorted(set(miss))[:10])}")
+    return {"fetched": raw.get("fetched"), "book": "Stoiximan", "m": out} if out else None
+
+
 def pull(data_dir: Path, games: list[dict], players: dict, log=print) -> int:
     feed = _fetch(log)
+    _save_awards(data_dir, feed, log)
     if not feed or not feed.get("games"):
         return 0
     out, miss = convert(feed, games, players)
