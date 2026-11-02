@@ -281,9 +281,9 @@ td.h{text-align:center;padding:4px}
 .chartwrap .crt,.chartwrap .cs{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
 .chartwrap .cb{fill:rgba(var(--heat),.55)}
 .chartwrap .cb.partial{fill:rgba(var(--heat),.25);stroke:rgba(var(--heat),.8);stroke-dasharray:4 3}
-.chartwrap .cl{fill:none;stroke:url(#cgrad);stroke-width:2.6;stroke-linecap:round}
+.chartwrap .cl{fill:none;stroke:url(#cgrad);stroke-width:1.9;stroke-linecap:round}
 .chartwrap .clh{fill:none;stroke:var(--accent2);stroke-width:10;stroke-opacity:.12;stroke-linecap:round}
-.chartwrap .cd{fill:var(--panel);stroke:var(--accent2);stroke-width:2.4}
+.chartwrap .cd{fill:var(--panel);stroke:var(--accent2);stroke-width:1.9}
 .chartwrap .cdh{fill:var(--accent2);fill-opacity:.16}
 .chartwrap .cdc{fill:var(--accent2)}
 .chartwrap .cb.small{fill:rgba(var(--heat),.22)}
@@ -362,12 +362,12 @@ td.h{text-align:center;padding:4px}
 @media (prefers-reduced-motion:reduce){.l10anim .l10bar,.l10anim .l10lines line,.l10pop{animation:none}}
 .l10hi{fill:var(--hit)}
 .l10lo{fill:var(--bad);opacity:.85}
-.l10avg{stroke:var(--text);stroke-width:2;stroke-dasharray:1 6;stroke-linecap:round;opacity:.75}
-.l10exp{stroke:var(--accent2);stroke-width:2;opacity:.95;filter:url(#l10glow)}
+.l10avg{stroke:var(--text);stroke-width:1.6;stroke-dasharray:1 6;stroke-linecap:round;opacity:.75}
+.l10exp{stroke:var(--accent2);stroke-width:1.6;opacity:.95;filter:url(#l10glow)}
 .l10avg-tag{fill:var(--panel2);stroke:var(--line)}.l10avg-txt{fill:var(--text);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
 .l10exp-tag{fill:color-mix(in srgb,var(--accent2) 22%,var(--panel))}.l10exp-txt{fill:var(--accent2);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
 .l10seg button{position:relative}
-.l10line{stroke:var(--warn);stroke-width:2;stroke-dasharray:8 5}
+.l10line{stroke:var(--warn);stroke-width:1.6;stroke-dasharray:8 5}
 .l10line-tag{fill:color-mix(in srgb,var(--warn) 22%,var(--panel))}.l10line-txt{fill:var(--warn);font-size:10.5px;font-weight:700;font-family:var(--f-disp)}
 .l10leg i.ll{width:18px;height:0;border-top:2px dashed var(--warn)}
 .l10lines-pick{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px}
@@ -999,10 +999,10 @@ body.has-cmp main{padding-bottom:110px}
 .rkchart .rkb.pos{fill:color-mix(in srgb,var(--hit) 78%,transparent);transform-origin:50% 100%}
 .rkchart .rkb.neg{fill:color-mix(in srgb,var(--bad) 72%,transparent);transform-origin:50% 0%}
 @keyframes rkbar{from{transform:scaleY(0)}}
-.rkchart .cum{fill:none;stroke:var(--line2);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:rkdraw 1.4s .25s cubic-bezier(.6,0,.2,1) forwards}
+.rkchart .cum{fill:none;stroke:var(--line2);stroke-width:1.9;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:rkdraw 1.4s .25s cubic-bezier(.6,0,.2,1) forwards}
 @keyframes rkdraw{to{stroke-dashoffset:0}}
 .rkchart .area{opacity:0;animation:rkfade .9s 1s ease forwards}@keyframes rkfade{to{opacity:1}}
-.rkchart .end{fill:var(--bg);stroke:var(--line2);stroke-width:2.5;opacity:0;animation:rkfade .4s 1.55s ease forwards}
+.rkchart .end{fill:var(--bg);stroke:var(--line2);stroke-width:2;opacity:0;animation:rkfade .4s 1.55s ease forwards}
 .rkchart .hit{fill:transparent;cursor:crosshair}.rkchart .hov{stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:1;pointer-events:none;transition:opacity .15s}
 .rktip{position:absolute;top:6px;transform:translateX(-50%);background:color-mix(in srgb,var(--panel2) 92%,transparent);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:12px;display:flex;flex-direction:column;gap:2px;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .rktip i{font-style:normal;font-weight:700}.rktip[hidden]{display:none}
@@ -2868,7 +2868,7 @@ function barChart(rows, o){
     for (let i=1;i<Pt.length;i++){ const [x1,y1]=Pt[i-1],[x2,y2]=Pt[i], cx=(x1+x2)/2; d+=` C${cx},${y1} ${cx},${y2} ${x2},${y2}`; } return d; };
   const glowLine = (Pt, cls) => Pt.length>1 ? `<path d="${smooth(Pt)}" class="clh ${cls}"/><path d="${smooth(Pt)}" class="cl ${cls}" filter="url(#cglow)"/>` : "";
   const glowDot = (x,y,cls,tt="") => `<circle cx="${x}" cy="${y}" r="9" class="cdh ${cls}"/><circle cx="${x}" cy="${y}" r="4.5" class="cd ${cls}">${tt}</circle><circle cx="${x}" cy="${y}" r="1.8" class="cdc"/>`;
-  const defs = `<defs><filter id="cglow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  const defs = `<defs><filter id="cglow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="1.7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="cgrad" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color:var(--accent2)"/><stop offset="1" style="stop-color:var(--line2)"/></linearGradient></defs>`;
   let line = "", dots = "";
   if (o.line2){
@@ -3162,7 +3162,7 @@ function l10Chart(pr, g){
   const anim = state.l10anim ? " l10anim" : ""; state.l10anim = false;
   return `<h4>${t("l10_chart")} <span class="l10hd"><span class="seg l10seg">${btn("s",t("h_s"))}${btn("g",t("h_g"))}${btn("a",t("h_a"))}${btn("p",t("l10_p"))}${hbOk?btn("h",t("l10_h"))+btn("b",t("l10_b")):""}</span>
     <button type="button" class="l10fbtn ${state.l10pop?"on":""}" data-l10f aria-expanded="${!!state.l10pop}" title="${esc(t("l10_games"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>${nLab}</button>${pop}</span></h4>
-    <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${nxBar}${linesG}</svg>
+    <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${nxBar}${linesG}</svg>
     <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""} ${line===v && SEG_POP==="ln:"+(v??"")?"pop":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
     <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
       ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b> · <b>${hitN}/${games.length}</b> ${t("l10_over_n")}</span>`:""}
@@ -4339,7 +4339,7 @@ function rkProfitChart(rows){
   const hits = pts.map((p,i)=>`<rect class="hit" x="${L+step*i}" y="${T}" width="${step}" height="${ih}" data-rkt="${esc(JSON.stringify({d:p.d,u:p.u,c:p.cum,n:p.n,w:p.w}))}"/>`).join("");
   return `<div class="rkchart"><svg class="${narrow?"nar":""}" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(t("rk_chart"))}">
     <defs><linearGradient id="rkArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${up?"var(--line2)":"var(--bad)"}" stop-opacity=".32"/><stop offset="1" stop-color="${up?"var(--line2)":"var(--bad)"}" stop-opacity="0"/></linearGradient>
-      <filter id="rkGlow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <filter id="rkGlow" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
     <g class="grid">${grid}</g>${bars}
     <path class="area" d="${area}" fill="url(#rkArea)"/>
     <path class="cum" d="${dpath}" pathLength="1" filter="url(#rkGlow)"/>
