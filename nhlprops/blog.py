@@ -22,13 +22,14 @@ CSS = r"""
 :root{--bg:#0a0e13;--bg2:#0d131a;--panel:#111821;--panel2:#17202b;--line:#22303f;--text:#e7eef6;--mute:#8796a8;--accent:#3ddc97;--gold:#e9c46a;--glow:61,220,151;color-scheme:dark;
 --f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--f-disp:"Oxanium","Exo 2",sans-serif;--f-read:"Source Serif 4",Georgia,"Times New Roman",serif}
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f3f5f8;--bg2:#eaeef3;--panel:#fff;--panel2:#eef2f6;--line:#dbe2ea;--text:#111821;--mute:#5a697b;--accent:#0d9a60;--gold:#b8860b;--glow:13,154,96;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f3f5f8;--bg2:#eaeef3;--panel:#fff;--panel2:#eef2f6;--line:#dbe2ea;--text:#111821;--mute:#5a697b;--accent:#0d9a60;--gold:#b8860b;--glow:13,154,96;color-scheme:light}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--f-ui)}
 a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 .wrap{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left))}
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:center;gap:18px;height:60px}.brand{font:800 18px var(--f-disp);letter-spacing:.04em;text-transform:uppercase}.brand b{color:var(--accent)}
 .top nav{display:flex;gap:4px;margin-left:auto}.top nav a{padding:7px 12px;border-radius:9px;font-weight:600;font-size:14px;color:var(--mute)}.top nav a:hover,.top nav a.on{color:var(--text);background:var(--panel2)}
-.cta{background:var(--accent);color:#06210f!important;font-weight:700}
+.cta{background:var(--accent);color:var(--accent-ink,#06210f)!important;font-weight:700}
 /* index */
 .bh{padding:46px 0 18px}.kick{font:700 12px var(--f-disp);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
 .bh h1{font:800 clamp(34px,5vw,56px)/1.05 var(--f-disp);margin:8px 0 10px;letter-spacing:.01em}.bh p{color:var(--mute);max-width:640px;margin:0;font-size:17px}
@@ -81,13 +82,15 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--mute);fo
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 """
 
+THEME_JS = (Path(__file__).parent / "theme_head.html").read_text(encoding="utf-8")
+
 HEAD = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title><meta name="description" content="{desc}"><meta name="theme-color" content="#0a0e13">
 <meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:type" content="{ogtype}">{ogimg}
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<style>{css}</style></head><body>
+<style>{css}</style>{themejs}</head><body>
 <header><div class="wrap top"><a class="brand" href="/">NHL Props <b>Lab</b></a><nav><a href="/blog" class="{on_blog}">Blog</a><a href="/app">Tonight's games</a><a class="cta" href="/app">Open the app</a></nav></div></header>"""
 
 FOOT = """<footer><div class="wrap">18+ · Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a>, <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a>. NHL Props Lab is an analysis tool and does not take bets. · <a href="/legal.html#terms">Terms</a> · <a href="/legal.html#privacy">Privacy</a></div></footer>
@@ -160,7 +163,7 @@ def build(log=print) -> int:
         rg = ('<div class="rg"><b>18+.</b> Betting involves risk and losing runs are normal, even with an edge. Only bet what you can afford to lose. '
               'Need help? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>.</div>') if m["section"] == "betting" else ""
         others = [o for o in ps if o["slug"] != m["slug"]][:3]
-        page = HEAD.format(title=html.escape(m["title"]) + " · NHL Props Lab", desc=html.escape(m["deck"]), css=CSS, on_blog="on", ogtype="article",
+        page = HEAD.format(themejs=THEME_JS, title=html.escape(m["title"]) + " · NHL Props Lab", desc=html.escape(m["deck"]), css=CSS, on_blog="on", ogtype="article",
                            ogimg=f'<meta property="og:image" content="{m["hero_src"]}">')
         page += (f'<main><section class="hero"><img src="{m["hero_src"]}" alt="{html.escape(m["hero"]["alt"])}"><div class="wrap in">'
                  f'<span class="tag {m["section"]}">{SECTIONS[m["section"]]}</span><h1>{html.escape(m["title"])}</h1><p class="deck">{html.escape(m["deck"])}</p>'
@@ -169,7 +172,7 @@ def build(log=print) -> int:
                  + (f'<section class="more"><h3>More from the blog</h3><div class="grid">{"".join(card(o) for o in others)}</div></section>' if others else "")
                  + '</main>' + FOOT)
         (OUT / f'{m["slug"]}.html').write_text(page, encoding="utf-8")
-    idx = HEAD.format(title="Blog · NHL Props Lab", desc="Legendary nights, rivalries and characters from NHL history, and the Betting Lab: how to think about betting.",
+    idx = HEAD.format(themejs=THEME_JS, title="Blog · NHL Props Lab", desc="Legendary nights, rivalries and characters from NHL history, and the Betting Lab: how to think about betting.",
                       css=CSS, on_blog="on", ogtype="website", ogimg=(f'<meta property="og:image" content="{ps[0]["hero_src"]}">' if ps else ""))
     idx += ('<main class="wrap"><section class="bh"><span class="kick">The blog</span><h1>Stories from the ice</h1>'
             '<p>Legendary nights, bitter rivalries, records and characters from hockey\'s past, and the Betting Lab, where we take apart how to think about a bet.</p>'
