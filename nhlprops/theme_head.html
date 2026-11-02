@@ -66,17 +66,4 @@
   addEventListener("resize", close);
 })();
 
-// tour video: stands still on its poster until the visitor presses play (big button, the video itself, or "Watch the tour")
-(function(){
-  const v = document.getElementById("tourvid"), btn = document.getElementById("tourplay"); if (!v) return;
-  let loaded = false;
-  const load = () => { if (loaded) return; loaded = true;
-    v.src = (window.innerWidth * (window.devicePixelRatio || 1)) > 1500 ? v.dataset.src1080 : v.dataset.src720; };
-  const start = (fromStart) => { load(); v.controls = true; btn.hidden = true; if (fromStart) { try { v.currentTime = 0; } catch(e){} } v.play().catch(() => {}); };
-  btn.addEventListener("click", () => start(false));
-  v.addEventListener("click", () => { if (!loaded) start(false); });
-  v.addEventListener("contextmenu", e => e.preventDefault());
-  v.addEventListener("ended", () => { v.controls = false; btn.hidden = false; try { v.currentTime = 0; } catch(e){} v.load(); loaded = true; });
-  document.querySelectorAll('a[href="#tour"]').forEach(a => a.addEventListener("click", () => setTimeout(() => start(true), 450)));
-})();
 </script>
