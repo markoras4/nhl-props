@@ -1,26 +1,25 @@
 Season 2026-2027. Fetching schedule from 2026-11-01 ...
-  47 upcoming games over 7 days
+  45 upcoming games over 6 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 723 skaters and 77 goalies (careers + game logs) ...
-Fetching 229 recent box scores (hits, blocks) ...
-News: 129 injuries, likely starters for 19 games (+18 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-11-01, updated 2026-11-01T20:27:03.964Z)
+Fetching 231 recent box scores (hits, blocks) ...
+News: 129 injuries, likely starters for 19 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-11-01, updated 2026-11-01T20:27:03.964Z)
 Shot maps: downloading play-by-play for 2 new games ...
-  shot maps: 229 games, 26143 attempts
-Model built: 47 games, 723 skaters (569 expected to play)
-Odds: bookmaker prices for 5 games, 176 players
-Odds: sharp-book prices for 1 games, 53 player markets
-  manual odds: 537 player prices added
-Public betting: splits for 5 games
-  season simulation: 10000 seasons, 1115 games left, top Cup: CAR 32%, COL 13%, MIN 10%
-Futures odds: Cup 32, conference 32, division 32, playoffs 26, points 26
+  shot maps: 231 games, 26354 attempts
+Model built: 45 games, 723 skaters (570 expected to play)
+Odds: bookmaker prices for 4 games, 142 players
+Odds: sharp-book prices for 0 games, 0 player markets
+Public betting: splits for 4 games
+  season simulation: 10000 seasons, 1113 games left, top Cup: CAR 32%, COL 13%, MIN 10%
+Futures odds: Cup 32, conference 32, division 32, playoffs 22, points 22
   history: MoneyPuck xG for 2026: 6,926 player-games
   history: 2 box scores for hits/blocks (2026)
   history: game-by-game files for 719 players (3 seasons)
   archive: 7 past dates published (2026-10-25, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31)
-Best picks record: 99 graded, 28 won, -3.00 units
-Triage ledger: S 292 bets +25.2u, L 1136 bets -46.7u, F 805 bets +99.0u
+Best picks record: 103 graded, 28 won, -7.00 units
+Triage ledger: S 307 bets +20.4u, L 1178 bets -45.0u, F 850 bets +77.3u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-01.html
