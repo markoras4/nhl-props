@@ -951,7 +951,7 @@ body.has-cmp main{padding-bottom:110px}
 .lgtot td{border-top:1px solid var(--line)}.cnt{font-variant-numeric:tabular-nums}.lgtab td,.lgtab th{white-space:nowrap}
 .lgcbox{overflow:hidden}.lgwrap{position:relative}
 .lgchart{width:100%;height:auto;display:block;overflow:visible}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-dasharray:3 4}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
-.lgl{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
+.lgl{fill:none;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
 @keyframes lgdraw{to{stroke-dashoffset:0px}}
 .lga{opacity:0;animation:lgfade 1s ease forwards;animation-delay:calc(.9s + var(--k)*.18s)}@keyframes lgfade{to{opacity:1}}
 .lgl.lg-S{stroke:var(--good)}.lgl.lg-L{stroke:#e3a33b}.lgl.lg-F{stroke:var(--bad)}
@@ -4486,11 +4486,11 @@ function lgChart(rows){
   const every = Math.ceil(days.length / (narrow ? 5 : 9));
   const xl = days.map((d,i) => (i % every === 0 || i === days.length-1) ? `<text x="${X(i)}" y="${H-8}" text-anchor="middle">${dayShort(d)}</text>` : "").join("");
   const defs = `<defs>${series.map(s => `<linearGradient id="lgg-${s.g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${LG_COL[s.g]}" stop-opacity=".22"/><stop offset="1" stop-color="${LG_COL[s.g]}" stop-opacity="0"/></linearGradient>`).join("")}
-    <filter id="lgglow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+    <filter id="lgglow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
   const path = s => s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("");
   const areas = series.map((s,k) => `<path class="lga" style="--k:${k}" fill="url(#lgg-${s.g})" d="${path(s)}L${X(days.length-1).toFixed(1)} ${Y(0).toFixed(1)}L${X(0).toFixed(1)} ${Y(0).toFixed(1)}Z"/>`).join("");
   const lines = series.map((s,k) => { const last = s.pts[s.pts.length-1];
-    return `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" filter="url(#lgglow)" d="${path(s)}"/><circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="4.5"/><text class="lgt lg-${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan data-cn="${last}" data-cf="u1" data-cd="${1350 + k*180}">${sgnU(last,1)}</tspan></text>`; }).join("");
+    return `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" filter="url(#lgglow)" d="${path(s)}"/><circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="3.8"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="3.8"/><text class="lgt lg-${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan data-cn="${last}" data-cf="u1" data-cd="${1350 + k*180}">${sgnU(last,1)}</tspan></text>`; }).join("");
   const hits = days.map((d,i) => `<rect class="lgh" x="${X(i) - iw/(days.length-1)/2}" y="${T}" width="${iw/(days.length-1)}" height="${ih}" data-i="${i}"/>`).join("");
   window.__lgc = {days, series};
   return `<div class="box lgcbox"><h4>${t("lg_chart")}</h4><div class="lgwrap"><svg viewBox="0 0 ${W} ${H}" class="lgchart">${defs}${grid}${xl}${areas}${lines}<line class="lghov" x1="0" x2="0" y1="${T}" y2="${T+ih}"/>${hits}</svg><div class="lgtip" hidden></div></div></div>`;
