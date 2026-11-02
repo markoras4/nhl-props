@@ -48,14 +48,19 @@ def frames(src, season, cfg, log=print):
         a = after[after.pid == pid]
         rows.append({"season": season, "pid": pid, "team": team, "posg": src_row.posg,
                      "g0": int(b.g.sum()), "a0": int(b.a.sum()), "gp0": len(b),
-                     "lg": float(src_row.lam_g), "la": float(src_row.lam_a), "left": int(team_games_left.get(team, 0)),
+                     "lg": float(src_row.lam_g), "la": float(src_row.lam_a), "left": int(team_games_left.get(team, 0)), "toi0": float(b.toi.mean()) if len(b) else 0.0,
                      "gp_after": len(a), "g_end": int(b.g.sum() + a.g.sum()), "a_end": int(b.a.sum() + a.a.sum())})
     log(f"  {season}: cut-off {cut.date()}, {len(rows)} skaters")
     return pd.DataFrame(rows)
 
 
-def sim(d: pd.DataFrame, K: float, av: float, rng, conc: float = 0) -> dict:
+def sim(d: pd.DataFrame, K: float, av: float, rng, conc: float = 0, slope: float = 0.0, ex: float = 0.0) -> dict:
     n = len(d)
+    if slope:      # regulars with big minutes miss fewer games: mean share rises with ice time
+        av = np.clip(av + slope * (d.toi0.values[:, None] - 16) / 6, 0.55, 0.95)
+    if ex:         # stretch the top end: rate x (rate / 0.5 points per game) ^ ex
+        f = ((d.lg + d.la).values / 0.5).clip(0.2, 3) ** ex
+        d = d.assign(lg=d.lg * f, la=d.la * f)
     share = rng.beta(av * conc, (1 - av) * conc, (n, N)) if conc else av
     games = rng.binomial(d.left.values[:, None], share, (n, N))
     mg = d.lg.values[:, None] if K > 1e8 else rng.gamma(K, d.lg.values[:, None] / K, (n, N))
@@ -84,16 +89,19 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     rep = {"seasons": seasons, "skaters": int(len(d)), "gp_share_actual": float((d.gp_after / d.left.clip(lower=1)).mean()), "grid": {}}
     sh = (d.gp_after / d.left.clip(lower=1)).clip(0, 1)
     rep["gp_share_pct"] = {q: float(sh.quantile(q)) for q in (0.1, 0.25, 0.5, 0.75, 0.9)}
-    for K in KS:
-        for av in AVAIL:
-            for c in CONC:
-                rep["grid"][f"K{K}|av{av}|c{c}"] = sim(d, K, av, rng, c)
     top = d[(d.g0 + d.a0) / d.gp0.clip(lower=1) >= 0.7].reset_index(drop=True)
-    best = sorted(rep["grid"].items(), key=lambda kv: abs(kv[1]["cover_p"] - 0.8) + abs(kv[1]["below_p"] - kv[1]["above_p"]))[:3]
-    rep["best"] = [k for k, _ in best]
-    rep["top_scorers"] = {}
-    for k in rep["best"]:
-        K_, av_, c_ = k.split("|"); rep["top_scorers"][k] = sim(top, float(K_[1:]), float(av_[2:]), rng, float(c_[1:]))
+    mid = d[((d.g0 + d.a0) / d.gp0.clip(lower=1)).between(0.4, 0.7)].reset_index(drop=True)
+    rep["top_scorers"] = {}; rep["mid"] = {}
+    for K in (10, 14):
+        for av in (0.78, 0.81):
+            for sl in (0.0, 0.04, 0.08):
+                for ex in (0.0, 0.1, 0.2):
+                    k = f"K{K}|av{av}|c1.5|sl{sl}|ex{ex}"
+                    rep["grid"][k] = sim(d, K, av, rng, 1.5, sl, ex)
+                    rep["top_scorers"][k] = sim(top, K, av, rng, 1.5, sl, ex)
+                    rep["mid"][k] = sim(mid, K, av, rng, 1.5, sl, ex)
+    score = lambda k: abs(rep["grid"][k]["cover_p"] - 0.8) + abs(rep["grid"][k]["bias_p"]) / 4 + abs(rep["top_scorers"][k]["bias_p"]) / 6 + abs(rep["mid"][k]["bias_p"]) / 5
+    rep["best"] = sorted(rep["grid"], key=score)[:5]
     (out_dir / "proj.json").write_text(json.dumps(rep, indent=1, default=float), encoding="utf-8")
     L = [f"# Player season projections: from ~14 team games in, {rep['skaters']} skater-seasons, {seasons}", "",
          f"Actual share of team games played after the cut-off: {rep['gp_share_actual']:.1%} (10/25/50/75/90%: " + " / ".join(f"{v:.0%}" for v in rep["gp_share_pct"].values()) + ")", "",
@@ -102,9 +110,10 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     for k, v in rep["grid"].items():
         L.append(f"| {k} | {v['cover_p']:.1%} | {v['cover_g']:.1%} | {v['below_p']:.1%} | {v['above_p']:.1%} | {v['bias_p']:+.1f} | {v['mae_p']:.1f} | "
                  f"{(v['p100']['pred'] or 0):.0%} / {(v['p100']['act'] or 0):.0%} ({v['p100']['n']}) | {(v['g30']['pred'] or 0):.0%} / {(v['g30']['act'] or 0):.0%} ({v['g30']['n']}) |")
-    L += ["", "Top scorers (0.7+ points per game at the cut-off):", ""]
-    for k, v in rep["top_scorers"].items():
-        L.append(f"- {k}: holds {v['cover_p']:.1%}, below {v['below_p']:.1%}, above {v['above_p']:.1%}, bias {v['bias_p']:+.1f}")
+    L += ["", "By group (all / 0.4-0.7 ppg / 0.7+ ppg): range holds, median bias", ""]
+    for k in rep["grid"]:
+        a, m_, t_ = rep["grid"][k], rep["mid"][k], rep["top_scorers"][k]
+        L.append(f"- {k}{' **best**' if k in rep['best'][:1] else ''}: all {a['cover_p']:.0%} {a['bias_p']:+.1f} · mid {m_['cover_p']:.0%} {m_['bias_p']:+.1f} · top {t_['cover_p']:.0%} {t_['bias_p']:+.1f} (below {t_['below_p']:.0%}, above {t_['above_p']:.0%})")
     md = "\n".join(L) + "\n"
     (out_dir / "proj.md").write_text(md, encoding="utf-8")
     log(md)
