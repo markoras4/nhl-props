@@ -17,8 +17,9 @@ import pandas as pd
 
 from .backtest import season_boxscores, prior_frames, predict
 
-KS = (15, 25, 40, 60, 100, 1e9)
-AVAIL = (0.85, 0.90, 0.93, 0.96)
+KS = (8, 12, 18, 25)
+AVAIL = (0.76, 0.80, 0.84)
+CONC = (1.5, 3, 6)   # how much the share of games played varies between players / seasons (Beta concentration)
 N = 6000
 
 
@@ -53,9 +54,10 @@ def frames(src, season, cfg, log=print):
     return pd.DataFrame(rows)
 
 
-def sim(d: pd.DataFrame, K: float, av: float, rng) -> dict:
+def sim(d: pd.DataFrame, K: float, av: float, rng, conc: float = 0) -> dict:
     n = len(d)
-    games = rng.binomial(d.left.values[:, None], av, (n, N))
+    share = rng.beta(av * conc, (1 - av) * conc, (n, N)) if conc else av
+    games = rng.binomial(d.left.values[:, None], share, (n, N))
     mg = d.lg.values[:, None] if K > 1e8 else rng.gamma(K, d.lg.values[:, None] / K, (n, N))
     ma = d.la.values[:, None] if K > 1e8 else rng.gamma(K, d.la.values[:, None] / K, (n, N))
     G = d.g0.values[:, None] + rng.poisson(mg * games)
@@ -80,14 +82,22 @@ def run(src, seasons, cfg, out_dir: Path, log=print) -> dict:
     d = d[(d.lg + d.la) > 0]
     rng = np.random.default_rng(11)
     rep = {"seasons": seasons, "skaters": int(len(d)), "gp_share_actual": float((d.gp_after / d.left.clip(lower=1)).mean()), "grid": {}}
+    sh = (d.gp_after / d.left.clip(lower=1)).clip(0, 1)
+    rep["gp_share_pct"] = {q: float(sh.quantile(q)) for q in (0.1, 0.25, 0.5, 0.75, 0.9)}
     for K in KS:
         for av in AVAIL:
-            rep["grid"][f"K{int(K) if K < 1e8 else 'inf'}|av{av}"] = sim(d, K, av, rng)
-    top = d[(d.g0 + d.a0) / d.gp0.clip(lower=1) >= 0.7]
-    rep["top_scorers"] = {k: sim(top.reset_index(drop=True), K, av, rng) for k, K, av in (("K40|av0.93", 40, .93), ("K60|av0.93", 60, .93), ("K100|av0.93", 100, .93))}
+            for c in CONC:
+                rep["grid"][f"K{K}|av{av}|c{c}"] = sim(d, K, av, rng, c)
+    top = d[(d.g0 + d.a0) / d.gp0.clip(lower=1) >= 0.7].reset_index(drop=True)
+    best = sorted(rep["grid"].items(), key=lambda kv: abs(kv[1]["cover_p"] - 0.8) + abs(kv[1]["below_p"] - kv[1]["above_p"]))[:3]
+    rep["best"] = [k for k, _ in best]
+    rep["top_scorers"] = {}
+    for k in rep["best"]:
+        K_, av_, c_ = k.split("|"); rep["top_scorers"][k] = sim(top, float(K_[1:]), float(av_[2:]), rng, float(c_[1:]))
     (out_dir / "proj.json").write_text(json.dumps(rep, indent=1, default=float), encoding="utf-8")
     L = [f"# Player season projections: from ~14 team games in, {rep['skaters']} skater-seasons, {seasons}", "",
-         f"Actual share of team games played after the cut-off: {rep['gp_share_actual']:.1%}", "",
+         f"Actual share of team games played after the cut-off: {rep['gp_share_actual']:.1%} (10/25/50/75/90%: " + " / ".join(f"{v:.0%}" for v in rep["gp_share_pct"].values()) + ")", "",
+         f"Best settings: {', '.join(rep['best'])}", "",
          "| setting | 10-90% holds points | holds goals | below | above | median bias (pts) | MAE (pts) | 100+ pts pred/act | 30+ G pred/act |", "|---|---|---|---|---|---|---|---|---|"]
     for k, v in rep["grid"].items():
         L.append(f"| {k} | {v['cover_p']:.1%} | {v['cover_g']:.1%} | {v['below_p']:.1%} | {v['above_p']:.1%} | {v['bias_p']:+.1f} | {v['mae_p']:.1f} | "
