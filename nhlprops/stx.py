@@ -16,6 +16,8 @@ import urllib.request
 from pathlib import Path
 
 URL = "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/stx-sync"
+# Stoiximan writes a few names in Greek letters
+ALIAS = {"Ράσμους Άντερσον": "Rasmus Andersson", "Κόνορ Μέρφι": "Connor Murphy"}
 LIVE = "00-stx-live.json"
 
 
@@ -63,6 +65,7 @@ def convert(feed: dict, games: list[dict], players: dict) -> tuple[dict, list]:
         rec = {"book": "Stoiximan", "fetched": fg.get("fetched"), "markets": fg.get("markets") or {},
                "totals": fg.get("totals") or {}, "players": {}}
         for name, mk in (fg.get("players") or {}).items():
+            name = ALIAS.get(name, name)
             k = _norm(name)
             pids = pool.get(k)
             if not pids:
