@@ -73,6 +73,11 @@ def convert(feed: dict, games: list[dict], players: dict) -> tuple[dict, list]:
             if not pids:
                 last = _norm(name.split()[-1]) if name.split() else ""
                 pids = [pid for n2, l in pool.items() for pid in l if last and n2.endswith(last) and n2[:1] == k[:1]]
+            if len(pids or []) > 1:   # two players with one name on one team (Elias Pettersson): the established one has the props
+                gp = lambda q: (((players.get(q) or players.get(int(q)) or {}).get("windows") or {}).get("career") or {}).get("gp") or 0
+                srt = sorted(pids, key=gp, reverse=True)
+                if gp(srt[0]) > 3 * max(1, gp(srt[1])):
+                    pids = srt[:1]
             if len(pids or []) != 1:
                 miss.append(name)
                 continue
