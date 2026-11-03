@@ -1,28 +1,90 @@
 {
- "2026-11-02-vgk-bos": [
-  "Boston Bruins TD Garden",
-  "Bruins Golden Knights game",
-  "David Pastrnak",
-  "Charlie McAvoy Bruins",
-  "Brad Marchand Bruins Pastrnak",
-  "Jack Eichel Golden Knights T-Mobile Arena",
-  "Vegas Golden Knights game T-Mobile Arena"
+ "2026-11-03-uta-tor": [
+  "Sergei Bobrovsky",
+  "William Nylander Maple Leafs",
+  "Scotiabank Arena Maple Leafs game",
+  "Clayton Keller Utah",
+  "Logan Cooley",
+  "Morgan Rielly Maple Leafs"
  ],
- "2026-11-02-det-fla": [
-  "Florida Panthers Amerant Bank Arena",
-  "Florida Panthers game Sunrise",
-  "Matthew Tkachuk",
-  "Sam Reinhart Panthers game",
-  "Detroit Red Wings Little Caesars Arena",
-  "Lucas Raymond",
-  "Moritz Seider"
+ "2026-11-03-wpg-mtl": [
+  "Cole Caufield Canadiens",
+  "Bell Centre Montreal Canadiens game",
+  "Lane Hutson",
+  "Kyle Connor Jets",
+  "Mark Scheifele Jets",
+  "Juraj Slafkovsky"
  ],
- "2026-11-02-col-chi": [
-  "Chicago Blackhawks United Center game",
-  "Colorado Avalanche Ball Arena",
-  "Nathan MacKinnon",
-  "Cale Makar",
-  "Connor Bedard",
-  "Artturi Lehkonen"
+ "2026-11-03-det-tbl": [
+  "Nikita Kucherov Lightning",
+  "Brandon Hagel",
+  "Andrei Vasilevskiy Lightning",
+  "Tampa Bay Lightning Amalie Arena game",
+  "Lucas Raymond Red Wings",
+  "Alex DeBrincat Red Wings"
+ ],
+ "2026-11-03-stl-nyr": [
+  "Alexis Lafreniere Rangers",
+  "Mika Zibanejad Rangers",
+  "Madison Square Garden Rangers game",
+  "Robert Thomas Blues",
+  "Jordan Binnington Blues Enterprise Center",
+  "Adam Fox Rangers"
+ ],
+ "2026-11-03-min-phi": [
+  "Kirill Kaprizov Wild",
+  "Matt Boldy Wild",
+  "Quinn Hughes",
+  "Travis Konecny Flyers",
+  "Matvei Michkov",
+  "Wells Fargo Center Flyers game"
+ ],
+ "2026-11-03-vgk-pit": [
+  "Sidney Crosby Penguins",
+  "PPG Paints Arena Penguins game",
+  "Erik Karlsson Penguins",
+  "Jack Eichel Golden Knights",
+  "Mark Stone Golden Knights",
+  "Mitch Marner"
+ ],
+ "2026-11-03-dal-wsh": [
+  "Alex Ovechkin Capitals",
+  "Capital One Arena Capitals game",
+  "Jake Oettinger Stars",
+  "Mikko Rantanen Stars",
+  "Jamie Benn Stars",
+  "Tom Wilson Capitals"
+ ],
+ "2026-11-03-col-cbj": [
+  "Nathan MacKinnon Avalanche",
+  "Cale Makar Avalanche",
+  "Nationwide Arena Blue Jackets game",
+  "Zach Werenski Blue Jackets",
+  "Adam Fantilli",
+  "Columbus Blue Jackets game"
+ ],
+ "2026-11-03-edm-njd": [
+  "Leon Draisaitl Oilers",
+  "Connor McDavid Oilers",
+  "Jack Hughes Devils",
+  "Prudential Center Devils game",
+  "Nico Hischier Devils",
+  "Connor Hellebuyck"
+ ],
+ "2026-11-03-car-nsh": [
+  "Sebastian Aho Hurricanes",
+  "Carolina Hurricanes game Lenovo Center",
+  "Steven Stamkos Predators",
+  "Filip Forsberg Predators",
+  "Bridgestone Arena Predators game",
+  "Roman Josi"
+ ],
+ "2026-11-03-ana-van": [
+  "Leo Carlsson Ducks",
+  "Elias Pettersson Canucks",
+  "Rogers Arena Canucks game",
+  "Brock Boeser Canucks",
+  "Cutter Gauthier Ducks",
+  "Quinn Hughes Canucks"
  ]
 }
