@@ -1,4 +1,5 @@
-"""Stoiximan prices pushed from the owner's browser (Tampermonkey script, see tools/stoiximan-sync.user.js).
+"""Stoiximan / Betano prices pushed from the owner's browser (Tampermonkey scripts: tools/stoiximan-sync.user.js, and
+tools/betano-sync.user.js for when Stoiximan can't be reached; same sportsbook, English market names).
 
 The script reads Stoiximan's NHL pages every hour (every 15 min close to puck drop, and once ~12 min before each
 game), and sends them to the Supabase function stx-sync. Each build reads the newest prices per game, matches
@@ -63,7 +64,7 @@ def convert(feed: dict, games: list[dict], players: dict) -> tuple[dict, list]:
         for t in (best["home"], best["away"]):
             for k, v in by_team.get(t, {}).items():
                 pool.setdefault(k, []).extend(v)
-        rec = {"book": "Stoiximan", "fetched": fg.get("fetched"), "markets": fg.get("markets") or {},
+        rec = {"book": "Betano" if str(fg.get("key", "")).startswith("/game-odds/") else "Stoiximan", "fetched": fg.get("fetched"), "markets": fg.get("markets") or {},
                "totals": fg.get("totals") or {}, "players": {}}
         for name, mk in (fg.get("players") or {}).items():
             name = ALIAS.get(name, name)
@@ -89,7 +90,19 @@ def convert(feed: dict, games: list[dict], players: dict) -> tuple[dict, list]:
                 d.pop("g3")
             if d:
                 rec["players"][pids[0]] = d
-        out[str(best["id"])] = rec
+        gid = str(best["id"])
+        if gid in out:   # the same game from a second site (Stoiximan and Betano): the newer push keeps its prices, the older fills gaps
+            old = out[gid]
+            for k, v in rec["markets"].items():
+                old["markets"].setdefault(k, v)
+            for k, v in rec["totals"].items():
+                old["totals"].setdefault(k, v)
+            for pid, mk in rec["players"].items():
+                cur = old["players"].setdefault(pid, {})
+                for m, v in mk.items():
+                    cur.setdefault(m, v)
+        else:
+            out[gid] = rec
     return out, miss
 
 
