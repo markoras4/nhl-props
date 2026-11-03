@@ -5,24 +5,25 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 723 skaters and 77 goalies (careers + game logs) ...
+Fetching 720 skaters and 77 goalies (careers + game logs) ...
 Fetching 231 recent box scores (hits, blocks) ...
 News: 128 injuries, likely starters for 26 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-02, updated 2026-11-02T19:19:27.555Z)
   shot maps: 231 games, 26354 attempts
-Model built: 51 games, 723 skaters (569 expected to play)
-Odds: bookmaker prices for 13 games, 428 players
-Odds: sharp-book prices for 2 games, 111 player markets
+Model built: 51 games, 720 skaters (568 expected to play)
+Odds: bookmaker prices for 12 games, 391 players
+Odds: sharp-book prices for 1 games, 54 player markets
   Stoiximan sync: 4 games, 1086 player prices (last push 2026-11-02T12:05:11.515955+00:00, hourly); unmatched: Gavin Brindley, Ville Heinola
-  manual odds: 923 player prices added
-Public betting: splits for 8 games
+  manual odds: 1088 player prices added
+Public betting: splits for 10 games
+Public betting: saved 1 locked splits (30 this season)
   season simulation: 10000 seasons, 1113 games left, top Cup: CAR 32%, COL 13%, MIN 10%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
-Player projections: 723 skaters
+Player projections: 720 skaters
 Goalie projections: 77 goalies
   awards: no player match for Artur Akhtyamov, Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 7,014 player-games
-  history: game-by-game files for 719 players (3 seasons)
+  history: game-by-game files for 715 players (3 seasons)
   archive: 7 past dates published (2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01)
 Best picks record: 103 graded, 28 won, -7.00 units
 Triage ledger: S 307 bets +20.4u, L 1178 bets -45.0u, F 850 bets +77.3u
