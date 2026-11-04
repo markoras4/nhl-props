@@ -5,24 +5,24 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 722 skaters and 77 goalies (careers + game logs) ...
+Fetching 719 skaters and 77 goalies (careers + game logs) ...
 Fetching 246 recent box scores (hits, blocks) ...
-News: 127 injuries, likely starters for 30 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 16 teams (2026-11-03, updated 2026-11-04T04:28:50.772Z)
+News: 127 injuries, likely starters for 28 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 16 teams (2026-11-03, updated 2026-11-04T04:28:50.772Z)
   shot maps: 246 games, 28094 attempts
-Model built: 46 games, 722 skaters (568 expected to play)
+Model built: 46 games, 719 skaters (568 expected to play)
 Odds: bookmaker prices for 4 games, 142 players
 Odds: sharp-book prices for 4 games, 212 player markets
   Stoiximan sync: 4 games, 897 player prices (last push 2026-11-04T16:10:40.322571+00:00, hourly); unmatched: Taylor Ward, Xavier Bourgault
   manual odds: 356 player prices added
 Public betting: splits for 4 games
-  season simulation: 10000 seasons, 1098 games left, top Cup: CAR 29%, COL 11%, MIN 11%
+  season simulation: 10000 seasons, 1098 games left, top Cup: CAR 28%, COL 11%, MIN 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
-Player projections: 722 skaters
+Player projections: 719 skaters
 Goalie projections: 77 goalies
   awards: no player match for Artur Akhtyamov, Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 7,472 player-games
-  history: game-by-game files for 716 players (3 seasons)
+  history: game-by-game files for 714 players (3 seasons)
   archive: 7 past dates published (2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03)
 Best picks record: 133 graded, 35 won, -5.19 units
 Triage ledger: S 522 bets +15.0u, L 1507 bets -51.2u, F 1096 bets +36.2u
