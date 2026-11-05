@@ -1,29 +1,31 @@
-Season 2026-2027. Fetching schedule from 2026-11-04 ...
-  46 upcoming games over 7 days
+Season 2026-2027. Fetching schedule from 2026-11-05 ...
+  48 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 719 skaters and 77 goalies (careers + game logs) ...
-Fetching 246 recent box scores (hits, blocks) ...
-News: 128 injuries, likely starters for 26 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-04, updated 2026-11-04T20:13:55.972Z)
-  shot maps: 246 games, 28094 attempts
-Model built: 46 games, 719 skaters (570 expected to play)
-Odds: bookmaker prices for 13 games, 463 players
-Odds: sharp-book prices for 2 games, 111 player markets
-  Stoiximan sync: 14 games, 948 player prices (last push 2026-11-05T02:42:28.330147+00:00, pre); unmatched: Artyom Duda, Taylor Raddysh, Taylor Ward, Xavier Bourgault
-  manual odds: 674 player prices added
-Public betting: splits for 13 games
-  season simulation: 10000 seasons, 1098 games left, top Cup: CAR 28%, COL 11%, MIN 11%
-Futures odds: Cup 32, conference 32, division 32, playoffs 28, points 28
-Player projections: 719 skaters
+Fetching 716 skaters and 77 goalies (careers + game logs) ...
+Fetching 250 recent box scores (hits, blocks) ...
+News: 127 injuries, likely starters for 26 games (+28 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-04, updated 2026-11-04T20:13:55.972Z)
+Shot maps: downloading play-by-play for 4 new games ...
+  shot maps: 250 games, 28548 attempts
+Model built: 48 games, 716 skaters (571 expected to play)
+Odds: bookmaker prices for 11 games, 391 players
+Odds: sharp-book prices for 9 games, 264 player markets
+  Stoiximan sync: 10 games, 57 player prices (last push 2026-11-05T02:42:28.330147+00:00, pre); unmatched: Artyom Duda, Brad Lambert, Jonas Rondbjerg, Taylor Raddysh
+  manual odds: 57 player prices added
+Public betting: splits for 11 games
+  season simulation: 10000 seasons, 1094 games left, top Cup: CAR 29%, COL 12%, MIN 11%
+Futures odds: Cup 32, conference 32, division 32, playoffs 25, points 24
+Player projections: 716 skaters
 Goalie projections: 77 goalies
   awards: no player match for Artur Akhtyamov, Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
-  history: MoneyPuck xG for 2026: 7,472 player-games
-  history: game-by-game files for 714 players (3 seasons)
-  archive: 7 past dates published (2026-10-28, 2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03)
-Best picks record: 133 graded, 35 won, -5.19 units
-Triage ledger: S 522 bets +15.0u, L 1507 bets -51.2u, F 1096 bets +36.2u
-Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-04.html
+  history: MoneyPuck xG for 2026: 7,530 player-games
+  history: 4 box scores for hits/blocks (2026)
+  history: game-by-game files for 713 players (3 seasons)
+  archive: 7 past dates published (2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04)
+Best picks record: 141 graded, 38 won, -2.36 units
+Triage ledger: S 571 bets +20.2u, L 1600 bets -55.6u, F 1150 bets +23.8u
+Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-05.html
