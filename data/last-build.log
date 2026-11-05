@@ -8,10 +8,9 @@ Fetching rosters for 32 teams ...
 Fetching 716 skaters and 77 goalies (careers + game logs) ...
 Fetching 250 recent box scores (hits, blocks) ...
 News: 127 injuries, likely starters for 26 games (+28 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-04, updated 2026-11-04T20:13:55.972Z)
-Shot maps: downloading play-by-play for 4 new games ...
   shot maps: 250 games, 28548 attempts
 Model built: 48 games, 716 skaters (571 expected to play)
-Odds: bookmaker prices for 11 games, 391 players
+Odds: bookmaker prices for 11 games, 392 players
 Odds: sharp-book prices for 9 games, 264 player markets
   Stoiximan sync: 10 games, 57 player prices (last push 2026-11-05T02:42:28.330147+00:00, pre); unmatched: Artyom Duda, Brad Lambert, Jonas Rondbjerg, Taylor Raddysh
   manual odds: 57 player prices added
@@ -23,7 +22,6 @@ Goalie projections: 77 goalies
   awards: no player match for Artur Akhtyamov, Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 7,530 player-games
-  history: 4 box scores for hits/blocks (2026)
   history: game-by-game files for 713 players (3 seasons)
   archive: 7 past dates published (2026-10-29, 2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04)
 Best picks record: 141 graded, 38 won, -2.36 units
