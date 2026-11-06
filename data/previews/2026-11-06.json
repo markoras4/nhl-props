@@ -1,0 +1,219 @@
+{
+ "date": "2026-11-06",
+ "written": "2026-11-06T08:30+01:00",
+ "previews": [
+  {
+   "id": 2026020262,
+   "slug": "2026-11-06-cbj-buf",
+   "photo": {
+    "src": "assets/previews/2026-11-06-cbj-buf.webp",
+    "alt": "KeyBank Center in Buffalo during a Sabres home game",
+    "author": "Michael Barera",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Chicago_Blackhawks_vs._Buffalo_Sabres_December_2024_01_(arena).jpg",
+    "pos": "center 55%"
+   },
+   "en": {
+    "kicker": "Blue Jackets at Sabres",
+    "title": "Columbus chases one more late win on tired legs as Thompson heats up in Buffalo",
+    "deck": "The Blue Jackets are 5-0 in games decided past regulation, and they needed a shootout on Thursday to beat Dallas. Now they play again 24 hours later in Buffalo, against a Sabres team that had a three-game winning streak stopped by Ottawa. The model likes Buffalo, but by less than the market does.",
+    "news": [
+     "Columbus beat Dallas 2-1 in a shootout on Thursday. Cam Talbot made 27 saves, so Jet Greaves is the model's expected starter tonight (78%), not yet confirmed.",
+     "Buffalo lost 2-1 to Ottawa on Wednesday. The model has Ukko-Pekka Luukkonen as the likely starter (75%).",
+     "Sabres goalie Alex Lyon returned to practice on Nov. 2 after a preseason injury and a setback. Lindy Ruff called him \"probably days away\" from being ready.",
+     "Konsta Helenius is week to week after a hit from San Jose's Jacob Trouba. Justin Danforth is back at practice. Conor Timmins and Jiri Kulich were available but did not dress against Ottawa."
+    ],
+    "records": [
+     "Zach Werenski's tying goal on Thursday was his first of the season, after 13 games without one. The model still gives him the best point chance on his team.",
+     "Tage Thompson has five goals and nine points over his last five games.",
+     "Both special-teams units are struggling: Buffalo ranks 27th on the power play and 27th on the penalty kill, Columbus 24th in both.",
+     "Columbus won the only meeting so far, 6-3 on Oct. 1. The last 10 games between these teams averaged 6.8 goals."
+    ],
+    "betting": [
+     "Market: Sabres 1.58, Blue Jackets 2.45, about 61–39 without the margin. The model says 55–45, clearly warmer on a Columbus team playing the second night of a back-to-back.",
+     "Total: over 5.5 is priced at 1.61 (about 59%) and the model says 57%. At 6.5 the two are close, 48% in the market against 46% in the model. Only 6 of Columbus' 14 games have gone over 5.5.",
+     "Player chances (model): Thompson 1+ point 68% and goal 45% (odds 2.07), Werenski 1+ point 62%, Benson 1+ point 60%. The model flags Kent Johnson's finishing as running hot."
+    ]
+   },
+   "sv": {
+    "kicker": "Blue Jackets mot Sabres",
+    "title": "Columbus jagar en ny sen seger på trötta ben när Thompson går varm i Buffalo",
+    "deck": "Blue Jackets har 5-0 i matcher som avgjorts efter full tid och behövde straffar för att slå Dallas i torsdags. Bara ett dygn senare väntar Buffalo, där Sabres fick en vinstsvit på tre matcher bruten av Ottawa. Modellen tror på Buffalo, men inte lika mycket som marknaden.",
+    "news": [
+     "Columbus slog Dallas med 2-1 efter straffar i torsdags. Cam Talbot gjorde 27 räddningar, så Jet Greaves är modellens väntade startmålvakt i kväll (78 %), ännu inte bekräftat.",
+     "Buffalo förlorade med 2-1 mot Ottawa i onsdags. Modellen räknar med Ukko-Pekka Luukkonen i målet (75 %).",
+     "Sabres målvakt Alex Lyon är tillbaka på träning sedan den 2 november efter en skada från försäsongen och ett bakslag. Enligt Lindy Ruff är han \"förmodligen några dagar\" från spel.",
+     "Konsta Helenius är borta i veckor efter en tackling av San Joses Jacob Trouba. Justin Danforth tränar igen. Conor Timmins och Jiri Kulich var tillgängliga men spelade inte mot Ottawa."
+    ],
+    "records": [
+     "Zach Werenskis kvittering i torsdags var hans första mål för säsongen, efter 13 matcher utan. Modellen ger honom ändå lagets bästa poängchans.",
+     "Tage Thompson har fem mål och nio poäng på de fem senaste matcherna.",
+     "Båda lagens specialteam går tungt: Buffalo är 27:a i både powerplay och boxplay, Columbus 24:a i båda.",
+     "Columbus vann det enda mötet hittills med 6-3 den 1 oktober. De tio senaste mötena har haft i snitt 6,8 mål."
+    ],
+    "betting": [
+     "Marknaden: Sabres 1,58, Blue Jackets 2,45, ungefär 61–39 utan marginal. Modellen säger 55–45, klart mer för Columbus trots att laget spelar andra kvällen i rad.",
+     "Totalt: över 5,5 ligger på 1,61 (cirka 59 %) och modellen säger 57 %. På 6,5 är de nära varandra, 48 % i marknaden mot 46 % i modellen. Bara 6 av Columbus 14 matcher har gått över 5,5.",
+     "Spelarchanser (modellen): Thompson 1+ poäng 68 % och mål 45 % (odds 2,07), Werenski 1+ poäng 62 %, Benson 1+ poäng 60 %. Modellen flaggar att Kent Johnsons avslut går varmt."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via JOX: Blue Jackets beat Stars in shootout",
+     "url": "https://www.joxfm.com/2026/11/05/zach-werenski-ties-it-late-blue-jackets-beat-stars-in-shootout/"
+    },
+    {
+     "name": "NHL.com: Sabres injuries and transactions",
+     "url": "https://www.nhl.com/sabres/news/buffalo-sabres-injuries-transactions-roster-news-contracts"
+    },
+    {
+     "name": "Inside the Rink: game preview",
+     "url": "https://insidetherink.com/stats/nhl/games/2026-11-06-blue-jackets-at-sabres-2026020262/"
+    }
+   ]
+  },
+  {
+   "id": 2026020263,
+   "slug": "2026-11-06-sjs-min",
+   "photo": {
+    "src": "assets/previews/2026-11-06-sjs-min.webp",
+    "alt": "Joel Eriksson Ek and Kirill Kaprizov of the Minnesota Wild ahead of a faceoff",
+    "author": "Jenn G",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Joel_Eriksson_Ek_and_Kirill_Kaprizov.jpg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Sharks at Wild",
+    "title": "Wild put a six-game point streak on the line against Sharks fresh from a players-only meeting",
+    "deck": "Minnesota is 5-0-1 in its last six, with four of its best players on matching point streaks. San Jose has lost three straight by a combined 14-4 and met without the coaches after a 7-2 loss in Los Angeles. The Sharks have still won the last three meetings, and the model is less sure of the Wild than the market.",
+    "news": [
+     "The Sharks held a players-only meeting after Wednesday's loss to the Kings. Kiefer Sherwood called the performance \"unacceptable\", and coach Ryan Warsofsky said \"we're all frustrated\".",
+     "Brock Faber practiced on Thursday for the first time since fracturing his skull on Sept. 25. He and Jared Spurgeon will still miss this weekend's home games, and John Hynes called Faber's timeline \"a moving target\".",
+     "Filip Gustavsson and both Foligno brothers are also out for Minnesota. Jesper Wallstedt is the expected starter (76%).",
+     "San Jose is without Igor Chernyshov, Alexander Wennberg, Quentin Musty and Kyle Keyser. The model expects Alex Nedeljkovic in goal (78%) after Yaroslav Askarov played the 7-2 loss in Los Angeles."
+    ],
+    "records": [
+     "Kirill Kaprizov, Matt Boldy, Joel Eriksson Ek and Quinn Hughes all carry six-game point streaks. Kaprizov has nine points in that span.",
+     "Hughes has 22 points (5 goals, 17 assists) and a point in 15 of Minnesota's 17 games.",
+     "Minnesota is 4-0-1 at home and 10-0-2 when it scores three or more goals. San Jose has lost five of six.",
+     "Macklin Celebrini ended a six-game goal drought on Wednesday. The Sharks swept last season's series with three one-goal wins, the last in a shootout on Dec. 31."
+    ],
+    "betting": [
+     "Market: Wild 1.40, Sharks 3.05, about 69–31 without the margin. The model says 64–36, a little warmer on San Jose.",
+     "Total: over 5.5 at 1.58 is about 60% in the market, 57% in the model. The last nine meetings averaged 7.3 goals, a higher-scoring history than either number implies.",
+     "Player chances (model): Kaprizov 1+ point 77% and goal 51% (odds 1.74), Boldy 1+ point 72%, Hughes 1+ point 72%, Celebrini 1+ point 66%. Kaprizov's goal odds imply 57% before the margin is removed, against the model's 51%."
+    ]
+   },
+   "sv": {
+    "kicker": "Sharks mot Wild",
+    "title": "Wild sätter poängsvit på sex matcher på spel mot Sharks efter spelarnas krismöte",
+    "deck": "Minnesota har 5-0-1 på de sex senaste, med fyra av sina bästa spelare på likadana poängsviter. San Jose har förlorat tre raka med sammanlagt 14-4 och höll ett möte utan tränarna efter 2-7 i Los Angeles. Sharks har ändå vunnit de tre senaste mötena, och modellen är mindre säker på Wild än marknaden.",
+    "news": [
+     "Sharks spelare höll ett eget möte efter onsdagens förlust mot Kings. Kiefer Sherwood kallade insatsen \"oacceptabel\", och tränaren Ryan Warsofsky sa att \"alla är frustrerade\".",
+     "Brock Faber tränade i torsdags för första gången sedan skallfrakturen den 25 september. Han och Jared Spurgeon missar ändå helgens hemmamatcher, och enligt John Hynes är tidsplanen för Faber osäker.",
+     "Även Filip Gustavsson och bröderna Foligno saknas i Minnesota. Jesper Wallstedt väntas starta (76 %).",
+     "San Jose saknar Igor Chernyshov, Alexander Wennberg, Quentin Musty och Kyle Keyser. Modellen räknar med Alex Nedeljkovic i målet (78 %) efter att Yaroslav Askarov stod i 2-7-förlusten i Los Angeles."
+    ],
+    "records": [
+     "Kirill Kaprizov, Matt Boldy, Joel Eriksson Ek och Quinn Hughes har alla poäng i sex raka matcher. Kaprizov har nio poäng under sviten.",
+     "Hughes har 22 poäng (5 mål, 17 assist) och har gjort poäng i 15 av Minnesotas 17 matcher.",
+     "Minnesota har 4-0-1 hemma och 10-0-2 när laget gör minst tre mål. San Jose har förlorat fem av sex.",
+     "Macklin Celebrini bröt en måltorka på sex matcher i onsdags. Sharks vann alla tre möten förra säsongen med ett mål, det sista efter straffar den 31 december."
+    ],
+    "betting": [
+     "Marknaden: Wild 1,40, Sharks 3,05, ungefär 69–31 utan marginal. Modellen säger 64–36, lite mer för San Jose.",
+     "Totalt: över 5,5 på 1,58 motsvarar cirka 60 % i marknaden och 57 % i modellen. De nio senaste mötena har haft i snitt 7,3 mål, mer än vad någon av siffrorna antyder.",
+     "Spelarchanser (modellen): Kaprizov 1+ poäng 77 % och mål 51 % (odds 1,74), Boldy 1+ poäng 72 %, Hughes 1+ poäng 72 %, Celebrini 1+ poäng 66 %. Oddset på Kaprizovs mål motsvarar 57 % innan marginalen räknas bort, mot modellens 51 %."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via CBS Sports: Wild look to extend point streak",
+     "url": "https://www.cbssports.com/nhl/news/wild-look-to-extend-point-streak-against-slumping-sharks/"
+    },
+    {
+     "name": "NHL.com: Sharks hold players-only meeting",
+     "url": "https://www.nhl.com/news/sharks-hold-players-only-meeting-after-kings-loss"
+    },
+    {
+     "name": "NHL.com: Status Report Nov. 5",
+     "url": "https://www.nhl.com/news/nhl-status-report-news-and-notes-november-5-2026"
+    }
+   ]
+  },
+  {
+   "id": 2026020264,
+   "slug": "2026-11-06-ana-cgy",
+   "photo": {
+    "src": "assets/previews/2026-11-06-ana-cgy.webp",
+    "alt": "Scotiabank Saddledome in Calgary during an intermission at a Flames game",
+    "author": "Jtayl132",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Scotiabank_Saddledome_Intermission.jpg",
+    "pos": "center 60%"
+   },
+   "en": {
+    "kicker": "Ducks at Flames",
+    "title": "Gauthier brings nine goals in four games to Calgary, and Cooley is back for the Flames",
+    "deck": "Cutter Gauthier has scored at a rate no Duck has matched, and Anaheim has won three straight for the first time this season. The Ducks play the night after a 5-4 win in Edmonton, against a Flames team that scores the fourth-fewest goals in the league but just got a goalie back. The goalie choice on both sides is the open question, and the model sits closer to Calgary than the market.",
+    "news": [
+     "Laurent Brossoit, called up from the AHL, has started and won three straight after Joel Quenneville passed over Lukas Dostal and Ville Husso. The model still lists Dostal as the likely starter on the second night (68%), so check the lineup.",
+     "Calgary activated Devin Cooley from injured reserve on Thursday and sent Arsenii Sergeev to the AHL. Cooley missed four games and has a .914 save percentage, but the model gives him only a 49% start chance.",
+     "Dustin Wolf stopped 27 of 29 in Wednesday's overtime loss in Seattle and is 2-0-1 with a .936 since Cooley got hurt.",
+     "Jonathan Huberdeau, Connor Zary and Samuel Honzek are out for Calgary, and Brennan Othmann is day to day. Anaheim is missing Troy Terry, A.J. Greer, Ryan Poehling and Ian Moore."
+    ],
+    "records": [
+     "Gauthier is the first player in Ducks history with nine goals in a four-game span. Seven of them came on the power play.",
+     "Anaheim went 12-for-19 on the power play in the last four games and leads the league at 38%. Calgary's penalty kill ranks eighth at 84%.",
+     "Before this streak, the Ducks had gone 1-6-1 and allowed 36 goals in eight games. They are 30th in goals allowed at 3.80 a game.",
+     "13 of Anaheim's 16 games have gone over 5.5 goals. Calgary is 29th in scoring at 2.44 a game."
+    ],
+    "betting": [
+     "Market: Flames 1.80, Ducks 2.06, about 53–47 without the margin. The model says 57–43, warmer on Calgary and Anaheim's short rest.",
+     "Total: over 5.5 at 1.60 is about 60% in the market and 58% in the model, close to agreement. The last 13 meetings averaged 6.1 goals.",
+     "Player chances (model): Gauthier goal 39% (odds 2.30) and 1+ point 58%, Carlsson 1+ point 58%, Farabee 1+ point 55%. The model flags Beckett Sennecke's finishing as running hot and has him at 29% for a goal (odds 2.88)."
+    ]
+   },
+   "sv": {
+    "kicker": "Ducks mot Flames",
+    "title": "Gauthier kommer till Calgary med nio mål på fyra matcher, och Flames har Cooley tillbaka",
+    "deck": "Cutter Gauthier gör mål i en takt ingen Duck har matchat, och Anaheim har vunnit tre raka för första gången i år. Ducks spelar kvällen efter 5-4 i Edmonton, mot ett Flames som gör fjärde minst mål i ligan men just fått tillbaka en målvakt. Målvaktsvalet är den öppna frågan i båda lagen, och modellen ligger närmare Calgary än marknaden.",
+    "news": [
+     "Laurent Brossoit, uppkallad från AHL, har startat och vunnit tre raka efter att Joel Quenneville gått förbi Lukas Dostal och Ville Husso. Modellen har ändå Dostal som trolig start andra kvällen i rad (68 %), så kolla laguppställningen.",
+     "Calgary aktiverade Devin Cooley från skadelistan i torsdags och skickade ner Arsenii Sergeev till AHL. Cooley missade fyra matcher och har 91,4 % i räddningsprocent, men modellen ger honom bara 49 % chans att starta.",
+     "Dustin Wolf räddade 27 av 29 i onsdagens övertidsförlust i Seattle och har 2-0-1 med 93,6 % sedan Cooley skadades.",
+     "Jonathan Huberdeau, Connor Zary och Samuel Honzek saknas i Calgary, och Brennan Othmann är osäker. Anaheim saknar Troy Terry, A.J. Greer, Ryan Poehling och Ian Moore."
+    ],
+    "records": [
+     "Gauthier är den förste i Ducks historia med nio mål på fyra matcher. Sju av dem kom i powerplay.",
+     "Anaheim har 12 av 19 i powerplay på de fyra senaste matcherna och leder ligan med 38 %. Calgarys boxplay är åttonde bäst med 84 %.",
+     "Före den här sviten hade Ducks 1-6-1 och släppte in 36 mål på åtta matcher. Laget är 30:e i insläppta mål med 3,80 per match.",
+     "13 av Anaheims 16 matcher har gått över 5,5 mål. Calgary är 29:e i gjorda mål med 2,44 per match."
+    ],
+    "betting": [
+     "Marknaden: Flames 1,80, Ducks 2,06, ungefär 53–47 utan marginal. Modellen säger 57–43, mer för Calgary och Anaheims korta vila.",
+     "Totalt: över 5,5 på 1,60 motsvarar cirka 60 % i marknaden och 58 % i modellen, nära samstämmigt. De 13 senaste mötena har haft i snitt 6,1 mål.",
+     "Spelarchanser (modellen): Gauthier mål 39 % (odds 2,30) och 1+ poäng 58 %, Carlsson 1+ poäng 58 %, Farabee 1+ poäng 55 %. Modellen flaggar att Beckett Senneckes avslut går varmt och ger honom 29 % för mål (odds 2,88)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via The Ticket: Gauthier stays red-hot",
+     "url": "https://www.theticket.com/2026/11/05/cutter-gauthier-stays-red-hot-as-ducks-top-oilers/"
+    },
+    {
+     "name": "Pro Hockey Rumors: Flames activate Cooley",
+     "url": "https://www.prohockeyrumors.com/2026/11/flames-activate-devin-cooley-reassign-arsenii-sergeev.html"
+    },
+    {
+     "name": "The Sporting Tribune: Quenneville starts Brossoit",
+     "url": "https://www.thesportingtribune.com/2026/11/01/anaheim-ducks-laurent-brossoit-lukas-dostal-ville-husso-defense-message"
+    }
+   ]
+  }
+ ]
+}
