@@ -54,6 +54,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 calc(28px
 footer .wrap{display:flex;gap:10px 22px;flex-wrap:wrap;justify-content:space-between}
 footer a{text-decoration:underline;text-underline-offset:2px}
 @media (max-width:560px){.brand{font-size:15px} section{scroll-margin-top:112px}}
+h2[id],h3[id]{scroll-margin-top:140px}
 </style>
 <script>/* light/dark choice before the first paint, so a refresh never flashes the default */(function(){ try { const s = localStorage.getItem("set:theme"); if (s==="light"||s==="dark") document.documentElement.setAttribute("data-theme", s); } catch(e){} })();</script>
 <script>
@@ -141,7 +142,7 @@ footer a{text-decoration:underline;text-underline-offset:2px}
 <script>
 // Set this to the contact address before launch; the contact lines stay hidden while it is empty.
 const CONTACT = "";
-const UPDATED = "2026-10-26";
+const UPDATED = "2026-11-06";
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const mail = () => CONTACT ? `<a href="mailto:${CONTACT}">${CONTACT}</a>` : "";
 const C = {
@@ -164,23 +165,38 @@ en:{
   </ul>
   <h3>4. Pro subscription</h3>
   <p>When Pro is available, the price, billing period and how to cancel are shown before you pay. A subscription renews until you cancel it. You can cancel at any time and keep Pro until the end of the period you've paid for. Your right of withdrawal under consumer law, and how it applies to a digital service you start using straight away, is explained at checkout.</p>
-  <h3>5. Fair use</h3>
-  <p>The site is for your own personal use. You may not:</p>
+  <h3>5. Personal use and sharing</h3>
+  <p>Your account and Pro access are for your own personal use. You may:</p>
   <ul>
-    <li>copy, scrape, resell or republish the site's probabilities, picks or data, in whole or in large parts;</li>
-    <li>share your account or Pro access with others;</li>
-    <li>try to get around access limits or interfere with the site's security or operation.</li>
+    <li>use the site to inform your own betting decisions;</li>
+    <li>now and then share a single pick, number or screenshot with friends, in forums or on your personal social media, as long as you credit the source (“Source: NHL Props Lab”) and don't crop or hide the credit shown on charts.</li>
   </ul>
-  <p>Sharing a single pick or screenshot with friends or on social media is fine.</p>
-  <h3>6. Ownership</h3>
-  <p>The site, its model, texts and design belong to NHL Props Lab. Team names, logos and player names belong to their owners and are used only to identify games and players. NHL Props Lab is not affiliated with, endorsed by or sponsored by the NHL, its teams or any sportsbook.</p>
-  <h3>7. No guarantee</h3>
+  <p>You may not, without our written permission:</p>
+  <ul>
+    <li>copy, download, scrape or collect the site's data, probabilities, picks, grades or projections, in whole or in large or regular parts, by hand or with automated tools;</li>
+    <li>resell, republish or redistribute them, including in paid tip services, groups or channels;</li>
+    <li>use them to train or test AI or machine-learning models, or to build or improve a competing site, app or data service;</li>
+    <li>share your account or Pro access, or get around access limits or the site's security.</li>
+  </ul>
+  <h3 id="licence">6. Commercial use and licences</h3>
+  <p>Using the site's content for commercial or regular public use needs a licence from us, agreed in writing, and usually involves a fee. This includes, for example:</p>
+  <ul>
+    <li>YouTube channels, podcasts, streams, newsletters and blogs that earn money (ads, sponsors, subscriptions or donations);</li>
+    <li>TV, radio, news sites and other media;</li>
+    <li>tipsters, paid groups, betting affiliates, sportsbooks, clubs, agencies and other businesses;</li>
+    <li>any product, service or data feed built on our numbers.</li>
+  </ul>
+  <p>To ask for a licence, use “Request a licence” on the <a href="./#licence">plans section</a> of the home page${CONTACT?` or write to ${mail()}`:""}. Each licence sets out what may be used, where, for how long, how it must be credited and the price. Until a licence is agreed, commercial use is not allowed.</p>
+  <h3>7. Ownership</h3>
+  <p>The site and its content belong to NHL Props Lab: the model and its outputs (probabilities, fair odds, grades, projections and picks), the compiled data, texts, charts and design. They are protected by copyright and database rights. These terms don't give you any rights to them beyond what is described above.</p>
+  <p>Raw statistics, team names, logos and player names belong to their owners and are used only to identify games and players. Sportsbook odds belong to the sportsbooks. NHL Props Lab is not affiliated with, endorsed by or sponsored by the NHL, its teams or any sportsbook.</p>
+  <h3>8. No guarantee</h3>
   <p>The site is provided as it is. We work to keep it accurate and available, but we can't promise that every number, lineup or price is correct or up to date, or that the site is always online. Features may change. Read the <a href="#disclaimer">disclaimer</a>.</p>
-  <h3>8. Liability</h3>
+  <h3>9. Liability</h3>
   <p>To the extent the law allows, we are not responsible for betting losses or other losses that come from using the site, including decisions based on its probabilities, picks or odds. Nothing in these terms limits rights you have under mandatory consumer law.</p>
-  <h3>9. Changes</h3>
+  <h3>10. Changes</h3>
   <p>We may update these terms. If a change matters for you, we'll say so on the site or by email before it applies. The date at the top shows the latest version.</p>
-  <h3>10. Law and disputes</h3>
+  <h3>11. Law and disputes</h3>
   <p>Swedish law applies. If we can't solve a problem together, consumers in Sweden can turn to the National Board for Consumer Disputes (<a href="https://www.arn.se" rel="noopener">ARN</a>) or a Swedish court.</p>
   ${CONTACT?`<h3>Contact</h3><p>${mail()}</p>`:""}`,
   disclaimer:()=>`
@@ -209,6 +225,7 @@ en:{
     <li><b>What you save:</b> your picks, the odds and closing odds you entered, the players you follow (with any note you add), and your alert settings.</li>
     <li><b>Notifications:</b> if you turn on alerts, a push-notification address for your device.</li>
     <li><b>Payments (when Pro launches):</b> handled by a payment provider. We see your subscription status, never your full card details.</li>
+    <li><b>Licence requests:</b> if you ask for a commercial licence, the name, email, organisation, links and message you send. We use them only to answer you and to agree a licence, and delete them within 12 months if no licence follows.</li>
     <li><b>Technical logs:</b> our hosting providers keep short-lived logs such as IP address and browser type, for security and to keep the site running.</li>
   </ul>
   <h3>In your browser</h3>
@@ -247,23 +264,38 @@ sv:{
   </ul>
   <h3>4. Pro-prenumeration</h3>
   <p>När Pro finns visas pris, betalningsperiod och hur du säger upp innan du betalar. En prenumeration förnyas tills du säger upp den. Du kan säga upp när som helst och behåller Pro till slutet av perioden du betalat för. Din ångerrätt enligt konsumentlagstiftningen, och hur den gäller för en digital tjänst som du börjar använda direkt, förklaras i kassan.</p>
-  <h3>5. Rimlig användning</h3>
-  <p>Sajten är för ditt eget, personliga bruk. Du får inte:</p>
+  <h3>5. Personligt bruk och delning</h3>
+  <p>Ditt konto och din Pro-tillgång är för ditt eget, personliga bruk. Du får:</p>
   <ul>
-    <li>kopiera, skrapa, sälja vidare eller publicera sajtens sannolikheter, spel eller data, helt eller i stora delar;</li>
-    <li>dela ditt konto eller din Pro-tillgång med andra;</li>
-    <li>försöka kringgå begränsningar eller störa sajtens säkerhet eller drift.</li>
+    <li>använda sajten som underlag för dina egna spelbeslut;</li>
+    <li>då och då dela ett enstaka spel, en siffra eller en skärmbild med vänner, i forum eller i dina privata sociala medier, så länge du anger källan (”Källa: NHL Props Lab”) och inte beskär eller döljer källangivelsen i diagrammen.</li>
   </ul>
-  <p>Att dela ett enstaka spel eller en skärmbild med vänner eller i sociala medier går bra.</p>
-  <h3>6. Äganderätt</h3>
-  <p>Sajten, modellen, texterna och designen tillhör NHL Props Lab. Lagnamn, logotyper och spelarnamn tillhör sina ägare och används bara för att visa vilka matcher och spelare det gäller. NHL Props Lab är inte knutet till, godkänt av eller sponsrat av NHL, lagen eller något spelbolag.</p>
-  <h3>7. Ingen garanti</h3>
+  <p>Utan vårt skriftliga tillstånd får du inte:</p>
+  <ul>
+    <li>kopiera, ladda ner, skrapa eller samla in sajtens data, sannolikheter, spel, betyg eller prognoser, helt eller i stora eller regelbundna delar, för hand eller med automatiska verktyg;</li>
+    <li>sälja vidare, återpublicera eller sprida dem, även i betalda tipstjänster, grupper eller kanaler;</li>
+    <li>använda dem för att träna eller testa AI- eller maskininlärningsmodeller, eller för att bygga eller förbättra en konkurrerande sajt, app eller datatjänst;</li>
+    <li>dela ditt konto eller din Pro-tillgång, eller kringgå åtkomstgränser eller sajtens säkerhet.</li>
+  </ul>
+  <h3 id="licens">6. Kommersiell användning och licenser</h3>
+  <p>Att använda sajtens innehåll kommersiellt eller regelbundet i publika sammanhang kräver en licens från oss, avtalad skriftligt, och innebär normalt en avgift. Det gäller till exempel:</p>
+  <ul>
+    <li>YouTube-kanaler, poddar, streams, nyhetsbrev och bloggar som drar in pengar (reklam, sponsorer, prenumerationer eller donationer);</li>
+    <li>tv, radio, nyhetssajter och andra medier;</li>
+    <li>tipsare, betalgrupper, affiliates, spelbolag, klubbar, byråer och andra företag;</li>
+    <li>produkter, tjänster eller dataflöden som bygger på våra siffror.</li>
+  </ul>
+  <p>Ansök om licens via ”Ansök om licens” under <a href="./#licence">planerna</a> på startsidan${CONTACT?` eller skriv till ${mail()}`:""}. Varje licens anger vad som får användas, var, hur länge, hur källan ska anges och priset. Innan en licens är avtalad är kommersiell användning inte tillåten.</p>
+  <h3>7. Äganderätt</h3>
+  <p>Sajten och dess innehåll tillhör NHL Props Lab: modellen och det den räknar fram (sannolikheter, rättvisa odds, betyg, prognoser och spel), den sammanställda datan, texterna, diagrammen och designen. De skyddas av upphovsrätt och databasskydd. Villkoren ger dig inga rättigheter till dem utöver det som beskrivs ovan.</p>
+  <p>Rå statistik, lagnamn, logotyper och spelarnamn tillhör sina ägare och används bara för att visa vilka matcher och spelare det gäller. Spelbolagens odds tillhör spelbolagen. NHL Props Lab är inte knutet till, godkänt av eller sponsrat av NHL, dess lag eller något spelbolag.</p>
+  <h3>8. Ingen garanti</h3>
   <p>Sajten tillhandahålls i befintligt skick. Vi arbetar för att den ska vara korrekt och tillgänglig, men vi kan inte lova att varje siffra, uppställning eller odds stämmer eller är uppdaterad, eller att sajten alltid är uppe. Funktioner kan ändras. Läs <a href="#disclaimer">ansvarsfriskrivningen</a>.</p>
-  <h3>8. Ansvar</h3>
+  <h3>9. Ansvar</h3>
   <p>I den mån lagen tillåter ansvarar vi inte för spelförluster eller andra förluster som uppstår när du använder sajten, inklusive beslut som bygger på dess sannolikheter, spel eller odds. Inget i villkoren begränsar dina rättigheter enligt tvingande konsumentlagstiftning.</p>
-  <h3>9. Ändringar</h3>
+  <h3>10. Ändringar</h3>
   <p>Vi kan uppdatera villkoren. Om en ändring har betydelse för dig meddelar vi det på sajten eller via e-post innan den börjar gälla. Datumet högst upp visar senaste versionen.</p>
-  <h3>10. Lag och tvister</h3>
+  <h3>11. Lag och tvister</h3>
   <p>Svensk lag gäller. Om vi inte löser ett problem tillsammans kan konsumenter i Sverige vända sig till Allmänna reklamationsnämnden (<a href="https://www.arn.se" rel="noopener">ARN</a>) eller svensk domstol.</p>
   ${CONTACT?`<h3>Kontakt</h3><p>${mail()}</p>`:""}`,
   disclaimer:()=>`
@@ -292,6 +324,7 @@ sv:{
     <li><b>Det du sparar:</b> dina spel, oddsen och stängningsoddsen du angett, spelarna du följer (med eventuell anteckning) och dina aviseringsinställningar.</li>
     <li><b>Aviseringar:</b> om du slår på aviseringar, en pushadress för din enhet.</li>
     <li><b>Betalningar (när Pro lanseras):</b> hanteras av en betalleverantör. Vi ser din prenumerationsstatus, aldrig dina fullständiga kortuppgifter.</li>
+    <li><b>Licensförfrågningar:</b> om du ansöker om en kommersiell licens, namnet, e-postadressen, organisationen, länkarna och meddelandet du skickar. Vi använder dem bara för att svara dig och avtala en licens, och raderar dem inom 12 månader om ingen licens blir av.</li>
     <li><b>Tekniska loggar:</b> våra driftleverantörer sparar kortlivade loggar som IP-adress och webbläsartyp, för säkerhet och drift.</li>
   </ul>
   <h3>I din webbläsare</h3>

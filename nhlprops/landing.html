@@ -181,6 +181,27 @@ h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);li
 .scap svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.8}
 
 /* plans */
+.lic{max-width:900px;margin:26px auto 0;border:1px solid var(--line);border-radius:18px;padding:24px 24px 22px;background:radial-gradient(120% 140% at 100% 0%,rgba(var(--glow),.08),transparent 55%),var(--panel)}
+.lich{text-align:center;max-width:620px;margin:0 auto 18px}.lich h3{font:700 22px/1.2 var(--f-disp);margin:4px 0 8px}.lich p{color:var(--mute);margin:0}
+.liceye{font:700 11px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)!important}
+.licgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.licc{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--panel2);display:flex;flex-direction:column;gap:8px}
+.licc h4{margin:0;font:700 16px var(--f-disp);display:flex;align-items:center;gap:8px}.licc h4 .soon{font:700 10px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);border-radius:99px;padding:2px 7px}
+.licc p{margin:0;color:var(--mute);font-size:13.5px}.licc ul{margin:2px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.licc li{display:flex;gap:8px;align-items:flex-start}.licc li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px}
+.licc .licp{margin-top:auto;padding-top:6px;font:700 13px var(--f-ui);color:var(--text)}
+.licfoot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}.licfoot p{margin:0;color:var(--mute);font-size:12.5px;max-width:560px}.licfoot a{color:var(--accent)}
+#licdlg{border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--text);padding:0;width:min(560px,calc(100vw - 32px));box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
+#licdlg::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(3px)}
+#licform{padding:22px;display:flex;flex-direction:column;gap:12px}#licform h3{margin:0;font:700 20px var(--f-disp)}.licds{margin:0;color:var(--mute);font-size:13.5px}
+#licform label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--mute);min-width:0}
+#licform input,#licform select,#licform textarea{font:inherit;font-size:14px;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;box-sizing:border-box}
+#licform input:focus,#licform select:focus,#licform textarea:focus{outline:none;border-color:var(--accent)}
+#licform textarea{resize:vertical}.licf2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.lichp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.licpriv{margin:0;font-size:12px;color:var(--mute)}.licpriv a{color:var(--accent)}.licmsg{margin:0;font-size:13.5px;padding:10px 12px;border-radius:10px;background:var(--panel2)}.licmsg.ok{color:var(--accent)}.licmsg.err{color:#e5484d}
+.licact{display:flex;justify-content:flex-end;gap:10px}
+@media (max-width:900px){.licgrid{grid-template-columns:1fr}.licfoot{flex-direction:column;align-items:stretch;text-align:center}}
+@media (max-width:560px){.licf2{grid-template-columns:1fr}.lic{padding:18px 16px}}
 .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:900px;margin:0 auto}
 .plan{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 26px 28px;display:flex;flex-direction:column;gap:14px}
 .plan.pro{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 20px 60px -30px rgba(var(--glow),.6)}
@@ -528,6 +549,11 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
           <a class="btn pri" href="APP_URL" data-t="cta_pro"></a>
         </div>
       </div>
+      <div class="lic" id="licence">
+        <div class="lich"><p class="liceye" data-t="lic_eye"></p><h3 data-t="lic_h"></h3><p data-t="lic_sub"></p></div>
+        <div class="licgrid" id="licgrid"></div>
+        <div class="licfoot"><p data-t="lic_note" data-html></p><button type="button" class="btn pri" id="licbtn" data-t="lic_btn"></button></div>
+      </div>
     </div>
   </section>
 
@@ -570,6 +596,22 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   </div>
 </footer>
 
+<dialog id="licdlg" aria-labelledby="licdh">
+  <form id="licform" method="dialog" novalidate>
+    <h3 id="licdh" data-t="lic_f_h"></h3><p class="licds" data-t="lic_f_sub"></p>
+    <div class="licf2"><label><span data-t="lic_f_name"></span><input name="name" required maxlength="120" autocomplete="name"></label>
+      <label><span data-t="lic_f_email"></span><input name="email" type="email" required maxlength="200" autocomplete="email"></label></div>
+    <label><span data-t="lic_f_org"></span><input name="org" maxlength="160" autocomplete="organization"></label>
+    <label><span data-t="lic_f_kind"></span><select name="kind" id="lickind"></select></label>
+    <div class="licf2"><label><span data-t="lic_f_channel"></span><input name="channel" maxlength="300" placeholder="https://"></label>
+      <label><span data-t="lic_f_aud"></span><input name="audience" maxlength="80"></label></div>
+    <label><span data-t="lic_f_msg"></span><textarea name="message" rows="4" maxlength="2000"></textarea></label>
+    <input name="website" class="lichp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <p class="licpriv" data-t="lic_f_priv" data-html></p>
+    <p class="licmsg" id="licmsg" role="status" hidden></p>
+    <div class="licact"><button type="button" class="btn ghost" id="liccancel" data-t="lic_f_cancel"></button><button type="submit" class="btn pri" id="licsend" data-t="lic_f_send"></button></div>
+  </form>
+</dialog>
 <script>
 const LDATA = /*__DATA__*/null;
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
@@ -614,6 +656,31 @@ const I18N = {
   rg:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`,
   terms:"Terms", privacy:"Privacy", disclaimer:"Disclaimer",
   also_h:"Also inside", also:["Playoff & Cup odds","Compare players","7-day archive","Game recaps","Shot maps","Streaks & milestones","Linemates","Line & pair rankings","Goalie saves & shutouts","First goalscorer","Game previews","Odds alerts","Watchlist","Parlay check","Public betting","Closing-odds tracking","Track record","Players & teams explorer","Triage grades","Triage track record","Goalie watch","Power-play point chance","Season projections","Milestone chances","Chart or list view","Award odds","Goalie projections"],
+  lic_eye:"For media, creators & businesses",
+  lic_h:"Using our numbers in your content or business?",
+  lic_sub:"Sharing a pick or a screenshot with credit is free. Showing the site's probabilities, projections or picks in commercial or public content needs a licence.",
+  lic_cards:[["Creator", "For monetised YouTube channels, podcasts, newsletters, paid groups and tipsters.", ["Show and quote our numbers in your content", "Credit on screen or in the show notes", "Fixed monthly price"], "Price on request", 0], ["Media & business", "For TV, radio, news sites, betting affiliates, clubs and agencies.", ["Regular use in broadcasts, articles and products", "Scope, volume and credit agreed in writing", "Custom quote"], "Price on request", 0], ["Data feed", "Projections, probabilities and fair prices as files or an API, for your own product.", ["Delivered every day", "Use agreed in writing", "Custom quote"], "Price on request", 1]],
+  lic_soon:"Later",
+  lic_btn:"Request a licence",
+  lic_note:"Copying data in bulk, reselling picks, or using our data to train models or build other services is never allowed without a written agreement. See the <a href=\"legal.html#terms\">terms of use</a>.",
+  lic_f_h:"Request a licence",
+  lic_f_sub:"Tell us a little about how you'd use NHL Props Lab. We reply by email, usually within a few days.",
+  lic_f_name:"Your name",
+  lic_f_email:"Email",
+  lic_f_org:"Organisation or channel (optional)",
+  lic_f_kind:"Type of use",
+  lic_kinds:[["creator", "Creator: YouTube, podcast, newsletter, paid group"], ["media", "Media: TV, radio, news"], ["business", "Business: affiliate, club, agency"], ["data", "Data feed or API"], ["other", "Something else"]],
+  lic_f_channel:"Where will it appear? (link)",
+  lic_f_aud:"Audience size (roughly)",
+  lic_f_msg:"What would you like to use, and how?",
+  lic_f_priv:"We use your details only to answer this request. <a href=\"legal.html#privacy\">Privacy</a>",
+  lic_f_send:"Send request",
+  lic_f_cancel:"Cancel",
+  lic_f_sending:"Sending…",
+  lic_f_need:"Please fill in your name and a valid email.",
+  lic_f_ok:"Thanks, your request has been sent. We'll get back to you by email.",
+  lic_f_err:"Something went wrong. Please try again in a moment.",
+  lic_f_many:"Too many requests from this address today. Please try again tomorrow.",
   faq_h:"Questions", faq_sub:"The short answers. Everything else is in How it works inside the app.",
   faq:[
    ["Is this a betting site?","<p>No. NHL Props Lab is an analysis tool. We don't take bets or hold money. You place bets with your own licensed sportsbook, if you want to.</p>"],
@@ -630,6 +697,8 @@ const I18N = {
    ["Can I see what the site said before a game that's already played?","<p>Yes, for the last 7 days. Open <i>Earlier</i> on the Games tab and any game appears exactly as it looked before puck drop, with ✓ / ✗ for what happened on every prop. It's the best way to learn to read the numbers.</p>"],
    ["How do the season projections work?","<p>Every day each skater's season is simulated 10,000 times, game by game, from the same true-talent rates as tonight's numbers, his ice time, the games left and the real chance of missing games. You get the most likely total and the range where 8 of 10 seasons end. Tested on three past seasons, that range held the real total 79% of the time. Free shows the projections; Pro adds the player cards with milestones and trophy chances.</p>"],
    ["How do the award odds work?","<p>Stoiximan's prices for the NHL awards sit next to the model's chances from the same 10,000 simulated seasons. The Rocket Richard (most goals) and Art Ross (most points) are won on the numbers, so the model prices them directly and marks value. The Hart, Norris, Calder and Vezina are voted on, so the model shows a clearly named stand-in instead, like the chance of leading all defencemen in points or all goalies in saved goals, and never calls those value. Part of Pro.</p>"],
+   ["Can I use the numbers in my video, podcast or article?", "<p>Sharing a single pick or screenshot with credit, the way any fan would, is free. If the content earns money or is published regularly, for example a monetised YouTube channel, a podcast, a newsletter, a paid tips group, TV or a news site, you need a licence. <a href=\"#licence\">See licences</a>.</p>"],
+   ["How do I credit NHL Props Lab?", "<p>Write <b>“Source: NHL Props Lab”</b> with a link to the site, visible next to the numbers: on screen, in the caption or in the show notes. Charts on the site carry a small credit in the corner; please don't crop or hide it.</p>"],
    ["What do you store about me?","<p>Your email, your saved picks, the players you follow and your settings. No advertising or tracking cookies. Read the <a href=\"legal.html#privacy\">privacy policy</a>.</p>"],
    ["I'm worried about my gambling.","<p>Talk to someone. In Sweden, call <a href=\"https://www.stodlinjen.se\" rel=\"noopener\">Stödlinjen</a> on 020-81 91 00 (free and anonymous) or exclude yourself from all licensed gambling at <a href=\"https://www.spelpaus.se\" rel=\"noopener\">Spelpaus.se</a>. Elsewhere: <a href=\"https://www.begambleaware.org\" rel=\"noopener\">BeGambleAware</a> (UK), <a href=\"https://www.ncpgambling.org\" rel=\"noopener\">1-800-GAMBLER</a> (US).</p>"]
   ]
@@ -674,6 +743,31 @@ const I18N = {
   rg:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`,
   terms:"Villkor", privacy:"Integritet", disclaimer:"Ansvarsfriskrivning",
   also_h:"Även i appen", also:["Slutspels- & cupchanser","Jämför spelare","7 dagars arkiv","Matchsammanfattningar","Skottkartor","Sviter & milstolpar","Kedjekamrater","Ranking av kedjor & backpar","Räddningar & nollor","Första målskytt","Förhandstittar","Oddsaviseringar","Bevakning","Kombokoll","Spelfördelning","Stängningsodds-koll","Facit","Spelar- & lagutforskaren","Triagebetyg","Triagefacit","Målvaktsbevakning","Chans till PP-poäng","Säsongsprognoser","Chanser till milstolpar","Diagram eller lista","Prisodds","Målvaktsprognoser"],
+  lic_eye:"För media, kreatörer och företag",
+  lic_h:"Vill du använda våra siffror i ditt innehåll eller företag?",
+  lic_sub:"Att dela ett spel eller en skärmbild med källa är gratis. Att visa sajtens sannolikheter, prognoser eller spel i kommersiellt eller publikt innehåll kräver licens.",
+  lic_cards:[["Kreatör", "För YouTube-kanaler, poddar och nyhetsbrev med intäkter, betalgrupper och tipstjänster.", ["Visa och citera våra siffror i ditt innehåll", "Källa i bild eller i avsnittsbeskrivningen", "Fast månadspris"], "Pris på förfrågan", 0], ["Media & företag", "För tv, radio, nyhetssajter, affiliates, klubbar och byråer.", ["Regelbunden användning i sändningar, artiklar och produkter", "Omfattning, volym och källangivelse avtalas skriftligt", "Offert"], "Pris på förfrågan", 0], ["Dataflöde", "Prognoser, sannolikheter och rättvisa odds som filer eller API, för din egen produkt.", ["Levereras varje dag", "Användning avtalas skriftligt", "Offert"], "Pris på förfrågan", 1]],
+  lic_soon:"Senare",
+  lic_btn:"Ansök om licens",
+  lic_note:"Att kopiera data i stor mängd, sälja vidare spel eller använda våra data för att träna modeller eller bygga andra tjänster är aldrig tillåtet utan skriftligt avtal. Se <a href=\"legal.html#terms\">användarvillkoren</a>.",
+  lic_f_h:"Ansök om licens",
+  lic_f_sub:"Berätta kort hur du vill använda NHL Props Lab. Vi svarar via e-post, oftast inom några dagar.",
+  lic_f_name:"Ditt namn",
+  lic_f_email:"E-post",
+  lic_f_org:"Organisation eller kanal (valfritt)",
+  lic_f_kind:"Typ av användning",
+  lic_kinds:[["creator", "Kreatör: YouTube, podd, nyhetsbrev, betalgrupp"], ["media", "Media: tv, radio, nyheter"], ["business", "Företag: affiliate, klubb, byrå"], ["data", "Dataflöde eller API"], ["other", "Något annat"]],
+  lic_f_channel:"Var ska det visas? (länk)",
+  lic_f_aud:"Publikens storlek (ungefär)",
+  lic_f_msg:"Vad vill du använda, och hur?",
+  lic_f_priv:"Vi använder dina uppgifter bara för att svara på förfrågan. <a href=\"legal.html#privacy\">Integritet</a>",
+  lic_f_send:"Skicka förfrågan",
+  lic_f_cancel:"Avbryt",
+  lic_f_sending:"Skickar…",
+  lic_f_need:"Fyll i ditt namn och en giltig e-postadress.",
+  lic_f_ok:"Tack, din förfrågan är skickad. Vi återkommer via e-post.",
+  lic_f_err:"Något gick fel. Försök igen om en stund.",
+  lic_f_many:"För många förfrågningar från den här adressen i dag. Försök igen i morgon.",
   faq_h:"Frågor", faq_sub:"De korta svaren. Allt annat finns under Så fungerar det i appen.",
   faq:[
    ["Är det här en spelsajt?","<p>Nej. NHL Props Lab är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar. Du spelar hos ditt eget licensierade spelbolag, om du vill.</p>"],
@@ -690,6 +784,8 @@ const I18N = {
    ["Kan jag se vad sajten sa före en match som redan är spelad?","<p>Ja, för de senaste 7 dagarna. Öppna <i>Tidigare</i> under Matcher så visas varje match precis som den såg ut före nedsläpp, med ✓ / ✗ för vad som hände i varje spel. Det bästa sättet att lära sig läsa siffrorna.</p>"],
    ["Hur fungerar säsongsprognoserna?","<p>Varje dag simuleras varje spelares säsong 10 000 gånger, match för match, från samma verkliga nivå som kvällens siffror, hans istid, matcherna kvar och den verkliga risken att missa matcher. Du får det troligaste utfallet och spannet där 8 av 10 säsonger slutar. Testat på tre tidigare säsonger höll spannet det verkliga utfallet 79 % av gångerna. Gratis visar prognoserna; Pro lägger till spelarkorten med milstolpar och chanser till priser.</p>"],
    ["Hur fungerar prisoddsen?","<p>Stoiximans odds på NHL:s priser visas bredvid modellens chanser från samma 10 000 simulerade säsonger. Rocket Richard (flest mål) och Art Ross (flest poäng) avgörs av siffrorna, så modellen prissätter dem direkt och markerar värde. Hart, Norris, Calder och Vezina röstas fram, så där visar modellen en tydligt namngiven ersättare, till exempel chansen att leda alla backar i poäng eller alla målvakter i räddade mål, och kallar det aldrig värde. Ingår i Pro.</p>"],
+   ["Får jag använda siffrorna i min video, podd eller artikel?", "<p>Att dela ett enstaka spel eller en skärmbild med källa, som vilken fan som helst, är gratis. Om innehållet drar in pengar eller publiceras regelbundet, till exempel en YouTube-kanal med intäkter, en podd, ett nyhetsbrev, en betald tipsgrupp, tv eller en nyhetssajt, behövs en licens. <a href=\"#licence\">Se licenser</a>.</p>"],
+   ["Hur anger jag NHL Props Lab som källa?", "<p>Skriv <b>”Källa: NHL Props Lab”</b> med en länk till sajten, synligt bredvid siffrorna: i bild, i bildtexten eller i avsnittsbeskrivningen. Diagrammen på sajten har en liten källangivelse i hörnet; beskär eller dölj den inte.</p>"],
    ["Vad sparar ni om mig?","<p>Din e-post, dina sparade spel, spelarna du följer och dina inställningar. Inga reklam- eller spårningskakor. Läs <a href=\"legal.html#privacy\">integritetspolicyn</a>.</p>"],
    ["Jag är orolig för mitt spelande.","<p>Prata med någon. Ring <a href=\"https://www.stodlinjen.se\" rel=\"noopener\">Stödlinjen</a> på 020-81 91 00 (gratis och anonymt) eller stäng av dig från allt licensierat spel på <a href=\"https://www.spelpaus.se\" rel=\"noopener\">Spelpaus.se</a>. Utanför Sverige: <a href=\"https://www.begambleaware.org\" rel=\"noopener\">BeGambleAware</a> (UK), <a href=\"https://www.ncpgambling.org\" rel=\"noopener\">1-800-GAMBLER</a> (USA).</p>"]
   ]
@@ -751,6 +847,8 @@ function plans(){
     $("#"+k+"_tail").innerHTML = tail.map(li).join("");
     const b = document.querySelector(`[data-pm="${k}"]`), open = b.closest(".plan").classList.contains("open");
     b.textContent = open ? t("pm_less") : t("pm_more").replace("{n}", main.length - SHOW); b.setAttribute("aria-expanded", open); });
+  $("#licgrid").innerHTML = t("lic_cards").map(([h,p_,items,price,soon]) => `<div class="licc"><h4>${esc(h)}${soon?`<span class="soon">${esc(t("lic_soon"))}</span>`:""}</h4><p>${esc(p_)}</p><ul>${items.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><div class="licp">${esc(price)}</div></div>`).join("");
+  const kv = $("#lickind").value; $("#lickind").innerHTML = t("lic_kinds").map(([k,l]) => `<option value="${k}">${esc(l)}</option>`).join(""); if (kv) $("#lickind").value = kv;
   $("#ab_do").innerHTML = t("ab_do").map(x => `<li><span>${x}</span></li>`).join("");
   $("#also").innerHTML = t("also").map(x => `<li>${x}</li>`).join("");
   const R = LDATA && LDATA.solid, lr = $("#lrec");
@@ -777,6 +875,29 @@ document.querySelectorAll(".themebtn").forEach(btn => btn.addEventListener("clic
 addEventListener("scroll", () => $("#hdr").classList.toggle("scrolled", scrollY > 8), {passive:true});
 applyTheme(store.get("set:theme"));
 render();
+
+// licence requests: stored in Supabase (insert-only for visitors), answered by email
+(() => {
+  const SB = "https://evxnevqxykbfocqfqxid.supabase.co", KEY = "sb_publishable_ZQQw6R--FoIe0CzNqEkeLg_O5qv4TQO";
+  const dlg = $("#licdlg"), f = $("#licform"), msg = $("#licmsg"), send = $("#licsend");
+  const show = (k, cls) => { msg.textContent = t(k); msg.className = "licmsg " + (cls || ""); msg.hidden = false; };
+  $("#licbtn").addEventListener("click", () => { msg.hidden = true; send.disabled = false; send.textContent = t("lic_f_send"); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); });
+  $("#liccancel").addEventListener("click", () => dlg.close ? dlg.close() : dlg.removeAttribute("open"));
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+  f.addEventListener("submit", async e => {
+    e.preventDefault(); const d = Object.fromEntries(new FormData(f));
+    if (d.website) { show("lic_f_ok", "ok"); return; }   // honeypot: quietly ignore bots
+    if (!d.name.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email.trim())) { show("lic_f_need", "err"); return; }
+    send.disabled = true; send.textContent = t("lic_f_sending");
+    const row = { name: d.name.trim(), email: d.email.trim(), org: d.org.trim() || null, kind: d.kind, channel: d.channel.trim() || null, audience: d.audience.trim() || null, message: d.message.trim() || null, lang: LANG === "sv" ? "sv" : "en" };
+    try {
+      const r = await fetch(SB + "/rest/v1/licence_requests", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify(row) });
+      if (r.ok) { show("lic_f_ok", "ok"); f.reset(); send.textContent = t("lic_f_send"); setTimeout(() => dlg.open && dlg.close(), 2600); return; }
+      const txt = await r.text(); show(/too many/i.test(txt) ? "lic_f_many" : "lic_f_err", "err");
+    } catch (err) { show("lic_f_err", "err"); }
+    send.disabled = false; send.textContent = t("lic_f_send");
+  });
+})();
 </script>
 
 
