@@ -7,16 +7,16 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 719 skaters and 76 goalies (careers + game logs) ...
 Fetching 264 recent box scores (hits, blocks) ...
-News: 126 injuries, likely starters for 0 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-07, updated 2026-11-07T04:56:22.707Z)
+News: 126 injuries, likely starters for 28 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-07, updated 2026-11-07T04:56:22.707Z)
   shot maps: 264 games, 30155 attempts
-Model built: 47 games, 719 skaters (569 expected to play)
-Odds: bookmaker prices for 12 games, 426 players
-Odds: sharp-book prices for 11 games, 347 player markets
-  Stoiximan sync: 12 games, 2450 player prices (last push 2026-11-07T08:14:22.622534+00:00, manual); unmatched: Artyom Duda, No Scorer, Trey Taylor
-  manual odds: 1336 player prices added
+Model built: 47 games, 719 skaters (570 expected to play)
+Odds: bookmaker prices for 12 games, 425 players
+Odds: sharp-book prices for 11 games, 350 player markets
+  Stoiximan sync: 12 games, 2451 player prices (last push 2026-11-07T12:28:41.136065+00:00, manual); unmatched: Artyom Duda, Trey Taylor
+  manual odds: 1034 player prices added
 Public betting: splits for 12 games
   season simulation: 10000 seasons, 1080 games left, top Cup: CAR 29%, MIN 13%, COL 11%
-Futures odds: Cup 32, conference 32, division 32, playoffs 27, points 26
+Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 26
 Player projections: 719 skaters
 Goalie projections: 76 goalies
   awards: no player match for Artur Akhtyamov, Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
