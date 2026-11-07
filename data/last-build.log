@@ -10,10 +10,10 @@ Fetching 266 recent box scores (hits, blocks) ...
 News: 120 injuries, likely starters for 19 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 23 teams (2026-11-07, updated 2026-11-07T21:36:02.968Z)
   shot maps: 266 games, 30399 attempts
 Model built: 45 games, 718 skaters (568 expected to play)
-Odds: bookmaker prices for 15 games, 459 players
+Odds: bookmaker prices for 15 games, 531 players
 Odds: sharp-book prices for 8 games, 457 player markets
-  Stoiximan sync: 15 games, 1964 player prices (last push 2026-11-07T22:20:26.474605+00:00, pre); unmatched: Artyom Duda, Trey Taylor
-  manual odds: 839 player prices added
+  Stoiximan sync: 15 games, 1964 player prices (last push 2026-11-07T22:36:25.203182+00:00, pre); unmatched: Artyom Duda, Trey Taylor
+  manual odds: 840 player prices added
 Public betting: splits for 14 games
   season simulation: 10000 seasons, 1078 games left, top Cup: CAR 29%, MIN 13%, COL 10%
 Futures odds: Cup 32, conference 32, division 32, playoffs 27, points 28
