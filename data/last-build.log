@@ -1,5 +1,5 @@
-Season 2026-2027. Fetching schedule from 2026-11-06 ...
-  45 upcoming games over 6 days
+Season 2026-2027. Fetching schedule from 2026-11-07 ...
+  47 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -7,12 +7,11 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 719 skaters and 77 goalies (careers + game logs) ...
 Fetching 264 recent box scores (hits, blocks) ...
-News: 125 injuries, likely starters for 21 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-06, updated 2026-11-07T01:11:58.933Z)
-Shot maps: downloading play-by-play for 3 new games ...
+News: 126 injuries, likely starters for 21 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-07, updated 2026-11-07T04:56:22.707Z)
   shot maps: 264 games, 30155 attempts
-Model built: 45 games, 719 skaters (569 expected to play)
+Model built: 47 games, 719 skaters (569 expected to play)
 Odds: bookmaker prices for 12 games, 425 players
-Odds: sharp-book prices for 0 games, 0 player markets
+Odds: sharp-book prices for 11 games, 347 player markets
   Stoiximan sync: 7 games, 0 player prices (last push 2026-11-07T01:50:12.777795+00:00, hourly)
 Public betting: splits for 12 games
   season simulation: 10000 seasons, 1080 games left, top Cup: CAR 29%, MIN 13%, COL 11%
@@ -21,11 +20,10 @@ Player projections: 719 skaters
 Goalie projections: 77 goalies
   awards: no player match for Artur Akhtyamov, Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
-  history: MoneyPuck xG for 2026: 7,926 player-games
-  history: 3 box scores for hits/blocks (2026)
+  history: MoneyPuck xG for 2026: 7,956 player-games
   history: game-by-game files for 715 players (3 seasons)
-  archive: 7 past dates published (2026-10-30, 2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05)
+  archive: 7 past dates published (2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06)
 Best picks record: 169 graded, 44 won, -12.06 units
 Triage ledger: 52 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 740 bets +28.3u, L 1828 bets -88.9u, F 1300 bets -16.0u
-Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-06.html
+Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-07.html
