@@ -1,5 +1,5 @@
 Season 2026-2027. Fetching schedule from 2026-11-07 ...
-  47 upcoming games over 7 days
+  45 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -7,14 +7,13 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 718 skaters and 77 goalies (careers + game logs) ...
 Fetching 266 recent box scores (hits, blocks) ...
-News: 120 injuries, likely starters for 20 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 23 teams (2026-11-07, updated 2026-11-07T19:32:21.306Z)
-Shot maps: downloading play-by-play for 2 new games ...
+News: 120 injuries, likely starters for 20 games (+36 backup reports), line combinations for 32/32 teams, game-day lineups for 24 teams (2026-11-07, updated 2026-11-07T21:02:11.513Z)
   shot maps: 266 games, 30399 attempts
-Model built: 47 games, 718 skaters (568 expected to play)
+Model built: 45 games, 718 skaters (568 expected to play)
 Odds: bookmaker prices for 16 games, 352 players
 Odds: sharp-book prices for 9 games, 521 player markets
-  Stoiximan sync: 16 games, 2381 player prices (last push 2026-11-07T18:48:47.990465+00:00, hourly); unmatched: Artyom Duda, Trey Taylor
-  manual odds: 1112 player prices added
+  Stoiximan sync: 15 games, 2036 player prices (last push 2026-11-07T21:05:03.252792+00:00, manual); unmatched: Artyom Duda, Trey Taylor
+  manual odds: 767 player prices added
 Public betting: splits for 12 games
   season simulation: 10000 seasons, 1078 games left, top Cup: CAR 29%, MIN 13%, COL 10%
 Futures odds: Cup 32, conference 32, division 32, playoffs 27, points 28
@@ -23,7 +22,6 @@ Goalie projections: 77 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 8,019 player-games
-  history: 2 box scores for hits/blocks (2026)
   history: game-by-game files for 715 players (3 seasons)
   archive: 7 past dates published (2026-10-31, 2026-11-01, 2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06)
 Best picks record: 173 graded, 45 won, -12.81 units
