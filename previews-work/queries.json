@@ -1,5 +1,14 @@
 {
- "2026-11-06-cbj-buf": ["Tage Thompson Sabres","Rasmus Dahlin Sabres","KeyBank Center Buffalo Sabres game","Zach Werenski Blue Jackets","Kent Johnson hockey","Buffalo Sabres vs Columbus Blue Jackets","Sabres Ukko-Pekka Luukkonen"],
- "2026-11-06-sjs-min": ["Kirill Kaprizov Wild","Matt Boldy Wild","Quinn Hughes","Joel Eriksson Ek Wild","Xcel Energy Center Minnesota Wild game","Macklin Celebrini Sharks","San Jose Sharks vs Minnesota Wild"],
- "2026-11-06-ana-cgy": ["Cutter Gauthier Ducks","Leo Carlsson Ducks","Beckett Sennecke","Scotiabank Saddledome Calgary Flames game","Calgary Flames hockey game","Anaheim Ducks vs Calgary Flames","Mikael Backlund Flames"]
+ "2026-11-07-fla-wsh": ["Matthew Tkachuk Panthers","Sam Reinhart Panthers","Alex Ovechkin Capitals","Capital One Arena Washington Capitals game","Dylan Strome Capitals","Florida Panthers vs Washington Capitals"],
+ "2026-11-07-stl-nsh": ["Filip Forsberg Predators","Roman Josi Predators","Steven Stamkos Predators","Bridgestone Arena Nashville Predators game","Robert Thomas Blues","St. Louis Blues vs Nashville Predators"],
+ "2026-11-07-nyr-sea": ["Adam Fox Rangers","Mika Zibanejad Rangers","Jordan Eberle Kraken","New York Rangers at Seattle Kraken","Vince Dunn Kraken","Climate Pledge Arena hockey"],
+ "2026-11-07-mtl-tor": ["Auston Matthews Maple Leafs","William Nylander Maple Leafs","Nick Suzuki Canadiens","Cole Caufield Canadiens","Scotiabank Arena Toronto Maple Leafs game","Montreal Canadiens vs Toronto Maple Leafs"],
+ "2026-11-07-uta-ott": ["Tim Stützle Senators","Brady Tkachuk Senators","Canadian Tire Centre Ottawa Senators game","Clayton Keller hockey","Logan Cooley Utah","Utah Hockey Club"],
+ "2026-11-07-njd-nyi": ["Jack Hughes Devils","Nico Hischier Devils","Jesper Bratt Devils","UBS Arena New York Islanders","Bo Horvat Islanders","New Jersey Devils vs New York Islanders"],
+ "2026-11-07-chi-car": ["Sebastian Aho Hurricanes","Andrei Svechnikov Hurricanes","Connor Bedard Blackhawks","PNC Arena Carolina Hurricanes game","Seth Jarvis Hurricanes","Chicago Blackhawks vs Carolina Hurricanes"],
+ "2026-11-07-sjs-dal": ["Jason Robertson Stars","Mikko Rantanen Stars","Jamie Benn Stars","American Airlines Center Dallas Stars game","Wyatt Johnston Stars","Jake Oettinger Stars"],
+ "2026-11-07-tbl-min": ["Nikita Kucherov Lightning","Brayden Point Lightning","Andrei Vasilevskiy Lightning","Kirill Kaprizov Wild","Xcel Energy Center Minnesota Wild game","Tampa Bay Lightning vs Minnesota Wild"],
+ "2026-11-07-det-col": ["Nathan MacKinnon Avalanche","Cale Makar Avalanche","Ball Arena Colorado Avalanche game","Lucas Raymond Red Wings","Moritz Seider Red Wings","Detroit Red Wings vs Colorado Avalanche"],
+ "2026-11-07-pit-lak": ["Sidney Crosby Penguins","Evgeni Malkin Penguins","Adrian Kempe Kings","Crypto.com Arena Los Angeles Kings game","Erik Karlsson Penguins","Pittsburgh Penguins vs Los Angeles Kings"],
+ "2026-11-07-van-edm": ["Connor McDavid Oilers","Leon Draisaitl Oilers","Rogers Place Edmonton Oilers game","Brock Boeser Canucks","Evan Bouchard Oilers","Vancouver Canucks vs Edmonton Oilers"]
 }
