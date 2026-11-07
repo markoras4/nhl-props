@@ -215,7 +215,12 @@ def lineup_roles(slate: dict, lu_dir: Path) -> None:
         lu = ctx.get("lineup") or {}
         if lu.get("source") not in ("projected", "gameday"):
             continue
-        today[t] = {str(pid): k for k, ids in (lu.get("groups") or {}).items() for pid in ids}
+        # every group a player is in (a PP1 player is also on a line): keeping only one lost the PP unit at random
+        roles: dict[str, list] = {}
+        for k, ids in (lu.get("groups") or {}).items():
+            for pid in ids:
+                roles.setdefault(str(pid), []).append(k)
+        today[t] = roles
     d0 = dt.date.fromisoformat(slate["date"])
     f_today = lu_dir / f"{slate['date']}.json"
     old = {}
@@ -229,13 +234,10 @@ def lineup_roles(slate: dict, lu_dir: Path) -> None:
     before = json.loads(past[-1].read_text())
     for t, now in today.items():
         prev = before.get(t)
-        if not prev:
+        # files from before 7 Nov 2026 kept one group per player and can't be compared fairly: skip them
+        if not prev or not all(isinstance(v, list) for v in prev.values()):
             continue
-        inv_now, inv_prev = {}, {}
-        for pid, k in now.items():
-            inv_now.setdefault(pid, []).append(k)
-        for pid, k in prev.items():
-            inv_prev.setdefault(pid, []).append(k)
+        inv_now, inv_prev = now, prev
         for pid, ks in inv_now.items():
             pl = slate["players"].get(pid) or slate["players"].get(int(pid)) if pid.isdigit() else None
             if not pl or pid not in inv_prev:

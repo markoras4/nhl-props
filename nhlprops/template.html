@@ -1837,7 +1837,13 @@ function currentTheme(){
 const P = id => DATA.players[String(id)];
 const G = id => DATA.goalies[String(id)];
 const gameById = Object.fromEntries(DATA.games.map(g => [String(g.id), g]));
-const dates = [...new Set(DATA.games.map(g=>g.date))].sort();
+// game days in the viewer's own timezone: a 19:00 ET game is "Sunday" in Stockholm when it starts at 01:00 Sunday
+const localDay = ts => new Date(ts).toLocaleDateString("sv-SE");
+const setLocalDays = () => DATA.games.forEach(g => { g.ld = g.start ? localDay(g.start) : g.date; });
+setLocalDays();
+const TODAY = localDay(Date.now());
+const isToday = d => d === TODAY;
+const dates = [...new Set(DATA.games.map(g=>g.ld))].sort();
 
 const state = {
   tab: "games", game: null, side: null, day: dates[0], open: null, sort: null,
@@ -1957,8 +1963,8 @@ const MLAB = {pt2:"m_pt2", pt3:"m_pt3", g2:"m_g2", g3:"m_g3", a2:"m_a2", ppp:"m_
 const mName = m => MLAB[m] ? t(MLAB[m]) : m==="fg" ? t("m_fg") : m==="g" ? t("m_g") : m==="a" ? t("m_a") : m==="pt" ? t("m_pt")
   : m.startsWith("fo") ? t("m_fo",{n:Math.ceil(parseFloat(m.slice(2)))}) : m[0]==="h" ? t("m_hit",{n:Math.ceil(parseFloat(m.slice(1)))})
   : m[0]==="b" ? t("m_blk",{n:Math.ceil(parseFloat(m.slice(1)))}) : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
-Object.assign(I18N.en, {"nx_exp_h": "Expected hits", "nx_exp_b": "Expected blocks", "nx_over_h": "Over {l} hits", "nx_over_b": "Over {l} blocks", "nx_h60": "Hits per 60", "nx_b60": "Blocks per 60", "nx_pg": "This season per game", "nx_in": "in", "nx_ha": "Home / away this season", "nx_ha_home": "home tonight", "nx_ha_away": "away tonight", "nx_cf_opp": "Opponent's shot share (CF%)", "nx_cf_his": "{t} shot share (CF%)", "nx_opp_pp": "Opponent power-play time per game", "nx_foot_hb": "Hits and blocks are counted by the home rink's scorers, and some rinks count clearly more than others.", "nxv_season_h": "Season hit rate", "nxv_l10_h": "Last 10 hit rate", "nxv_season_b": "Season block rate", "nxv_l10_b": "Last 10 block rate", "tri_lean":"Lean ({n})", "tri_nosolid":"No Solid bets for this selection. The Lean ones are below.", "tri_solid_n":"{n} Solid bets on the slate", "aw_tab": "Awards", "aw_title": "Season awards", "aw_sub": "Stoiximan's prices for the NHL awards, next to the model's chances from the same 10,000 simulated seasons.", "aw_upd": "Prices from {d}, {h}.", "aw_rocket": "Rocket Richard", "aw_artross": "Art Ross", "aw_hart": "Hart", "aw_norris": "Norris", "aw_calder": "Calder", "aw_vezina": "Vezina", "aw_adams": "Jack Adams", "aw_sort_book": "Book favourites", "aw_sort_model": "Model favourites", "aw_book_h": "Book", "aw_book_tip": "Stoiximan's price. Below it: the book's chance with its margin removed (award markets carry a big margin, so the raw prices add up to far more than 100%).", "aw_fair_s": "book {p}", "aw_notlisted": "not offered", "aw_fairodds": "fair {o}", "aw_value": "value", "aw_m_rr": "Model", "aw_m_rr_tip": "The model's chance that he scores the most goals this season (the Rocket Richard goes to the top goal scorer, so this is the real thing). Value = the book pays at least 10% more than the model's fair price.", "aw_m_ar": "Model", "aw_m_ar_tip": "The model's chance that he finishes with the most points (the Art Ross goes to the top scorer). Stoiximan doesn't offer this market yet.", "aw_m_hart": "Art Ross chance", "aw_m_hart_tip": "Not a Hart chance: the Hart is voted on by writers. Shown for context, because most Hart winners are at or near the top of the scoring race.", "aw_m_dl": "Most D points", "aw_m_dl_tip": "Stand-in, not a Norris chance: the model's chance that he finishes with the most points among defencemen. Voters also weigh defence, so treat gaps with care.", "aw_m_rl": "Most rookie points", "aw_m_rl_tip": "Stand-in, not a Calder chance: the model's chance that he finishes with the most points among rookie skaters. Rookie goalies can win the Calder too.", "aw_m_vz": "Most saved goals", "aw_m_vz_tip": "Stand-in, not a Vezina chance: the model's chance that he finishes first in goals saved above expected among goalies with 40+ games. General managers vote on the Vezina and also look at wins and workload.", "aw_now_g": "Now", "aw_proj_gsax": "Saved goals at the end · range", "aw_gsax_now": "{v} saved goals", "aw_coach": "head coach", "aw_coach_h": "Coach", "aw_nomatch": "not in tonight's player list", "aw_n_exact_h": "Decided by the numbers.", "aw_n_coach_h": "Book prices only.", "aw_n_proxy_h": "Voted award: the model shows a stand-in.", "aw_n_rocket": "Most goals wins, so the model's chance is a real price. Rows with a value tag pay at least 10% more than the model's fair price; the three biggest edges are outlined.", "aw_n_artross": "Most points wins. No book offers it yet, so only the model's chances and fair prices show here.", "aw_n_hart": "Writers vote for the most valuable player, so no model can price it directly. The column shows each player's Art Ross chance for context: most Hart winners lead or come close in the scoring race.", "aw_n_norris": "Writers vote for the best all-round defenceman. The column is the chance of leading all defencemen in points: a fair guide to the offensive side, not the whole picture.", "aw_n_calder": "Writers vote for the best rookie. The column is the chance of leading rookie skaters in points; for goalies the saved-goals projection shows instead.", "aw_n_vezina": "General managers vote for the best goalie. The column is the chance of leading goalies with 40+ games in goals saved above expected, from a season simulation of each goalie's starts and save quality.", "aw_n_adams": "Broadcasters vote for the coach of the year. The model has nothing honest to add here, so these are the book's prices with the margin removed.", "aw_foot": "Award prices are read from Stoiximan every 3 hours. Only the Rocket Richard and Art Ross are marked as value, because only those are won on the numbers alone. Futures carry a large margin and tie money up for months.", "aw_ch_book": "book {p}", "aw_ch_model": "model {p}", "aw_card_h": "Award prices", "aw_card_none": "No award prices for him right now."});
-Object.assign(I18N.sv, {"nx_exp_h": "Väntade tacklingar", "nx_exp_b": "Väntade blockeringar", "nx_over_h": "Över {l} tacklingar", "nx_over_b": "Över {l} blockeringar", "nx_h60": "Tacklingar per 60", "nx_b60": "Blockeringar per 60", "nx_pg": "I år per match", "nx_in": "på", "nx_ha": "Hemma / borta i år", "nx_ha_home": "hemma i kväll", "nx_ha_away": "borta i kväll", "nx_cf_opp": "Motståndets skottandel (CF%)", "nx_cf_his": "{t}s skottandel (CF%)", "nx_opp_pp": "Motståndets powerplaytid per match", "nx_foot_hb": "Tacklingar och blockeringar räknas av hemmaarenans statistiker, och vissa arenor räknar klart mer än andra.", "nxv_season_h": "Säsongens tacklingstakt", "nxv_l10_h": "Senaste 10, tacklingar", "nxv_season_b": "Säsongens blockeringstakt", "nxv_l10_b": "Senaste 10, blockeringar", "tri_lean":"Lutar ({n})", "tri_nosolid":"Inga stabila spel för det här urvalet. De som lutar finns nedan.", "tri_solid_n":"{n} Stabila spel på programmet", "aw_tab": "Priser", "aw_title": "Säsongens priser", "aw_sub": "Stoiximans odds på NHL:s priser, bredvid modellens chanser från samma 10 000 simulerade säsonger.", "aw_upd": "Odds från {d}, {h}.", "aw_rocket": "Rocket Richard", "aw_artross": "Art Ross", "aw_hart": "Hart", "aw_norris": "Norris", "aw_calder": "Calder", "aw_vezina": "Vezina", "aw_adams": "Jack Adams", "aw_sort_book": "Bookens favoriter", "aw_sort_model": "Modellens favoriter", "aw_book_h": "Book", "aw_book_tip": "Stoiximans odds. Under: bookens chans utan marginal (prismarknader har stor marginal, så de råa oddsen summerar till långt över 100 %).", "aw_fair_s": "book {p}", "aw_notlisted": "erbjuds ej", "aw_fairodds": "rättvist {o}", "aw_value": "värde", "aw_m_rr": "Modell", "aw_m_rr_tip": "Modellens chans att han gör flest mål i år (Rocket Richard går till bäste målskytt, så det här är på riktigt). Värde = booken betalar minst 10 % mer än modellens rättvisa odds.", "aw_m_ar": "Modell", "aw_m_ar_tip": "Modellens chans att han slutar med flest poäng (Art Ross går till poängkungen). Stoiximan erbjuder inte marknaden än.", "aw_m_hart": "Chans till Art Ross", "aw_m_hart_tip": "Inte en Hart-chans: Hart röstas fram av journalister. Visas som sammanhang, eftersom de flesta Hart-vinnare ligger i toppen av poängligan.", "aw_m_dl": "Flest poäng bland backar", "aw_m_dl_tip": "Ersättare, inte en Norris-chans: modellens chans att han slutar med flest poäng bland backar. Röstarna väger också in försvarsspelet.", "aw_m_rl": "Flest rookiepoäng", "aw_m_rl_tip": "Ersättare, inte en Calder-chans: modellens chans att han slutar med flest poäng bland rookies (utespelare). Rookiemålvakter kan också vinna Calder.", "aw_m_vz": "Flest räddade mål", "aw_m_vz_tip": "Ersättare, inte en Vezina-chans: modellens chans att han slutar etta i räddade mål över förväntat bland målvakter med 40+ matcher. Klubbcheferna röstar och ser också på vinster och arbetsbörda.", "aw_now_g": "Nu", "aw_proj_gsax": "Räddade mål vid säsongens slut · spann", "aw_gsax_now": "{v} räddade mål", "aw_coach": "huvudtränare", "aw_coach_h": "Tränare", "aw_nomatch": "inte i kvällens spelarlista", "aw_n_exact_h": "Avgörs av siffrorna.", "aw_n_coach_h": "Bara bookens odds.", "aw_n_proxy_h": "Pris som röstas fram: modellen visar en ersättare.", "aw_n_rocket": "Flest mål vinner, så modellens chans är ett riktigt pris. Rader med värde-märkning betalar minst 10 % mer än modellens rättvisa odds; de tre största fördelarna är markerade.", "aw_n_artross": "Flest poäng vinner. Ingen book erbjuder det än, så här visas bara modellens chanser och rättvisa odds.", "aw_n_hart": "Journalister röstar fram den mest värdefulla spelaren, så ingen modell kan prissätta det direkt. Kolumnen visar varje spelares chans till Art Ross som sammanhang: de flesta Hart-vinnare leder eller ligger nära i poängligan.", "aw_n_norris": "Journalister röstar fram den bästa backen. Kolumnen är chansen att leda alla backar i poäng: en bra fingervisning om offensiven, inte hela bilden.", "aw_n_calder": "Journalister röstar fram bästa rookie. Kolumnen är chansen att leda rookies (utespelare) i poäng; för målvakter visas prognosen för räddade mål i stället.", "aw_n_vezina": "Klubbcheferna röstar fram bästa målvakt. Kolumnen är chansen att leda målvakter med 40+ matcher i räddade mål över förväntat, från en säsongssimulering av varje målvakts starter och räddningsnivå.", "aw_n_adams": "TV- och radiofolk röstar fram årets tränare. Modellen har inget ärligt att tillföra här, så det här är bookens odds utan marginal.", "aw_foot": "Prisoddsen läses från Stoiximan var tredje timme. Bara Rocket Richard och Art Ross märks med värde, eftersom bara de avgörs av siffrorna. Långtidsspel har stor marginal och binder pengar i månader.", "aw_ch_book": "book {p}", "aw_ch_model": "modell {p}", "aw_card_h": "Prisodds", "aw_card_none": "Inga prisodds för honom just nu."});
+Object.assign(I18N.en, {"aw_stale":"{n} days old: value not marked", "p_more":"Showing the top 300 · show all {n}", "p_less":"Show the top 300 only", "qr_role_g":"Biggest role: {a}, about {m} min{r} in his game.", "cmp_chance_g":"Chance in his game", "cmp_vs_g":"vs this opponent", "qr_bl_noodds":"None of the priced options has value right now; on chance alone, {a} is ahead of {b}.", "nx_exp_h": "Expected hits", "nx_exp_b": "Expected blocks", "nx_over_h": "Over {l} hits", "nx_over_b": "Over {l} blocks", "nx_h60": "Hits per 60", "nx_b60": "Blocks per 60", "nx_pg": "This season per game", "nx_in": "in", "nx_ha": "Home / away this season", "nx_ha_home": "home tonight", "nx_ha_away": "away tonight", "nx_cf_opp": "Opponent's shot share (CF%)", "nx_cf_his": "{t} shot share (CF%)", "nx_opp_pp": "Opponent power-play time per game", "nx_foot_hb": "Hits and blocks are counted by the home rink's scorers, and some rinks count clearly more than others.", "nxv_season_h": "Season hit rate", "nxv_l10_h": "Last 10 hit rate", "nxv_season_b": "Season block rate", "nxv_l10_b": "Last 10 block rate", "tri_lean":"Lean ({n})", "tri_nosolid":"No Solid bets for this selection. The Lean ones are below.", "tri_solid_n":"{n} Solid bets on the slate", "aw_tab": "Awards", "aw_title": "Season awards", "aw_sub": "Stoiximan's prices for the NHL awards, next to the model's chances from the same 10,000 simulated seasons.", "aw_upd": "Prices from {d}, {h}.", "aw_rocket": "Rocket Richard", "aw_artross": "Art Ross", "aw_hart": "Hart", "aw_norris": "Norris", "aw_calder": "Calder", "aw_vezina": "Vezina", "aw_adams": "Jack Adams", "aw_sort_book": "Book favourites", "aw_sort_model": "Model favourites", "aw_book_h": "Book", "aw_book_tip": "Stoiximan's price. Below it: the book's chance with its margin removed (award markets carry a big margin, so the raw prices add up to far more than 100%).", "aw_fair_s": "book {p}", "aw_notlisted": "not offered", "aw_fairodds": "fair {o}", "aw_value": "value", "aw_m_rr": "Model", "aw_m_rr_tip": "The model's chance that he scores the most goals this season (the Rocket Richard goes to the top goal scorer, so this is the real thing). Value = the book pays at least 10% more than the model's fair price.", "aw_m_ar": "Model", "aw_m_ar_tip": "The model's chance that he finishes with the most points (the Art Ross goes to the top scorer). Stoiximan doesn't offer this market yet.", "aw_m_hart": "Art Ross chance", "aw_m_hart_tip": "Not a Hart chance: the Hart is voted on by writers. Shown for context, because most Hart winners are at or near the top of the scoring race.", "aw_m_dl": "Most D points", "aw_m_dl_tip": "Stand-in, not a Norris chance: the model's chance that he finishes with the most points among defencemen. Voters also weigh defence, so treat gaps with care.", "aw_m_rl": "Most rookie points", "aw_m_rl_tip": "Stand-in, not a Calder chance: the model's chance that he finishes with the most points among rookie skaters. Rookie goalies can win the Calder too.", "aw_m_vz": "Most saved goals", "aw_m_vz_tip": "Stand-in, not a Vezina chance: the model's chance that he finishes first in goals saved above expected among goalies with 40+ games. General managers vote on the Vezina and also look at wins and workload.", "aw_now_g": "Now", "aw_proj_gsax": "Saved goals at the end · range", "aw_gsax_now": "{v} saved goals", "aw_coach": "head coach", "aw_coach_h": "Coach", "aw_nomatch": "not in tonight's player list", "aw_n_exact_h": "Decided by the numbers.", "aw_n_coach_h": "Book prices only.", "aw_n_proxy_h": "Voted award: the model shows a stand-in.", "aw_n_rocket": "Most goals wins, so the model's chance is a real price. Rows with a value tag pay at least 10% more than the model's fair price; the three biggest edges are outlined.", "aw_n_artross": "Most points wins. No book offers it yet, so only the model's chances and fair prices show here.", "aw_n_hart": "Writers vote for the most valuable player, so no model can price it directly. The column shows each player's Art Ross chance for context: most Hart winners lead or come close in the scoring race.", "aw_n_norris": "Writers vote for the best all-round defenceman. The column is the chance of leading all defencemen in points: a fair guide to the offensive side, not the whole picture.", "aw_n_calder": "Writers vote for the best rookie. The column is the chance of leading rookie skaters in points; for goalies the saved-goals projection shows instead.", "aw_n_vezina": "General managers vote for the best goalie. The column is the chance of leading goalies with 40+ games in goals saved above expected, from a season simulation of each goalie's starts and save quality.", "aw_n_adams": "Broadcasters vote for the coach of the year. The model has nothing honest to add here, so these are the book's prices with the margin removed.", "aw_foot": "Award prices are read from Stoiximan up to every 3 hours while the price sync runs; prices older than two days aren't marked as value. Only the Rocket Richard and Art Ross are marked as value, because only those are won on the numbers alone. Futures carry a large margin and tie money up for months.", "aw_ch_book": "book {p}", "aw_ch_model": "model {p}", "aw_card_h": "Award prices", "aw_card_none": "No award prices for him right now."});
+Object.assign(I18N.sv, {"aw_stale":"{n} dagar gamla: värde markeras inte", "p_more":"Visar topp 300 · visa alla {n}", "p_less":"Visa bara topp 300", "qr_role_g":"Störst roll: {a}, ungefär {m} min{r} i sin match.", "cmp_chance_g":"Chans i hans match", "cmp_vs_g":"mot den här motståndaren", "qr_bl_noodds":"Inget av alternativen med odds har värde just nu; på chans är {a} före {b}.", "nx_exp_h": "Väntade tacklingar", "nx_exp_b": "Väntade blockeringar", "nx_over_h": "Över {l} tacklingar", "nx_over_b": "Över {l} blockeringar", "nx_h60": "Tacklingar per 60", "nx_b60": "Blockeringar per 60", "nx_pg": "I år per match", "nx_in": "på", "nx_ha": "Hemma / borta i år", "nx_ha_home": "hemma i kväll", "nx_ha_away": "borta i kväll", "nx_cf_opp": "Motståndets skottandel (CF%)", "nx_cf_his": "{t}s skottandel (CF%)", "nx_opp_pp": "Motståndets powerplaytid per match", "nx_foot_hb": "Tacklingar och blockeringar räknas av hemmaarenans statistiker, och vissa arenor räknar klart mer än andra.", "nxv_season_h": "Säsongens tacklingstakt", "nxv_l10_h": "Senaste 10, tacklingar", "nxv_season_b": "Säsongens blockeringstakt", "nxv_l10_b": "Senaste 10, blockeringar", "tri_lean":"Lutar ({n})", "tri_nosolid":"Inga stabila spel för det här urvalet. De som lutar finns nedan.", "tri_solid_n":"{n} Stabila spel på programmet", "aw_tab": "Priser", "aw_title": "Säsongens priser", "aw_sub": "Stoiximans odds på NHL:s priser, bredvid modellens chanser från samma 10 000 simulerade säsonger.", "aw_upd": "Odds från {d}, {h}.", "aw_rocket": "Rocket Richard", "aw_artross": "Art Ross", "aw_hart": "Hart", "aw_norris": "Norris", "aw_calder": "Calder", "aw_vezina": "Vezina", "aw_adams": "Jack Adams", "aw_sort_book": "Bookens favoriter", "aw_sort_model": "Modellens favoriter", "aw_book_h": "Book", "aw_book_tip": "Stoiximans odds. Under: bookens chans utan marginal (prismarknader har stor marginal, så de råa oddsen summerar till långt över 100 %).", "aw_fair_s": "book {p}", "aw_notlisted": "erbjuds ej", "aw_fairodds": "rättvist {o}", "aw_value": "värde", "aw_m_rr": "Modell", "aw_m_rr_tip": "Modellens chans att han gör flest mål i år (Rocket Richard går till bäste målskytt, så det här är på riktigt). Värde = booken betalar minst 10 % mer än modellens rättvisa odds.", "aw_m_ar": "Modell", "aw_m_ar_tip": "Modellens chans att han slutar med flest poäng (Art Ross går till poängkungen). Stoiximan erbjuder inte marknaden än.", "aw_m_hart": "Chans till Art Ross", "aw_m_hart_tip": "Inte en Hart-chans: Hart röstas fram av journalister. Visas som sammanhang, eftersom de flesta Hart-vinnare ligger i toppen av poängligan.", "aw_m_dl": "Flest poäng bland backar", "aw_m_dl_tip": "Ersättare, inte en Norris-chans: modellens chans att han slutar med flest poäng bland backar. Röstarna väger också in försvarsspelet.", "aw_m_rl": "Flest rookiepoäng", "aw_m_rl_tip": "Ersättare, inte en Calder-chans: modellens chans att han slutar med flest poäng bland rookies (utespelare). Rookiemålvakter kan också vinna Calder.", "aw_m_vz": "Flest räddade mål", "aw_m_vz_tip": "Ersättare, inte en Vezina-chans: modellens chans att han slutar etta i räddade mål över förväntat bland målvakter med 40+ matcher. Klubbcheferna röstar och ser också på vinster och arbetsbörda.", "aw_now_g": "Nu", "aw_proj_gsax": "Räddade mål vid säsongens slut · spann", "aw_gsax_now": "{v} räddade mål", "aw_coach": "huvudtränare", "aw_coach_h": "Tränare", "aw_nomatch": "inte i kvällens spelarlista", "aw_n_exact_h": "Avgörs av siffrorna.", "aw_n_coach_h": "Bara bookens odds.", "aw_n_proxy_h": "Pris som röstas fram: modellen visar en ersättare.", "aw_n_rocket": "Flest mål vinner, så modellens chans är ett riktigt pris. Rader med värde-märkning betalar minst 10 % mer än modellens rättvisa odds; de tre största fördelarna är markerade.", "aw_n_artross": "Flest poäng vinner. Ingen book erbjuder det än, så här visas bara modellens chanser och rättvisa odds.", "aw_n_hart": "Journalister röstar fram den mest värdefulla spelaren, så ingen modell kan prissätta det direkt. Kolumnen visar varje spelares chans till Art Ross som sammanhang: de flesta Hart-vinnare leder eller ligger nära i poängligan.", "aw_n_norris": "Journalister röstar fram den bästa backen. Kolumnen är chansen att leda alla backar i poäng: en bra fingervisning om offensiven, inte hela bilden.", "aw_n_calder": "Journalister röstar fram bästa rookie. Kolumnen är chansen att leda rookies (utespelare) i poäng; för målvakter visas prognosen för räddade mål i stället.", "aw_n_vezina": "Klubbcheferna röstar fram bästa målvakt. Kolumnen är chansen att leda målvakter med 40+ matcher i räddade mål över förväntat, från en säsongssimulering av varje målvakts starter och räddningsnivå.", "aw_n_adams": "TV- och radiofolk röstar fram årets tränare. Modellen har inget ärligt att tillföra här, så det här är bookens odds utan marginal.", "aw_foot": "Prisoddsen läses från Stoiximan upp till var tredje timme när synken körs; odds äldre än två dagar markeras inte som värde. Bara Rocket Richard och Art Ross märks med värde, eftersom bara de avgörs av siffrorna. Långtidsspel har stor marginal och binder pengar i månader.", "aw_ch_book": "book {p}", "aw_ch_model": "modell {p}", "aw_card_h": "Prisodds", "aw_card_none": "Inga prisodds för honom just nu."});
 const noHistory = m => m==="fg" || m.startsWith("fo");      // markets without a per-game record in the last-10 strip
 function hitGame(gm, m){
   if (noHistory(m)) return false;
@@ -2076,7 +2082,7 @@ document.addEventListener("click", e => {
 function streaksTable(){
   const f = state.stf || "all", rows = [];
   for (const g of DATA.games){
-    if (state.pday!=="all" && g.date!==state.pday) continue;
+    if (state.pday!=="all" && g.ld!==state.pday) continue;
     if (state.pfilter!=="all" && String(g.id)!==String(state.pfilter)) continue;
     for (const x of streaksForGame(g)){
       if (state.q && !x.p.name.toLowerCase().includes(state.q)) continue;
@@ -2087,7 +2093,7 @@ function streaksTable(){
   const mlabel = x => x.k==="ms" ? (x.need ? t("st_reach") : "") : mName(x.m);
   return rows.map(x=>{ const od = x.m ? getOdds(x.g.id, x.pr.id, x.m) : null, ev = od && x.v!=null ? x.v*od-1 : null;
     return `<tr class="row" data-g="${x.g.id}" data-id="${x.pr.id}">
-      <td><div class="pl"><div class="jersey">${x.p.num??""}</div><div><div class="nm">${esc(x.p.name)} ${injPill(x.p.injury)}</div><div class="sub">${logo(x.pr.team,18)} ${x.p.pos} · ${x.pr.team} ${x.pr.home?"vs":"@"} ${x.pr.opp} · ${dayLabel(x.g.date)}</div></div></div></td>
+      <td><div class="pl"><div class="jersey">${x.p.num??""}</div><div><div class="nm">${esc(x.p.name)} ${injPill(x.p.injury)}</div><div class="sub">${logo(x.pr.team,18)} ${x.p.pos} · ${x.pr.team} ${x.pr.home?"vs":"@"} ${x.pr.opp} · ${dayLabel(x.g.ld)}</div></div></div></td>
       <td><span class="stlab st-${x.k}">${x.label}</span></td>
       <td class="n hide-xs">${x.rare!=null?`<span class="tip" tabindex="0" data-tip="${esc(t("st_rare_tip",{x:Math.max(2,Math.round(1/x.rare))}))}">${t("st_rare",{x:Math.max(2,Math.round(1/x.rare))})}</span>`:"–"}</td>
       <td>${x.v!=null?`<span class="meta">${mlabel(x)}</span> <b>${pct(x.v,1)}</b>`:"–"}</td>
@@ -2161,11 +2167,11 @@ function go(patch){
 function gamesList(){
   if (!dates.length){ $("#main").innerHTML = `<div class="card empty">${t("no_games")}</div>`; return; }
   if (!dates.includes(state.day)) state.day = dates[0];
-  const games = DATA.games.filter(g=>g.date===state.day);
+  const games = DATA.games.filter(g=>g.ld===state.day);
   const L = DATA.league;
   const ads = ARCH ? [] : archDates();
   const pastChip = ads.length ? `<div class="day past" title="${esc(t("ar_cta"))}"><b>◷ ${t("ar_earlier")}</b><span>${t("ar_7d")}</span><select id="archsel2" aria-label="${t("ar_pick")}"><option value="">${t("ar_pick")}</option>${ads.map(d=>`<option value="${d}">${dayLabel(d)}</option>`).join("")}</select></div>` : "";
-  let html = `<div class="days">${pastChip}${dates.map(d=>`<button class="day ${d===state.day?"on":""}" data-d="${d}"><b>${d===dates[0]&&!ARCH?t("today"):dayShort(d)}</b><span>${dayLabel(d)} · ${t("n_games",{n:DATA.games.filter(g=>g.date===d).length})}</span></button>`).join("")}</div>
+  let html = `<div class="days">${pastChip}${dates.map(d=>`<button class="day ${d===state.day?"on":""}" data-d="${d}"><b>${isToday(d)&&!ARCH?t("today"):dayShort(d)}</b><span>${dayLabel(d)} · ${t("n_games",{n:DATA.games.filter(g=>g.ld===d).length})}</span></button>`).join("")}</div>
   <div class="glist">`;
   for (const g of games){
     const A = DATA.teams[g.away]||{}, H = DATA.teams[g.home]||{};
@@ -2211,7 +2217,7 @@ function h2hBlock(g){
     const d = new Date(x.date+"T12:00:00").toLocaleDateString(LOCALE(),{day:"numeric",month:"short",year:"numeric"});
     return `<div class="h2r" data-rd="${x.date}" data-rt="${H}" role="button" tabindex="0" title="${esc(t("rc_open"))}"><span class="h2d">${d}</span>${left}<span class="h2at">–</span>${right}<span class="h2tot">${x.hg+x.ag}</span></div>`;
   }).join("");
-  return `<div class="h2h"><div class="h2s"><b>${t("h2h_title")}</b><span>${t("h2h_sum",{a:A, aw, hw, h:H, avg:fmt(h.avg_total,1), l:line, o:over, n:games.length})}</span></div>
+  return `<div class="h2h"><div class="h2s"><b>${t("h2h_title")}</b><span>${t("h2h_sum",{a:A, aw, hw, h:H, avg:fmt(games.length ? games.reduce((s_,x)=>s_+x.hg+x.ag,0)/games.length : h.avg_total,1), l:line, o:over, n:games.length})}</span></div>
     <div class="h2head"><span></span><span class="l">${t("h2h_away")}</span><span></span><span>${t("h2h_home")}</span><span class="h2tot">${t("h2h_total")}</span></div>${rows}</div>`;
 }
 function winOdds(g, d){
@@ -2238,7 +2244,7 @@ function gamePage(){
   let html = `<button class="back" id="back">${t("all_games")}</button>
   <div class="card ghero">
     <div class="tm">${logo(g.away)}<div><div class="abbr">${g.away}</div><div class="meta">${rec(A)} · ${trResults(A.last5)}</div></div></div>
-    <div class="big">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>${t("proj_goals")} · ${dayLabel(g.date)} ${timeOf(g)}</small>${liveScore(g)?`<div class="livebar">${statePill(g)} <b>${g.away} ${liveScore(g)} ${g.home}</b></div>`:""}${g.frozen?`<div class="frozen">${t("frozen_note")}</div>`:""}</div>
+    <div class="big">${fmt(mu.a,2)} – ${fmt(mu.h,2)}<small>${t("proj_goals")} · ${dayLabel(g.ld)} ${timeOf(g)}</small>${liveScore(g)?`<div class="livebar">${statePill(g)} <b>${g.away} ${liveScore(g)} ${g.home}</b></div>`:""}${g.frozen?`<div class="frozen">${t("frozen_note")}</div>`:""}</div>
     <div class="tm r">${logo(g.home)}<div><div class="abbr">${g.home}</div><div class="meta">${trResults(H.last5)} · ${rec(H)}</div></div></div>
   </div>
   ${previewBlock(g)}
@@ -2514,7 +2520,7 @@ const triMkt = (m, side) => /^s\d/.test(m) ? t(side === "n" ? "tri_su" : "tri_so
 function triageRows(day){
   const out = [];
   for (const g of DATA.games){
-    if (day !== "all" && g.date !== day) continue;
+    if (day !== "all" && g.ld !== day) continue;
     if (g.state && !["FUT","PRE"].includes(g.state)) continue;
     const po = DATA.odds?.[g.id]?.players || {};
     for (const pr of g.props){ const p = P(pr.id); if (!p?.active) continue;
@@ -2537,7 +2543,7 @@ function triBtn(on){
 }
 function triageList(){
   const day = state.pday || "all", grp = state.trg || "all", sd = state.trs || "all";
-  const gsel = state.trgame || "all", dayGames = DATA.games.filter(g => (day === "all" || g.date === day) && (!g.state || ["FUT","PRE"].includes(g.state)));
+  const gsel = state.trgame || "all", dayGames = DATA.games.filter(g => (day === "all" || g.ld === day) && (!g.state || ["FUT","PRE"].includes(g.state)));
   let rows = triageRows(day).filter(r => (gsel === "all" || String(r.g.id) === String(gsel)) && (grp === "all" || bpFamily(r.m) === grp || (grp === "pts" && GROUP_OF[r.m] === "multi")) && (sd === "all" || r.side === sd));
   rows.sort((a,b) => "SLF".indexOf(a.gr) - "SLF".indexOf(b.gr) || b.ev - a.ev);
   const fams = [...new Set(triageRows(day).map(r => bpFamily(r.m)))].filter(f => MGROUPS[f]);
@@ -2546,7 +2552,7 @@ function triageList(){
   const lkl = Object.entries(linked).filter(([,v]) => v.size >= 3).sort((a,b)=>b[1].size-a[1].size)
     .map(([k, v]) => `<b>${k.split("|")[0]}</b> ${v.size} ${t(k.endsWith("|n")?"tri_lk_n":"tri_lk_o")}`);
   const lk = lkl.length ? `<p class="note">⚠ ${t("tri_linked2")} ${lkl.join(" · ")}</p>` : "";
-  const row = r => `<tr class="row" data-id="${r.pr.id}" data-g="${r.g.id}"><td>${triBadge(r)}</td><td><div class="llnm">${logo(r.pr.team,18)}<div><b>${esc(r.p.name)}</b><div class="meta">${r.pr.team} ${r.pr.home?"vs":"@"} ${r.pr.opp} · ${dayShort(r.g.date)}</div></div></div></td>
+  const row = r => `<tr class="row" data-id="${r.pr.id}" data-g="${r.g.id}"><td>${triBadge(r)}</td><td><div class="llnm">${logo(r.pr.team,18)}<div><b>${esc(r.p.name)}</b><div class="meta">${r.pr.team} ${r.pr.home?"vs":"@"} ${r.pr.opp} · ${dayShort(r.g.ld)}</div></div></div></td>
     <td>${esc(triMkt(r.m, r.side))}</td><td class="n num hide-xs"><b>${pct(r.pm,0)}</b></td><td class="n num">${oddsTxt(r.od)}</td><td class="n num ev-pos">${evTxt(r.ev)}</td>
     <td class="hide-sm">${Object.entries(r.views).map(([k,e]) => `<span class="trv ${e>0?"ok":"no"}" title="${esc(t("tv_"+k,{e:evTxt(e)}))}">${k==="season"?"SZN":"L10"} ${evTxt(e)}</span>`).join(" ") || `<span class="meta">–</span>`}</td>
     <td class="hide-xs">${triCautions(r).map(x => `<span class="trc">${esc(x)}</span>`).join("")}${triInfo(r).map((x,i) => `<span class="tri_i ${r.info[i]==="sharp_ok"?"ok":""}">${esc(x)}</span>`).join("")}</td></tr>`;
@@ -2557,7 +2563,7 @@ function triageList(){
   $("#main").innerHTML = `<div class="controls">
     <div class="seg olseg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button>${triBtn(true)}<button data-s="streaks">${t("st_tab")}</button><button data-s="lines">${t("ll_tab")}</button></div>
     <select id="fday" aria-label="${t("day")}"><option value="all">${t("all_days")}</option>${dates.map(d=>`<option value="${d}" ${day===d?"selected":""}>${dayLabel(d)}</option>`).join("")}</select>
-    <select id="trgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${dayGames.map(g=>`<option value="${g.id}" ${String(gsel)===String(g.id)?"selected":""}>${day==="all"?dayLabel(g.date)+" · ":""}${g.away} @ ${g.home}</option>`).join("")}</select>
+    <select id="trgame" aria-label="${t("game")}"><option value="all">${t("all_games2")}</option>${dayGames.map(g=>`<option value="${g.id}" ${String(gsel)===String(g.id)?"selected":""}>${day==="all"?dayLabel(g.ld)+" · ":""}${g.away} @ ${g.home}</option>`).join("")}</select>
     <div class="seg olseg" id="trg"><button data-k="all" class="${grp==="all"?"on":""}">${t("tri_all")}</button>${fams.map(f=>`<button data-k="${f}" class="${grp===f?"on":""}">${t("mg_"+f)}</button>`).join("")}</div>
     <div class="seg olseg" id="trs">${["all","o","n"].map(k=>`<button data-k="${k}" class="${sd===k?"on":""}">${t(k==="all"?"tri_all":"tri_side"+k)}</button>`).join("")}</div></div>
     <div class="card trhow clp ${CL_OPEN("trihow")?"open":""}" data-clk="trihow"><button type="button" class="clph" aria-expanded="${CL_OPEN("trihow")}"><span class="trhh">${I_SVG}${t("tri_how_h")}</span><svg class="clpc" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="clpb"><div class="clpi"><div class="prose">${t("tri_how")}</div></div></div></div>
@@ -3122,7 +3128,7 @@ function nextTip(pid, gid, m){
   }
   if (ppu){ const pen = Object.fromEntries(Object.entries(DATA.teams).map(([k,v]) => [k, v.pen_pg])); oppH += row(t("nx_pen"), `<b>${fmt(T.pen_pg,1)}</b>`, chip(nxRank(pen, opp, true), good));
     if (TR.pk) oppH += row(t("nx_pk"), `<b>${fmt(TR.pk.v,2)}</b>`, chip(N + 1 - TR.pk.rk, good)); }
-  const dt_ = g.date === dates[0] ? t("today") : new Date(g.date + "T12:00:00").toLocaleDateString(LOCALE(), {weekday:"short", day:"numeric", month:"short"});
+  const dt_ = isToday(g.ld) ? t("today") : new Date(g.ld + "T12:00:00").toLocaleDateString(LOCALE(), {weekday:"short", day:"numeric", month:"short"});
   const tm = g.start ? new Date(g.start).toLocaleTimeString(LOCALE(), {hour:"2-digit", minute:"2-digit"}) : "";
   return `<div class="gth"><b>${dt_}${tm ? " · " + tm : ""}</b> <span>${pr.home ? "vs" : "@"} ${opp}</span><span class="meta">${esc(shortName(p.name))}</span></div>
     <div class="nxb"><div class="nxh nxhr"><span>${t("nx_tonight")}</span>${typeof nxBadge !== "undefined" ? nxBadge : ""}</div>${num}</div>
@@ -3214,7 +3220,7 @@ function l10Chart(pr, g){
     return `<g class="gtg nxg" data-gtp="${pr.id}" data-gtd="next" data-gtg="${g.id}" data-gtm="${m}" tabindex="0" role="button" aria-label="${esc(t("nx_tonight"))}"><rect x="${L + cw*i}" y="${T}" width="${cw}" height="${H-T}" class="gthit"/>
       <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="nxbar"/><text x="${cx}" y="${y(0)-h-5}" text-anchor="middle" class="nxq">?</text>
       <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o nxo">${pr.home?"":"@"}${pr.opp}</text>
-      <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d nxo">${g.date === dates[0] ? t("today") : (+g.date.slice(5,7)) + "/" + (+g.date.slice(8,10))}</text></g>`; })() : "";
+      <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d nxo">${isToday(g.ld) ? t("today") : (+g.ld.slice(5,7)) + "/" + (+g.ld.slice(8,10))}</text></g>`; })() : "";
   // reference lines (model, average, chosen line), each with a value tag at the right edge; tags never overlap
   const refs = [];
   if (exp!=null) refs.push({v:exp, y:y(exp), cls:"l10exp"});
@@ -3420,19 +3426,22 @@ const spTip = (() => { let el = null, cur = null;
   addEventListener("scroll", hide, {passive:true}); addEventListener("resize", hide);
   return {hide}; })();
 // tooltips inside scrolling boxes (tables) would be cut off by the box edge: those float above the page instead
-(() => { let box = null, cur = null;
+(() => { let box = null, cur = null, shownAt = 0;
   const clipped = el => { for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) { const cs = getComputedStyle(p);
     if (/(auto|scroll|hidden|clip)/.test(cs.overflowX + cs.overflowY)) return true; } return false; };
   const hide = () => { if (box) box.classList.remove("on"); cur = null; };
+  const soft = () => { if (Date.now() - shownAt > 400) hide(); };   // a tap fires focus, scroll and mouse events right after showing
   const show = el => { if (!box){ box = document.createElement("div"); box.id = "tipfloat"; box.setAttribute("role","tooltip"); document.body.appendChild(box); }
     cur = el; box.textContent = el.dataset.tip; const r = el.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;
     let left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width/2 - w/2)); const top = r.top - h - 8 > 8 ? r.top - h - 8 : r.bottom + 8;
-    box.style.left = left + "px"; box.style.top = top + "px"; box.classList.add("on"); };
+    box.style.left = left + "px"; box.style.top = top + "px"; box.classList.add("on"); shownAt = Date.now(); };
   const enter = e => { const el = e.target.closest && e.target.closest(".tip[data-tip]"); if (!el || el === cur) return;
-    if (el.classList.contains("tipjs") || clipped(el)) { el.classList.add("tipjs"); show(el); } };
-  document.addEventListener("mouseover", e => { enter(e); const el = e.target.closest && e.target.closest(".tip[data-tip]"); if (!el && cur) hide(); });
-  document.addEventListener("focusin", enter); document.addEventListener("focusout", hide);
-  addEventListener("scroll", hide, {passive:true, capture:true}); addEventListener("resize", hide);
+    // on phones every tooltip floats, so it is kept inside the screen; on wider screens only the ones in scrolling boxes
+    if (el.classList.contains("tipjs") || innerWidth < 720 || clipped(el)) { el.classList.add("tipjs"); show(el); } };
+  document.addEventListener("mouseover", e => { enter(e); const el = e.target.closest && e.target.closest(".tip[data-tip]"); if (!el && cur) soft(); });
+  document.addEventListener("focusin", enter); document.addEventListener("focusout", soft);
+  document.addEventListener("click", e => { const el = e.target.closest && e.target.closest(".tip[data-tip]"); if (el && innerWidth < 720){ el.classList.add("tipjs"); if (el === cur && Date.now() - shownAt > 450) hide(); else if (el !== cur) show(el); } else if (cur && !el) hide(); }, true);
+  addEventListener("scroll", soft, {passive:true, capture:true}); addEventListener("resize", hide);
 })();
 function spRender(box){ const p = box && P(box.dataset.pid); if (p) box.innerHTML = shotProfile(p);
   const det = box && box.closest(".detail"); if (det) det.querySelectorAll("tr[data-spd]").forEach(r=>r.classList.toggle("spsel", state.spw==="g:"+r.dataset.spd)); }
@@ -3800,7 +3809,7 @@ function exRows(S){
     if (!p.active || p.posg === "G" || !nx[p.id]) continue;
     if (S.pos !== "all" && p.posg !== S.pos) continue;
     if (S.team !== "all" && p.team !== S.team) continue;
-    if (S.tonight && nx[p.id].g.date !== dates[0]) continue;
+    if (S.tonight && nx[p.id].g.ld !== dates[0]) continue;
     if ((p.windows?.cur?.gp || 0) < S.min) continue;
     const x = exVal(S.x, p), y = exVal(S.y, p); if (x == null || y == null) continue;
     out.push({p, x, y, nx: nx[p.id]}); }
@@ -3859,13 +3868,13 @@ const exNick = n => { const w = n.split(" "); return w.length > 2 && ["Golden","
 let EX_TN = null;
 const exTmName = tm => { if (!EX_TN){ EX_TN = {}; for (const g of [...DATA.games, ...(DATA.graded?.games || [])]) { if (g.home_name) EX_TN[g.home] = g.home_name; if (g.away_name) EX_TN[g.away] = g.away_name; } }
   return DATA.teams[tm]?.name || EX_TN[tm] || tm; };
-const exNxTxt = (tm, g) => g ? `${g.home === tm ? "vs" : "@"} ${g.home === tm ? g.away : g.home} · ${g.date === dates[0] ? t("today") : dayShort(g.date)}` : t("ext_nogame");
+const exNxTxt = (tm, g) => g ? `${g.home === tm ? "vs" : "@"} ${g.home === tm ? g.away : g.home} · ${isToday(g.ld) ? t("today") : dayShort(g.ld)}` : t("ext_nogame");
 // one adapter per mode, so the drawing code is shared
 function exAdapter(S){
   if (exT(S)){
     const MT = EX_TM, [kx, ky] = exAx(S);
     let rows = exTeamRows(S).map(r => ({...r, id: r.team, name: exTmName(r.team), short: exNick(exTmName(r.team))}));
-    if (S.ttonight) rows = rows.filter(r => r.nx && r.nx.date === dates[0]);
+    if (S.ttonight) rows = rows.filter(r => r.nx && r.nx.ld === dates[0]);
     const fmtV = (k, v) => v == null ? "–" : MT[k].pct ? pct(v, MT[k].d) : ((["xgd","gd","gsax"].includes(k) && v > 0) ? "+" : "") + fmt(v, MT[k].d);
     return {MT, kx, ky, P: EX_TP[S.tpreset] || null, rows, teams:true, fmtV, lbl: k => t("exmt_"+k), story: k => t("exts_"+k), seed: r => [...r.team].reduce((a,c)=>a*31+c.charCodeAt(0),7),
       hit: r => S.q && (r.team.toLowerCase().includes(S.q) || r.name.toLowerCase().includes(S.q)),
@@ -3875,9 +3884,9 @@ function exAdapter(S){
   const [kx, ky] = exAx(S);
   return {MT: EX_M, kx, ky, P: EX_P[S.preset] || null, rows: exRows(S).map(r => ({...r, id: r.p.id, name: r.p.name})), teams:false, fmtV: exFmt,
     lbl: k => t("exm_"+k), story: k => t("exs_"+k), seed: r => r.p.id, hit: r => S.q && r.p.name.toLowerCase().includes(S.q),
-    cardSub: r => `${r.p.team} · ${r.p.pos} · ${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} ${dayShort(r.nx.g.date)}`,
+    cardSub: r => `${r.p.team} · ${r.p.pos} · ${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} ${dayShort(r.nx.g.ld)}`,
     tipHead: r => `${logo(r.p.team,18)} <b>${esc(r.p.name)}</b> <span class="meta">${r.p.team} · ${r.p.pos}</span>`,
-    tipNext: r => `${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} · ${dayShort(r.nx.g.date)}`, click: t("ex_click"), open: exOpen, cardLogo: r => logo(r.p.team, 20), count: n => t("ex_count",{n})};
+    tipNext: r => `${r.nx.pr.home?"vs":"@"} ${r.nx.pr.opp} · ${dayShort(r.nx.g.ld)}`, click: t("ex_click"), open: exOpen, cardLogo: r => logo(r.p.team, 20), count: n => t("ex_count",{n})};
 }
 // the same players and filters as the chart, as a sortable table (Chart | List switch)
 function exList(S, A, box){
@@ -3991,7 +4000,7 @@ function propsTab(){
   const groups = GROUP_ORDER.filter(gk => DATA.games.some(g=>g.props.some(pr=>hasM(pr, MGROUPS[gk][0]))));
   if (!groups.includes(mGroup(state.market))) state.market = "pt";
   const hbOn = true;
-  const gameOpts = DATA.games.filter(g=>state.pday==="all"||g.date===state.pday).map(g=>`<option value="${g.id}" ${state.pfilter==g.id?"selected":""}>${dayLabel(g.date)} · ${g.away} @ ${g.home}</option>`).join("");
+  const gameOpts = DATA.games.filter(g=>state.pday==="all"||g.ld===state.pday).map(g=>`<option value="${g.id}" ${state.pfilter==g.id?"selected":""}>${dayLabel(g.ld)} · ${g.away} @ ${g.home}</option>`).join("");
   $("#main").innerHTML = `<div class="controls">
     <div class="seg olseg mgrp" id="mgrp">${groups.map(k=>`<button data-g="${k}" class="${mGroup(state.market)===k?"on":""}">${t("mg_"+k)}</button>`).join("")}</div>
     <div class="seg olseg" id="mkt">${(hbOn ? MGROUPS[mGroup(state.market)] : MKEYS).map(k=>`<button data-m="${k}" class="${state.market===k?"on":""}">${mName(k)}</button>`).join("")}</div>
@@ -4030,7 +4039,7 @@ function linesList(){
   let rows = LL.rows.filter(r => r[1] === state.llk && r[5] >= state.llmin && (state.llteam === "all" || r[0] === state.llteam))
     .map(([tm, k, ids, names, gp, toi, gf, xgf, ga, xga, sf, sa]) => ({tm, ids, names, gp, toi, gf, xgf, ga, xga, sf, sa,
       xgp: xgf + xga > 0 ? xgf / (xgf + xga) : 0.5, xg60: toi ? xgf / toi * 60 : 0, nx: nextOf(tm)}));
-  if (state.lltonight) rows = rows.filter(r => r.nx && r.nx.date === dates[0]);
+  if (state.lltonight) rows = rows.filter(r => r.nx && r.nx.ld === dates[0]);
   const S = state.lls;
   if (S === "under") rows = rows.filter(r => r.gf < r.xgf).sort((a,b) => lo(a.gf,a.xgf) - lo(b.gf,b.xgf));
   else if (S === "over") rows = rows.filter(r => r.gf > r.xgf).sort((a,b) => hi(a.gf,a.xgf) - hi(b.gf,b.xgf));
@@ -4041,7 +4050,7 @@ function linesList(){
   else if (S === "toi") rows.sort((a,b) => b.toi - a.toi);
   else rows.sort((a,b) => b.xgp - a.xgp);
   const body = rows.slice(0, 150).map((r, i) => {
-    const tn = r.nx ? `<a class="lltn" href="#g${r.nx.id}" data-llg="${r.nx.id}" data-llt="${r.tm}">${r.nx.home === r.tm ? "vs" : "@"} ${r.nx.home === r.tm ? r.nx.away : r.nx.home} · ${r.nx.date === dates[0] ? t("today") : dayShort(r.nx.date)}</a>${inLineup(r.tm, r.ids) ? `<div><span class="pill s-confirmed">${t("ll_inlu")}</span></div>` : ""}` : `<span class="meta">–</span>`;
+    const tn = r.nx ? `<a class="lltn" href="#g${r.nx.id}" data-llg="${r.nx.id}" data-llt="${r.tm}">${r.nx.home === r.tm ? "vs" : "@"} ${r.nx.home === r.tm ? r.nx.away : r.nx.home} · ${isToday(r.nx.ld) ? t("today") : dayShort(r.nx.ld)}</a>${inLineup(r.tm, r.ids) ? `<div><span class="pill s-confirmed">${t("ll_inlu")}</span></div>` : ""}` : `<span class="meta">–</span>`;
     const dg = r.gf - r.xgf, da = r.ga - r.xga;
     return `<tr><td class="n num meta hide-xs">${i+1}</td><td><div class="llnm">${logo(r.tm,18)}<div><b>${r.names.map(esc).join(" · ")}</b><div class="meta">${r.tm} · ${t("ll_min",{m:fmt(r.toi,0), gp:r.gp})}</div><div class="llxs">${tn}</div></div></div></td>
       <td class="n num">${r.gf} <small class="meta">/ ${fmt(r.xgf,1)}</small><div class="lld ${dg>=0?"pos":"neg"}">${dg>=0?"+":""}${fmt(dg,1)}</div></td>
@@ -4068,12 +4077,12 @@ function linesList(){
 }
 function rowsTop(){
   if (state.psort==="streaks"){ $("#ptb").innerHTML = streaksTable();
-    $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
+  $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
     $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,i.dataset.m), isNaN(v)?"":v); rowsTop(); };
     return; }
   const m = state.market; const rows = [];
   for (const g of DATA.games){
-    if (state.pday!=="all" && g.date!==state.pday) continue;
+    if (state.pday!=="all" && g.ld!==state.pday) continue;
     if (state.pfilter!=="all" && String(g.id)!==String(state.pfilter)) continue;
     for (const pr of g.props){ const p = P(pr.id); if(!p.active) continue;
       if (!hasM(pr, m)) continue;
@@ -4082,10 +4091,11 @@ function rowsTop(){
       const v = prob(pr,g,m), od = getOdds(g.id,pr.id,m); rows.push({g,pr,p,v,od,ev:od==null?null:v*od-1}); }
   }
   if (state.psort==="ev") rows.sort((a,b)=>(b.ev??-9)-(a.ev??-9)); else rows.sort((a,b)=>b.v-a.v);
-  $("#ptb").innerHTML = rows.slice(0,300).map(({g,pr,p,v,od,ev})=>{
+  const PCAP = state.pall ? rows.length : 300;
+  $("#ptb").innerHTML = rows.slice(0,PCAP).map(({g,pr,p,v,od,ev})=>{
     const last = lastGames(p, m).slice(0,10);
     return `<tr class="row" data-g="${g.id}" data-id="${pr.id}">
-      <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</div></div></div></td>
+      <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.ld)}</div></div></div></td>
       <td class="n num hide-xs">${fmt(p.toi_proj,1)}</td>
       <td><div class="pbar"><b class="${v >= 0.5 ? "hi" : ""}">${pct(v,1)}</b><span class="pbt"><i style="width:${Math.max(2,Math.min(100,v*100))}%"></i></span></div>${ARCH?`<div class="rprop">${resMark(archHit(g.id, pr.id, m))} ${resLine(g.id, pr.id)}</div>`:""}</td>
       <td class="n num hide-xs">${oddsTxt(1/v)}</td>
@@ -4093,6 +4103,8 @@ function rowsTop(){
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm">${noHistory(m) ? `<span class="meta">–</span>` : `<div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""} gtg" data-gtp="${pr.id}" data-gtd="${x.d}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}`}</td>
       <td><div class="ptsig">${regPills(p)}</div></td><td><div class="ptact">${watchBtn(pr.id)}${cmpBtn(g, pr)}${slipBtn(g, pr, m)}${saveBtn(g, pr, m)}</div></td></tr>`; }).join("") || `<tr><td colspan="9" class="empty">${t("no_match")}</td></tr>`;
+  if (rows.length > 300) $("#ptb").insertAdjacentHTML("beforeend", `<tr class="pmore"><td colspan="20"><button type="button" class="exlmore" id="pallbtn">${state.pall ? t("p_less") : t("p_more",{n:rows.length})}</button></td></tr>`);
+  const pab = $("#pallbtn"); if (pab) pab.onclick = e => { e.stopPropagation(); state.pall = !state.pall; rowsTop(); };
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
   $("#ptb").onchange = e => { const i=e.target.closest("input.odds"); if(!i) return; const v=parseOdds(i.value)??NaN; store.set(oddsKey(i.dataset.g,i.dataset.pid,state.market), isNaN(v)?"":v); rowsTop(); };
 }
@@ -4208,7 +4220,7 @@ function cmpQuick(items, m, pv, ev, od, hits){
   const iR = idx.reduce((a, b) => toi(b) > toi(a) ? b : a);
   if (idx.every(i => i === iR || toi(iR) - toi(i) >= 1)){
     const M = items[iR].p.mates || {}; const role = [M.line?.toUpperCase(), M.pp?.toUpperCase()].filter(Boolean).join(", ");
-    L.push(t("qr_role", {a: nm(iR), m: fmt(toi(iR), 1), r: role ? ` (${role})` : ""}));
+    L.push(t(items.every(x => isToday(x.g.ld)) ? "qr_role" : "qr_role_g", {a: nm(iR), m: fmt(toi(iR), 1), r: role ? ` (${role})` : ""}));
   }
   // 4. one flag per player that changes how to read his number
   const flags = [], gk = new Set();
@@ -4222,13 +4234,21 @@ function cmpQuick(items, m, pv, ev, od, hits){
   });
   L.push(...flags.slice(0, 3));
   if (gk.size) L.push(t(gk.size > 1 ? "qr_gks" : "qr_gk", {t: [...gk].join(LANG === "sv" ? " och " : " and ")}));
-  // 5. bottom line: trust-adjusted edge with odds, trust-adjusted chance without
-  const sc = i => ev[i] != null ? ev[i] * trust(i) : pv[i] * (0.85 + 0.15 * trust(i));
-  const order = idx.slice().sort((a, b) => sc(b) - sc(a));
-  const a0 = order[0], a1 = order[1];
-  const tight = ev[a0] != null ? (sc(a0) - sc(a1) < 0.03) : (sc(a0) - sc(a1) < 0.012);
-  if (ev[a0] != null && ev[a0] * trust(a0) <= 0) L.push(t("qr_bl_none"));
-  else L.push(t(tight ? "qr_bl_tight" : "qr_bl", {a: nm(a0), b: nm(a1)}));
+  // 5. bottom line, on one scale: with prices, the trust-adjusted edge decides (a positive edge always beats a player
+  // with no price yet); without prices, the trust-adjusted chance decides
+  const se = i => ev[i] * trust(i), sp = i => pv[i] * (0.85 + 0.15 * trust(i));
+  const priced = idx.filter(i => ev[i] != null).sort((a, b) => se(b) - se(a)), unpriced = idx.filter(i => ev[i] == null).sort((a, b) => sp(b) - sp(a));
+  let a0, a1, tight = false;
+  if (priced.length && se(priced[0]) > 0){
+    a0 = priced[0]; a1 = priced[1] ?? unpriced[0];
+    tight = priced.length > 1 && se(a0) - se(priced[1]) < 0.03;
+    L.push(t(tight ? "qr_bl_tight" : "qr_bl", {a: nm(a0), b: nm(a1)}));
+  } else if (priced.length === idx.length) { a0 = priced[0]; L.push(t("qr_bl_none")); }
+  else {
+    a0 = unpriced[0]; a1 = unpriced[1] ?? priced[0];
+    tight = unpriced.length > 1 && sp(a0) - sp(unpriced[1]) < 0.012;
+    L.push(t(tight ? "qr_bl_tight" : (priced.length ? "qr_bl_noodds" : "qr_bl"), {a: nm(a0), b: nm(a1)}));
+  }
   const miss = pv[a0] > 0 && pv[a0] < 0.5 ? Math.round((1 - pv[a0]) / pv[a0]) : 0;
   return `<div class="cmquick"><h5>${t("qr_title")}</h5><ul>${L.map(x => `<li>${x}</li>`).join("")}</ul>
     <p class="meta">${miss >= 2 ? t("qr_reminder", {p: pct(pv[a0], 0), n: miss, k: miss + 1}) + " " : ""}${t("qr_note")}</p></div>`;
@@ -4269,7 +4289,7 @@ function cmpRender(){
   const head = `<div class="cr chead"><div class="cl"></div>${items.map((x,i)=>{ const g = x.g, opp = x.pr.opp;
     return `<div class="cv" style="--pc:${CMP_COL(i)}"><div class="chc"><button type="button" class="chx" data-cx="${g.id}|${x.pr.id}" aria-label="${t("cmp_remove")}">×</button>
       <div class="chtop">${logo(x.pr.team,22)}<span class="jersey">${x.p.num??""}</span></div>
-      <div class="chn">${esc(x.p.name)}</div><div class="chs">${x.p.pos} · ${x.pr.home?"vs":"@"} ${opp}</div><div class="chs">${dayShort(g.date)} ${timeOf(g)}</div></div></div>`; }).join("")}</div>`;
+      <div class="chn">${esc(x.p.name)}</div><div class="chs">${x.p.pos} · ${x.pr.home?"vs":"@"} ${opp}</div><div class="chs">${dayShort(g.ld)} ${timeOf(g)}</div></div></div>`; }).join("")}</div>`;
   // tonight
   const ogName = x => { const q = G(state.goalie[x.g.id]?.[x.pr.opp]); return q ? esc(shortName(q.name)) : "–"; };
   const opPos = x => { const o = DATA.opp_pos?.[x.pr.opp]?.[posGroup(x.p.pos)]; if (!o) return null; const k = cmpStat(m)==="s" ? "s" : cmpStat(m)==="g" ? "g" : "pt"; return {v:o[k], r:o[k+"_rk"], k}; };
@@ -4277,7 +4297,7 @@ function cmpRender(){
   const role = x => { const M = x.p.mates || {}; return [M.line ? M.line.toUpperCase() : null, M.pp ? M.pp.toUpperCase() : null].filter(Boolean).join(" · ") || "–"; };
   const exps = items.map((x,i) => ok[i] ? cmpExp(x.pr, x.g, m) : null);
   const tonight = [
-    row(t("cmp_chance"), pv.map((v,i) => v==null ? `<span class="meta">${t("cmp_na")}</span>` : `<div class="cbig">${pct(v,1)}</div><div class="cbar"><s style="width:${Math.min(100,v*100)}%"></s></div>`), best(pv.map(v => v==null ? null : Math.round(v*1000))), "rbig"),
+    row(t(items.every(x => isToday(x.g.ld)) ? "cmp_chance" : "cmp_chance_g"), pv.map((v,i) => v==null ? `<span class="meta">${t("cmp_na")}</span>` : `<div class="cbig">${pct(v,1)}</div><div class="cbar"><s style="width:${Math.min(100,v*100)}%"></s></div>`), best(pv.map(v => v==null ? null : Math.round(v*1000))), "rbig"),
     row(t("cmp_fair"), pv.map(v => v ? oddsTxt(1/v) : "–"), -1),
     row(t("cmp_mkt"), bk.map(b => b?.o ? `<b>${oddsTxt(b.o)}</b>${noVig(b)!=null?` <span class="meta">${pct(noVig(b),0)}</span>`:""}` : `<span class="meta">–</span>`), -1),
     row(t("h_yours"), items.map((x,i) => ok[i] ? `<input class="odds codds" data-g="${x.g.id}" data-pid="${x.pr.id}" placeholder="${bk[i]?.o?oddsTxt(bk[i].o):t("odds_ph")}" value="${uo[i]!=null?oddsTxt(uo[i]):""}" inputmode="decimal">` : ""), -1),
@@ -4294,7 +4314,7 @@ function cmpRender(){
   const charts = items.map((x,i) => { const h = hits[i].L10;
     return `<div class="cmc" style="--pc:${CMP_COL(i)}"><div class="cmh"><i></i><b>${esc(shortName(x.p.name))}</b>${h?`<span class="${h[0]/h[1]>=0.6?"hr-hi":h[0]/h[1]<=0.4?"hr-lo":""}">${t("cmp_over",{h:h[0], n:h[1]})}</span>`:""}</div>${cmpMiniChart(x, m, ymax, i)}</div>`; }).join("");
   // hit rates
-  const hrows = [["L5","L5"],["L10","L10"],["L20","L20"],["S",t("hr_season")],["V",t("cmp_vs")]]
+  const hrows = [["L5","L5"],["L10","L10"],["L20","L20"],["S",t("hr_season")],["V",t(items.every(x => isToday(x.g.ld)) ? "cmp_vs" : "cmp_vs_g")]]
     .filter(([k]) => hits.some(h => h[k]))
     .map(([k,lbl]) => row(lbl, hits.map(h => hrCell(h[k])), best(hits.map(h => h[k] && h[k][1]>=3 ? rate(h[k]) : null)))).join("");
   // season numbers
@@ -4804,6 +4824,13 @@ en: `<h3>What the site does</h3>
   <p><b>Points vs expected:</b> each team's points so far next to the points its play deserved (from its chances in every game). Well above means running hot, which rarely lasts. The simulation rates teams on chances and goals, not points, so a lucky run isn't carried forward, and players' chances already use each player's real finishing level. Tested: players on hot or cold teams scored as the model expected, so no extra team adjustment is needed.</p>
   <p><b>What's at stake</b> on each game page: each team's playoff chance now, with a win and with a loss. The gap is the game's importance (Low, Medium, High, Critical); high-stakes games are marked on the games list. In tests on past seasons, importance didn't clearly change who won beyond the model, so it's context, but it can move the market.</p>
 
+  <h3>Player projections</h3>
+  <p><i>Futures → Players</i> plays out every skater's season 10,000 times, game by game: his goal and assist rates per game from the model (true-talent rates times projected ice time), the games his team has left, a chance of missing games (injuries, scratches, trades; regulars with big minutes miss fewer), and uncertainty in his true level, because the model's rate is an estimate. Stars get a slight top-end stretch, since the model's caution pulls them a bit too far toward average.</p>
+  <p>Each player gets his likely final goals, assists and points with a range (8 seasons in 10 end inside it), milestone chances (20/30/40 goals, 80/100 points and more), and his chance to lead the league in points (Art Ross), goals (Rocket Richard) or assists. <b>Tested</b> on three past seasons from about 14 games in: the range held the real final total 79% of the time, with no lean for regulars, mid scorers or stars.</p>
+
+  <h3>Season awards</h3>
+  <p><i>Futures → Awards</i> sets the books' award prices (margin removed) next to the model. The <b>Rocket Richard</b> (most goals) and <b>Art Ross</b> (most points) are won on the numbers, so the model's chance comes straight from the same simulated seasons and value is marked where a price beats it. The <b>Hart, Norris, Calder and Vezina</b> are voted on, so the model shows a clearly named stand-in instead: most points (for the Hart), most points by a defenceman (Norris), most points by a rookie skater (Calder), most saved goals above expected among goalies with 40+ games (Vezina, from a season simulation of each goalie's starts and save level). Stand-ins are context and never marked as value. The <b>Jack Adams</b> (coach) shows the book only.</p>
+
   <h3>Lines</h3>
   <p>The <i>Lines</i> tab on every game page shows both teams' forward lines, defence pairs and power-play units side by side. For each line: tonight's projection (the chance at least one of its players scores, expected goals and shots, and the chance one of them takes a penalty), its record together at 5-on-5 this season (goals vs expected goals for and against, shots, xG%), and flags such as <i>Scoring below its chances</i>, <i>Conceding above its chances</i>, <i>Out-chancing opponents</i>, <i>New line</i>, <i>Promoted</i> or <i>Moved down</i>. All numbers are on-ice: what happened while those players were out together, not goals they scored themselves. The scoring and conceding flags appear only when the gap is too big to be normal luck (it would happen less than 1 time in 10 by chance) and at least 2 goals; such gaps usually come from finishing or goaltending and tend to even out. The chance flags (xG% 60%+ or 40% and below) are the steadier sign of how well a line plays. The line with the clearly higher projection is outlined. Lines don't always face their same-numbered opponent: coaches tend to put their top pair against the other team's top line and keep their third pair away from it. Tested over three seasons, though, which pair a line faces moves its shots or points by only 1–2%, so line form is context: each player's chance already uses his real level.</p>
   <p><i>Lines &amp; pairs</i> (in the Props tab) ranks every forward line and defence pair in the league with enough minutes together at 5-on-5 this season. Sort by share of the chances (xG%), chances per 60 minutes, minutes together, or by luck: scoring or conceding more or fewer goals than the chances suggest. The luck sorts rank by how unusual the gap is, not just its size, so a big gap over a few minutes doesn't crowd out a real outlier. Filter by team, minutes or teams playing today, and open a line's next game in one click.</p>
@@ -4936,6 +4963,13 @@ sv: `<h3>Vad sajten gör</h3>
   <p>Fliken <i>Säsong</i> simulerar resten av säsongen 10 000 gånger utifrån dagens tabell och varje lags styrka (mål och förväntade mål i år, förra säsongen dragen mot snittet), sedan slutspelet i NHL:s riktiga format. För varje lag: chansen att gå till slutspel, vinna en omgång (omgång 2), nå konferensfinalen, nå Stanley Cup-finalen, vinna cupen och vinna divisionen, plus beräknade poäng, med rättvisa odds och spelbolagets odds där de finns (markerade vid 10 %+ värde). Varje simulerad säsong drar lagens styrka från ett spann, så tidigt på säsongen blir chanserna inte översäkra. Testat på fem tidigare säsonger: lag med ungefär 60 % gick till slutspel ungefär 66 % av gångerna, lag med 98 % ungefär 99 %.</p>
   <p><b>Poäng mot förväntat:</b> varje lags poäng hittills bredvid de poäng spelet förtjänat (utifrån chanserna i varje match). Klart över betyder att laget går över förväntan, vilket sällan håller. Simuleringen bedömer lagen på chanser och mål, inte poäng, så en tursam period förs inte vidare, och spelarnas chanser bygger redan på varje spelares verkliga avslutsnivå. Testat: spelare i lag som går över eller under förväntan gjorde mål som modellen väntade sig, så ingen extra lagjustering behövs.</p>
   <p><b>Vad som står på spel</b> på varje matchsida: varje lags chans till slutspel nu, med vinst och med förlust. Skillnaden är matchens vikt (Låg, Medel, Hög, Avgörande); viktiga matcher markeras i matchlistan. I tester på tidigare säsonger ändrade vikten inte tydligt vem som vann utöver modellen, så det är bakgrund, men den kan påverka marknaden.</p>
+
+  <h3>Spelarprognoser</h3>
+  <p><i>Säsong → Spelare</i> spelar ut varje utespelares säsong 10 000 gånger, match för match: hans mål- och assisttakt per match från modellen (verklig nivå gånger väntad istid), lagets återstående matcher, en chans att missa matcher (skador, petningar, byten; ordinarie med mycket istid missar färre) och osäkerhet om hans verkliga nivå, eftersom modellens takt är en uppskattning. Stjärnor får en liten extra spridning uppåt, eftersom modellens försiktighet drar dem lite för långt mot snittet.</p>
+  <p>Varje spelare får sina troliga mål, assist och poäng vid säsongens slut med ett spann (8 säsonger av 10 slutar inom det), chanser till milstolpar (20/30/40 mål, 80/100 poäng med mera) och chansen att leda ligan i poäng (Art Ross), mål (Rocket Richard) eller assist. <b>Testat</b> på tre tidigare säsonger från ungefär 14 matcher in: spannet höll det verkliga slutresultatet 79 % av gångerna, utan slagsida för ordinarie, mellanskikt eller stjärnor.</p>
+
+  <h3>Säsongens priser</h3>
+  <p><i>Säsong → Priser</i> visar spelbolagens odds på NHL:s priser (utan marginal) bredvid modellen. <b>Rocket Richard</b> (flest mål) och <b>Art Ross</b> (flest poäng) avgörs av siffrorna, så modellens chans kommer direkt från samma simulerade säsonger och värde markeras där ett pris slår den. <b>Hart, Norris, Calder och Vezina</b> röstas fram, så där visar modellen en tydligt namngiven ersättare: flest poäng (för Hart), flest poäng bland backar (Norris), flest poäng bland rookies (Calder), flest räddade mål över förväntat bland målvakter med 40+ matcher (Vezina, från en säsongssimulering av varje målvakts starter och räddningsnivå). Ersättare är sammanhang och markeras aldrig som värde. <b>Jack Adams</b> (tränare) visar bara spelbolagets odds.</p>
 
   <h3>Kedjor</h3>
   <p>Fliken <i>Kedjor</i> på varje matchsida visar båda lagens kedjor, backpar och powerplayfemmor sida vid sida. För varje kedja: kvällens prognos (chansen att minst en av spelarna gör mål, förväntade mål och skott och chansen att någon av dem åker ut), hur den gått tillsammans i 5 mot 5 i år (mål mot förväntade mål för och emot, skott, xG%) och markeringar som <i>Gör färre mål än chanserna</i>, <i>Släpper in fler mål än chanserna</i>, <i>Vinner chanserna</i>, <i>Ny kedja</i>, <i>Uppflyttad</i> eller <i>Nedflyttad</i>. Alla siffror gäller på isen: vad som hände när spelarna var ute tillsammans, inte mål de gjort själva. Mål-markeringarna visas bara när skillnaden är för stor för vanlig tur (den skulle hända mindre än 1 gång av 10 av slump) och minst 2 mål; sådana skillnader kommer oftast från avslut eller målvaktsspel och brukar jämna ut sig. Chans-markeringarna (xG% 60 %+ eller 40 % och lägre) är det stabilare tecknet på hur bra en kedja spelar. Kedjan med klart högre prognos markeras. Kedjorna möter inte alltid sin nummer-motsvarighet: tränarna brukar sätta sitt bästa backpar mot motståndarens förstakedja och hålla tredjeparet borta från den. I tester över tre säsonger påverkade vilket backpar en kedja möter dess skott och poäng med bara 1–2 %, så kedjeformen är bakgrund: varje spelares chans bygger redan på hans verkliga nivå.</p>
@@ -5222,13 +5256,13 @@ function slipRender(){
   const fair = R.joint > 0 ? 1 / R.joint : null, ev = combo ? R.joint * combo - 1 : null;
   const games = Object.keys(R.byGame);
   const legsHtml = games.map(gid => { const g = gameById[gid], idx = R.byGame[gid];
-    return `<div class="slg"><div class="slgh">${logo(g.away,16)} ${g.away} @ ${logo(g.home,16)} ${g.home} <span class="meta">· ${dayLabel(g.date)} ${timeOf(g)}</span>${idx.length>1?`<span class="pill s-up">${t("sl_same")}</span>`:""}</div>
+    return `<div class="slg"><div class="slgh">${logo(g.away,16)} ${g.away} @ ${logo(g.home,16)} ${g.home} <span class="meta">· ${dayLabel(g.ld)} ${timeOf(g)}</span>${idx.length>1?`<span class="pill s-up">${t("sl_same")}</span>`:""}</div>
       ${idx.map(i => { const x = info[i], s = SLIP[i];
         return `<div class="slr"><div><b>${esc(x.label)}</b><div class="meta">${esc(x.sub)}</div></div><span class="num">${pct(x.p,1)}<small class="meta"> · ${oddsTxt(1/x.p)}</small></span>
           <input class="odds slodds" data-i="${i}" value="${s.o!=null?oddsTxt(s.o):""}" placeholder="${x.od?oddsTxt(x.od):t("odds_ph")}" aria-label="${t("h_odds")}">
           <span class="${x.od?(x.p*x.od-1>0?"ev-pos":"ev-neg"):""} num">${x.od?evTxt(x.p*x.od-1):"–"}</span><button type="button" class="delbtn" data-sldel="${i}" aria-label="${t("cmp_remove")}">✕</button></div>`; }).join("")}</div>`; }).join("");
   // add a game leg (win, total, team total) for any game already in the slip or any game today
-  const opts = DATA.games.filter(g => !g.frozen && (!g.state || ["FUT","PRE"].includes(g.state)) && g.date === dates[0]).map(g => `<option value="${g.id}">${g.away} @ ${g.home}</option>`).join("");
+  const opts = DATA.games.filter(g => !g.frozen && (!g.state || ["FUT","PRE"].includes(g.state)) && g.ld === dates[0]).map(g => `<option value="${g.id}">${g.away} @ ${g.home}</option>`).join("");
   const plans = slipPlans(R, combo, SLIP_STATE.total);
   box.innerHTML = `${legsHtml}
     <div class="sladd"><select id="sl_g" aria-label="${t("game")}">${opts}</select><select id="sl_m" aria-label="${t("pk_market")}"></select><button type="button" class="mbtn" id="sl_addt">＋ ${t("sl_addgame")}</button></div>
@@ -5327,7 +5361,7 @@ function openSave(gid, pid, m){
   const g = gameById[gid], pr = g && g.props.find(x => String(x.id) === String(pid)); if (!pr) return;
   const p = P(pr.id), b = book(g.id, pr.id, m), uo = userOdds(g.id, pr.id, m), od = uo ?? b?.o ?? "";
   const pv = prob(pr, g, m);
-  modal(`<h3>${t("sv_h")}</h3><p class="meta">${esc(p.name)} · ${mName(m)} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.date)}</p>
+  modal(`<h3>${t("sv_h")}</h3><p class="meta">${esc(p.name)} · ${mName(m)} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.ld)}</p>
     <form id="savef"><label for="sv_o">${t("sv_odds")}</label><input id="sv_o" type="text" inputmode="text" value="${od!==""?oddsTxt(od):""}" required>
     <label for="sv_s">${t("sv_stake")}</label><input id="sv_s" type="number" step="0.5" min="0.5" inputmode="decimal" value="1" required>
     <p class="meta" style="margin:10px 0 0">${t("sv_model",{p:pct(pv,1)})}</p>
@@ -5406,7 +5440,7 @@ function watchCard(){
     let next = `<span class="meta">${t("wl_nogame")}</span>`, pg = "–", pp = "–", og = "";
     if (nx){
       const g = nx.g, home = (nx.pr?.team || w.team) === g.home, opp = home ? g.away : g.home;
-      next = `<b>${dayShort(g.date)}</b> ${timeOf(g)} <span class="meta">${home?"vs":"@"} ${opp}</span>`;
+      next = `<b>${dayShort(g.ld)}</b> ${timeOf(g)} <span class="meta">${home?"vs":"@"} ${opp}</span>`;
       if (nx.pr && nx.p?.active){
         pg = pct(prob(nx.pr, g, "g"), 0); pp = pct(prob(nx.pr, g, "pt"), 0);
         const b = book(g.id, nx.pr.id, "g"); og = b?.o ? ` <span class="meta">${oddsTxt(b.o)}</span>` : "";
@@ -5580,7 +5614,7 @@ function openRecap(date, team){
   const got = RECAPS.has(key) ? Promise.resolve(RECAPS.get(key)) :
     fetch(`${RECAP_URL}?date=${date}&team=${team}`).then(r => r.ok ? r.json() : null).then(js => { if (js && !js.error) RECAPS.set(key, js); return js; });
   got.then(R => { const box = document.querySelector("#modal .rcp .cmscroll"); if (!box) return;
-    if (!R || R.error){ box.innerHTML = `<p class="meta">${t("rc_none")}</p>`; return; }
+    if (!R || R.error || !R.home || !R.away){ box.innerHTML = `<p class="meta">${t("rc_none")}</p>`; return; }
     box.innerHTML = recapHTML(R);
     const tb = box.querySelector(".rcseg"); if (tb) tb.onclick = e => { const b = e.target.closest("[data-rs]"); if (!b) return;
       box.querySelectorAll("[data-rs]").forEach(x => x.classList.toggle("on", x===b));
@@ -5728,10 +5762,12 @@ const AW_MODEL = {rocket:"rr", artross:"ar", hart:"ar", norris:"dl", calder:"rl"
 const AW_EXACT = new Set(["rocket","artross"]);
 const awBook = (k, pid) => (DATA.awards?.m?.[k] || []).find(r => r[2] === String(pid));
 const awModel = (k, pid) => { if (k === "vezina") return DATA.gproj?.[pid]?.vz ?? null; const f = AW_MODEL[k]; if (!f) return null; const pj = DATA.proj?.[pid]; return pj ? (pj[f] ?? 0) : null; };
+// award prices older than two days aren't treated as value (the price may have moved since)
+const awStale = () => { const f = DATA.awards?.fetched; return !!f && Date.now() - new Date(f).getTime() > 48 * 3600e3; };
 function awChips(pid){ const A_ = DATA.awards?.m; if (!A_) return "";
   const ch = AW_LIST.map(([k, l]) => { const b = awBook(k, pid); if (!b) return ""; const m = awModel(k, pid), ex = AW_EXACT.has(k);
     const ev = ex && m != null ? m * b[1] - 1 : null;
-    return `<div class="awch ${ev != null && ev >= FUT_VALUE && m >= 0.01 ? "val" : ""}"><span>${t(l)}</span><b>${oddsTxt(b[1])}</b><small>${t("aw_ch_book",{p:pct(b[3], b[3] < 0.1 ? 1 : 0)})}${ex && m != null ? ` · ${t("aw_ch_model",{p:pct(m, m < 0.1 ? 1 : 0)})}` : ""}</small></div>`; }).join("");
+    return `<div class="awch ${!awStale() && ev != null && ev >= FUT_VALUE && m >= 0.01 ? "val" : ""}"><span>${t(l)}</span><b>${oddsTxt(b[1])}</b><small>${t("aw_ch_book",{p:pct(b[3], b[3] < 0.1 ? 1 : 0)})}${ex && m != null ? ` · ${t("aw_ch_model",{p:pct(m, m < 0.1 ? 1 : 0)})}` : ""}</small></div>`; }).join("");
   return ch ? `<div class="awchips"><h5>${t("aw_card_h")}</h5>${ch}</div>` : `<p class="pjodds">${t("aw_card_none")}</p>`; }
 function fuAwards(){
   const AW = DATA.awards?.m || {}, K = state.fua || (AW.rocket ? "rocket" : "artross"), sortM = state.fuas === "model";
@@ -5746,7 +5782,7 @@ function fuAwards(){
     src.filter(([id, v]) => v >= 0.02 && !have.has(id)).forEach(([id, v]) => rows.push({id, name: (P(id) || G(id))?.name, odds: null, fair: null, m: v})); }
   rows = rows.filter(r => r.name);
   rows.sort((a, b) => sortM || K === "artross" ? (b.m ?? -1) - (a.m ?? -1) || (b.fair ?? 0) - (a.fair ?? 0) : (b.fair ?? -1) - (a.fair ?? -1) || (b.m ?? 0) - (a.m ?? 0));
-  const evs = exact ? rows.filter(r => r.odds && r.m != null && r.m >= 0.01 && r.m * r.odds - 1 >= FUT_VALUE).sort((a, b) => (b.m * b.odds - 1) / (b.odds - 1) - (a.m * a.odds - 1) / (a.odds - 1)).slice(0, 3).map(r => r.id) : [];
+  const evs = exact && !awStale() ? rows.filter(r => r.odds && r.m != null && r.m >= 0.01 && r.m * r.odds - 1 >= FUT_VALUE).sort((a, b) => (b.m * b.odds - 1) / (b.odds - 1) - (a.m * a.odds - 1) / (a.odds - 1)).slice(0, 3).map(r => r.id) : [];
   const top = new Set(evs), all = state.fuaall;
   const shown = all ? rows : rows.slice(0, 25);
   const gx = (v, sg) => { const r = Math.round(v) || 0; return (sg && r > 0 ? "+" : "") + r; };
@@ -5764,10 +5800,10 @@ function fuAwards(){
   const body = shown.map((r, i) => { const ev = exact && r.odds && r.m != null ? r.m * r.odds - 1 : null;
     return `<tr class="${p_ok(r) ? "pjr" : ""} ${top.has(r.id) ? "awval" : ""}" ${p_ok(r) ? `data-pjgo="${r.id}" tabindex="0"` : ""}><td class="exlrk">${i + 1}</td><td>${who(r)}</td>
       ${K === "artross" ? "" : `<td class="n num"><b>${r.odds ? oddsTxt(r.odds) : "–"}</b><small class="meta pjsub">${r.odds ? t("aw_fair_s",{p:pc(r.fair)}) : t("aw_notlisted")}</small></td>`}
-      ${mHead ? `<td class="n num ${exact ? (ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? "pjhi" : "") : "awproxy"}"><b ${r.m != null && r.m >= 0.001 && r.m < 0.995 ? `data-cn="${r.m}" data-cf="${r.m < 0.1 ? "pc1" : "pc0"}"` : ""}>${pc(r.m)}</b>${exact && r.m > 0.001 ? `<small class="meta pjsub">${t("aw_fairodds",{o:oddsTxt(1 / r.m)})}${ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? ` · <span class="bk pos">${t("aw_value")}</span>` : ""}</small>` : ""}</td>` : ""}
+      ${mHead ? `<td class="n num ${exact ? (!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? "pjhi" : "") : "awproxy"}"><b ${r.m != null && r.m >= 0.001 && r.m < 0.995 ? `data-cn="${r.m}" data-cf="${r.m < 0.1 ? "pc1" : "pc0"}"` : ""}>${pc(r.m)}</b>${exact && r.m > 0.001 ? `<small class="meta pjsub">${t("aw_fairodds",{o:oddsTxt(1 / r.m)})}${!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? ` · <span class="bk pos">${t("aw_value")}</span>` : ""}</small>` : ""}</td>` : ""}
       ${coach ? "" : ctx(r) || `<td class="hide-sm"></td><td class="hide-sm"></td>`}</tr>`; }).join("");
   const fetched = DATA.awards?.fetched ? new Date(DATA.awards.fetched) : null;
-  $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("aw_title")}</h2><p class="meta">${t("aw_sub")}${fetched ? " " + t("aw_upd",{d:fetched.toLocaleDateString(LOCALE(),{day:"numeric",month:"short"}), h:fetched.toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : ""}</p></div>${fuSwitch()}</div>
+  $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("aw_title")}</h2><p class="meta">${t("aw_sub")}${fetched ? " " + t("aw_upd",{d:fetched.toLocaleDateString(LOCALE(),{day:"numeric",month:"short"}), h:fetched.toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : ""}${awStale() ? ` <span class="pill s-q">${t("aw_stale",{n:Math.floor((Date.now() - fetched.getTime()) / 864e5)})}</span>` : ""}</p></div>${fuSwitch()}</div>
     <div class="controls pjctl"><div class="seg mgrp" id="awk">${tabs.map(([k, l]) => `<button data-k="${k}" class="${K === k ? "on" : ""}">${t(l)}</button>`).join("")}</div>
       ${K !== "artross" && mHead ? `<div class="seg olseg" id="aws"><button data-k="book" class="${sortM ? "" : "on"}">${t("aw_sort_book")}</button><button data-k="model" class="${sortM ? "on" : ""}">${t("aw_sort_model")}</button></div>` : ""}</div>
     <div class="awnote ${exact ? "ex" : ""}"><b>${t(exact ? "aw_n_exact_h" : coach ? "aw_n_coach_h" : "aw_n_proxy_h")}</b> ${t("aw_n_" + K)}</div>
@@ -5832,8 +5868,9 @@ function applyArchive(A){
   DATA.games.length = 0; DATA.games.push(...(A.games || []));
   for (const k of Object.keys(gameById)) delete gameById[k];
   for (const g of DATA.games) gameById[String(g.id)] = g;
-  dates.length = 0; dates.push(A.date);
-  state.day = state.pday = A.date; state.pfilter = "all";
+  setLocalDays();
+  dates.length = 0; dates.push(...[...new Set(DATA.games.map(g => g.ld))].sort());
+  state.day = state.pday = dates.includes(A.date) ? A.date : (dates[0] || A.date); state.pfilter = "all";
   for (const k of Object.keys(state.goalie)) delete state.goalie[k];
   DATA.games.forEach(g => { state.goalie[g.id] = {}; for (const tm of [g.home, g.away]) state.goalie[g.id][tm] = g.starters?.[tm]; });
   FG_MEMO.clear();
