@@ -3210,14 +3210,14 @@ function l10Chart(pr, g){
   const panels = seasons.map(S => `<g class="l10sea"><rect x="${L + cw*S.i0 + 1}" y="${T - 2}" width="${cw*(S.i1 - S.i0 + 1) - 2}" height="${H - T - B + 4}" rx="6"/><text x="${L + cw*S.i0 + 6}" y="${T + 9}">${String(S.sn % 100).padStart(2,"0")}/${String((S.sn+1) % 100).padStart(2,"0")}</text></g>`).join("");
   const bars = games.map((x,i) => { const v = vals[i], cx = L + cw*i + cw/2, below = line!=null ? v < line : (avg != null && v < avg - 1e-9);
     const h = Math.max(v === 0 ? 3 : 0, (H - T - B) * v / ymax), showLab = (games.length - 1 - i) % every === 0;
-    return `<g class="gtg" data-gtp="${pr.id}" data-gtd="${x.d}" tabindex="0" role="button" aria-label="${esc(x.d+" "+(x.h?"vs ":"@ ")+x.o)}"><rect x="${L + cw*i}" y="${T}" width="${cw}" height="${H-T}" class="gthit"/>
+    return `<g class="gtg" data-gtp="${pr.id}" data-gtd="${x.d}" tabindex="0" role="button" aria-label="${esc(x.d+" "+(x.h?"vs ":"@ ")+x.o)}"><rect x="${cx-bw/2-3}" y="${Math.max(T, y(0)-h-16)}" width="${bw+6}" height="${H - Math.max(T, y(0)-h-16)}" class="gthit"/>
       <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="l10bar ${below?"l10lo":"l10hi"}" style="--i:${(i * Math.min(1, 24 / games.length)).toFixed(2)}"/>
       ${v>0 && !crowd?`<text x="${cx}" y="${y(v)-4}" text-anchor="middle" class="l10v">${v}</text>`:""}
       ${showLab?`<text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o">${narrow?"":(x.h?"":"@")}${x.o}</text>
       <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d">${narrow ? (x.h?"":"@") + (+x.d.slice(5,7)) + "/" + (+x.d.slice(8,10)) : x.d.slice(5).replace("-","/")}</text>`:""}</g>`; }).join("");
   // tonight: an empty dashed bar up to the model's expectation, opening the preview card on hover / tap
   const nxBar = nxOn ? (() => { const i = games.length, cx = L + cw*i + cw/2, h = Math.max(3, (H - T - B) * Math.min(exp||0, ymax) / ymax);
-    return `<g class="gtg nxg" data-gtp="${pr.id}" data-gtd="next" data-gtg="${g.id}" data-gtm="${m}" tabindex="0" role="button" aria-label="${esc(t("nx_tonight"))}"><rect x="${L + cw*i}" y="${T}" width="${cw}" height="${H-T}" class="gthit"/>
+    return `<g class="gtg nxg" data-gtp="${pr.id}" data-gtd="next" data-gtg="${g.id}" data-gtm="${m}" tabindex="0" role="button" aria-label="${esc(t("nx_tonight"))}"><rect x="${cx-bw/2-3}" y="${Math.max(T, y(0)-h-18)}" width="${bw+6}" height="${H - Math.max(T, y(0)-h-18)}" class="gthit"/>
       <rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="3" class="nxbar"/><text x="${cx}" y="${y(0)-h-5}" text-anchor="middle" class="nxq">?</text>
       <text x="${cx}" y="${H-B+(narrow?15:17)}" text-anchor="middle" class="l10o nxo">${pr.home?"":"@"}${pr.opp}</text>
       <text x="${cx}" y="${H-B+(narrow?28:32)}" text-anchor="middle" class="l10d nxo">${isToday(g.ld) ? t("today") : (+g.ld.slice(5,7)) + "/" + (+g.ld.slice(8,10))}</text></g>`; })() : "";
@@ -4188,7 +4188,7 @@ function cmpMiniChart(x, m, ymax, i){
   const W = 260, H = 118, T = 14, B = 22, pad = 4, RM = 22, cw = (W - pad - RM) / 10, bw = Math.min(18, cw*0.62);
   const y = v => T + (H - T - B) * (1 - v / ymax);
   const bars = gs.map((g_, k) => { const v = cmpVal(g_, st), ov = cmpOver(g_, m), cx = pad + cw*(k + (10 - gs.length)) + cw/2, h = Math.max(v===0?2:0, (H-T-B) * v / ymax);
-    return `<g class="gtg" data-gtp="${x.pr.id}" data-gtd="${g_.d}"><rect x="${cx-cw/2}" y="0" width="${cw}" height="${H}" class="gthit"/><rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="2.5" class="${ov?"cmo":"cmu"}"/>${v>0?`<text x="${cx}" y="${y(v)-3}" text-anchor="middle" class="cmv">${v}</text>`:""}<text x="${cx}" y="${H-7}" text-anchor="middle" class="cmd">${g_.o}</text></g>`; }).join("");
+    return `<g class="gtg" data-gtp="${x.pr.id}" data-gtd="${g_.d}"><rect x="${cx-bw/2-2}" y="${Math.max(0, y(0)-h-14)}" width="${bw+4}" height="${H - Math.max(0, y(0)-h-14)}" class="gthit"/><rect x="${cx-bw/2}" y="${y(0)-h}" width="${bw}" height="${h}" rx="2.5" class="${ov?"cmo":"cmu"}"/>${v>0?`<text x="${cx}" y="${y(v)-3}" text-anchor="middle" class="cmv">${v}</text>`:""}<text x="${cx}" y="${H-7}" text-anchor="middle" class="cmd">${g_.o}</text></g>`; }).join("");
   return `<svg viewBox="0 0 ${W} ${H}" class="cmsvg" style="--pc:${CMP_COL(i)}" role="img" aria-label="${esc(x.p.name)}">
     <line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" class="cmax"/>${bars}
     <line x1="0" x2="${W-RM+2}" y1="${y(L)}" y2="${y(L)}" class="cml"/><text x="${W-1}" y="${y(L)+3.5}" text-anchor="end" class="cmlt">${L}</text></svg>`;
