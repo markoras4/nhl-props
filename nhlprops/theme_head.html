@@ -18,7 +18,7 @@
   };
   const OLD = {green:"rink", blue:"rink", mint:"rink", violet:"neon", pink:"neon", gold:"ember"};
   const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc2","pc3","pc4","line2","hit","accent2","good","bad"];
-  const get = () => { try { let v = localStorage.getItem("set:accent"); if (OLD[v]) { v = OLD[v]; localStorage.setItem("set:accent", v); } return A[v] ? v : "rink"; } catch(e){ return "rink"; } };
+  const get = () => "neon";   // one look for everyone: Neon (light and dark stay switchable)
   const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
   const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
   function apply(){
@@ -34,7 +34,7 @@
   new MutationObserver(apply).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
   try { matchMedia("(prefers-color-scheme: light)").addEventListener("change", apply); } catch(e){}
   const css = document.createElement("style");
-  css.textContent = `.accbtn{display:inline-grid;place-items:center}.accbtn i{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
+  css.textContent = `.accbtn{display:none!important}.accbtn i{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
 #accpop{position:absolute;z-index:200;background:var(--panel,#111821);border:1px solid var(--line,#22303f);border-radius:14px;padding:6px;box-shadow:0 18px 50px -12px rgba(0,0,0,.55);display:grid;gap:2px;min-width:170px;font:600 13.5px var(--f-ui,system-ui)}
 #accpop .ah{font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--mute,#8796a8);padding:6px 10px 4px}
 #accpop button{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--text,#e7eef6);padding:8px 10px;border-radius:9px;cursor:pointer;text-align:left;font:inherit}
