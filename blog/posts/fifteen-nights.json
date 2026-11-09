@@ -1,0 +1,18 @@
+{
+ "slug": "fifteen-nights",
+ "section": "betting",
+ "title": "Fifteen Nights, Two Stories: What Our Record Can't Tell You Yet",
+ "deck": "After eight nights our best picks were 7 units down. Seven nights later they were 8.6 up. Neither number means what it looks like, and that is the most useful thing a young track record can teach you.",
+ "date": "2026-11-09",
+ "date_label": "November 9, 2026",
+ "read_min": 6,
+ "hero": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Ice_Hockey_Game_-_Madison_Square_Garden_-_Boston_vs_New_York.jpg/1920px-Ice_Hockey_Game_-_Madison_Square_Garden_-_Boston_vs_New_York.jpg",
+  "alt": "An NHL game seen from the stands at Madison Square Garden",
+  "credit": "Madison Square Garden, 2008 · Donatingpictures · CC BY-SA 3.0"
+ },
+ "credits": [
+  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Ice_Hockey_Game_-_Madison_Square_Garden_-_Boston_vs_New_York.jpg\" rel=\"noopener\">Ice Hockey Game, Madison Square Garden</a> by Donatingpictures, CC BY-SA 3.0",
+  "Numbers: NHL Props Lab track record, data/bestpicks.json on the site branch as built November 9, 2026, covering October 25 to November 8 (205 graded picks on the All tab, one void left out; 102 graded picks on the Multi-point tab). Stakes are one unit per pick. Simulations: 40,000 replays of those same 205 picks and prices, run for this article. Charts: NHL Props Lab."
+ ]
+}
