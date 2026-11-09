@@ -27,7 +27,7 @@ CSS = r"""
 a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 .wrap{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left))}
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.top{display:flex;align-items:center;gap:18px;height:60px}.brand{font:800 18px var(--f-disp);letter-spacing:.04em;text-transform:uppercase}.brand b{color:var(--accent)}
+.top{display:flex;align-items:center;gap:18px;height:60px}.brand{font:800 18px var(--f-disp);letter-spacing:.04em;text-transform:uppercase}.brand b{color:var(--accent)}.brand img{height:30px;width:auto;display:block}.brand .eo-l{display:none}@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .brand .eo-d{display:none}:root:not([data-theme="dark"]) .brand .eo-l{display:block}}:root[data-theme="light"] .brand .eo-d{display:none}:root[data-theme="light"] .brand .eo-l{display:block}@media (max-width:640px){.brand img{height:24px}}
 .top nav{display:flex;gap:4px;margin-left:auto}.top nav a{padding:7px 12px;border-radius:9px;font-weight:600;font-size:14px;color:var(--mute)}.top nav a:hover,.top nav a.on{color:var(--text);background:var(--panel2)}
 .cta{background:var(--accent);color:var(--accent-ink,#06210f)!important;font-weight:700}
 /* index */
@@ -90,8 +90,8 @@ HEAD = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<style>{css}</style>{themejs}</head><body>
-<header><div class="wrap top"><a class="brand" href="/">NHL Props <b>Lab</b></a><nav><a href="/blog" class="{on_blog}">Blog</a><a href="/app">Tonight's games</a><a class="cta" href="/app">Open the app</a></nav></div></header>"""
+<link rel="icon" type="image/svg+xml" href="/brand/evenout-icon.svg"><link rel="icon" type="image/png" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><style>{css}</style>{themejs}</head><body>
+<header><div class="wrap top"><a class="brand" href="/"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="NHL Props Lab" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></a><nav><a href="/blog" class="{on_blog}">Blog</a><a href="/app">Tonight's games</a><a class="cta" href="/app">Open the app</a></nav></div></header>"""
 
 FOOT = """<footer><div class="wrap">18+ · Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a>, <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a>. NHL Props Lab is an analysis tool and does not take bets. · <a href="/legal.html#terms">Terms</a> · <a href="/legal.html#privacy">Privacy</a></div></footer>
 <script>document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.12}).observe(el));

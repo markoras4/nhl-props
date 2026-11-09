@@ -124,11 +124,13 @@ h2[id],h3[id]{scroll-margin-top:140px}
   addEventListener("resize", close);
 })();
 </script>
+<style>.brand img{height:30px;width:auto;display:block}.brand .eo-l{display:none}@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .brand .eo-d{display:none}:root:not([data-theme="dark"]) .brand .eo-l{display:block}}:root[data-theme="light"] .brand .eo-d{display:none}:root[data-theme="light"] .brand .eo-l{display:block}@media (max-width:640px){.brand img{height:24px}}</style>
+<link rel="icon" type="image/svg+xml" href="/brand/evenout-icon.svg"><link rel="icon" type="image/png" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 </head>
 <body>
 <header>
   <div class="wrap top">
-    <a class="brand" href="/">NHL Props <b>Lab</b></a>
+    <a class="brand" href="/"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="NHL Props Lab" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></a>
     <div class="hright">
       <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
       <button class="iconbtn" id="theme" type="button" aria-label="Theme"></button>
