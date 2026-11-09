@@ -136,24 +136,17 @@ def split(payload: dict) -> tuple[dict, dict]:
     if payload.get("previews"):
         pro["previews"] = payload["previews"]
         pub["previews"] = {gid: strip_preview(pv) for gid, pv in payload["previews"].items()}
-    # player hit rates beyond the last 5 (L10 / L20 / season / vs opponent) and hits & blocks history
-    pp = {}
-    pro_players = {}
-    for pid, p in (payload.get("players") or {}).items():
-        q = dict(p)
-        keep = {}
-        if p.get("hr"):
-            hr = p["hr"]
-            keep["hr"] = hr
-            q["hr"] = {k: (v[:1] if isinstance(v, list) else v) for k, v in hr.items() if not re.match(r"^(h|b)\d|^hbn$", k)}
-        if p.get("hb_games") is not None:
-            keep["hb_games"] = p["hb_games"]
-            q.pop("hb_games", None)
-        if keep:
-            pro_players[pid] = keep
-        pp[pid] = q
-    pub["players"] = pp
-    pro["players"] = pro_players
+    # hit rates and hits / blocks history stay public: they are counts from the public game logs (data/gl/)
+    pro["players"] = {}
+    # season-long player chances are Pro: milestone chances (m), Art Ross / Rocket Richard / D / rookie leaders
+    # (ar, rr, dl, rl, am) and the goalie "most saved goals" chance (vz). Projected totals and ranges stay free.
+    PJ_PRO = ("m", "ar", "rr", "dl", "rl", "am")
+    if payload.get("proj"):
+        pro["proj"] = {pid: {k: pj[k] for k in PJ_PRO if k in pj} for pid, pj in payload["proj"].items()}
+        pub["proj"] = {pid: {k: v for k, v in pj.items() if k not in PJ_PRO} for pid, pj in payload["proj"].items()}
+    if payload.get("gproj"):
+        pro["gproj"] = {pid: {"vz": gp["vz"]} for pid, gp in payload["gproj"].items() if "vz" in gp}
+        pub["gproj"] = {pid: {k: v for k, v in gp.items() if k != "vz"} for pid, gp in payload["gproj"].items()}
     pub["paywall"] = {"pro_plans": list(PRO_PLANS), "free_watch": 3, "free_legs": 2}
     return pub, pro
 

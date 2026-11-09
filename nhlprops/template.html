@@ -2011,13 +2011,13 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_bp:"{n} best picks for this game · +edge", pw_bp_none:"Best picks, live until the lock",
   pw_tri:"Every value bet tonight, graded Solid, Lean or Fragile", pw_watch_max:"Free accounts follow up to {n} players. Pro follows as many as you like.",
   pw_legs_max:"Free checks parlays with up to {n} legs. Pro checks up to 8.", pw_need_acct:"Create a free account (or log in) to use this.",
-  pw_moves:"Odds movement is Pro", pw_hr:"L10, L20, season and vs opponent hit rates are Pro", pw_tonight:"Tonight's model chance, odds, EV and grade are Pro",
+  pw_moves:"Odds movement is Pro", pw_hr:"Vs opponent and model vs market are Pro", pw_tonight:"Tonight's model chance, odds, EV and grade are Pro",
   pw_ai:"Ask AI is Pro", pw_cmp_lock:"Compare every player with Pro (Free compares the open players)", pw_arch:"Player breakdowns, picks and compare for past days are Pro",
   pw_stakes:"Now / with a win / with a loss is Pro", pw_lines:"Per-line projections are Pro", pw_pub:"Public betting (tickets and money per side) is Pro",
-  pw_fut:"Fair odds, sportsbook odds and value are Pro", pw_fg:"The first-goalscorer list is Pro", pw_saves:"Save lines and fair odds are Pro",
-  pw_matchup:"What the opponent allows his position is Pro", pw_shots:"Last 10, single-game maps and profile numbers are Pro", pw_role:"Tonight's chances in the role box are Pro",
+  pw_fut:"Sportsbook odds and value are Pro", pw_fg:"The first-goalscorer list is Pro", pw_saves:"Save lines and fair odds are Pro",
+  pw_matchup:"What the opponent allows his position is Pro", pw_shots:"Shot-profile numbers are Pro", pw_role:"Tonight's chances in the role box are Pro",
   pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
-  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection"});
+  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro"});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
   pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Träffprocent L10 / L20 / säsong, matchups, skottkartor","Larm, obegränsad bevakning, full kombikoll"],
@@ -2030,13 +2030,14 @@ Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t
   pw_bp:"{n} bästa spel i matchen · +edge", pw_bp_none:"Bästa spel, live fram till låsningen",
   pw_tri:"Kvällens alla värdespel, betygsatta Stabil, Lutar eller Skör", pw_watch_max:"Gratiskonton bevakar upp till {n} spelare. Pro bevakar hur många som helst.",
   pw_legs_max:"Gratis kollar kombos med upp till {n} delar. Pro kollar upp till 8.", pw_need_acct:"Skapa ett gratiskonto (eller logga in) för att använda det här.",
-  pw_moves:"Oddsrörelser är Pro", pw_hr:"Träffprocent L10, L20, säsong och mot motståndaren är Pro", pw_tonight:"Kvällens modellchans, odds, EV och betyg är Pro",
+  pw_moves:"Oddsrörelser är Pro", pw_hr:"Mot motståndaren och modell mot marknad är Pro", pw_tonight:"Kvällens modellchans, odds, EV och betyg är Pro",
   pw_ai:"Fråga AI är Pro", pw_cmp_lock:"Jämför alla spelare med Pro (Gratis jämför de öppna spelarna)", pw_arch:"Spelardetaljer, spel och jämförelser för tidigare dagar är Pro",
   pw_stakes:"Nu / med vinst / med förlust är Pro", pw_lines:"Prognoser per kedja är Pro", pw_pub:"Publikens spel (spel och pengar per sida) är Pro",
-  pw_fut:"Rättvisa odds, bookens odds och värde är Pro", pw_fg:"Listan över första målskytt är Pro", pw_saves:"Räddningslinjer och rättvisa odds är Pro",
-  pw_matchup:"Vad motståndaren släpper till hans position är Pro", pw_shots:"Senaste 10, enskilda matcher och profilsiffror är Pro", pw_role:"Kvällens chanser i rollrutan är Pro",
+  pw_fut:"Bookens odds och värde är Pro", pw_fg:"Listan över första målskytt är Pro", pw_saves:"Räddningslinjer och rättvisa odds är Pro",
+  pw_matchup:"Vad motståndaren släpper till hans position är Pro", pw_shots:"Skottprofilens siffror är Pro", pw_role:"Kvällens chanser i rollrutan är Pro",
   pw_streak:"Chans i kväll, rättvisa odds och EV är Pro", pw_ll:"Alla kedjor och backpar i ligan, sorterbara, är Pro", pw_alerts:"Larm är Pro",
-  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos"});
+  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos", pw_ms:"Chans för milstolpar", pw_season:"Chanser för milstolpar och priser är Pro"});
+const PW_EX_PRO = ["mkt","mod","ar","rr","m_g30","m_p100"];   // explorer stats that are Pro (tonight's model / market, season chances)
 const PW_FAKE = ["38%","24%","51%","17%","62%","29%","45%","33%"];
 // a blurred placeholder (never real numbers) with a lock, a short reason and an upgrade button
 function lockBox(sub, opts={}){
@@ -2071,6 +2072,8 @@ function applyPro(X){
   if (X.league_lines) DATA.league_lines = X.league_lines;
   if (X.previews) DATA.previews = X.previews;
   for (const [pid, v] of Object.entries(X.players || {})) if (DATA.players[pid]) Object.assign(DATA.players[pid], v);
+  for (const [pid, v] of Object.entries(X.proj || {})) if (DATA.proj?.[pid]) Object.assign(DATA.proj[pid], v);
+  for (const [pid, v] of Object.entries(X.gproj || {})) if (DATA.gproj?.[pid]) Object.assign(DATA.gproj[pid], v);
   if (typeof FG_MEMO !== "undefined") FG_MEMO.clear();
 }
 const noHistory = m => m==="fg" || m.startsWith("fo");      // markets without a per-game record in the last-10 strip
@@ -3104,18 +3107,6 @@ const CL_SET = k => { try { return localStorage.getItem("cl:"+k) != null; } catc
 document.addEventListener("click", e => { const h = e.target.closest(".clph"); if (!h || e.target.closest(".hinfo")) return; const c = h.parentElement, on = !c.classList.contains("open");
   c.classList.toggle("open", on); h.setAttribute("aria-expanded", on); try { localStorage.setItem("cl:"+c.dataset.clk, on ? "1" : "0"); } catch(e){} });
 function detail(pr, g){
-  if (!prOpen(pr)){   // free: a locked player's prices, value and model build are Pro (not in the page); the rest stays open
-    const p = P(pr.id);
-    return `<div class="detail"><div class="dgrid">
-      <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${watchBtn(pr.id, true)}</h4>${lockBox(t("pw_player"), {feat:"player", rows:4})}</div>
-      ${oppPosPlayer(pr, p)}
-      <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
-        <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
-        <tbody>${(p.form?.games||[]).map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div></div>
-      ${roleBox(pr, g, p)}${matesBox(pr, p)}
-      <div class="box spbox" data-pid="${pr.id}">${shotProfile(p)}</div>
-      ${statsBox(p)}</div></div>`;
-  }
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
@@ -3123,13 +3114,13 @@ function detail(pr, g){
   const PVT = [["sc",MGROUPS.pts],["mu",[...MGROUPS.multi, ...MGROUPS.pp]],["sh",MGROUPS.s],["ph",[...MGROUPS.h, ...MGROUPS.b, ...MGROUPS.pim]],["fo",MGROUPS.fo]]
     .map(([k,ks])=>[k, ks.filter(m=>avail.includes(m))]).filter(([,ks])=>ks.length);
   if (!PVT.some(([k])=>k===state.pvtab)) state.pvtab = "sc";
-  const pvKeys = (PVT.find(([k])=>k===state.pvtab) || PVT[0])[1];
+  const pvKeys = (PVT.find(([k])=>k===state.pvtab) || PVT[0] || [null, []])[1];
   const oddsRows = pvKeys.map(m=>{ const pv = prob(pr,g,m), b = book(g.id,pr.id,m), uo = userOdds(g.id,pr.id,m), od = uo ?? b?.o ?? null, ev = od==null?null:pv*od-1, nv = noVig(b);
     return `<span>${mName(m)} ${ARCH?resMark(archHit(g.id, pr.id, m)):""}</span><span class="num"><b>${pct(pv,1)}</b> <span class="meta">${oddsTxt(1/pv)}</span></span>
       <span class="num">${b?`<b>${oddsTxt(b.o)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}${b.b==="p"?` <span class="sharp tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span>`:""}${b.p?`<div class="meta"><span class="tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span> ${oddsTxt(b.p)}${b.pn?` · ${pct(noVig({o:b.p, n:b.pn}),0)}`:""}</div>`:""}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}${(()=>{ if (!(ev>0)) return ""; const tr = triage(g, pr, m, "o", od); return tr ? " "+triBadge(tr) : ""; })()}</span><span class="svsl">${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</span>`; }).join("");
-  const LK = false;   // locked players returned above; free: a locked player's prices, value and model build are Pro (not in the page)
+  const LK = !prOpen(pr);   // free: a locked player's prices, value and model build are Pro (not in the page)
   return `<div class="detail"><div class="dgrid">
     ${LK ? `<div class="box" style="grid-column:span 2"><h4>${t("pv")} ${watchBtn(pr.id, true)}</h4>${lockBox(t("pw_player"), {feat:"player", rows:4})}</div>
     <div class="box"><h4><span>${t("built")} ${HI("tt_built")}</span></h4>${lockBox("", {feat:"player", rows:3, cls:"sm"})}</div>` : `
@@ -3210,12 +3201,12 @@ function nextTip(pid, gid, m){
     head = row(t("nx_exp_" + m), `<b>${fmt(pr.base[hk],2)}</b>`); }
   else { mk = m === "p" ? "pt" : m; head = ""; }
   const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), od = getOdds(g.id, pr.id, mk);
-  const tro = od ? triage(g, pr, mk, "o", od) : null, trn = b?.n ? triage(g, pr, mk, "n", b.n) : null, tr = tro || trn;
+  const tro = PRO && od ? triage(g, pr, mk, "o", od) : null, trn = PRO && b?.n ? triage(g, pr, mk, "n", b.n) : null, tr = tro || trn;
   const lbl = m === "s" ? t("tri_so",{l:mk.slice(1)}) : m === "h" || m === "b" ? t("nx_over_" + m,{l:mk.slice(1)}) : mName(mk);
   let num = head + row(lbl, `<b>${pct(pm,1)}</b> <span class="meta">${t("h_fair").toLowerCase()} ${oddsTxt(1/pm)}</span>`);
   if (od) num += row(t("h_odds"), `<b>${oddsTxt(od)}</b>${b?.n ? ` <span class="meta">/ ${oddsTxt(b.n)}</span>` : ""}`, `<span class="${pm*od-1>0?"ev-pos":"ev-neg"}">${evTxt(pm*od-1)}</span>`);
   { // season and last-10 views: always shown; with odds as value at the price (under side when only the under has value)
-    const base = m === "s" ? "s" : m === "g" ? "g" : m === "a" ? "a" : m === "h" ? "h" : m === "b" ? "b" : "p", useN = trn && !tro, vp = triViewProbs(g, pr, mk);
+    const base = m === "s" ? "s" : m === "g" ? "g" : m === "a" ? "a" : m === "h" ? "h" : m === "b" ? "b" : "p", useN = trn && !tro, vp = PRO ? triViewProbs(g, pr, mk) : {};
     const vr = Object.entries(vp).map(([k,q]) => { const qq = useN ? 1 - q : q, oo = useN ? b.n : od, e = oo ? qq*oo - 1 : null;
       return `<div class="nxr"><span>${t("nxv_"+k+"_"+base)}</span><span>${e == null ? `<b>${pct(qq,1)}</b>` : `<span class="meta">${pct(qq,0)}</span> <span class="${e>0?"ev-pos":"ev-neg"}">${t("nxv_val")} ${evTxt(e)}</span>`}</span></div>`; }).join("");
     if (vr) num += `<div class="nxtr2"><div class="nxtrl">${useN ? `<div class="nxr"><span>${esc(triMkt(mk,"n"))}</span><span></span></div>` : ""}${vr}</div></div>`; }
@@ -3319,7 +3310,7 @@ function l10Log(p){
 }
 const seasonOf = d => { const y = +d.slice(0,4), mo = +d.slice(5,7); return mo >= 8 ? y : y - 1; };
 function l10Chart(pr, g){
-  const p = P(pr.id), l = lambdas(pr, g), hbOk = hasHB(pr) && (p.hb_games||[]).length >= 3;
+  const p = P(pr.id), l = lambdas(pr, g), hbOk = (hasHB(pr) || !PRO) && (p.hb_games||[]).length >= 3;
   let m = state.l10m || "s"; if ((m==="h"||m==="b") && !hbOk) m = "s";
   const hb = m==="h" || m==="b", cnt = m==="s" || hb;
   const lines = m==="s" ? C.sog_lines : m==="h" ? HIT_LINES : m==="b" ? BLK_LINES : [0.5];
@@ -3332,7 +3323,8 @@ function l10Chart(pr, g){
   const val = x => m==="g" ? x.g : m==="a" ? x.a : m==="p" ? x.g + x.a : m==="h" ? x.hit : m==="b" ? x.blk : x.s;
   const w = p.windows || {}, base = (w.cur && w.cur.gp >= 5) ? w.cur : (w.prev3 || w.cur || {});
   const avg = hb ? games.reduce((a,x)=>a+val(x),0)/Math.max(1,games.length) : m==="g" ? base.g_pg : m==="a" ? base.a_pg : m==="p" ? base.p_pg : base.s_pg;
-  const exp = m==="g" ? l.g : m==="a" ? l.a : m==="p" ? l.g + l.a : m==="h" ? pr.base.hit : m==="b" ? pr.base.blk : l.s;
+  const exp0 = m==="g" ? l.g : m==="a" ? l.a : m==="p" ? l.g + l.a : m==="h" ? pr.base.hit : m==="b" ? pr.base.blk : l.s;
+  const exp = exp0 == null || isNaN(exp0) ? null : exp0;   // locked player / Pro market: no model line (the bars stay)
   const avgLbl = hb ? t("l10_avg_last",{n:games.length}) : (w.cur && w.cur.gp >= 5) ? t("l10_avg_season") : t("l10_avg_3y");
   const vals = games.map(val), top = Math.max(1, ...vals, avg||0, exp||0, line||0);
   const ymax = cnt ? Math.ceil(top + 0.5) : Math.max(2, Math.ceil(top));
@@ -3379,7 +3371,7 @@ function l10Chart(pr, g){
     <button type="button" class="l10fbtn ${state.l10pop?"on":""}" data-l10f aria-expanded="${!!state.l10pop}" title="${esc(t("l10_games"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>${nLab}</button>${pop}</span></h4>
     <svg viewBox="0 0 ${W} ${H}" class="l10svg${anim}" role="img" aria-label="${t("l10_chart")}"><defs><filter id="l10glow" filterUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${panels}${grid}${bars}${nxBar}${linesG}</svg>
     <div class="l10lines-pick"><span class="lpl">${t("l10_colour")}</span><span class="seg">${[null,...lines].map(v=>`<button data-l10line="${v??""}" class="${line===v?"on":""} ${line===v && SEG_POP==="ln:"+(v??"")?"pop":""}">${v==null?t("l10_by_avg"):(cnt?v:t("l10_1plus"))}</button>`).join("")}</span></div>
-    <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span><span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>
+    <div class="l10leg"><span><i class="la"></i>${avgLbl} <b>${fmt(avg,2)}</b></span>${exp!=null ? `<span><i class="le"></i>${t("l10_exp")} <b>${fmt(exp,2)}</b></span>` : ""}
       ${line!=null?`<span><i class="ll"></i>${t("l10_line")} <b>${line}</b> · <b>${hitN}/${games.length}</b> ${t("l10_over_n")}</span>`:""}
       <span><i class="sw hi"></i>${line!=null?t("l10_over"):t("l10_hi")}</span><span><i class="sw lo"></i>${line!=null?t("l10_under"):t("l10_lo")}</span></div>
     ${hitStrip(pr, g, m, line)}`;
@@ -3396,14 +3388,15 @@ function hitStrip(pr, g, m, line){
     const n = hr.hbn || [0,0], pm_ = prob(pr, g, mk), b_ = book(g.id, pr.id, mk), mk_ = noVig(b_) ?? (b_?.o ? 1/b_.o : null);
     const c_ = (lbl, h, nn) => { if (!nn) return ""; const r = h/nn, c = nn>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : ""; return `<span class="hr ${c}"><small>${lbl}</small><b><span data-cn="${h}" data-cf="i">${h}</span>/${nn}</b></span>`; };
     return `<div class="hrstrip"><div class="hrt">${t(m==="h"?"hr_over_h":"hr_over_b",{l:L})}</div><div class="hrc">
-      ${c_("L5",H[0],n[0])}${c_("L10",H[1],n[1])}<span class="hr hr-model"><small>${t("hr_model")}</small><b ${pm_!=null?`data-cn="${pm_}" data-cf="pc0"`:""}>${pct(pm_)}</b></span>
-      ${mk_!=null?`<span class="hr"><small>${t("hr_market")}</small><b data-cn="${mk_}" data-cf="pc0">${pct(mk_)}</b></span>`:""}</div></div>`;
+      ${c_("L5",H[0],n[0])}${c_("L10",H[1],n[1])}${!PRO ? `<span class="hr"><small>${t("hr_model")} · ${t("hr_market")}</small><b>${lockInline(t("pw_hr"))}</b></span>` : `<span class="hr hr-model"><small>${t("hr_model")}</small><b ${pm_!=null?`data-cn="${pm_}" data-cf="pc0"`:""}>${pct(pm_)}</b></span>`}
+      ${PRO && mk_!=null?`<span class="hr"><small>${t("hr_market")}</small><b data-cn="${mk_}" data-cf="pc0">${pct(mk_)}</b></span>`:""}</div></div>`;
   }
   const cell = (lbl, h, n) => { if (!n) return ""; const r = h/n, c = n>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : "";
     return `<span class="hr ${c}"><small>${lbl}</small><b><span data-cn="${h}" data-cf="i">${h}</span>/${n}</b></span>`; };
-  if (!PRO){   // free: last 5 only
+  if (!PRO){   // free: the counts (public game logs); vs opponent and model vs market are Pro
     const nm0 = m==="s" ? t("hr_over_s",{l:L}) : m==="g" ? t("hr_g") : m==="a" ? t("hr_a") : t("hr_p");
-    return `<div class="hrstrip"><div class="hrt">${nm0}</div><div class="hrc">${cell("L5",H[0],hr.n[0])}<span class="hr"><small>L10 · L20 · ${t("hr_season")}</small><b>${lockInline(t("pw_hr"))}</b></span></div></div>`;
+    return `<div class="hrstrip"><div class="hrt">${nm0}</div><div class="hrc">${cell("L5",H[0],hr.n[0])}${cell("L10",H[1],hr.n[1])}${cell("L20",H[2],hr.n[2])}${hr.n[3]?`<span class="hr"><small>${t("hr_season")}</small><b>${pct(H[3]/hr.n[3])}</b></span>`:""}
+      <span class="hr"><small>${t("hr_vs",{t:pr.opp})} · ${t("hr_model")} · ${t("hr_market")}</small><b>${lockInline(t("pw_hr"))}</b></span></div></div>`;
   }
   const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), mkt = noVig(b) ?? (b?.o ? 1/b.o : null);
   const name = m==="s" ? t("hr_over_s",{l:L}) : m==="g" ? t("hr_g") : m==="a" ? t("hr_a") : t("hr_p");
@@ -3497,12 +3490,11 @@ function shotTier(metric, v, posg, enough){
 }
 const tierPill = tr => tr ? `<span class="tier ${tr.cls}">${tr.lab}${tr.rank?` <i>· ${tr.rank}</i>`:""}</span>` : "";
 function shotProfile(p){
-  if (!PRO && state.spw && state.spw !== "season") state.spw = "season";   // free: season map only
   const games10 = p.form.games.slice(0,10);
   if (state.spw && state.spw.startsWith("g:") && !games10.some(x=>x.d===state.spw.slice(2))) state.spw = "season";
   const gsel = state.spw && state.spw.startsWith("g:") ? state.spw.slice(2) : null;
   const opts = games10.map(x=>`<option value="${x.d}" ${gsel===x.d?"selected":""}>${dayLabel(x.d)} ${x.h?t("r6_vs"):"@"} ${x.o}</option>`).join("");
-  const head = `<h4>${t("sp_title")} <span class="spctl"><span class="seg spseg"><button data-sp="season" class="${!gsel&&(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}${PRO ? "" : " 🔒"}</button></span>${games10.length?`<select class="spgame ${gsel?"on":""}" aria-label="${t("sp_game")}"><option value="">${t("sp_game")} ▾</option>${opts}</select>`:""}</span></h4>`;
+  const head = `<h4>${t("sp_title")} <span class="spctl"><span class="seg spseg"><button data-sp="season" class="${!gsel&&(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}</button></span>${games10.length?`<select class="spgame ${gsel?"on":""}" aria-label="${t("sp_game")}"><option value="">${t("sp_game")} ▾</option>${opts}</select>`:""}</span></h4>`;
   if (!SHOTS){ loadShots(); return head + `<p class="meta">${t("sp_loading")}</p>`; }
   const S = SHOTS[p.id] || SHOTS[String(p.id)];
   const l10 = state.spw === "l10";
@@ -3589,15 +3581,12 @@ function spRender(box){ const p = box && P(box.dataset.pid); if (p) box.innerHTM
   const det = box && box.closest(".detail"); if (det) det.querySelectorAll("tr[data-spd]").forEach(r=>r.classList.toggle("spsel", state.spw==="g:"+r.dataset.spd)); }
 document.addEventListener("click", e => {
   const r = e.target.closest("tr[data-spd]");
-  if (r && !PRO){ if (r.closest(".detail")?.querySelector(".spbox")) openUpgrade("shots"); return; }
   if (r){ const box = r.closest(".detail")?.querySelector(".spbox"); if (box){ state.spw = "g:"+r.dataset.spd; spRender(box); box.scrollIntoView({behavior:"smooth", block:"nearest"}); } return; }
   const b = e.target.closest("[data-sp]"); if (!b) return;
-  if (!PRO && b.dataset.sp !== "season") return openUpgrade("shots");
   state.spw = b.dataset.sp; spRender(b.closest(".spbox"));
 });
 document.addEventListener("change", e => {
   const sel = e.target.closest(".spgame"); if (!sel) return;
-  if (!PRO){ sel.value = ""; return openUpgrade("shots"); }
   state.spw = sel.value ? "g:"+sel.value : "season"; spRender(sel.closest(".spbox"));
 });
 
@@ -3945,7 +3934,7 @@ function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
 const exVal = (k, p) => { const m = EX_M[k], v = m.f(p, exNext()[p.id]); return v == null || !isFinite(v) ? null : v; };
 const exFmt = (k, v) => v == null ? "–" : EX_M[k].pct ? pct(v, EX_M[k].d) : (k === "gmx" && v > 0 ? "+" : "") + fmt(v, EX_M[k].d);
 function exState(){ const S = state.ex = state.ex || {mode:"players", preset:"luck", pos:"all", team:"all", tonight:false, min:5, q:"", tpreset:"strength"};
-  if (!PRO && (S.preset === "tonight" || ["mkt","mod","hit","blk"].includes(S.x) || ["mkt","mod","hit","blk"].includes(S.y))){ S.preset = "luck"; S.x = EX_P.luck.x; S.y = EX_P.luck.y; }
+  if (!PRO && (S.preset === "tonight" || PW_EX_PRO.includes(S.x) || PW_EX_PRO.includes(S.y))){ S.preset = "luck"; S.x = EX_P.luck.x; S.y = EX_P.luck.y; }
   if (!S.view) S.view = store.get("ex_view") === "list" ? "list" : "chart";
   S.mode = S.mode || "players"; S.tpreset = S.tpreset === undefined ? "strength" : S.tpreset;
   if (S.mode === "teams"){ if (S.tpreset && EX_TP[S.tpreset]){ S.tx = EX_TP[S.tpreset].x; S.ty = EX_TP[S.tpreset].y; } }
@@ -3977,7 +3966,7 @@ function exRows(S){
 function exploreTab(){
   const S = exState(), TM = exT(S), MT = exMT(S), PT = exPT(S), [ax, ay] = exAx(S), pre = exPre(S);
   const teams = [...new Set(Object.values(DATA.players).map(p => p.team))].filter(Boolean).sort();
-  const opt = k => Object.keys(MT).filter(m => TM || PRO || !["mkt","mod","hit","blk"].includes(m)).filter(m => TM || !MT[m].rng && !["pace","ar","rr","m_g30","m_p100"].includes(m) || DATA.proj).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
+  const opt = k => Object.keys(MT).filter(m => TM || PRO || !PW_EX_PRO.includes(m)).filter(m => TM || !MT[m].rng && !["pace","ar","rr","m_g30","m_p100"].includes(m) || DATA.proj).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
   const filters = TM ? `<label class="toggle"><input type="checkbox" id="extn" ${S.ttonight?"checked":""}> ${t("ext_playing")}</label>`
     : `<div class="seg olseg" id="expos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")]].map(([k,l])=>`<button data-k="${k}" class="${S.pos===k?"on":""}">${l}</button>`).join("")}</div>
       <select id="exteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${S.team===x?"selected":""}>${x}</option>`).join("")}</select>
@@ -5887,7 +5876,7 @@ function futuresTab(){
   const topSet = new Set(evs.sort((a, b) => b[1] - a[1]).slice(0, FUT_TOP).map(x => x[0]));
   const cell = (tm, v, k) => { const p = v[k]; const od = futBook(F, k, tm); const ev = od ? p * od - 1 : null;
     const strong = p >= 0.5 ? "hi" : p >= 0.15 ? "mid" : "lo";
-    return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b${(k === "playoffs" || k === "cup") && p >= 0.005 && p < 0.995 ? ` data-cn="${p}" data-cf="pc0"` : ""}>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${!PRO ? "" : p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
+    return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b${(k === "playoffs" || k === "cup") && p >= 0.005 && p < 0.995 ? ` data-cn="${p}" data-cf="pc0"` : ""}>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
   const ptsCell = (tm, v) => { const P_ = F.odds?.points?.[tm]; if (!P_) return `<td class="n hide-sm fucell"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t(PRO ? "fu_proj" : "pw_fu_proj")}</small></td>`;
     const po = ptsOver(v, P_.line), ev = po!=null && P_.over ? po * P_.over - 1 : null, evu = po!=null && P_.under ? (1-po) * P_.under - 1 : null;
     const best = ev!=null && evu!=null ? (ev >= evu ? ["o", ev, P_.over] : ["u", evu, P_.under]) : null;
@@ -5899,7 +5888,7 @@ function futuresTab(){
     <div class="controls"><div class="seg mgrp" id="fuf">${filters.map(([k,l])=>`<button data-f="${k}" class="${flt===k?"on":""}">${l.startsWith("fu_")?t(l):l}</button>`).join("")}</div></div>
     ${PRO ? "" : `<p class="pwnote">🔒 ${t("pw_fut")} <button type="button" class="pwbtn" data-upgrade="futures">${t("pw_btn")}</button></p>`}
     <div class="card tablewrap futab"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
-    <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span>${PRO ? `<span><small>2.38</small> ${t("fu_lg_fair")}</span><span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span>` : ""}</div>
+    <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span><span><small>2.38</small> ${t("fu_lg_fair")}</span>${PRO ? `<span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span>` : ""}</div>
     <p class="foot">${t("fu_foot")}</p>`;
   if (state.fucnt !== false) lgCount($("#main").querySelector(".futab"), 550, 22, 32); state.fucnt = true;   // count up when the view opens or the filter changes (not on sort)
   $("#fuf").onclick = e => { const b = e.target.closest("[data-f]"); if (b){ state.fuf = b.dataset.f; futuresTab(); } };
@@ -5922,8 +5911,8 @@ function pjCard(pid, big){ const pj = DATA.proj?.[pid], p = P(pid); if (!pj || !
   return `<div class="pjbig"><b data-cn="${pj.p[1]}" data-cf="i">${pj.p[1]}</b><span>${t("pj_proj",{g:pj.g[1], a:pj.a[1]})}</span></div>
     <p class="meta pjline">${t("pj_now",{p:(p.windows?.cur?.p ?? 0), gp:pj.gp, lo:pj.p[0], hi:pj.p[2]})}</p>
     ${pjHist(pj, big ? 130 : 84)}
-    ${ms.length ? `<div class="pjms">${ms.map(m => `<div class="${m.v >= 0.5 ? "hi" : ""}"><small>${m.l}</small><b data-cn="${m.v}" data-cf="pc0">${pct(m.v, 0)}</b></div>`).join("")}</div>` : ""}
-    ${big ? `<div class="pjkv"><div><span>${t("pj_ar")}</span><b>${pct(pj.ar, pj.ar < 0.1 ? 1 : 0)}</b></div><div><span>${t("pj_rr")}</span><b>${pct(pj.rr, pj.rr < 0.1 ? 1 : 0)}</b></div>
+    ${!PRO ? `<div class="pjms"><div><small>${t("pw_ms")}</small><b>${lockInline(t("pw_season"))}</b></div></div>` : ms.length ? `<div class="pjms">${ms.map(m => `<div class="${m.v >= 0.5 ? "hi" : ""}"><small>${m.l}</small><b data-cn="${m.v}" data-cf="pc0">${pct(m.v, 0)}</b></div>`).join("")}</div>` : ""}
+    ${big ? `<div class="pjkv"><div><span>${t("pj_ar")}</span><b>${PRO ? pct(pj.ar, pj.ar < 0.1 ? 1 : 0) : lockInline(t("pw_season"))}</b></div><div><span>${t("pj_rr")}</span><b>${PRO ? pct(pj.rr, pj.rr < 0.1 ? 1 : 0) : lockInline(t("pw_season"))}</b></div>
       ${pj.pace != null ? `<div><span>${t("pj_pace")}</span><b>${fmt(pj.pace, 0)} → ${pj.p[1]}</b></div>` : ""}</div>
       ${awChips(pid)}` : ""}`; }
 function fuPlayers(){
@@ -5942,7 +5931,7 @@ function fuPlayers(){
       <td class="n num hide-sm pjnow">${c.g ?? 0}–${c.a ?? 0}–${c.p ?? 0}<small class="meta pjsub">${c.gp ?? 0} ${t("ext_gp")}</small></td>
       <td class="n num pjv"><b data-cn="${R_[1]}" data-cf="i">${R_[1]}</b><span class="pjrng" style="--d:${Math.min(i, 24) * 28}ms"><i style="left:${sc(R_[0])}%;width:${sc(R_[2]) - sc(R_[0])}%"></i><s style="left:${sc(R_[1])}%"></s></span><small class="meta pjsub">${R_[0]}–${R_[2]}</small></td>
       <td class="n num hide-sm">${K === "g" ? r.pj.p[1] : r.pj.g[1]}<small class="meta pjsub">${K === "g" ? t("pj_p") : t("pj_g")}</small></td>
-      <td class="n num ${r.pj.ar >= 0.1 ? "pjhi" : ""}">${pct(r.pj.ar, 0)}</td><td class="n num hide-sm ${r.pj.rr >= 0.1 ? "pjhi" : ""}">${pct(r.pj.rr, 0)}</td></tr>`; }).join("");
+      ${PRO ? `<td class="n num ${r.pj.ar >= 0.1 ? "pjhi" : ""}">${pct(r.pj.ar, 0)}</td><td class="n num hide-sm ${r.pj.rr >= 0.1 ? "pjhi" : ""}">${pct(r.pj.rr, 0)}</td>` : `<td class="n num">${lockInline(t("pw_season"))}</td><td class="n num hide-sm">${lockInline(t("pw_season"))}</td>`}</tr>`; }).join("");
   const sel = rows.find(r => r.id === state.fup);
   $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("pj_title")}</h2><p class="meta">${t("pj_sub")}</p></div>${fuSwitch()}</div>
     <div class="controls pjctl"><div class="seg olseg" id="pjk">${[["p",t("pj_tp")],["g",t("pj_tg")],["a",t("pj_ta")]].map(([k, l]) => `<button data-k="${k}" class="${K === k ? "on" : ""}">${l}</button>`).join("")}</div>
@@ -5984,14 +5973,18 @@ function fuAwards(){
   const tabs = AW_LIST.filter(([k]) => AW[k] || (k === "artross" && DATA.proj) || (k === "vezina" && DATA.gproj));
   const isG = k => k === "vezina", exact = AW_EXACT.has(K), coach = K === "adams";
   let rows = [];
-  if (K === "artross") rows = Object.entries(DATA.proj || {}).filter(([, pj]) => pj.ar >= 0.001).map(([id, pj]) => ({id, name: P(id)?.name, odds: null, fair: null, m: pj.ar}));
+  const projKey = id => K === "vezina" ? (DATA.gproj?.[id]?.gsax?.[1] ?? -99) : K === "rocket" ? (DATA.proj?.[id]?.g?.[1] ?? -1) : (DATA.proj?.[id]?.p?.[1] ?? -1);
+  if (!PRO && (K === "rocket" || K === "artross"))   // free: the projection leaders (model chances are Pro)
+    rows = Object.entries(DATA.proj || {}).filter(([id]) => P(id)?.active !== false).sort((a, b) => projKey(b[0]) - projKey(a[0])).slice(0, 40).map(([id]) => ({id, name: P(id)?.name, odds: null, fair: null, m: null}));
+  else if (K === "artross") rows = Object.entries(DATA.proj || {}).filter(([, pj]) => pj.ar >= 0.001).map(([id, pj]) => ({id, name: P(id)?.name, odds: null, fair: null, m: pj.ar}));
   else rows = (AW[K] || []).map(r => ({id: r[2], name: r[0], odds: r[1], fair: r[3], m: r[2] ? awModel(K, r[2]) : null}));
   // the model's own contenders the book doesn't list (Rocket Richard, Vezina)
-  if (K === "rocket" || K === "vezina"){ const have = new Set(rows.map(r => r.id));
+  if (PRO && (K === "rocket" || K === "vezina")){ const have = new Set(rows.map(r => r.id));
     const src = K === "rocket" ? Object.entries(DATA.proj || {}).map(([id, pj]) => [id, pj.rr]) : Object.entries(DATA.gproj || {}).map(([id, g]) => [id, g.vz]);
     src.filter(([id, v]) => v >= 0.02 && !have.has(id)).forEach(([id, v]) => rows.push({id, name: (P(id) || G(id))?.name, odds: null, fair: null, m: v})); }
   rows = rows.filter(r => r.name);
-  rows.sort((a, b) => sortM || K === "artross" ? (b.m ?? -1) - (a.m ?? -1) || (b.fair ?? 0) - (a.fair ?? 0) : (b.fair ?? -1) - (a.fair ?? -1) || (b.m ?? 0) - (a.m ?? 0));
+  if (!PRO) rows.sort((a, b) => projKey(b.id) - projKey(a.id));
+  else rows.sort((a, b) => sortM || K === "artross" ? (b.m ?? -1) - (a.m ?? -1) || (b.fair ?? 0) - (a.fair ?? 0) : (b.fair ?? -1) - (a.fair ?? -1) || (b.m ?? 0) - (a.m ?? 0));
   const evs = exact && !awStale() ? rows.filter(r => r.odds && r.m != null && r.m >= 0.01 && r.m * r.odds - 1 >= FUT_VALUE).sort((a, b) => (b.m * b.odds - 1) / (b.odds - 1) - (a.m * a.odds - 1) / (a.odds - 1)).slice(0, 3).map(r => r.id) : [];
   const top = new Set(evs), all = state.fuaall;
   const shown = all ? rows : rows.slice(0, 25);
@@ -6010,7 +6003,7 @@ function fuAwards(){
   const body = shown.map((r, i) => { const ev = exact && r.odds && r.m != null ? r.m * r.odds - 1 : null;
     return `<tr class="${p_ok(r) ? "pjr" : ""} ${top.has(r.id) ? "awval" : ""}" ${p_ok(r) ? `data-pjgo="${r.id}" tabindex="0"` : ""}><td class="exlrk">${i + 1}</td><td>${who(r)}</td>
       ${K === "artross" ? "" : `<td class="n num">${!PRO ? lockInline(t("pw_fut")) : `<b>${r.odds ? oddsTxt(r.odds) : "–"}</b><small class="meta pjsub">${r.odds ? t("aw_fair_s",{p:pc(r.fair)}) : t("aw_notlisted")}</small>`}</td>`}
-      ${mHead ? `<td class="n num ${exact ? (!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? "pjhi" : "") : "awproxy"}"><b ${r.m != null && r.m >= 0.001 && r.m < 0.995 ? `data-cn="${r.m}" data-cf="${r.m < 0.1 ? "pc1" : "pc0"}"` : ""}>${pc(r.m)}</b>${PRO && exact && r.m > 0.001 ? `<small class="meta pjsub">${t("aw_fairodds",{o:oddsTxt(1 / r.m)})}${!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? ` · <span class="bk pos">${t("aw_value")}</span>` : ""}</small>` : ""}</td>` : ""}
+      ${mHead ? `<td class="n num ${exact ? (!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? "pjhi" : "") : "awproxy"}">${!PRO ? lockInline(t("pw_season")) : `<b ${r.m != null && r.m >= 0.001 && r.m < 0.995 ? `data-cn="${r.m}" data-cf="${r.m < 0.1 ? "pc1" : "pc0"}"` : ""}>${pc(r.m)}</b>`}${PRO && exact && r.m > 0.001 ? `<small class="meta pjsub">${t("aw_fairodds",{o:oddsTxt(1 / r.m)})}${!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? ` · <span class="bk pos">${t("aw_value")}</span>` : ""}</small>` : ""}</td>` : ""}
       ${coach ? "" : ctx(r) || `<td class="hide-sm"></td><td class="hide-sm"></td>`}</tr>`; }).join("");
   const fetched = DATA.awards?.fetched ? new Date(DATA.awards.fetched) : null;
   $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("aw_title")}</h2><p class="meta">${t("aw_sub")}${fetched ? " " + t("aw_upd",{d:fetched.toLocaleDateString(LOCALE(),{day:"numeric",month:"short"}), h:fetched.toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : ""}${awStale() ? ` <span class="pill s-q">${t("aw_stale",{n:Math.floor((Date.now() - fetched.getTime()) / 864e5)})}</span>` : ""}</p></div>${fuSwitch()}</div>

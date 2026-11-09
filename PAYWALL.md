@@ -1,6 +1,15 @@
 # Free / Pro / visitors: agreed plan (build together with Stripe)
 
 Rule of thumb: anything about the game or the teams is free; anything that helps decide a bet on a specific player is Pro.
+Consistency rules (2026-11-09):
+* A chance and its fair odds are always shown together or locked together (fair odds = 1 / chance). What is always
+  Pro: the sportsbook price, value and EV.
+* Counts from public data (the game logs in data/gl/, shot data) are never locked: a lock that can be rebuilt from
+  public files is not used.
+* Season-long player chances are Pro (milestones, Art Ross, Rocket Richard, award "stand-in" chances, goalie
+  saved-goals leader). Projected totals and their range are free.
+* Every player profile has the same sections. Open and locked players differ only in tonight's model numbers,
+  prices and value (and the "How the number is built" box).
 Locked items are shown blurred with a small lock and an "Unlock with Pro" panel (not hidden).
 Pro data must only be sent to Pro users (served by a Supabase function that checks the subscription), never just hidden in the page.
 
@@ -18,7 +27,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Best picks record (Track record: W–L, units, ROI, CLV, charts by market/team/player, every past pick) | yes, after each game locks | yes |
 | Best picks record on the landing page | yes (public) | yes |
 | First goalscorer | team "scores first" % | player list |
-| Hits & blocks | no | yes |
+| Hits & blocks | past games (game-by-game chart, hit counts) | plus tonight's chances |
 | Multi-point (2+/3+ points, 2+ goals, hat trick, 2+ assists), PP point, faceoffs won, penalties | no | yes |
 | Shutout chance (goalie card, More markets) | yes | yes |
 | Role & usage box | PP minutes and unit only | everything, incl. tonight's chances |
@@ -30,9 +39,9 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Shot profile tiers (elite / good / average / below) | season tiers | everything |
 | Odds movement | no | yes |
 | Player page: last 10 games + chart | yes | yes |
-| Hit rates | L5 | L10, L20, season, vs opponent, model vs market |
+| Hit rates | L5, L10, L20, season (counts from the public game logs) | plus vs opponent and model vs market |
 | Per-player matchup (what the opponent allows his position) | no | yes |
-| Shot map | season map | last 10, single game, profile numbers |
+| Shot map | season, last 10 and single-game maps, with tiers | plus the shot-profile numbers |
 | Streaks view & "Streaks to watch" | the list (who, what run, how rare) | chance tonight, fair odds, EV |
 | Milestones | yes | yes |
 | My picks (tracking) | yes (free account) | yes (later: export, ROI by market) |
@@ -41,9 +50,11 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Sharp-book second price (shown beside the main sportsbook) | no | yes |
 | Alerts | no | yes |
 | Track record, How it works | yes | yes |
-| Futures tab (playoffs, rounds, Cup, division, points) | chances | plus fair odds, sportsbook odds and value |
+| Futures tab (playoffs, rounds, Cup, division, points) | chances and fair odds | plus sportsbook odds and value |
 | What's at stake (game importance) | level only | now / with a win / with a loss |
 | Game recaps (last 6, past meetings) | yes | yes |
+| Season projections (player profile, Futures → Players) | projected points / goals / assists and range | plus milestone chances and Art Ross / Rocket Richard chances |
+| Season awards | projection leaders (sorted by projected goals / points / saved goals) | plus model chances, sportsbook prices and value |
 | Archive: last 7 days as before puck drop, with ✓/✗ results | games list, scores and results only | everything (player breakdowns, picks, compare) |
 
 Also planned for that release: 18+ check on the landing page again, Stripe checkout, prices (not decided yet).
