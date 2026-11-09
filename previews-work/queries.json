@@ -1,8 +1,26 @@
 {
- "2026-11-08-fla-bos": ["David Pastrnak Bruins","Jeremy Swayman Bruins","Matthew Tkachuk Panthers","Sam Reinhart Panthers","TD Garden Boston Bruins game","Charlie McAvoy Bruins"],
- "2026-11-08-vgk-buf": ["Jack Eichel Golden Knights","Mark Stone Vegas Golden Knights","Tage Thompson Sabres","Rasmus Dahlin Sabres","KeyBank Center Buffalo Sabres game","Vegas Golden Knights T-Mobile Arena"],
- "2026-11-08-tbl-wpg": ["Nikita Kucherov Lightning","Andrei Vasilevskiy Lightning","Brayden Point Lightning","Kyle Connor Jets","Mark Scheifele Jets","Winnipeg Jets Canada Life Centre game"],
- "2026-11-08-njd-tor": ["Jack Hughes Devils","Nico Hischier Devils","Jesper Bratt Devils","Auston Matthews Maple Leafs","William Nylander Maple Leafs","Toronto Maple Leafs Scotiabank Arena game"],
- "2026-11-08-phi-cgy": ["Travis Konecny Flyers","Matvei Michkov Flyers","Trevor Zegras Flyers","Calgary Flames Saddledome game","Mikael Backlund Flames","Philadelphia Flyers game"],
- "2026-11-08-pit-ana": ["Sidney Crosby Penguins","Evgeni Malkin Penguins","Leo Carlsson Ducks","Cutter Gauthier Ducks","Honda Center Anaheim Ducks game","Pittsburgh Penguins game action"]
+ "2026-11-09-nyr-edm": [
+  "Connor McDavid Oilers",
+  "Leon Draisaitl Oilers",
+  "Zach Hyman Edmonton Oilers",
+  "Rogers Place Edmonton Oilers game",
+  "Mika Zibanejad Rangers",
+  "Artemi Panarin Rangers Madison Square Garden"
+ ],
+ "2026-11-09-phi-van": [
+  "Elias Pettersson Canucks",
+  "Quinn Hughes Canucks",
+  "Rogers Arena Vancouver Canucks game",
+  "Brock Boeser Canucks",
+  "Travis Konecny Flyers",
+  "Matvei Michkov Flyers"
+ ],
+ "2026-11-09-nyi-sjs": [
+  "Macklin Celebrini Sharks",
+  "William Eklund Sharks",
+  "SAP Center San Jose Sharks game",
+  "Bo Horvat Islanders",
+  "Ilya Sorokin Islanders",
+  "Tomas Hertl San Jose Sharks"
+ ]
 }
