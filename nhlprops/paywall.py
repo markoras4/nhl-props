@@ -125,7 +125,8 @@ def split(payload: dict) -> tuple[dict, dict]:
         aw = copy.deepcopy(payload["awards"])
         pro["awards"] = payload["awards"]
         for k, rows in (aw.get("m") or {}).items():
-            aw["m"][k] = [[r[0], None, *r[2:]] if isinstance(r, list) and len(r) > 1 else r for r in rows]
+            # [name, book odds, pid, book chance (no margin), ...]: both book numbers are Pro
+            aw["m"][k] = [[r[0], None, r[2] if len(r) > 2 else None, None, *r[4:]] if isinstance(r, list) and len(r) > 1 else r for r in rows]
         pub["awards"] = aw
     # line & pair rankings across the league: Pro
     if "league_lines" in payload:

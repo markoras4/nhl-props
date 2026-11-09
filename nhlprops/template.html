@@ -2017,7 +2017,7 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_fut:"Fair odds, sportsbook odds and value are Pro", pw_fg:"The first-goalscorer list is Pro", pw_saves:"Save lines and fair odds are Pro",
   pw_matchup:"What the opponent allows his position is Pro", pw_shots:"Last 10, single-game maps and profile numbers are Pro", pw_role:"Tonight's chances in the role box are Pro",
   pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
-  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro"});
+  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection"});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
   pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Träffprocent L10 / L20 / säsong, matchups, skottkartor","Larm, obegränsad bevakning, full kombikoll"],
@@ -2036,7 +2036,7 @@ Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t
   pw_fut:"Rättvisa odds, bookens odds och värde är Pro", pw_fg:"Listan över första målskytt är Pro", pw_saves:"Räddningslinjer och rättvisa odds är Pro",
   pw_matchup:"Vad motståndaren släpper till hans position är Pro", pw_shots:"Senaste 10, enskilda matcher och profilsiffror är Pro", pw_role:"Kvällens chanser i rollrutan är Pro",
   pw_streak:"Chans i kväll, rättvisa odds och EV är Pro", pw_ll:"Alla kedjor och backpar i ligan, sorterbara, är Pro", pw_alerts:"Larm är Pro",
-  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro"});
+  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos"});
 const PW_FAKE = ["38%","24%","51%","17%","62%","29%","45%","33%"];
 // a blurred placeholder (never real numbers) with a lock, a short reason and an upgrade button
 function lockBox(sub, opts={}){
@@ -5888,7 +5888,7 @@ function futuresTab(){
   const cell = (tm, v, k) => { const p = v[k]; const od = futBook(F, k, tm); const ev = od ? p * od - 1 : null;
     const strong = p >= 0.5 ? "hi" : p >= 0.15 ? "mid" : "lo";
     return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b${(k === "playoffs" || k === "cup") && p >= 0.005 && p < 0.995 ? ` data-cn="${p}" data-cf="pc0"` : ""}>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${!PRO ? "" : p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
-  const ptsCell = (tm, v) => { const P_ = F.odds?.points?.[tm]; if (!P_) return `<td class="n hide-sm fucell"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t("fu_proj")}</small></td>`;
+  const ptsCell = (tm, v) => { const P_ = F.odds?.points?.[tm]; if (!P_) return `<td class="n hide-sm fucell"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t(PRO ? "fu_proj" : "pw_fu_proj")}</small></td>`;
     const po = ptsOver(v, P_.line), ev = po!=null && P_.over ? po * P_.over - 1 : null, evu = po!=null && P_.under ? (1-po) * P_.under - 1 : null;
     const best = ev!=null && evu!=null ? (ev >= evu ? ["o", ev, P_.over] : ["u", evu, P_.under]) : null;
     return `<td class="n hide-sm fucell"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t("fu_line",{l:P_.line})} · ${t("fu_over")} ${pct(po,0)}${best && best[1]>=FUT_VALUE ? ` · <span class="bk pos">${t(best[0]==="o"?"fu_v_over":"fu_v_under",{o:oddsTxt(best[2])})}</span>` : ""}</small></td>`; };
@@ -5899,7 +5899,7 @@ function futuresTab(){
     <div class="controls"><div class="seg mgrp" id="fuf">${filters.map(([k,l])=>`<button data-f="${k}" class="${flt===k?"on":""}">${l.startsWith("fu_")?t(l):l}</button>`).join("")}</div></div>
     ${PRO ? "" : `<p class="pwnote">🔒 ${t("pw_fut")} <button type="button" class="pwbtn" data-upgrade="futures">${t("pw_btn")}</button></p>`}
     <div class="card tablewrap futab"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
-    <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span><span><small>2.38</small> ${t("fu_lg_fair")}</span><span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span></div>
+    <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span>${PRO ? `<span><small>2.38</small> ${t("fu_lg_fair")}</span><span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span>` : ""}</div>
     <p class="foot">${t("fu_foot")}</p>`;
   if (state.fucnt !== false) lgCount($("#main").querySelector(".futab"), 550, 22, 32); state.fucnt = true;   // count up when the view opens or the filter changes (not on sort)
   $("#fuf").onclick = e => { const b = e.target.closest("[data-f]"); if (b){ state.fuf = b.dataset.f; futuresTab(); } };
@@ -5974,12 +5974,13 @@ const awModel = (k, pid) => { if (k === "vezina") return DATA.gproj?.[pid]?.vz ?
 // award prices older than two days aren't treated as value (the price may have moved since)
 const awStale = () => { const f = DATA.awards?.fetched; return !!f && Date.now() - new Date(f).getTime() > 48 * 3600e3; };
 function awChips(pid){ const A_ = DATA.awards?.m; if (!A_) return "";
+  if (!PRO) return AW_LIST.some(([k]) => awBook(k, pid)) ? `<div class="awchips"><h5>${t("aw_card_h")}</h5>${lockInline(t("pw_fut"))}</div>` : "";
   const ch = AW_LIST.map(([k, l]) => { const b = awBook(k, pid); if (!b) return ""; const m = awModel(k, pid), ex = AW_EXACT.has(k);
     const ev = ex && m != null ? m * b[1] - 1 : null;
     return `<div class="awch ${!awStale() && ev != null && ev >= FUT_VALUE && m >= 0.01 ? "val" : ""}"><span>${t(l)}</span><b>${oddsTxt(b[1])}</b><small>${t("aw_ch_book",{p:pct(b[3], b[3] < 0.1 ? 1 : 0)})}${ex && m != null ? ` · ${t("aw_ch_model",{p:pct(m, m < 0.1 ? 1 : 0)})}` : ""}</small></div>`; }).join("");
   return ch ? `<div class="awchips"><h5>${t("aw_card_h")}</h5>${ch}</div>` : `<p class="pjodds">${t("aw_card_none")}</p>`; }
 function fuAwards(){
-  const AW = DATA.awards?.m || {}, K = state.fua || (AW.rocket ? "rocket" : "artross"), sortM = state.fuas === "model";
+  const AW = DATA.awards?.m || {}, K = state.fua || (AW.rocket ? "rocket" : "artross"), sortM = state.fuas === "model" || !PRO;   // free: no book prices, so model order
   const tabs = AW_LIST.filter(([k]) => AW[k] || (k === "artross" && DATA.proj) || (k === "vezina" && DATA.gproj));
   const isG = k => k === "vezina", exact = AW_EXACT.has(K), coach = K === "adams";
   let rows = [];
@@ -6008,13 +6009,13 @@ function fuAwards(){
   const p_ok = r => r.id && P(r.id) && DATA.proj?.[r.id];
   const body = shown.map((r, i) => { const ev = exact && r.odds && r.m != null ? r.m * r.odds - 1 : null;
     return `<tr class="${p_ok(r) ? "pjr" : ""} ${top.has(r.id) ? "awval" : ""}" ${p_ok(r) ? `data-pjgo="${r.id}" tabindex="0"` : ""}><td class="exlrk">${i + 1}</td><td>${who(r)}</td>
-      ${K === "artross" ? "" : `<td class="n num"><b>${r.odds ? oddsTxt(r.odds) : "–"}</b><small class="meta pjsub">${r.odds ? t("aw_fair_s",{p:pc(r.fair)}) : t("aw_notlisted")}</small></td>`}
-      ${mHead ? `<td class="n num ${exact ? (!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? "pjhi" : "") : "awproxy"}"><b ${r.m != null && r.m >= 0.001 && r.m < 0.995 ? `data-cn="${r.m}" data-cf="${r.m < 0.1 ? "pc1" : "pc0"}"` : ""}>${pc(r.m)}</b>${exact && r.m > 0.001 ? `<small class="meta pjsub">${t("aw_fairodds",{o:oddsTxt(1 / r.m)})}${!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? ` · <span class="bk pos">${t("aw_value")}</span>` : ""}</small>` : ""}</td>` : ""}
+      ${K === "artross" ? "" : `<td class="n num">${!PRO ? lockInline(t("pw_fut")) : `<b>${r.odds ? oddsTxt(r.odds) : "–"}</b><small class="meta pjsub">${r.odds ? t("aw_fair_s",{p:pc(r.fair)}) : t("aw_notlisted")}</small>`}</td>`}
+      ${mHead ? `<td class="n num ${exact ? (!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? "pjhi" : "") : "awproxy"}"><b ${r.m != null && r.m >= 0.001 && r.m < 0.995 ? `data-cn="${r.m}" data-cf="${r.m < 0.1 ? "pc1" : "pc0"}"` : ""}>${pc(r.m)}</b>${PRO && exact && r.m > 0.001 ? `<small class="meta pjsub">${t("aw_fairodds",{o:oddsTxt(1 / r.m)})}${!awStale() && ev != null && ev >= FUT_VALUE && r.m >= 0.01 ? ` · <span class="bk pos">${t("aw_value")}</span>` : ""}</small>` : ""}</td>` : ""}
       ${coach ? "" : ctx(r) || `<td class="hide-sm"></td><td class="hide-sm"></td>`}</tr>`; }).join("");
   const fetched = DATA.awards?.fetched ? new Date(DATA.awards.fetched) : null;
   $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("aw_title")}</h2><p class="meta">${t("aw_sub")}${fetched ? " " + t("aw_upd",{d:fetched.toLocaleDateString(LOCALE(),{day:"numeric",month:"short"}), h:fetched.toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : ""}${awStale() ? ` <span class="pill s-q">${t("aw_stale",{n:Math.floor((Date.now() - fetched.getTime()) / 864e5)})}</span>` : ""}</p></div>${fuSwitch()}</div>
     <div class="controls pjctl"><div class="seg mgrp" id="awk">${tabs.map(([k, l]) => `<button data-k="${k}" class="${K === k ? "on" : ""}">${t(l)}</button>`).join("")}</div>
-      ${K !== "artross" && mHead ? `<div class="seg olseg" id="aws"><button data-k="book" class="${sortM ? "" : "on"}">${t("aw_sort_book")}</button><button data-k="model" class="${sortM ? "on" : ""}">${t("aw_sort_model")}</button></div>` : ""}</div>
+      ${K !== "artross" && mHead && PRO ? `<div class="seg olseg" id="aws"><button data-k="book" class="${sortM ? "" : "on"}">${t("aw_sort_book")}</button><button data-k="model" class="${sortM ? "on" : ""}">${t("aw_sort_model")}</button></div>` : ""}</div>
     <div class="awnote ${exact ? "ex" : ""}"><b>${t(exact ? "aw_n_exact_h" : coach ? "aw_n_coach_h" : "aw_n_proxy_h")}</b> ${t("aw_n_" + K)}</div>
     <div class="card tablewrap pjtab awtab"><table><thead><tr><th class="exlrk"></th><th>${t(coach ? "aw_coach_h" : "ex_l_player")}</th>${K === "artross" ? "" : `<th class="n"><span class="tip" tabindex="0" data-tip="${esc(t("aw_book_tip"))}">${t("aw_book_h")}</span></th>`}${mHead ? `<th class="n"><span class="tip" tabindex="0" data-tip="${esc(t(mHead + "_tip"))}">${t(mHead)}</span></th>` : ""}${coach ? "" : `<th class="n hide-sm">${cHead[0]}</th><th class="n hide-sm">${cHead[1]}</th>`}</tr></thead><tbody>${body}</tbody></table>
     ${rows.length > 25 ? `<button type="button" class="exlmore" id="awmore">${all ? t("ex_l_less") : t("ex_l_more",{n:rows.length})}</button>` : ""}</div>
