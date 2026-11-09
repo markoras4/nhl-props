@@ -207,7 +207,7 @@ def pinnacle_rows(session=None, log=print) -> list[dict]:
         sp, par = m.get("special") or {}, m.get("parent") or {}
         if m.get("type") != "special" or sp.get("category") != "Player Props" or m.get("isLive") or par.get("isLive"):
             continue
-        rx = re.match(r"^(.*?) total (goals|assists|points|shots on goal)", str(sp.get("description") or ""), re.I)
+        rx = re.match(r"^(.*?) total (goals|assists|points|shots on goal)\b", str(sp.get("description") or ""), re.I)
         try:
             start = dt.datetime.fromisoformat(str(par.get("startTime")).replace("Z", "+00:00"))
         except ValueError:
