@@ -9,6 +9,7 @@ Consistency rules (2026-11-09):
 * Season-long player chances are Pro (milestones, Art Ross, Rocket Richard, award "stand-in" chances, goalie
   saved-goals leader), and so are the projection ranges and the season-end chart: with them the chances could be
   rebuilt closely (Rocket Richard within ~1-4 points, points milestones within ~1.5). Projected totals stay free.
+* Tooltips follow the same rules as the page: a tooltip never shows a number that is locked where it appears.
 * Every player profile has the same sections. Open and locked players differ only in tonight's model numbers,
   prices and value (and the "How the number is built" box).
 Locked items are shown blurred with a small lock and an "Unlock with Pro" panel (not hidden).
@@ -41,7 +42,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Odds movement | no | yes |
 | Player page: last 10 games + chart | yes | yes |
 | Hit rates | L5, L10, L20, season (counts from the public game logs) | plus vs opponent and model vs market |
-| Per-player matchup (what the opponent allows his position) | no | yes |
+| Per-player matchup (what the opponent allows his position) | yes (same numbers as the free defence-by-position table and the Tonight card) | yes |
 | Shot map | season, last 10 and single-game maps, with tiers | plus the shot-profile numbers |
 | Streaks view & "Streaks to watch" | the list (who, what run, how rare) | chance tonight, fair odds, EV |
 | Milestones | yes | yes |

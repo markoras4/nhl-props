@@ -2001,7 +2001,7 @@ const canM = (pr, m) => PRO || (OPEN.has(String(pr?.id ?? pr)) && !PRO_MKT(m));
 const ACCOUNT = () => PLAN !== "visitor";
 Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t:"Pro", pw_player:"Pro player: unlock every player with Pro",
   pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more.",
-  pw_feats:["Every player, not just 1 forward and 1 defenceman per team","Hits, blocks, multi-point, PP points, faceoffs, penalties, first goalscorer","Best picks and Triage, live until the lock","Odds movement, sharp-book prices, public betting","Hit rates L10 / L20 / season, matchups, shot maps","Alerts, unlimited watchlist, full parlay check"],
+  pw_feats:["Every player, not just 1 forward and 1 defenceman per team","Hits, blocks, multi-point, PP points, faceoffs, penalties, first goalscorer","Best picks and Triage, live until the lock","Odds movement, sharp-book prices, public betting","Season ranges, milestone and award chances","Hit rates vs the opponent and model vs market, shot-profile numbers","Alerts, unlimited watchlist, full parlay check"],
   pw_see_plans:"See plans", pw_signup:"Create a free account", pw_login:"Log in", pw_later:"Not now",
   pw_free_h:"Free with an account", pw_free_sub:"Create a free account to save picks, track closing odds, follow up to {n} players and save 2-leg parlays.",
   pw_plan:"Plan", pw_plan_visitor:"Visitor", pw_plan_free:"Free", pw_plan_pro:"Pro", pw_plan_creator:"Creator", pw_plan_media:"Media",
@@ -2020,7 +2020,7 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games.", sharp_upd:"Sharp-book prices updated {t}."});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
   pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
-  pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Träffprocent L10 / L20 / säsong, matchups, skottkartor","Larm, obegränsad bevakning, full kombikoll"],
+  pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Säsongsspann, chanser för milstolpar och priser","Träffprocent mot motståndaren och modell mot marknad, skottprofilens siffror","Larm, obegränsad bevakning, full kombikoll"],
   pw_see_plans:"Se planer", pw_signup:"Skapa ett gratiskonto", pw_login:"Logga in", pw_later:"Inte nu",
   pw_free_h:"Gratis med konto", pw_free_sub:"Skapa ett gratiskonto för att spara spel, följa stängningsodds, bevaka upp till {n} spelare och spara kombos med 2 delar.",
   pw_plan:"Plan", pw_plan_visitor:"Besökare", pw_plan_free:"Gratis", pw_plan_pro:"Pro", pw_plan_creator:"Kreatör", pw_plan_media:"Media",
@@ -3853,7 +3853,6 @@ function oppPosBox(g){
 }
 function oppPosPlayer(pr, p){
   const x = DATA.opp_pos?.[pr.opp]?.[posGroup(p.pos)]; if (!x) return "";
-  if (!PRO) return `<div class="box"><h4>${t("op_player",{t:pr.opp, p:t("op_"+posGroup(p.pos)).toLowerCase()})}</h4>${lockBox(t("pw_matchup"), {feat:"matchup", rows:3, cls:"sm"})}</div>`;
   const r = (lbl, m, d) => `<span>${lbl}</span><span>${fmt(x[m],d)} <span class="meta">${t("op_vs_lg",{v:fmt(x[m+"_lg"],d)})}</span> ${rkTxt(x[m+"_rk"])}</span>`;
   return `<div class="box"><h4>${t("op_player",{t:pr.opp, p:t("op_"+posGroup(p.pos)).toLowerCase()})}</h4>
     <div class="kv">${r(t("op_shots_pg"),"s",1)}${r(t("op_goals_pg"),"g",2)}${r(t("op_pts_pg"),"pt",2)}</div>
@@ -4129,7 +4128,7 @@ function exDraw(animate, first){
     let extra = "";
     if (A.teams){ const rk = DATA.team_ranks?.teams?.[r.team] || {}, T_ = r.T;
       extra = `<div class="nxr"><span>${t("ext_rec")}</span><span>${T_.gp} ${t("ext_gp")} · ${pct(T_.pts_pct ?? 0, 0)} ${t("ext_pts")}</span></div>` + (rk.att ? `<div class="nxr"><span>${t("ext_rk")}</span><span>${t("ext_rk_att")} ${rk.att.rk} · ${t("ext_rk_def")} ${rk.def?.rk ?? "–"}</span></div>` : ""); }
-    if (!A.teams && DATA.proj?.[r.id]){ const pj = DATA.proj[r.id]; extra += `<div class="nxr"><span>${t("ex_proj_line")}</span><span><b>${pj.p[1]}</b> ${t("pts_short")} (${pj.p[0]}–${pj.p[2]})</span></div>`; }
+    if (!A.teams && DATA.proj?.[r.id]){ const pj = DATA.proj[r.id]; extra += `<div class="nxr"><span>${t("ex_proj_line")}</span><span><b>${pj.p[1]}</b> ${t("pts_short")}${PRO && pj.p[0] != null ? ` (${pj.p[0]}–${pj.p[2]})` : ""}</span></div>`; }
     tip.innerHTML = `<div class="gth">${A.tipHead(r)}</div>
       <div class="nxr"><span>${A.lbl(ky)}</span><b>${A.fmtV(ky, r.y)}</b></div><div class="nxr"><span>${A.lbl(kx)}</span><b>${A.fmtV(kx, r.x)}</b></div>${extra}
       <div class="nxr"><span>${t("ex_next")}</span><span>${A.tipNext(r)}</span></div><div class="nxf">${A.click}</div>`;
@@ -5610,7 +5609,8 @@ function watchCard(){
       const g = nx.g, home = (nx.pr?.team || w.team) === g.home, opp = home ? g.away : g.home;
       next = `<b>${dayShort(g.ld)}</b> ${timeOf(g)} <span class="meta">${home?"vs":"@"} ${opp}</span>`;
       if (nx.pr && nx.p?.active){
-        pg = pct(prob(nx.pr, g, "g"), 0); pp = pct(prob(nx.pr, g, "pt"), 0);
+        if (prOpen(nx.pr)){ pg = pct(prob(nx.pr, g, "g"), 0); pp = pct(prob(nx.pr, g, "pt"), 0); }
+        else pg = pp = lockInline(t("pw_player"));
         const b = book(g.id, nx.pr.id, "g"); og = b?.o ? ` <span class="meta">${oddsTxt(b.o)}</span>` : "";
       } else next += `<div class="meta">${t("wl_notin")}</div>`;
     }
