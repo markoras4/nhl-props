@@ -34,6 +34,21 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      # Sharp-book (Pinnacle) prices, at most once an hour, on whatever run comes first: the pre-game ticks run every
+      # 10-15 min on game days, so this needs no extra workflow runs. Pinnacle blocks Supabase's servers but not
+      # GitHub's, so the runner fetches and pin-sync stores (signed with GitHub's OIDC token, no stored key).
+      # Pro accounts read the table in the app; the site build keeps fetching Pinnacle itself too.
+      - name: Sharp-book prices (Pinnacle, hourly)
+        if: github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          FN=https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pin-sync
+          AGE=$(curl -sS -m 20 "$FN" | python -c "import sys,json;a=json.load(sys.stdin).get('age_min');print(999 if a is None else a)" || echo 999)
+          if [ "$AGE" -lt 50 ]; then echo "Sharp prices are $AGE min old: skipped"; exit 0; fi
+          python -m nhlprops sharp --out /tmp/sharp.json
+          OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pin-sync" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          curl -sS -m 60 -X POST "$FN" -H "Authorization: Bearer $OIDC" -H "Content-Type: application/json" --data-binary @/tmp/sharp.json; echo
+
       - name: Pre-game check
         id: gate
         env:

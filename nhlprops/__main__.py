@@ -585,6 +585,8 @@ def main(argv=None):
     sub.add_parser("check", help="test that every data source answers and has the expected columns")
     pg = sub.add_parser("pregame", help="exit 0 and print run=true if a game starts within the window (for the hourly job)")
     pg.add_argument("--window", type=int, default=75, help="minutes before puck drop (a second refresh runs at 35)")
+    sh = sub.add_parser("sharp", help="Pinnacle player prices for upcoming games as JSON rows (for the hourly sharp-price sync)")
+    sh.add_argument("--out", default="-", help="file to write, or - for stdout")
     bt = sub.add_parser("backtest", help="replay past seasons game by game (does not touch the website)")
     bt.add_argument("--seasons", default="", help="comma-separated start years, default: the two previous seasons")
     bt.add_argument("--totals", action="store_true", help="test game totals instead of player props")
@@ -639,6 +641,15 @@ def main(argv=None):
         return check(src)
     if args.cmd == "pregame":
         return pregame(src, data_dir / "pregame.json", args.window)
+    if args.cmd == "sharp":
+        from .odds import pinnacle_rows
+        rows = pinnacle_rows(log=lambda m: print(m, file=sys.stderr))
+        txt = json.dumps({"rows": rows}, separators=(",", ":"))
+        if args.out == "-":
+            print(txt)
+        else:
+            Path(args.out).write_text(txt, encoding="utf-8")
+        return 0
     if args.cmd == "backtest":
         from .backtest import run as run_backtest
         cur = season_start_for(nhl_today())

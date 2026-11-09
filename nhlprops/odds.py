@@ -187,6 +187,56 @@ def fetch_pinnacle(src, games: list[dict], players: list[dict], log=print) -> di
     return out
 
 
+def pinnacle_rows(session=None, log=print) -> list[dict]:
+    """Pinnacle player props for upcoming NHL games as plain rows (no player matching), for the hourly sharp-price sync
+    (python -m nhlprops sharp -> Supabase pin-sync -> table pin_odds, read by Pro accounts in the app)."""
+    import re
+    import requests
+    from .sources import HEADERS
+    ses = session or requests.Session()
+    get = lambda path: ses.get(PIN + path, headers=HEADERS, timeout=30)
+    r1, r2 = get("/matchups"), get("/markets/straight")
+    if r1.status_code != 200 or r2.status_code != 200:
+        log(f"Pinnacle: HTTP {r1.status_code} / {r2.status_code}")
+        return []
+    price_by = {mk.get("matchupId"): mk for mk in r2.json() or []
+                if mk.get("type") == "total" and mk.get("period") == 0 and not mk.get("isAlternate")}
+    now = dt.datetime.now(dt.timezone.utc)
+    rows = []
+    for m in r1.json() or []:
+        sp, par = m.get("special") or {}, m.get("parent") or {}
+        if m.get("type") != "special" or sp.get("category") != "Player Props" or m.get("isLive") or par.get("isLive"):
+            continue
+        rx = re.match(r"^(.*?) total (goals|assists|points|shots on goal)", str(sp.get("description") or ""), re.I)
+        try:
+            start = dt.datetime.fromisoformat(str(par.get("startTime")).replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        mk = price_by.get(m.get("id"))
+        if not rx or not mk or start <= now:
+            continue
+        side = {x.get("id"): str(x.get("name") or "").lower() for x in m.get("participants") or []}
+        ov = un = line = None
+        for pr in mk.get("prices") or []:
+            nm = side.get(pr.get("participantId"), "")
+            line = pr.get("points", line)
+            if nm.startswith("over"):
+                ov = _am(pr.get("price"))
+            elif nm.startswith("under"):
+                un = _am(pr.get("price"))
+        if not ov or line is None:
+            continue
+        stat = PIN_STAT[rx.group(2).lower()]
+        key = f"s{float(line)}" if stat == "s" else PIN_LINE.get((stat, float(line)))
+        teams = {x.get("alignment"): x.get("name") for x in par.get("participants") or []}
+        if not key or not teams.get("home") or not teams.get("away"):
+            continue
+        rows.append({"start_time": start.isoformat(), "home_name": teams["home"], "away_name": teams["away"],
+                     "player_name": rx.group(1).strip(), "market": key, "over": ov, "under": un})
+    log(f"Pinnacle: {len(rows)} player prices in {len({(r['start_time'], r['home_name']) for r in rows})} games")
+    return rows
+
+
 def merge_second(main: dict, pin: dict) -> None:
     """Add the sharp book's price to each player market ('p' over, 'pn' under) and fill markets the main feed lacks
     (marked b='p')."""

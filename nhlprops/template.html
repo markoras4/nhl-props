@@ -2017,7 +2017,7 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_fut:"Sportsbook odds and value are Pro", pw_fg:"The first-goalscorer list is Pro", pw_saves:"Save lines and fair odds are Pro",
   pw_matchup:"What the opponent allows his position is Pro", pw_shots:"Shot-profile numbers are Pro", pw_role:"Tonight's chances in the role box are Pro",
   pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
-  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games."});
+  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games.", sharp_upd:"Sharp-book prices updated {t}."});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
   pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Träffprocent L10 / L20 / säsong, matchups, skottkartor","Larm, obegränsad bevakning, full kombikoll"],
@@ -2036,7 +2036,7 @@ Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t
   pw_fut:"Bookens odds och värde är Pro", pw_fg:"Listan över första målskytt är Pro", pw_saves:"Räddningslinjer och rättvisa odds är Pro",
   pw_matchup:"Vad motståndaren släpper till hans position är Pro", pw_shots:"Skottprofilens siffror är Pro", pw_role:"Kvällens chanser i rollrutan är Pro",
   pw_streak:"Chans i kväll, rättvisa odds och EV är Pro", pw_ll:"Alla kedjor och backpar i ligan, sorterbara, är Pro", pw_alerts:"Larm är Pro",
-  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos", pw_ms:"Chans för milstolpar", pw_season:"Chanser för milstolpar och priser är Pro", pw_range:"Spannet och diagrammet över säsongsslutet är Pro", pw_pj_now:"Nu {p} på {gp} matcher."});
+  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos", pw_ms:"Chans för milstolpar", pw_season:"Chanser för milstolpar och priser är Pro", pw_range:"Spannet och diagrammet över säsongsslutet är Pro", pw_pj_now:"Nu {p} på {gp} matcher.", sharp_upd:"Skarpa bookens odds uppdaterade {t}."});
 const PW_EX_PRO = ["mkt","mod","ar","rr","m_g30","m_p100"];   // explorer stats that are Pro (tonight's model / market, season chances)
 const PW_FAKE = ["38%","24%","51%","17%","62%","29%","45%","33%"];
 // a blurred placeholder (never real numbers) with a lock, a short reason and an upgrade button
@@ -2955,7 +2955,7 @@ function sidePanel(g, team){
       <span>${DATA.odds?.[g.id] ? t("lg_mkt") : t("lg_fair")}</span>
       <span><em class="evtag">+3%</em> ${t("lg_ev")}</span>
       <span><em class="evtag big">+8%</em><i style="box-shadow:inset 0 0 0 1.5px var(--good)"></i>${t("lg_val")}</span></div>
-    <p class="foot">${t("grid_foot")}${upd}</p>`;
+    <p class="foot">${t("grid_foot")}${upd}${PRO && SHARP_AT ? " " + t("sharp_upd",{t:new Date(SHARP_AT).toLocaleTimeString(LOCALE(),{hour:"2-digit",minute:"2-digit"})}) : ""}</p>`;
   $("#sidebody").onclick = e => {
     if (e.target.closest("input,select")) return;
     const sc = e.target.closest("[data-slipc]");
@@ -5794,6 +5794,41 @@ async function loadPlan(){
   }
   PRO = !PAYWALLED || (want && PRO_LOADED);
   if (PRO && document.querySelector("#modal .pwlist")) closeModal();
+  if (PRO && PAYWALLED) loadSharp();
+}
+// ------------------------------------------------------------ fresh sharp-book prices (Pro)
+// The workflow stores Pinnacle's player prices in pin_odds about once an hour (supabase/functions/pin-sync); the page
+// was built earlier, so Pro accounts merge the newer prices in: the sharp price beside the main book ('p' / 'pn'),
+// or the market itself when only the sharp book has it (b = 'p'). Readable by Pro accounts only (RLS).
+let SHARP_AT = null, SHARP_TIMER = null;
+const nmKey = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+async function loadSharp(){
+  if (!sb || !PRO || ARCH) return;
+  if (!SHARP_TIMER) SHARP_TIMER = setInterval(loadSharp, 15 * 60e3);
+  let data;
+  try { ({data} = await sb.from("pin_odds").select("start_time,home_name,away_name,player_name,market,over,under,fetched_at")
+    .gte("start_time", new Date().toISOString()).limit(10000)); } catch(e){ return; }
+  if (!data?.length) return;
+  const last = s => nmKey(s).split(" ").pop();
+  let n = 0, newest = SHARP_AT;
+  for (const r of data){
+    if (SHARP_AT && r.fetched_at <= SHARP_AT) continue;            // already merged
+    const t = new Date(r.start_time).getTime();
+    const g = DATA.games.find(x => x.start && Math.abs(new Date(x.start).getTime() - t) < 4 * 3600e3
+      && (nmKey(x.home_name) === nmKey(r.home_name) || (last(x.home_name) === last(r.home_name) && last(x.away_name) === last(r.away_name))));
+    if (!g || (g.state && !["FUT","PRE"].includes(g.state))) continue;
+    const want = nmKey(r.player_name), w = want.split(" ");
+    const pr = g.props.find(x => nmKey(P(x.id)?.name) === want)
+      || g.props.find(x => { const a = nmKey(P(x.id)?.name).split(" "); return a.length && a[a.length-1] === w[w.length-1] && a[0][0] === w[0][0]; });
+    if (!pr) continue;
+    const o = DATA.odds[g.id] = DATA.odds[g.id] || {book:"Bookmaker", players:{}, totals:{}, winner:{}, fetched:null};
+    const cur = (o.players = o.players || {})[pr.id] = o.players[pr.id] || {};
+    const v = cur[r.market], ov = +r.over, un = r.under != null ? +r.under : null;
+    if (v && v.b !== "p"){ v.p = ov; v.pn = un; } else cur[r.market] = {o: ov, n: un, b: "p"};
+    n++; if (!newest || r.fetched_at > newest) newest = r.fetched_at;
+  }
+  SHARP_AT = newest;
+  if (n) render();
 }
 if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null;
   if (ev === "SIGNED_OUT" && PAYWALLED && PRO_LOADED && PRO_PLANS.includes(PLAN)){ location.reload(); return; }   // drop Pro data from memory

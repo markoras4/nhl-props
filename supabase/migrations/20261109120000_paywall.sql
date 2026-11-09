@@ -45,3 +45,13 @@ returns boolean language sql stable security definer set search_path = public as
 $$;
 revoke all on function public.has_pro(uuid) from public, anon;
 grant execute on function public.has_pro(uuid) to authenticated, service_role;
+
+-- 8) hourly sharp-book (Pinnacle) prices, written by supabase/functions/pin-sync from the GitHub workflow, Pro-only reads
+create table if not exists public.pin_odds (
+  start_time timestamptz not null, home_name text not null, away_name text not null, player_name text not null,
+  market text not null, over numeric not null, under numeric, fetched_at timestamptz not null default now(),
+  primary key (start_time, home_name, player_name, market)
+);
+alter table public.pin_odds enable row level security;
+create policy "pro reads sharp prices" on public.pin_odds for select to authenticated using ((select public.has_pro()));
+create index if not exists pin_odds_fetched on public.pin_odds (fetched_at desc);
