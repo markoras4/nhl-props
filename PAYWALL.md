@@ -94,3 +94,11 @@ How it is enforced:
 * `supabase/functions/send-alerts` reads the private alerts feed and only alerts Pro plans.
 * Local testing: `py tools/paywall/localsite.py <built site> .local-test/site`, then
   `py tools/paywall/devserver.py .local-test/site 8787` and open `http://localhost:8787/app/?as=free` (visitor/free/pro/creator/media).
+
+## Sharp-book prices (hourly)
+* Pinnacle's guest API blocks Supabase's servers and many home connections, but not GitHub's runners.
+* The first workflow run each hour (the pre-game ticks run every 10-15 min, 13:00-08:30 UTC on game days) runs
+  `python -m nhlprops sharp` and posts the rows to `supabase/functions/pin-sync`, signed with GitHub's OIDC token.
+  `GET pin-sync` returns how old the newest stored price is; the step skips when it is under 50 minutes.
+* Table `pin_odds` (Pro-only reads). The app merges newer prices for Pro accounts on load and every 15 minutes, and
+  the roster grid footer shows "Sharp-book prices updated HH:MM". Site builds still fetch Pinnacle themselves.
