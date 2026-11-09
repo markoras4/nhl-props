@@ -140,13 +140,19 @@ def split(payload: dict) -> tuple[dict, dict]:
     pro["players"] = {}
     # season-long player chances are Pro: milestone chances (m), Art Ross / Rocket Richard / D / rookie leaders
     # (ar, rr, dl, rl, am) and the goalie "most saved goals" chance (vz). Projected totals and ranges stay free.
-    PJ_PRO = ("m", "ar", "rr", "dl", "rl", "am")
+    # The ranges (10th / 90th percentile) and the season-end histogram are Pro as well: with them, the milestone and
+    # award chances can be rebuilt closely (tested 2026-11-09). Free keeps the projected total (the median) only.
+    PJ_PRO = ("m", "ar", "rr", "dl", "rl", "am", "h", "h0", "hw")
+    PJ_RANGE = ("p", "g", "a")
+    med = lambda v: [None, v[1], None] if isinstance(v, list) and len(v) == 3 else v
     if payload.get("proj"):
-        pro["proj"] = {pid: {k: pj[k] for k in PJ_PRO if k in pj} for pid, pj in payload["proj"].items()}
-        pub["proj"] = {pid: {k: v for k, v in pj.items() if k not in PJ_PRO} for pid, pj in payload["proj"].items()}
+        pro["proj"] = {pid: {k: pj[k] for k in PJ_PRO + PJ_RANGE if k in pj} for pid, pj in payload["proj"].items()}
+        pub["proj"] = {pid: {k: (med(v) if k in PJ_RANGE else v) for k, v in pj.items() if k not in PJ_PRO}
+                       for pid, pj in payload["proj"].items()}
     if payload.get("gproj"):
-        pro["gproj"] = {pid: {"vz": gp["vz"]} for pid, gp in payload["gproj"].items() if "vz" in gp}
-        pub["gproj"] = {pid: {k: v for k, v in gp.items() if k != "vz"} for pid, gp in payload["gproj"].items()}
+        pro["gproj"] = {pid: {k: gp[k] for k in ("vz", "gsax") if k in gp} for pid, gp in payload["gproj"].items()}
+        pub["gproj"] = {pid: {k: (med(v) if k == "gsax" else v) for k, v in gp.items() if k != "vz"}
+                        for pid, gp in payload["gproj"].items()}
     pub["paywall"] = {"pro_plans": list(PRO_PLANS), "free_watch": 3, "free_legs": 2}
     return pub, pro
 

@@ -2017,7 +2017,7 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_fut:"Sportsbook odds and value are Pro", pw_fg:"The first-goalscorer list is Pro", pw_saves:"Save lines and fair odds are Pro",
   pw_matchup:"What the opponent allows his position is Pro", pw_shots:"Shot-profile numbers are Pro", pw_role:"Tonight's chances in the role box are Pro",
   pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
-  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro"});
+  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games."});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
   pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Träffprocent L10 / L20 / säsong, matchups, skottkartor","Larm, obegränsad bevakning, full kombikoll"],
@@ -2036,7 +2036,7 @@ Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t
   pw_fut:"Bookens odds och värde är Pro", pw_fg:"Listan över första målskytt är Pro", pw_saves:"Räddningslinjer och rättvisa odds är Pro",
   pw_matchup:"Vad motståndaren släpper till hans position är Pro", pw_shots:"Skottprofilens siffror är Pro", pw_role:"Kvällens chanser i rollrutan är Pro",
   pw_streak:"Chans i kväll, rättvisa odds och EV är Pro", pw_ll:"Alla kedjor och backpar i ligan, sorterbara, är Pro", pw_alerts:"Larm är Pro",
-  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos", pw_ms:"Chans för milstolpar", pw_season:"Chanser för milstolpar och priser är Pro"});
+  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro", pw_fu_proj:"modellens prognos", pw_ms:"Chans för milstolpar", pw_season:"Chanser för milstolpar och priser är Pro", pw_range:"Spannet och diagrammet över säsongsslutet är Pro", pw_pj_now:"Nu {p} på {gp} matcher."});
 const PW_EX_PRO = ["mkt","mod","ar","rr","m_g30","m_p100"];   // explorer stats that are Pro (tonight's model / market, season chances)
 const PW_FAKE = ["38%","24%","51%","17%","62%","29%","45%","33%"];
 // a blurred placeholder (never real numbers) with a lock, a short reason and an upgrade button
@@ -4039,7 +4039,7 @@ function exAdapter(S){
 // the same players and filters as the chart, as a sortable table (Chart | List switch)
 function exList(S, A, box){
   const MT = A.MT, kx = A.kx, ky = A.ky, P_ = A.P, rows = A.rows.slice();
-  const prj = !A.teams && DATA.proj && (MT[ky]?.rng || MT[kx]?.rng);
+  const prj = PRO && !A.teams && DATA.proj && (MT[ky]?.rng || MT[kx]?.rng);   // the range column is Pro
   const cols = [{k:"y", l:A.lbl(ky), v:r => r.y, f:r => A.fmtV(ky, r.y)}, {k:"x", l:A.lbl(kx), v:r => r.x, f:r => A.fmtV(kx, r.x)}];
   if (P_?.diag || P_?.gap) cols.push({k:"gap", l:t("ex_l_gap"), v:r => r.y - r.x, f:r => { const d = r.y - r.x, dd = MT[ky].pct ? pct(Math.abs(d), MT[ky].d) : fmt(Math.abs(d), Math.max(MT[ky].d, MT[kx].d)); return `<span class="${d > 0 ? "up" : d < 0 ? "dn" : ""}">${d > 0 ? "+" : d < 0 ? "−" : ""}${dd}</span>`; }});
   if (prj){ const rk = MT[ky]?.rng || MT[kx]?.rng;
@@ -4106,7 +4106,7 @@ function exDraw(animate, first){
       return `<g class="${cls}" data-id="${r.id}" style="transform:translate(${px(r).toFixed(1)}px,${py(r).toFixed(1)}px);--d:${(i % 40) * 12}ms"><circle r="${tp || h ? 6.5 : 4.6}"/>${(tp || h) && canLabel(px(r), py(r)) ? `<text x="9" y="4" class="exlab">${esc(r.p.name.split(" ").slice(-1)[0])}</text>` : ""}</g>`; }).join("");
   }
   // projection ranges: the 10-90% line through the top-10 (and searched) dots when a projected stat is on an axis
-  const rngK = !A.teams && DATA.proj && (MT[ky]?.rng ? ["y", MT[ky].rng] : MT[kx]?.rng ? ["x", MT[kx].rng] : null);
+  const rngK = PRO && !A.teams && DATA.proj && (MT[ky]?.rng ? ["y", MT[ky].rng] : MT[kx]?.rng ? ["x", MT[kx].rng] : null);
   const whisk = !rngK ? "" : rows.filter(r => topIds.has(r.id) || A.hit(r)).map(r => { const R_ = DATA.proj[r.id]?.[rngK[1]]; if (!R_) return "";
     const c = r.p.posg === "D" ? "d" : "f";
     if (rngK[0] === "y"){ const x = px(r), a1 = sy(R_[0]), a2 = sy(R_[2]); return `<g class="exwh ${c}"><line x1="${x}" x2="${x}" y1="${a1}" y2="${a2}"/><line x1="${x-4}" x2="${x+4}" y1="${a1}" y2="${a1}"/><line x1="${x-4}" x2="${x+4}" y1="${a2}" y2="${a2}"/></g>`; }
@@ -5909,8 +5909,8 @@ function pjHist(pj, h = 120){ const H_ = pj.h || [], mx = Math.max(1, ...H_);
 function pjCard(pid, big){ const pj = DATA.proj?.[pid], p = P(pid); if (!pj || !p) return "";
   const ms = pjMiles(pj);
   return `<div class="pjbig"><b data-cn="${pj.p[1]}" data-cf="i">${pj.p[1]}</b><span>${t("pj_proj",{g:pj.g[1], a:pj.a[1]})}</span></div>
-    <p class="meta pjline">${t("pj_now",{p:(p.windows?.cur?.p ?? 0), gp:pj.gp, lo:pj.p[0], hi:pj.p[2]})}</p>
-    ${pjHist(pj, big ? 130 : 84)}
+    <p class="meta pjline">${PRO ? t("pj_now",{p:(p.windows?.cur?.p ?? 0), gp:pj.gp, lo:pj.p[0], hi:pj.p[2]}) : t("pw_pj_now",{p:(p.windows?.cur?.p ?? 0), gp:pj.gp})}</p>
+    ${PRO ? pjHist(pj, big ? 130 : 84) : lockBox(t("pw_range"), {feat:"season", rows:2, cls:"sm"})}
     ${!PRO ? `<div class="pjms"><div><small>${t("pw_ms")}</small><b>${lockInline(t("pw_season"))}</b></div></div>` : ms.length ? `<div class="pjms">${ms.map(m => `<div class="${m.v >= 0.5 ? "hi" : ""}"><small>${m.l}</small><b data-cn="${m.v}" data-cf="pc0">${pct(m.v, 0)}</b></div>`).join("")}</div>` : ""}
     ${big ? `<div class="pjkv"><div><span>${t("pj_ar")}</span><b>${PRO ? pct(pj.ar, pj.ar < 0.1 ? 1 : 0) : lockInline(t("pw_season"))}</b></div><div><span>${t("pj_rr")}</span><b>${PRO ? pct(pj.rr, pj.rr < 0.1 ? 1 : 0) : lockInline(t("pw_season"))}</b></div>
       ${pj.pace != null ? `<div><span>${t("pj_pace")}</span><b>${fmt(pj.pace, 0)} → ${pj.p[1]}</b></div>` : ""}</div>
@@ -5929,7 +5929,7 @@ function fuPlayers(){
     return `<tr class="pjr ${r.id === state.fup ? "sel" : ""}" data-pj="${r.id}" tabindex="0"><td class="exlrk">${i + 1}</td>
       <td><span class="exlnm">${logo(r.p.team, 20)}<span><b>${esc(r.p.name)}</b><small class="meta">${r.p.team} · ${r.p.pos}${r.pj.rk ? ` · <span class="pjrk">${t("pj_rookie")}</span>` : ""}</small></span></span></td>
       <td class="n num hide-sm pjnow">${c.g ?? 0}–${c.a ?? 0}–${c.p ?? 0}<small class="meta pjsub">${c.gp ?? 0} ${t("ext_gp")}</small></td>
-      <td class="n num pjv"><b data-cn="${R_[1]}" data-cf="i">${R_[1]}</b><span class="pjrng" style="--d:${Math.min(i, 24) * 28}ms"><i style="left:${sc(R_[0])}%;width:${sc(R_[2]) - sc(R_[0])}%"></i><s style="left:${sc(R_[1])}%"></s></span><small class="meta pjsub">${R_[0]}–${R_[2]}</small></td>
+      <td class="n num pjv"><b data-cn="${R_[1]}" data-cf="i">${R_[1]}</b>${PRO ? `<span class="pjrng" style="--d:${Math.min(i, 24) * 28}ms"><i style="left:${sc(R_[0])}%;width:${sc(R_[2]) - sc(R_[0])}%"></i><s style="left:${sc(R_[1])}%"></s></span><small class="meta pjsub">${R_[0]}–${R_[2]}</small>` : `<small class="meta pjsub">${lockInline(t("pw_range"))}</small>`}</td>
       <td class="n num hide-sm">${K === "g" ? r.pj.p[1] : r.pj.g[1]}<small class="meta pjsub">${K === "g" ? t("pj_p") : t("pj_g")}</small></td>
       ${PRO ? `<td class="n num ${r.pj.ar >= 0.1 ? "pjhi" : ""}">${pct(r.pj.ar, 0)}</td><td class="n num hide-sm ${r.pj.rr >= 0.1 ? "pjhi" : ""}">${pct(r.pj.rr, 0)}</td>` : `<td class="n num">${lockInline(t("pw_season"))}</td><td class="n num hide-sm">${lockInline(t("pw_season"))}</td>`}</tr>`; }).join("");
   const sel = rows.find(r => r.id === state.fup);
@@ -5992,9 +5992,9 @@ function fuAwards(){
   const pc = v => v == null ? "–" : v >= 0.995 ? ">99%" : v > 0 && v < 0.001 ? "<0.1%" : pct(v, v < 0.1 ? 1 : 0);
   const ctx = r => { if (coach || !r.id) return "";
     if (isG(K) || (K === "calder" && G(r.id))){ const g = G(r.id), gp_ = DATA.gproj?.[r.id], c = g?.cur || {};
-      return `<td class="n num hide-sm">${c.gp ?? 0} ${t("ext_gp")}<small class="meta pjsub">${t("aw_gsax_now",{v:(c.gsax >= 0 ? "+" : "") + fmt(c.gsax ?? 0, 1)})}</small></td><td class="n num hide-sm">${gp_ ? `${gx(gp_.gsax[1], 1)}<small class="meta pjsub">${gx(gp_.gsax[0])} – ${gx(gp_.gsax[2])} · ${gp_.gp} ${t("ext_gp")}</small>` : "–"}</td>`; }
+      return `<td class="n num hide-sm">${c.gp ?? 0} ${t("ext_gp")}<small class="meta pjsub">${t("aw_gsax_now",{v:(c.gsax >= 0 ? "+" : "") + fmt(c.gsax ?? 0, 1)})}</small></td><td class="n num hide-sm">${gp_ ? `${gx(gp_.gsax[1], 1)}<small class="meta pjsub">${PRO ? `${gx(gp_.gsax[0])} – ${gx(gp_.gsax[2])} · ` : ""}${gp_.gp} ${t("ext_gp")}</small>` : "–"}</td>`; }
     const pj = DATA.proj?.[r.id], c = P(r.id)?.windows?.cur || {}, gk = K === "rocket";
-    return `<td class="n num hide-sm">${gk ? `${c.g ?? 0} ${t("pj_g")}` : `${c.g ?? 0}–${c.a ?? 0}–${c.p ?? 0}`}<small class="meta pjsub">${c.gp ?? 0} ${t("ext_gp")}</small></td><td class="n num hide-sm">${pj ? `<b class="awpv" data-cn="${(gk ? pj.g : pj.p)[1]}" data-cf="i">${(gk ? pj.g : pj.p)[1]}</b><small class="meta pjsub">${(gk ? pj.g : pj.p)[0]}–${(gk ? pj.g : pj.p)[2]} ${gk ? t("pj_g") : t("pj_p")}</small>` : "–"}</td>`; };
+    return `<td class="n num hide-sm">${gk ? `${c.g ?? 0} ${t("pj_g")}` : `${c.g ?? 0}–${c.a ?? 0}–${c.p ?? 0}`}<small class="meta pjsub">${c.gp ?? 0} ${t("ext_gp")}</small></td><td class="n num hide-sm">${pj ? `<b class="awpv" data-cn="${(gk ? pj.g : pj.p)[1]}" data-cf="i">${(gk ? pj.g : pj.p)[1]}</b><small class="meta pjsub">${PRO ? `${(gk ? pj.g : pj.p)[0]}–${(gk ? pj.g : pj.p)[2]} ` : ""}${gk ? t("pj_g") : t("pj_p")}</small>` : "–"}</td>`; };
   const who = r => { const p = P(r.id), g = !p && r.id ? G(r.id) : null, tm = (p || g)?.team;
     return `<span class="exlnm">${tm ? logo(tm, 20) : `<span class="awcoach"></span>`}<span><b>${esc(r.name)}</b><small class="meta">${tm ? `${tm} · ${p ? p.pos : "G"}` : coach ? t("aw_coach") : t("aw_nomatch")}${p && DATA.proj?.[r.id]?.rk ? ` · <span class="pjrk">${t("pj_rookie")}</span>` : ""}</small></span></span>`; };
   const mHead = {rocket:"aw_m_rr", artross:"aw_m_ar", hart:"aw_m_hart", norris:"aw_m_dl", calder:"aw_m_rl", vezina:"aw_m_vz"}[K];

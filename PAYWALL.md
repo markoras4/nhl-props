@@ -7,7 +7,8 @@ Consistency rules (2026-11-09):
 * Counts from public data (the game logs in data/gl/, shot data) are never locked: a lock that can be rebuilt from
   public files is not used.
 * Season-long player chances are Pro (milestones, Art Ross, Rocket Richard, award "stand-in" chances, goalie
-  saved-goals leader). Projected totals and their range are free.
+  saved-goals leader), and so are the projection ranges and the season-end chart: with them the chances could be
+  rebuilt closely (Rocket Richard within ~1-4 points, points milestones within ~1.5). Projected totals stay free.
 * Every player profile has the same sections. Open and locked players differ only in tonight's model numbers,
   prices and value (and the "How the number is built" box).
 Locked items are shown blurred with a small lock and an "Unlock with Pro" panel (not hidden).
@@ -53,7 +54,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Futures tab (playoffs, rounds, Cup, division, points) | chances and fair odds | plus sportsbook odds and value |
 | What's at stake (game importance) | level only | now / with a win / with a loss |
 | Game recaps (last 6, past meetings) | yes | yes |
-| Season projections (player profile, Futures → Players) | projected points / goals / assists and range | plus milestone chances and Art Ross / Rocket Richard chances |
+| Season projections (player profile, Futures → Players, Explorer, Awards) | projected points / goals / assists (the total only) | plus the range, the season-end chart, milestone chances and Art Ross / Rocket Richard chances |
 | Season awards | projection leaders (sorted by projected goals / points / saved goals) | plus model chances, sportsbook prices and value |
 | Archive: last 7 days as before puck drop, with ✓/✗ results | games list, scores and results only | everything (player breakdowns, picks, compare) |
 
