@@ -90,7 +90,7 @@ HEAD = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap">
-<link rel="icon" type="image/svg+xml" href="/brand/evenout-icon.svg"><link rel="icon" type="image/png" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><style>{css}</style>{themejs}</head><body>
+<link rel="icon" type="image/svg+xml" href="/brand/evenout-icon.svg?v=2"><link rel="icon" type="image/png" href="/icons/icon-192.png?v=2"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2"><style>{css}</style>{themejs}</head><body>
 <header><div class="wrap top"><a class="brand" href="/"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="NHL Props Lab" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></a><nav><a href="/blog" class="{on_blog}">Blog</a><a href="/app">Tonight's games</a><a class="cta" href="/app">Open the app</a></nav></div></header>"""
 
 FOOT = """<footer><div class="wrap">18+ · Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a>, <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a>. NHL Props Lab is an analysis tool and does not take bets. · <a href="/legal.html#terms">Terms</a> · <a href="/legal.html#privacy">Privacy</a></div></footer>
@@ -163,7 +163,7 @@ def build(log=print) -> int:
         rg = ('<div class="rg"><b>18+.</b> Betting involves risk and losing runs are normal, even with an edge. Only bet what you can afford to lose. '
               'Need help? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>.</div>') if m["section"] == "betting" else ""
         others = [o for o in ps if o["slug"] != m["slug"]][:3]
-        page = HEAD.format(themejs=THEME_JS, title=html.escape(m["title"]) + " · NHL Props Lab", desc=html.escape(m["deck"]), css=CSS, on_blog="on", ogtype="article",
+        page = HEAD.format(themejs=THEME_JS, title=html.escape(m["title"]) + " · evenout", desc=html.escape(m["deck"]), css=CSS, on_blog="on", ogtype="article",
                            ogimg=f'<meta property="og:image" content="{m["hero_src"]}">')
         page += (f'<main><section class="hero"><img src="{m["hero_src"]}" alt="{html.escape(m["hero"]["alt"])}"><div class="wrap in">'
                  f'<span class="tag {m["section"]}">{SECTIONS[m["section"]]}</span><h1>{html.escape(m["title"])}</h1><p class="deck">{html.escape(m["deck"])}</p>'
@@ -172,7 +172,7 @@ def build(log=print) -> int:
                  + (f'<section class="more"><h3>More from the blog</h3><div class="grid">{"".join(card(o) for o in others)}</div></section>' if others else "")
                  + '</main>' + FOOT)
         (OUT / f'{m["slug"]}.html').write_text(page, encoding="utf-8")
-    idx = HEAD.format(themejs=THEME_JS, title="Blog · NHL Props Lab", desc="Legendary nights, rivalries and characters from NHL history, and the Betting Lab: how to think about betting.",
+    idx = HEAD.format(themejs=THEME_JS, title="Blog · evenout", desc="Legendary nights, rivalries and characters from NHL history, and the Betting Lab: how to think about betting.",
                       css=CSS, on_blog="on", ogtype="website", ogimg=(f'<meta property="og:image" content="{ps[0]["hero_src"]}">' if ps else ""))
     idx += ('<main class="wrap"><section class="bh"><span class="kick">The blog</span><h1>Stories from the ice</h1>'
             '<p>Legendary nights, bitter rivalries, records and characters from hockey\'s past, and the Betting Lab, where we take apart how to think about a bet.</p>'
