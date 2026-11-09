@@ -226,7 +226,7 @@ function render(){
     <nav class="index">${P.map(p=>{ const g=G[p.id]||{}; return `<a href="#g${p.id}">${logo(g.away,20)}${esc(g.away||"")} <small>@</small> ${esc(g.home||"")}${logo(g.home,20)}</a>`; }).join("")}</nav></div>`;
   const arts = P.map(p => {
     const g = G[p.id] || {}; const L = p[LANG] || p.en; const ph = p.photo || {};
-    const list = (k) => `<div class="col ${k==="betting"?"bet":""}"><h3><svg viewBox="0 0 24 24">${ICON[k]}</svg>${t(k)}</h3><ul>${(L[k]||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;
+    const list = (k) => `<div class="col ${k==="betting"?"bet":""}"><h3><svg viewBox="0 0 24 24">${ICON[k]}</svg>${t(k)}</h3><ul>${(L[k]||[]).map(x=>x === "\u0000LOCK" ? `<li class="pwli"><a href="APP_URL" style="filter:none">🔒 ${LANG==="sv" ? "Spelarchanser (modell mot marknad) finns i Pro" : "Player chances (model vs market) are in Pro"}</a></li>` : `<li>${esc(x)}</li>`).join("")}</ul></div>`;
     const strip = g.home ? `<div class="strip">
         <div class="teams">${logo(g.away,30)}${g.away} <span>${g.ma.toFixed(1)} – ${g.mh.toFixed(1)}</span> ${g.home}${logo(g.home,30)}</div>
         <div class="bar"><div class="wpb"><i style="width:${g.pa*100}%"></i><i style="width:${g.ph*100}%"></i></div>

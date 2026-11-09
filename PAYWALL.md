@@ -59,3 +59,26 @@ Also planned for that release: 18+ check on the landing page again, Stripe check
 | Unlucky / hot tags, typical shots per goal, team news | yes | yes |
 | Hand-copied sportsbook prices (game markets in More markets) | yes (game level) | yes |
 | Hand-copied sportsbook player prices (shots, multi-point, PP points, blocks) | same rules as other player prices: open players; multi-point, PP and blocks are Pro | everyone |
+
+## Plans in the app (built)
+
+| Plan | Who | Access |
+|---|---|---|
+| Visitor | not signed in | Free column; account features ask to sign up |
+| Free | free account (`profiles.plan = 'free'`) | Free column + account features (picks, closing odds, watchlist ≤ 3, 2-leg parlays) |
+| Pro | `profiles.plan = 'pro'` | everything |
+| Creator | `profiles.plan = 'creator'` | everything in Pro + creator licence note in the account window |
+| Media | `profiles.plan = 'media'` | everything in Pro + media licence note in the account window |
+
+How it is enforced:
+* `nhlprops/paywall.py` splits every build: the page carries Free data only (open players = biggest projected ice
+  time F and D per team; Pro markets, odds movement, sharp prices, public betting, futures odds, stakes numbers,
+  line rankings, hit rates beyond L5 and the preview prop bullet are removed). The rest goes to `output/pro/`.
+* The daily workflow uploads `output/pro/` to the private `pro` storage bucket through `supabase/functions/pro-upload`,
+  signed with GitHub's own OIDC token (no stored key; only this repo's main branch is accepted).
+  `supabase/functions/pro-data` returns a 60-second signed link only to Pro / Creator / Media.
+* `supabase/migrations/*_paywall.sql`: plan values, `has_pro()`, watchlist ≤ 3 and 2-leg parlays for free, alerts Pro only.
+  Users can't change their own plan (only `display_name` is granted); a Stripe webhook should set it.
+* `supabase/functions/send-alerts` reads the private alerts feed and only alerts Pro plans.
+* Local testing: `py tools/paywall/localsite.py <built site> .local-test/site`, then
+  `py tools/paywall/devserver.py .local-test/site 8787` and open `http://localhost:8787/app/?as=free` (visitor/free/pro/creator/media).

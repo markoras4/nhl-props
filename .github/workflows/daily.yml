@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write   # GitHub's sign-in token for the Pro data upload (no stored Supabase key)
 
 concurrency:
   group: daily-build
@@ -102,6 +103,22 @@ jobs:
             [ -f "$f" ] || continue
             node -e "const s=require('fs').readFileSync('$f','utf8');const re=/<script>([\s\S]*?)<\/script>/g;let m,bad=0;while((m=re.exec(s))){try{new Function(m[1])}catch(e){console.error('$f:',e.message);bad=1}}process.exit(bad)"
           done
+
+      - name: Upload the Pro data to private storage (never to the public site; see PAYWALL.md)
+        if: steps.gate.outputs.run == 'true' && github.ref == 'refs/heads/main'
+        run: |
+          if [ ! -d output/pro ]; then echo "No Pro data: skipped"; exit 0; fi
+          # GitHub's short-lived OIDC token; the pro-upload function only accepts it for this repo's main branch
+          OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pro-upload" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          cd output/pro
+          fail=0
+          for f in $(find . -name '*.json' | sed 's|^\./||'); do
+            code=$(curl -sS -o /tmp/up.txt -w "%{http_code}" -X POST "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload?path=$f"               -H "Authorization: Bearer $OIDC" -H "Content-Type: application/json" --data-binary "@$f")
+            echo "$f $code"; [ "$code" = "200" ] || { cat /tmp/up.txt; fail=1; }
+          done
+          # the public site must not carry Pro files
+          test ! -e ../../site/data/alerts.json
+          if [ "$fail" = 1 ]; then echo "::warning::Some Pro files did not upload; Pro users keep the previous data"; fi
 
       - name: Save prediction history to the repository
         if: steps.gate.outputs.run == 'true'

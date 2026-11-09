@@ -395,6 +395,8 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
                       "mh": d.get("proj_h", 3.0), "ma": d.get("proj_a", 3.0), "ph": d["p_home"], "pa": d["p_away"],
                       "exp": d["exp_total"]})
     pdate, previews = pick_previews(day, slate)
+    from .paywall import strip_preview
+    previews = [strip_preview(p) for p in previews]   # the player-prop bullet is Pro
     teams = {x for g in games for x in (g["home"], g["away"])}
     teams |= {x for p in previews for x in (p.get("home"), p.get("away")) if x}
     by_id = {str(g["id"]): g for g in slate["games"]}
@@ -489,6 +491,8 @@ def pick_previews(day: str, slate: dict | None = None) -> tuple[str | None, list
 def render_previews(slate: dict, out_dir: Path, app_url: str = "app/") -> Path:
     today = nhl_today()
     pdate, previews = pick_previews(today, slate)
+    from .paywall import strip_preview
+    previews = [strip_preview(p) for p in previews]   # the player-prop bullet is Pro
     by_id = {str(g["id"]): g for g in slate["games"]}
     games = {str(p["id"]): game_summary(by_id[str(p["id"])]) for p in previews if str(p["id"]) in by_id}
     teams = {x for g in games.values() for x in (g["home"], g["away"])}
@@ -516,10 +520,49 @@ def app_previews(slate: dict) -> dict:
     return out
 
 
+def paywall_outputs(out_dir: Path) -> None:
+    """Keep Pro data out of the public site files (see PAYWALL.md and nhlprops/paywall.py):
+    live value bets (alerts.json) move to output/pro/; picks for games that haven't locked yet are cut from the
+    public track-record files; archive days keep games, scores and results, the rest goes to output/pro/archive/."""
+    from .paywall import strip_archive, strip_feed_rows
+    pro_dir = out_dir / "pro"
+    pro_dir.mkdir(parents=True, exist_ok=True)
+    al = out_dir / "alerts.json"
+    if al.exists():
+        (pro_dir / "alerts.json").write_text(al.read_text(encoding="utf-8"), encoding="utf-8")
+        al.unlink()
+    for name in ("bestpicks.json", "ledger.json"):
+        f = out_dir / name
+        if f.exists():
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                d["rows"] = strip_feed_rows(d.get("rows") or [])
+                f.write_text(json.dumps(d, separators=(",", ":")), encoding="utf-8")
+            except Exception as e:  # never break the build
+                print("Paywall: could not filter", name, e)
+    adir = out_dir / "archive"
+    if adir.exists():
+        (pro_dir / "archive").mkdir(parents=True, exist_ok=True)
+        for f in adir.glob("*.json"):
+            try:
+                pub, full = strip_archive(json.loads(f.read_text(encoding="utf-8")))
+                (pro_dir / "archive" / f.name).write_text(json.dumps(full, separators=(",", ":")), encoding="utf-8")
+                f.write_text(json.dumps(pub, separators=(",", ":")), encoding="utf-8")
+            except Exception as e:
+                print("Paywall: archive", f.name, e)
+
+
 def render(slate: dict, graded: dict | None, out_dir: Path, demo: bool) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     payload = clean({**slate, "graded": graded, "config": CONFIG, "demo": demo, "previews": app_previews(slate),
                      "built": dt.datetime.now().isoformat(timespec="minutes")})
+    # Free / Pro split (nhlprops/paywall.py): the page only carries what Free may see; the Pro patch goes to
+    # output/pro/ (uploaded to private storage, served by the pro-data function to Pro, Creator and Media accounts)
+    from .paywall import split
+    payload, pro = split(payload)
+    (out_dir / "pro").mkdir(parents=True, exist_ok=True)
+    for name in (f"{slate['date']}{'-demo' if demo else ''}.json", "latest-demo.json" if demo else "latest.json"):
+        (out_dir / "pro" / name).write_text(json.dumps(clean(pro), separators=(",", ":")), encoding="utf-8")
     js = json.dumps(payload, separators=(",", ":")).replace("</", "<\\/")
     html = TEMPLATE.read_text(encoding="utf-8").replace("/*__DATA__*/null", js)
     dated = out_dir / f"nhl-props-{slate['date']}{'-demo' if demo else ''}.html"
@@ -866,6 +909,7 @@ def main(argv=None):
     out = render(slate, graded, ROOT / "output", args.demo)
     render_landing(slate, ROOT / "output", app_url="app/")
     render_previews(slate, ROOT / "output", app_url="app/")
+    paywall_outputs(ROOT / "output")
     print(f"Dashboard written: {out}")
     if raw["errors"]:
         print(f"Note: {len(raw['errors'])} downloads failed - see data/errors.log")

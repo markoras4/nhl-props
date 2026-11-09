@@ -627,7 +627,7 @@ body.has-cmp .slipfab{bottom:84px}
 .gmh{font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;padding-bottom:4px;border-bottom:1px solid var(--line)}
 .gmh span:not(:first-child),.gmr>:not(:first-child){text-align:right}.gmr{padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
 .gmr b{font-variant-numeric:tabular-nums}.gmr .odds{width:100%}.gmr>.meta{order:0!important;flex-basis:auto!important;font-size:12px}
-.fgbox{margin:14px 0}.fggrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:760px){.fggrid{grid-template-columns:1fr}}
+.fgbox{margin:14px 0}.fggrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}.fggrid>div{min-width:0}@media (max-width:760px){.fggrid{grid-template-columns:minmax(0,1fr)}}
 .fgh{display:flex;align-items:center;gap:6px;margin-bottom:6px}.fgtab td,.fgtab th{white-space:nowrap}.fgtab .odds{width:64px}
 .ofmt{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:7px 6px;font:600 12.5px var(--f-ui);max-width:128px}
 @media (max-width:760px){.ofmt{max-width:78px;padding:7px 4px;font-size:12px}}
@@ -1075,6 +1075,24 @@ body.has-cmp main{padding-bottom:110px}
 @media (max-width:1100px){.rkkpis{grid-template-columns:repeat(4,minmax(0,1fr))}.rkk.big{grid-column:span 2}.rkgrid{grid-template-columns:1fr 1fr}.rkgrid .rkcard:first-child{grid-column:1/-1}}
 @media (max-width:640px){.rkrow{grid-template-columns:minmax(0,1.6fr) 50px minmax(50px,1fr) 54px}.rkrow .rkr{display:none}.rkkpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rkk{padding:10px}.rkk b{font-size:18px}.rkk.big b{font-size:28px}.rkgrid{grid-template-columns:1fr}.rkstep b{min-width:96px;font-size:12px}.trksw .seg button{font-size:12px;padding:6px 10px}}
 @media (prefers-reduced-motion:reduce){.rkk,.rkchart .rkb,.rkbar i{animation:none}.rkchart .cum{animation:none;stroke-dashoffset:0}.rkchart .area,.rkchart .end,.rkchart .dot,.rkchart .endl{animation:none;opacity:1}.rkchart .halo{animation:none}}
+/* paywall: blurred placeholders with a lock (PAYWALL.md). The blurred content is always fake. */
+.pwlock{position:relative;display:grid;border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:12px;overflow:hidden;min-height:96px;margin:10px 0;background:var(--panel)}
+.pwlock>.pwblur,.pwlock>.pwover{grid-area:1/1}
+.pwblur{filter:blur(6px);opacity:.55;padding:12px 14px;pointer-events:none;user-select:none}
+.pwfr{display:flex;align-items:center;gap:10px;padding:5px 0}.pwfr i{display:block;height:10px;border-radius:5px;background:var(--mute);opacity:.5}.pwfr b{margin-left:auto;font-variant-numeric:tabular-nums}.pwfr b+b{margin-left:12px}
+.pwover{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:10px;background:color-mix(in srgb,var(--panel) 35%,transparent)}
+.pwover b{font-size:14px}.pwsub{font-size:12.5px;color:var(--mute);max-width:440px}.pwic{font-size:18px;line-height:1}
+.pwbtn{margin-top:6px;border:0;border-radius:999px;padding:6px 14px;font-weight:700;font-size:13px;background:var(--accent);color:var(--accent-ink,#06210f);cursor:pointer}
+.pwlock.sm{min-height:64px}.pwlock.sm .pwblur{padding:8px 10px}
+.cell.pwc{cursor:pointer;opacity:.85}.cell.pwc b{filter:blur(4px);user-select:none}.cell.pwc small{display:block;font-size:11px}
+.pwin{display:inline-flex;align-items:center;gap:3px;cursor:pointer;white-space:nowrap}.pwin i{font-style:normal;filter:blur(4px);user-select:none}
+.pwtr td{padding:0}.pwtr .pwlock{position:sticky;left:0;width:min(100%,calc(100vw - 40px));margin:8px 0}
+tr.row.pwopen td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.pwbadge{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font:700 10.5px/1.6 var(--f-ui,inherit);letter-spacing:.3px;text-transform:uppercase;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+.pwbadge.free,.pwbadge.visitor{background:color-mix(in srgb,var(--mute) 18%,transparent);color:var(--mute)}
+.pwlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:6px;font-size:14px}.pwfree{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.pwnote{font-size:12.5px;color:var(--mute);margin:6px 0}
+a.mbtn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 </style>
 <script>/* light/dark choice before the first paint, so a refresh never flashes the default */(function(){ try { const s = localStorage.getItem("set:theme"); if (s==="light"||s==="dark") document.documentElement.setAttribute("data-theme", s); } catch(e){} })();</script>
 <script>
@@ -1951,6 +1969,7 @@ const isHB = m => /^[hb]\d/.test(m);
 const hasHB = pr => pr && pr.base && pr.base.hit != null;
 function hasM(pr, m){
   if (!pr || !pr.base || !m) return false;
+  if (!canM(pr, m)) return false;            // paywall: locked player or Pro market (callers show a lock where it matters)
   if (isHB(m)) return pr.base.hit != null;
   if (m==="ppp") return pr.base.ppp != null;
   if (m.startsWith("pim")) return pr.base.pen != null;
@@ -1965,6 +1984,95 @@ const mName = m => MLAB[m] ? t(MLAB[m]) : m==="fg" ? t("m_fg") : m==="g" ? t("m_
   : m[0]==="b" ? t("m_blk",{n:Math.ceil(parseFloat(m.slice(1)))}) : t("m_sog",{n:Math.ceil(parseFloat(m.slice(1)))});
 Object.assign(I18N.en, {"aw_stale":"{n} days old: value not marked", "p_more":"Showing the top 300 · show all {n}", "p_less":"Show the top 300 only", "qr_role_g":"Biggest role: {a}, about {m} min{r} in his game.", "cmp_chance_g":"Chance in his game", "cmp_vs_g":"vs this opponent", "qr_bl_noodds":"None of the priced options has value right now; on chance alone, {a} is ahead of {b}.", "nx_exp_h": "Expected hits", "nx_exp_b": "Expected blocks", "nx_over_h": "Over {l} hits", "nx_over_b": "Over {l} blocks", "nx_h60": "Hits per 60", "nx_b60": "Blocks per 60", "nx_pg": "This season per game", "nx_in": "in", "nx_ha": "Home / away this season", "nx_ha_home": "home tonight", "nx_ha_away": "away tonight", "nx_cf_opp": "Opponent's shot share (CF%)", "nx_cf_his": "{t} shot share (CF%)", "nx_opp_pp": "Opponent power-play time per game", "nx_foot_hb": "Hits and blocks are counted by the home rink's scorers, and some rinks count clearly more than others.", "nxv_season_h": "Season hit rate", "nxv_l10_h": "Last 10 hit rate", "nxv_season_b": "Season block rate", "nxv_l10_b": "Last 10 block rate", "tri_lean":"Lean ({n})", "tri_nosolid":"No Solid bets for this selection. The Lean ones are below.", "tri_solid_n":"{n} Solid bets on the slate", "aw_tab": "Awards", "aw_title": "Season awards", "aw_sub": "Stoiximan's prices for the NHL awards, next to the model's chances from the same 10,000 simulated seasons.", "aw_upd": "Prices from {d}, {h}.", "aw_rocket": "Rocket Richard", "aw_artross": "Art Ross", "aw_hart": "Hart", "aw_norris": "Norris", "aw_calder": "Calder", "aw_vezina": "Vezina", "aw_adams": "Jack Adams", "aw_sort_book": "Book favourites", "aw_sort_model": "Model favourites", "aw_book_h": "Book", "aw_book_tip": "Stoiximan's price. Below it: the book's chance with its margin removed (award markets carry a big margin, so the raw prices add up to far more than 100%).", "aw_fair_s": "book {p}", "aw_notlisted": "not offered", "aw_fairodds": "fair {o}", "aw_value": "value", "aw_m_rr": "Model", "aw_m_rr_tip": "The model's chance that he scores the most goals this season (the Rocket Richard goes to the top goal scorer, so this is the real thing). Value = the book pays at least 10% more than the model's fair price.", "aw_m_ar": "Model", "aw_m_ar_tip": "The model's chance that he finishes with the most points (the Art Ross goes to the top scorer). Stoiximan doesn't offer this market yet.", "aw_m_hart": "Art Ross chance", "aw_m_hart_tip": "Not a Hart chance: the Hart is voted on by writers. Shown for context, because most Hart winners are at or near the top of the scoring race.", "aw_m_dl": "Most D points", "aw_m_dl_tip": "Stand-in, not a Norris chance: the model's chance that he finishes with the most points among defencemen. Voters also weigh defence, so treat gaps with care.", "aw_m_rl": "Most rookie points", "aw_m_rl_tip": "Stand-in, not a Calder chance: the model's chance that he finishes with the most points among rookie skaters. Rookie goalies can win the Calder too.", "aw_m_vz": "Most saved goals", "aw_m_vz_tip": "Stand-in, not a Vezina chance: the model's chance that he finishes first in goals saved above expected among goalies with 40+ games. General managers vote on the Vezina and also look at wins and workload.", "aw_now_g": "Now", "aw_proj_gsax": "Saved goals at the end · range", "aw_gsax_now": "{v} saved goals", "aw_coach": "head coach", "aw_coach_h": "Coach", "aw_nomatch": "not in tonight's player list", "aw_n_exact_h": "Decided by the numbers.", "aw_n_coach_h": "Book prices only.", "aw_n_proxy_h": "Voted award: the model shows a stand-in.", "aw_n_rocket": "Most goals wins, so the model's chance is a real price. Rows with a value tag pay at least 10% more than the model's fair price; the three biggest edges are outlined.", "aw_n_artross": "Most points wins. No book offers it yet, so only the model's chances and fair prices show here.", "aw_n_hart": "Writers vote for the most valuable player, so no model can price it directly. The column shows each player's Art Ross chance for context: most Hart winners lead or come close in the scoring race.", "aw_n_norris": "Writers vote for the best all-round defenceman. The column is the chance of leading all defencemen in points: a fair guide to the offensive side, not the whole picture.", "aw_n_calder": "Writers vote for the best rookie. The column is the chance of leading rookie skaters in points; for goalies the saved-goals projection shows instead.", "aw_n_vezina": "General managers vote for the best goalie. The column is the chance of leading goalies with 40+ games in goals saved above expected, from a season simulation of each goalie's starts and save quality.", "aw_n_adams": "Broadcasters vote for the coach of the year. The model has nothing honest to add here, so these are the book's prices with the margin removed.", "aw_foot": "Award prices are read from Stoiximan up to every 3 hours while the price sync runs; prices older than two days aren't marked as value. Only the Rocket Richard and Art Ross are marked as value, because only those are won on the numbers alone. Futures carry a large margin and tie money up for months.", "aw_ch_book": "book {p}", "aw_ch_model": "model {p}", "aw_card_h": "Award prices", "aw_card_none": "No award prices for him right now."});
 Object.assign(I18N.sv, {"aw_stale":"{n} dagar gamla: värde markeras inte", "p_more":"Visar topp 300 · visa alla {n}", "p_less":"Visa bara topp 300", "qr_role_g":"Störst roll: {a}, ungefär {m} min{r} i sin match.", "cmp_chance_g":"Chans i hans match", "cmp_vs_g":"mot den här motståndaren", "qr_bl_noodds":"Inget av alternativen med odds har värde just nu; på chans är {a} före {b}.", "nx_exp_h": "Väntade tacklingar", "nx_exp_b": "Väntade blockeringar", "nx_over_h": "Över {l} tacklingar", "nx_over_b": "Över {l} blockeringar", "nx_h60": "Tacklingar per 60", "nx_b60": "Blockeringar per 60", "nx_pg": "I år per match", "nx_in": "på", "nx_ha": "Hemma / borta i år", "nx_ha_home": "hemma i kväll", "nx_ha_away": "borta i kväll", "nx_cf_opp": "Motståndets skottandel (CF%)", "nx_cf_his": "{t}s skottandel (CF%)", "nx_opp_pp": "Motståndets powerplaytid per match", "nx_foot_hb": "Tacklingar och blockeringar räknas av hemmaarenans statistiker, och vissa arenor räknar klart mer än andra.", "nxv_season_h": "Säsongens tacklingstakt", "nxv_l10_h": "Senaste 10, tacklingar", "nxv_season_b": "Säsongens blockeringstakt", "nxv_l10_b": "Senaste 10, blockeringar", "tri_lean":"Lutar ({n})", "tri_nosolid":"Inga stabila spel för det här urvalet. De som lutar finns nedan.", "tri_solid_n":"{n} Stabila spel på programmet", "aw_tab": "Priser", "aw_title": "Säsongens priser", "aw_sub": "Stoiximans odds på NHL:s priser, bredvid modellens chanser från samma 10 000 simulerade säsonger.", "aw_upd": "Odds från {d}, {h}.", "aw_rocket": "Rocket Richard", "aw_artross": "Art Ross", "aw_hart": "Hart", "aw_norris": "Norris", "aw_calder": "Calder", "aw_vezina": "Vezina", "aw_adams": "Jack Adams", "aw_sort_book": "Bookens favoriter", "aw_sort_model": "Modellens favoriter", "aw_book_h": "Book", "aw_book_tip": "Stoiximans odds. Under: bookens chans utan marginal (prismarknader har stor marginal, så de råa oddsen summerar till långt över 100 %).", "aw_fair_s": "book {p}", "aw_notlisted": "erbjuds ej", "aw_fairodds": "rättvist {o}", "aw_value": "värde", "aw_m_rr": "Modell", "aw_m_rr_tip": "Modellens chans att han gör flest mål i år (Rocket Richard går till bäste målskytt, så det här är på riktigt). Värde = booken betalar minst 10 % mer än modellens rättvisa odds.", "aw_m_ar": "Modell", "aw_m_ar_tip": "Modellens chans att han slutar med flest poäng (Art Ross går till poängkungen). Stoiximan erbjuder inte marknaden än.", "aw_m_hart": "Chans till Art Ross", "aw_m_hart_tip": "Inte en Hart-chans: Hart röstas fram av journalister. Visas som sammanhang, eftersom de flesta Hart-vinnare ligger i toppen av poängligan.", "aw_m_dl": "Flest poäng bland backar", "aw_m_dl_tip": "Ersättare, inte en Norris-chans: modellens chans att han slutar med flest poäng bland backar. Röstarna väger också in försvarsspelet.", "aw_m_rl": "Flest rookiepoäng", "aw_m_rl_tip": "Ersättare, inte en Calder-chans: modellens chans att han slutar med flest poäng bland rookies (utespelare). Rookiemålvakter kan också vinna Calder.", "aw_m_vz": "Flest räddade mål", "aw_m_vz_tip": "Ersättare, inte en Vezina-chans: modellens chans att han slutar etta i räddade mål över förväntat bland målvakter med 40+ matcher. Klubbcheferna röstar och ser också på vinster och arbetsbörda.", "aw_now_g": "Nu", "aw_proj_gsax": "Räddade mål vid säsongens slut · spann", "aw_gsax_now": "{v} räddade mål", "aw_coach": "huvudtränare", "aw_coach_h": "Tränare", "aw_nomatch": "inte i kvällens spelarlista", "aw_n_exact_h": "Avgörs av siffrorna.", "aw_n_coach_h": "Bara bookens odds.", "aw_n_proxy_h": "Pris som röstas fram: modellen visar en ersättare.", "aw_n_rocket": "Flest mål vinner, så modellens chans är ett riktigt pris. Rader med värde-märkning betalar minst 10 % mer än modellens rättvisa odds; de tre största fördelarna är markerade.", "aw_n_artross": "Flest poäng vinner. Ingen book erbjuder det än, så här visas bara modellens chanser och rättvisa odds.", "aw_n_hart": "Journalister röstar fram den mest värdefulla spelaren, så ingen modell kan prissätta det direkt. Kolumnen visar varje spelares chans till Art Ross som sammanhang: de flesta Hart-vinnare leder eller ligger nära i poängligan.", "aw_n_norris": "Journalister röstar fram den bästa backen. Kolumnen är chansen att leda alla backar i poäng: en bra fingervisning om offensiven, inte hela bilden.", "aw_n_calder": "Journalister röstar fram bästa rookie. Kolumnen är chansen att leda rookies (utespelare) i poäng; för målvakter visas prognosen för räddade mål i stället.", "aw_n_vezina": "Klubbcheferna röstar fram bästa målvakt. Kolumnen är chansen att leda målvakter med 40+ matcher i räddade mål över förväntat, från en säsongssimulering av varje målvakts starter och räddningsnivå.", "aw_n_adams": "TV- och radiofolk röstar fram årets tränare. Modellen har inget ärligt att tillföra här, så det här är bookens odds utan marginal.", "aw_foot": "Prisoddsen läses från Stoiximan upp till var tredje timme när synken körs; odds äldre än två dagar markeras inte som värde. Bara Rocket Richard och Art Ross märks med värde, eftersom bara de avgörs av siffrorna. Långtidsspel har stor marginal och binder pengar i månader.", "aw_ch_book": "book {p}", "aw_ch_model": "modell {p}", "aw_card_h": "Prisodds", "aw_card_none": "Inga prisodds för honom just nu."});
+// ------------------------------------------------------------ plans & paywall (PAYWALL.md, nhlprops/paywall.py)
+// The page only carries Free data. Pro, Creator and Media accounts get the rest from the pro-data function after
+// login (applyPro). Locked things are shown blurred with a lock and an upgrade button, never with real numbers.
+const PAYWALLED = !!DATA.paywall;                         // builds from before the split carry everything
+const PRO_PLANS = DATA.paywall?.pro_plans || ["pro","creator","media"];
+const FREE_WATCH = DATA.paywall?.free_watch ?? 3, FREE_LEGS = DATA.paywall?.free_legs ?? 2;
+let PLAN = "visitor";                                     // visitor | free | pro | creator | media
+let PRO = !PAYWALLED;                                     // Pro features on (and Pro data loaded)
+let PRO_STATE = "";                                       // "" | loading | error
+const OPEN = new Set((DATA.open_ids || []).map(String));  // 1 forward + 1 defenceman per team, open to everyone
+const isOpenP = id => PRO || OPEN.has(String(id));
+const prOpen = pr => PRO || (!!pr && !pr.locked && OPEN.has(String(pr.id)));   // archive props are all locked for free
+const PRO_MKT = m => /^(h|b|fo)\d|^(pt2|pt3|g2|g3|a2|ppp|pim0\.5|pim2\.5|fg)$/.test(m);
+const canM = (pr, m) => PRO || (OPEN.has(String(pr?.id ?? pr)) && !PRO_MKT(m));
+const ACCOUNT = () => PLAN !== "visitor";
+Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t:"Pro", pw_player:"Pro player: unlock every player with Pro",
+  pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more.",
+  pw_feats:["Every player, not just 1 forward and 1 defenceman per team","Hits, blocks, multi-point, PP points, faceoffs, penalties, first goalscorer","Best picks and Triage, live until the lock","Odds movement, sharp-book prices, public betting","Hit rates L10 / L20 / season, matchups, shot maps","Alerts, unlimited watchlist, full parlay check"],
+  pw_see_plans:"See plans", pw_signup:"Create a free account", pw_login:"Log in", pw_later:"Not now",
+  pw_free_h:"Free with an account", pw_free_sub:"Create a free account to save picks, track closing odds, follow up to {n} players and save 2-leg parlays.",
+  pw_plan:"Plan", pw_plan_visitor:"Visitor", pw_plan_free:"Free", pw_plan_pro:"Pro", pw_plan_creator:"Creator", pw_plan_media:"Media",
+  pw_lic_creator:"Creator licence: you may show and quote our numbers in your content, with credit on screen or in the show notes.",
+  pw_lic_media:"Media licence: regular use in broadcasts, articles and products, within the scope agreed in writing.",
+  pw_loading:"Loading Pro data…", pw_err:"Pro data couldn't load. Refresh to try again.",
+  pw_bp:"{n} best picks for this game · +edge", pw_bp_none:"Best picks, live until the lock",
+  pw_tri:"Every value bet tonight, graded Solid, Lean or Fragile", pw_watch_max:"Free accounts follow up to {n} players. Pro follows as many as you like.",
+  pw_legs_max:"Free checks parlays with up to {n} legs. Pro checks up to 8.", pw_need_acct:"Create a free account (or log in) to use this.",
+  pw_moves:"Odds movement is Pro", pw_hr:"L10, L20, season and vs opponent hit rates are Pro", pw_tonight:"Tonight's model chance, odds, EV and grade are Pro",
+  pw_ai:"Ask AI is Pro", pw_cmp_lock:"Compare every player with Pro (Free compares the open players)", pw_arch:"Player breakdowns, picks and compare for past days are Pro",
+  pw_stakes:"Now / with a win / with a loss is Pro", pw_lines:"Per-line projections are Pro", pw_pub:"Public betting (tickets and money per side) is Pro",
+  pw_fut:"Fair odds, sportsbook odds and value are Pro", pw_fg:"The first-goalscorer list is Pro", pw_saves:"Save lines and fair odds are Pro",
+  pw_matchup:"What the opponent allows his position is Pro", pw_shots:"Last 10, single-game maps and profile numbers are Pro", pw_role:"Tonight's chances in the role box are Pro",
+  pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
+  pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro"});
+Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
+  pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
+  pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Träffprocent L10 / L20 / säsong, matchups, skottkartor","Larm, obegränsad bevakning, full kombikoll"],
+  pw_see_plans:"Se planer", pw_signup:"Skapa ett gratiskonto", pw_login:"Logga in", pw_later:"Inte nu",
+  pw_free_h:"Gratis med konto", pw_free_sub:"Skapa ett gratiskonto för att spara spel, följa stängningsodds, bevaka upp till {n} spelare och spara kombos med 2 delar.",
+  pw_plan:"Plan", pw_plan_visitor:"Besökare", pw_plan_free:"Gratis", pw_plan_pro:"Pro", pw_plan_creator:"Kreatör", pw_plan_media:"Media",
+  pw_lic_creator:"Kreatörslicens: du får visa och citera våra siffror i ditt innehåll, med källa i bild eller i beskrivningen.",
+  pw_lic_media:"Medielicens: regelbunden användning i sändningar, artiklar och produkter, inom det som avtalats skriftligt.",
+  pw_loading:"Laddar Pro-data…", pw_err:"Pro-data kunde inte laddas. Ladda om sidan.",
+  pw_bp:"{n} bästa spel i matchen · +edge", pw_bp_none:"Bästa spel, live fram till låsningen",
+  pw_tri:"Kvällens alla värdespel, betygsatta Stabil, Lutar eller Skör", pw_watch_max:"Gratiskonton bevakar upp till {n} spelare. Pro bevakar hur många som helst.",
+  pw_legs_max:"Gratis kollar kombos med upp till {n} delar. Pro kollar upp till 8.", pw_need_acct:"Skapa ett gratiskonto (eller logga in) för att använda det här.",
+  pw_moves:"Oddsrörelser är Pro", pw_hr:"Träffprocent L10, L20, säsong och mot motståndaren är Pro", pw_tonight:"Kvällens modellchans, odds, EV och betyg är Pro",
+  pw_ai:"Fråga AI är Pro", pw_cmp_lock:"Jämför alla spelare med Pro (Gratis jämför de öppna spelarna)", pw_arch:"Spelardetaljer, spel och jämförelser för tidigare dagar är Pro",
+  pw_stakes:"Nu / med vinst / med förlust är Pro", pw_lines:"Prognoser per kedja är Pro", pw_pub:"Publikens spel (spel och pengar per sida) är Pro",
+  pw_fut:"Rättvisa odds, bookens odds och värde är Pro", pw_fg:"Listan över första målskytt är Pro", pw_saves:"Räddningslinjer och rättvisa odds är Pro",
+  pw_matchup:"Vad motståndaren släpper till hans position är Pro", pw_shots:"Senaste 10, enskilda matcher och profilsiffror är Pro", pw_role:"Kvällens chanser i rollrutan är Pro",
+  pw_streak:"Chans i kväll, rättvisa odds och EV är Pro", pw_ll:"Alla kedjor och backpar i ligan, sorterbara, är Pro", pw_alerts:"Larm är Pro",
+  pw_explore:"Förvalet I kväll och modell- / marknadsaxlarna är Pro", pw_bullet:"Spelarchanser (modell mot marknad) är Pro"});
+const PW_FAKE = ["38%","24%","51%","17%","62%","29%","45%","33%"];
+// a blurred placeholder (never real numbers) with a lock, a short reason and an upgrade button
+function lockBox(sub, opts={}){
+  const rows = opts.rows ?? 3, label = opts.label || t("pw_unlock");
+  const fake = Array.from({length: rows}, (_, i) => `<div class="pwfr"><i style="width:${40+((i*37)%45)}%"></i><b>${PW_FAKE[i % PW_FAKE.length]}</b><b>${PW_FAKE[(i+3) % PW_FAKE.length]}</b></div>`).join("");
+  return `<div class="pwlock ${opts.cls||""}" data-pw="${esc(opts.feat||"")}"><div class="pwblur" aria-hidden="true">${opts.fake ?? fake}</div>
+    <div class="pwover"><span class="pwic" aria-hidden="true">🔒</span><b>${esc(label)}</b>${sub?`<span class="pwsub">${esc(sub)}</span>`:""}
+    <button type="button" class="pwbtn" data-upgrade="${esc(opts.feat||"")}">${t(opts.acct ? "pw_signup" : "pw_btn")}</button></div></div>`;
+}
+const lockCell = (title) => `<div class="cell pwc" data-upgrade="cell" title="${esc(title || t("pw_unlock"))}"><b>${PW_FAKE[Math.floor(Math.random()*8)]}</b><small>🔒</small></div>`;
+const lockInline = (title) => `<span class="pwin" data-upgrade="inline" title="${esc(title || t("pw_unlock"))}" role="button" tabindex="0"><i aria-hidden="true">00.0%</i>🔒</span>`;
+const planName = p => t("pw_plan_" + (p || PLAN));
+function openUpgrade(feat){
+  if (PRO_STATE === "loading") return;   // a Pro account whose Pro data is still on its way
+  if (!ACCOUNT() && feat === "acct") return openAuth("up");
+  const feats = (I18N[LANG]?.pw_feats || I18N.en.pw_feats).map(x => `<li>✓ ${esc(x)}</li>`).join("");
+  const why = {compare:"pw_cmp_lock", explore:"pw_explore", shots:"pw_shots", alerts:"pw_alerts", matchup:"pw_matchup", fg:"pw_fg", saves:"pw_saves", public:"pw_pub", lines:"pw_ll"}[feat];
+  modal(`<h3>🔒 ${t("pw_h")}</h3>${why ? `<p><b>${esc(t(why))}.</b></p>` : ""}<p class="meta">${t("pw_sub")}</p><ul class="pwlist">${feats}</ul>
+    ${ACCOUNT() ? "" : `<div class="pwfree"><b>${t("pw_free_h")}</b><p class="meta">${t("pw_free_sub",{n:FREE_WATCH})}</p></div>`}
+    <div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a>${ACCOUNT() ? "" : `<button class="mbtn" id="pw_up" type="button">${t("pw_signup")}</button>`}<button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`);
+  const up = $("#pw_up"); if (up) up.onclick = () => openAuth("up");
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-upgrade]"); if (!b) return; e.preventDefault(); e.stopPropagation(); openUpgrade(b.dataset.upgrade); }, true);
+// merge the Pro patch (nhlprops/paywall.split) into DATA
+function applyPro(X){
+  if (!X) return;
+  for (const g of DATA.games){ const full = X.props?.[String(g.id)]; if (full) g.props = full; }
+  if (X.odds) DATA.odds = X.odds;
+  if (X.futures_odds && DATA.futures) DATA.futures.odds = X.futures_odds;
+  if (X.futures_games && DATA.futures) DATA.futures.games = X.futures_games;
+  if (X.awards) DATA.awards = X.awards;
+  if (X.league_lines) DATA.league_lines = X.league_lines;
+  if (X.previews) DATA.previews = X.previews;
+  for (const [pid, v] of Object.entries(X.players || {})) if (DATA.players[pid]) Object.assign(DATA.players[pid], v);
+  if (typeof FG_MEMO !== "undefined") FG_MEMO.clear();
+}
 const noHistory = m => m==="fg" || m.startsWith("fo");      // markets without a per-game record in the last-10 strip
 function hitGame(gm, m){
   if (noHistory(m)) return false;
@@ -1984,6 +2092,7 @@ const book = (gid,pid,m) => DATA.odds?.[gid]?.players?.[pid]?.[m] || null;
 const openOdds = (gid,pid,m) => { const k = book(gid,pid,m)?.b === "p" ? m + "@p" : m; return DATA.odds?.[gid]?.open?.players?.[pid]?.[k] ?? null; };
 // how the price moved since we first saw it today, and whether it moved toward the model's fair odds
 function moveTag(g, pr, m, compact){
+  if (!PRO) return "";                       // odds movement is Pro (opening prices aren't in the free page)
   const b = book(g.id, pr.id, m), o0 = openOdds(g.id, pr.id, m);
   if (!b?.o || !o0 || Math.abs(b.o - o0) < 0.01) return "";
   const fair = 1/Math.max(prob(pr, g, m), 1e-6), toward = Math.abs(b.o - fair) < Math.abs(o0 - fair);
@@ -1993,6 +2102,7 @@ function moveTag(g, pr, m, compact){
 }
 // compact arrow for tight cells (the game's player grid)
 function moveArrow(g, pr, m){
+  if (!PRO) return "";
   if (userOdds(g.id, pr.id, m) != null) return "";
   const b = book(g.id, pr.id, m), o0 = openOdds(g.id, pr.id, m);
   if (!b?.o || !o0 || Math.abs(o0 / b.o - 1) < 0.05) return "";
@@ -2047,9 +2157,10 @@ function streakItems(g, pr){
   const pg = prob(pr,g,"g"), ppt = prob(pr,g,"pt");
   // droughts only for players expected to produce (goal chance 12%+ / point chance 35%+), and only when rare (1 in 7+)
   const RARE = 0.08;   // a run this long happens 1 time in 12 or less at his level
-  if (regular && pg >= 0.12 && d.found && d.p!=null && d.p<RARE && d.shots>=8)
+  // free: locked players have no model chance in the page; their streak is still listed (who, what run, how rare)
+  if (regular && (isNaN(pg) || pg >= 0.12) && d.found && d.p!=null && d.p<RARE && d.shots>=8)
     out.push({k:"gd", rank:d.p, m:"g", v:prob(pr,g,"g"), rare:d.p, label:t("st_gd",{n:d.games, s:d.shots})});
-  if (regular && ppt >= 0.35 && st.pp!=null && st.pp<RARE && st.pd>=3)
+  if (regular && (isNaN(ppt) || ppt >= 0.35) && st.pp!=null && st.pp<RARE && st.pd>=3)
     out.push({k:"pd", rank:st.pp, m:"pt", v:prob(pr,g,"pt"), rare:st.pp, label:t("st_pd",{n:st.pd})});
   if (st.ps>=5) out.push({k:"ps", rank:1/st.ps, m:"pt", v:prob(pr,g,"pt"), label:t("st_ps",{n:st.ps, x:st.ps_pts})});
   if (st.gst>=3) out.push({k:"gs", rank:1/st.gst, m:"g", v:prob(pr,g,"g"), label:t("st_gs",{n:st.gst, x:st.gst_g})});
@@ -2071,7 +2182,7 @@ function streakStrip(g){
   const all = streaksForGame(g).sort((a,b)=>ST_ORDER[a.k]-ST_ORDER[b.k] || a.rank-b.rank).slice(0,10);
   if (!all.length) return "";
   return `<div class="box ststrip"><h4>${t("st_watch")} <span class="meta">${t("st_watch_sub")}</span></h4><div class="stchips">
-    ${all.map(x=>`<button type="button" class="stchip st-${x.k}" data-stp="${x.pr.id}" data-stt="${x.pr.team}">${logo(x.pr.team,16)}<b>${esc(x.p.name.split(" ").slice(-1)[0])}</b><span>${x.label}</span>${x.v!=null?`<em>${pct(x.v)}</em>`:""}</button>`).join("")}</div>
+    ${all.map(x=>`<button type="button" class="stchip st-${x.k}" data-stp="${x.pr.id}" data-stt="${x.pr.team}">${logo(x.pr.team,16)}<b>${esc(x.p.name.split(" ").slice(-1)[0])}</b><span>${x.label}</span>${x.v!=null?(PRO?`<em>${pct(x.v)}</em>`:`<em class="pwin" title="${esc(t("pw_streak"))}"><i>00%</i>🔒</em>`):""}</button>`).join("")}</div>
     <p class="note">${t("st_note")}</p></div>`;
 }
 document.addEventListener("click", e => {
@@ -2096,10 +2207,10 @@ function streaksTable(){
       <td><div class="pl"><div class="jersey">${x.p.num??""}</div><div><div class="nm">${esc(x.p.name)} ${injPill(x.p.injury)}</div><div class="sub">${logo(x.pr.team,18)} ${x.p.pos} · ${x.pr.team} ${x.pr.home?"vs":"@"} ${x.pr.opp} · ${dayLabel(x.g.ld)}</div></div></div></td>
       <td><span class="stlab st-${x.k}">${x.label}</span></td>
       <td class="n hide-xs">${x.rare!=null?`<span class="tip" tabindex="0" data-tip="${esc(t("st_rare_tip",{x:Math.max(2,Math.round(1/x.rare))}))}">${t("st_rare",{x:Math.max(2,Math.round(1/x.rare))})}</span>`:"–"}</td>
-      <td>${x.v!=null?`<span class="meta">${mlabel(x)}</span> <b>${pct(x.v,1)}</b>`:"–"}</td>
+      ${!PRO ? `<td>${lockInline(t("pw_streak"))}</td><td class="n hide-xs">${lockInline(t("pw_streak"))}</td><td class="n">${lockInline(t("pw_streak"))}</td><td class="n">${lockInline(t("pw_streak"))}</td></tr>` : `<td>${x.v!=null?`<span class="meta">${mlabel(x)}</span> <b>${pct(x.v,1)}</b>`:"–"}</td>
       <td class="n hide-xs">${x.v?oddsTxt(1/x.v):"–"}</td>
       <td class="n">${x.m?`<input class="odds" data-g="${x.g.id}" data-pid="${x.pr.id}" data-m="${x.m}" value="${userOdds(x.g.id,x.pr.id,x.m)!=null?oddsTxt(userOdds(x.g.id,x.pr.id,x.m)):""}" placeholder="${book(x.g.id,x.pr.id,x.m)?.o!=null?oddsTxt(book(x.g.id,x.pr.id,x.m).o):"—"}">`:""}</td>
-      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td></tr>`; }).join("") || `<tr><td colspan="7" class="empty">${t("st_none")}</td></tr>`;
+      <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td></tr>`}`; }).join("") || `<tr><td colspan="7" class="empty">${t("st_none")}</td></tr>`;
 }
 function regPills(p){
   const r = p.regress, d = p.drought, out = [];
@@ -2129,7 +2240,7 @@ function header(){
   const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
     props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', explore:'<path d="M4 4v16h16"/><circle cx="9" cy="14" r="1.6"/><circle cx="13" cy="9" r="1.6"/><circle cx="17" cy="12" r="1.6"/><circle cx="16" cy="6" r="1.6"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
     how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>', futures:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"/>', picks:'<path d="M6 4h12v16l-6-4-6 4z"/>'};
-  $("#acct").textContent = USER ? (USER.email||"").split("@")[0] : t("login");
+  $("#acct").innerHTML = (USER ? esc((USER.email||"").split("@")[0]) : t("login")) + (PAYWALLED && USER ? `<span class="pwbadge ${PLAN}">${planName()}</span>` : "");
   $("#acct").classList.toggle("in", !!USER);
   $("#nav").innerHTML = [["games","nav_games"],["props","nav_props"],["explore","nav_explore"],["futures","nav_futures"],["picks","nav_picks"],["track","nav_track"],["how","nav_how"]]
     .filter(([k]) => !IS_SHL || ["games","props"].includes(k))
@@ -2326,7 +2437,7 @@ function lineCard(g, team, key){
         ${small ? `<span class="tier t-small">${t("tier_small")}</span>` : form}</div>`;
     }
   }
-  const proj = pp ? "" : `<div class="lnproj"><span class="tip" tabindex="0" data-tip="${esc(t("ln_proj_tip"))}">${t("ln_scores")} <b>${pct(1 - Math.exp(-xg))}</b></span><span>${t("ln_xg")} <b>${fmt(xg,2)}</b></span><span>${t("ln_shots")} <b>${fmt(xs,1)}</b></span><span class="tip" tabindex="0" data-tip="${esc(t("ln_pen_tip"))}">${t("ln_pen")} <b>${pct(1 - Math.exp(-pen))}</b></span></div>`;
+  const proj = pp ? "" : !PRO ? `<div class="lnproj"><span>${t("ln_scores")} · ${t("ln_xg")} · ${t("ln_shots")} · ${t("ln_pen")}</span>${lockInline(t("pw_lines"))}</div>` : `<div class="lnproj"><span class="tip" tabindex="0" data-tip="${esc(t("ln_proj_tip"))}">${t("ln_scores")} <b>${pct(1 - Math.exp(-xg))}</b></span><span>${t("ln_xg")} <b>${fmt(xg,2)}</b></span><span>${t("ln_shots")} <b>${fmt(xs,1)}</b></span><span class="tip" tabindex="0" data-tip="${esc(t("ln_pen_tip"))}">${t("ln_pen")} <b>${pct(1 - Math.exp(-pen))}</b></span></div>`;
   return `<div class="lncard" data-xg="${xg.toFixed(4)}">${names}${proj}${together}</div>`;
 }
 function linesView(g){
@@ -2542,6 +2653,13 @@ function triBtn(on){
   return `<button data-s="tri" class="trbtn ${on ? "on" : ""} ${!seen && !on ? "new" : ""}" ${n ? `title="${esc(t("tri_solid_n",{n}))}"` : ""}>${t("tri_tab")}${n ? `<span class="trn">${n}</span>` : ""}</button>`;
 }
 function triageList(){
+  if (!PRO){
+    $("#main").innerHTML = `<div class="controls"><div class="seg olseg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button>${triBtn(true)}<button data-s="streaks">${t("st_tab")}</button><button data-s="lines">${t("ll_tab")}</button></div></div>
+      <div class="card trhow clp open" data-clk="trihow"><button type="button" class="clph" aria-expanded="true"><span class="trhh">${I_SVG}${t("tri_how_h")}</span></button><div class="clpb"><div class="clpi"><div class="prose">${t("tri_how")}</div></div></div></div>
+      <div class="box"><h4>${t("tri_title")} <span class="meta">${t("tri_sub")}</span></h4>${lockBox(t("pw_tri"), {feat:"triage", rows:6})}</div>`;
+    $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); } };
+    return;
+  }
   const day = state.pday || "all", grp = state.trg || "all", sd = state.trs || "all";
   const gsel = state.trgame || "all", dayGames = DATA.games.filter(g => (day === "all" || g.ld === day) && (!g.state || ["FUT","PRE"].includes(g.state)));
   let rows = triageRows(day).filter(r => (gsel === "all" || String(r.g.id) === String(gsel)) && (grp === "all" || bpFamily(r.m) === grp || (grp === "pts" && GROUP_OF[r.m] === "multi")) && (sd === "all" || r.side === sd));
@@ -2600,6 +2718,7 @@ function statePill(g){
 }
 document.addEventListener("click", e => { const b = e.target.closest?.("[data-bpg]"); if (!b) return; e.preventDefault(); e.stopPropagation(); state.bpg = b.dataset.bpg; segPop("bp:" + b.dataset.bpg); render(); }, true);
 function bestPicksBox(g){
+  if (!PRO) return `<div class="box picks"><h4>${t("bp_title")}</h4>${lockBox(t("pw_bp_none"), {feat:"bestpicks", rows:2})}</div>`;
   const {picks, hasOdds, teamCount} = bestPicks(g);
   const grp = bpGrp(g);
   const seg = `<span class="seg bpseg">${["all", ...bpGroups(g)].map(k=>`<button type="button" data-bpg="${k}" class="${grp===k?"on":""} ${grp===k && SEG_POP==="bp:"+k?"pop":""}">${k==="all"?t("bpg_all"):t("mg_"+k)}</button>`).join("")}</span>`;
@@ -2788,13 +2907,15 @@ function sidePanel(g, team){
   const opp = team===g.home ? g.away : g.home;
   const lu = DATA.teams[team]?.lineup || {groups:{}};
   const pos = {}; Object.entries(lu.groups).forEach(([k,ids])=>{ if(/^[fd]\d$/.test(k)) ids.forEach(id=>{ pos[id]=k; }); });
-  GRID = state.gridm==="hb" && g.props.some(hasHB) ? GRID_HB : state.gridm==="multi" ? GRID_MULTI : GRID_STD;
+  const hbTabs = g.props.some(hasHB) || !PRO;   // free: the Multi-point and Hits & blocks tabs show locked
+  GRID = state.gridm==="hb" && hbTabs ? GRID_HB : state.gridm==="multi" ? GRID_MULTI : GRID_STD;
   const slipOK = !ARCH && !g.frozen && (!g.state || ["FUT","PRE"].includes(g.state));
   if (state.sort && !GRID.includes(state.sort)) state.sort = null;
   const rows = g.props.filter(pr=>pr.team===team).map(pr=>{
     const p = P(pr.id); const probs = Object.fromEntries(GRID.map(m=>[m, hasM(pr,m) ? prob(pr,g,m) : null]));
+    const lk = Object.fromEntries(GRID.map(m=>[m, !PRO && (PRO_MKT(m) || !prOpen(pr))]));
     const k = p.active ? (pos[pr.id]||(p.posg==="D"?"d9":"f9")) : "zz";
-    return {pr, p, probs, grp: k==="zz" ? "9" : (k[0]==="f"?"0":"1")+k};
+    return {pr, p, probs, lk, grp: k==="zz" ? "9" : (k[0]==="f"?"0":"1")+k};
   });
   const colMax = Object.fromEntries(GRID.map(m=>[m, Math.max(...rows.filter(r=>r.p.active && r.probs[m]!=null).map(r=>r.probs[m]), 0.01)]));
   if (state.sort) rows.sort((a,b)=> (b.p.active-a.p.active) || ((b.probs[state.sort]??-1)-(a.probs[state.sort]??-1)));
@@ -2805,11 +2926,11 @@ function sidePanel(g, team){
     const label = state.sort ? (r.p.active ? t("g_in") : t("g_out")) : gl(r.grp);
     if (label!==lastG){ body += `<tr class="grp"><td colspan="${GRID.length+3}">${label}</td></tr>`; lastG = label; }
     const open = String(state.open)===String(r.pr.id);
-    body += `<tr class="row ${open?"open":""} ${r.p.active?"":"out"}" data-id="${r.pr.id}">
+    body += `<tr class="row ${open?"open":""} ${r.p.active?"":"out"} ${!PRO && prOpen(r.pr) ? "pwopen" : ""}" data-id="${r.pr.id}" ${!PRO && prOpen(r.pr) ? `title="${esc(t("pw_open"))}"` : ""}>
       <td><div class="pl"><div class="jersey">${r.p.num??""}</div><div><div class="nm">${esc(r.p.name)} ${injPill(r.p.injury)}</div>
         <div class="sub">${r.p.pos}${pos[r.pr.id]?" · "+pos[r.pr.id].toUpperCase():""}${r.p.why && !r.p.injury?" · "+esc(trWhy(r.p.why)):""}</div>${ARCH?resLine(g.id, r.pr.id):""}</div><span class="plbtns">${watchBtn(r.pr.id)}${r.p.active?cmpBtn(g, r.pr):""}</span></div></td>
       <td class="n hide-sm num">${fmt(r.p.toi_proj,1)}</td>
-      ${GRID.map(m=>{ const v=r.probs[m]; if (v==null) return `<td class="h"><div class="cell na">–</div></td>`; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
+      ${GRID.map(m=>{ const v=r.probs[m]; if (r.lk[m] && r.p.active) return `<td class="h">${lockCell(PRO_MKT(m) ? t("pw_unlock") : t("pw_player"))}</td>`; if (v==null) return `<td class="h"><div class="cell na">–</div></td>`; const od=getOdds(g.id,r.pr.id,m); const ev=od?v*od-1:null;
         const val = r.p.active && ev!=null && ev>=VALUE;
         const tip = t("tip",{p:pct(v,1), f:oddsTxt(1/v)}) + (od ? t("tip_odds",{o:oddsTxt(od), e:evTxt(ev)}) : "");
         const hr_ = ARCH ? archHit(g.id, r.pr.id, m) : null;
@@ -2822,7 +2943,7 @@ function sidePanel(g, team){
   $("#sidebody").innerHTML = `
     <div class="sidegrid">${goalieCard(g, team, t("st_goalie_team",{t:team}))}${injuriesCard(team)}${lineupCard(g, team)}${missingCard(team)}${newsCard(team)}</div>
     ${facingBar(g, team, opp)}
-    ${g.props.some(hasHB) ? `<div class="seg gridm" id="gridm"><button data-gm="std" class="${!state.gridm||state.gridm==="std"?"on":""}">${t("gm_std")}</button><button data-gm="multi" class="${state.gridm==="multi"?"on":""}">${t("gm_multi")}</button><button data-gm="hb" class="${state.gridm==="hb"?"on":""}">${t("gm_hb")}</button></div>` : ""}${slipOK ? `<p class="slhint">＋ ${t("sl_grid_hint")}</p>` : ""}
+    ${hbTabs ? `<div class="seg gridm" id="gridm"><button data-gm="std" class="${!state.gridm||state.gridm==="std"?"on":""}">${t("gm_std")}</button><button data-gm="multi" class="${state.gridm==="multi"?"on":""}">${t("gm_multi")}</button><button data-gm="hb" class="${state.gridm==="hb"?"on":""}">${t("gm_hb")}</button></div>` : ""}${slipOK ? `<p class="slhint">＋ ${t("sl_grid_hint")}</p>` : ""}
     <div class="card tablewrap"><table><thead><tr>
       <th>${t("player_team",{t:team})}</th><th class="n hide-sm">${t("toi")}</th>
       ${GRID.map(m=>`<th class="s ${state.sort===m?"on":""}" data-m="${m}" style="text-align:center">${mName(m)}</th>`).join("")}<th>${t("signals")}</th></tr></thead>
@@ -2983,6 +3104,18 @@ const CL_SET = k => { try { return localStorage.getItem("cl:"+k) != null; } catc
 document.addEventListener("click", e => { const h = e.target.closest(".clph"); if (!h || e.target.closest(".hinfo")) return; const c = h.parentElement, on = !c.classList.contains("open");
   c.classList.toggle("open", on); h.setAttribute("aria-expanded", on); try { localStorage.setItem("cl:"+c.dataset.clk, on ? "1" : "0"); } catch(e){} });
 function detail(pr, g){
+  if (!prOpen(pr)){   // free: a locked player's prices, value and model build are Pro (not in the page); the rest stays open
+    const p = P(pr.id);
+    return `<div class="detail"><div class="dgrid">
+      <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${watchBtn(pr.id, true)}</h4>${lockBox(t("pw_player"), {feat:"player", rows:4})}</div>
+      ${oppPosPlayer(pr, p)}
+      <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
+        <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
+        <tbody>${(p.form?.games||[]).map(x=>`<tr><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div></div>
+      ${roleBox(pr, g, p)}${matesBox(pr, p)}
+      <div class="box spbox" data-pid="${pr.id}">${shotProfile(p)}</div>
+      ${statsBox(p)}</div></div>`;
+  }
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
   const x = v => { const c = v>1.005?"up":v<0.995?"down":""; return `<b class="${c}">×${v.toFixed(3)}</b>`; };
@@ -2996,8 +3129,12 @@ function detail(pr, g){
       <span class="num">${b?`<b>${oddsTxt(b.o)}</b>${nv!=null?` <span class="meta">${pct(nv,0)}</span>`:""} ${moveTag(g,pr,m,true)}${b.b==="p"?` <span class="sharp tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span>`:""}${b.p?`<div class="meta"><span class="tip" tabindex="0" data-tip="${esc(t("sharp_tip"))}">${t("sharp")}</span> ${oddsTxt(b.p)}${b.pn?` · ${pct(noVig({o:b.p, n:b.pn}),0)}`:""}</div>`:""}`:`<span class="meta">–</span>`}</span>
       <input class="odds podds" id="po-${g.id}-${pr.id}-${m}" data-pid="${pr.id}" data-m="${m}" placeholder="${b?oddsTxt(b.o):t("odds_ph")}" value="${uo!=null?oddsTxt(uo):""}">
       <span class="${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}${(()=>{ if (!(ev>0)) return ""; const tr = triage(g, pr, m, "o", od); return tr ? " "+triBadge(tr) : ""; })()}</span><span class="svsl">${saveBtn(g, pr, m)}${slipBtn(g, pr, m)}</span>`; }).join("");
+  const LK = false;   // locked players returned above; free: a locked player's prices, value and model build are Pro (not in the page)
   return `<div class="detail"><div class="dgrid">
+    ${LK ? `<div class="box" style="grid-column:span 2"><h4>${t("pv")} ${watchBtn(pr.id, true)}</h4>${lockBox(t("pw_player"), {feat:"player", rows:4})}</div>
+    <div class="box"><h4><span>${t("built")} ${HI("tt_built")}</span></h4>${lockBox("", {feat:"player", rows:3, cls:"sm"})}</div>` : `
     <div class="box" style="grid-column:span 2"><h4>${t("pv")} ${cmpBtn(g, pr, true)}${watchBtn(pr.id, true)} <span class="seg pvtabs">${PVT.map(([k])=>`<button data-pvtab="${k}" class="${state.pvtab===k?"on":""} ${state.pvtab===k && SEG_POP==="pv:"+k?"pop":""}">${t("pvt_"+k)}</button>`).join("")}</span></h4><div class="oddsgrid"><span class="h">${t("h_market")}</span><span class="h">${t("h_modelfair")}</span><span class="h">${t("h_oddsmkt")}</span><span class="h">${t("h_yours")}</span><span class="h">EV</span><span class="h"></span>${oddsRows}</div>
+      ${PRO ? "" : lockBox((I18N[LANG]?.pw_feats || I18N.en.pw_feats)[1], {feat:"markets", rows:2, cls:"sm"})}
       <p class="note">${t("pv_note")}</p></div>
     <div class="box"><h4><span>${t("built")} ${HI("tt_built")}</span></h4>
       <div class="chips">
@@ -3013,7 +3150,7 @@ function detail(pr, g){
         ${KL("tt_xs", t("k_xs"))}<span>${fmt(l.s,2)}</span>
         ${KL("tt_og", t("k_og"))}<span>${og?esc(og.name):t("unknown")}</span>
         ${KL("tt_ktoi", t("k_toi"))}<span>${fmt(p.toi_recent,1)} / ${fmt(p.toi_season,1)}</span>
-      </div></div>
+      </div></div>`}
     <div class="box"><h4><span>${t("reg")} ${HI("tt_reg")}</span></h4>
       <div class="kv">
         ${KL("tt_shcur", t("k_shcur"))}<span>${pct(rg.sh,1)} <span class="meta">(${t("g_s",{g:rg.g, s:rg.s})})</span></span>
@@ -3131,7 +3268,7 @@ function nextTip(pid, gid, m){
   const dt_ = isToday(g.ld) ? t("today") : new Date(g.ld + "T12:00:00").toLocaleDateString(LOCALE(), {weekday:"short", day:"numeric", month:"short"});
   const tm = g.start ? new Date(g.start).toLocaleTimeString(LOCALE(), {hour:"2-digit", minute:"2-digit"}) : "";
   return `<div class="gth"><b>${dt_}${tm ? " · " + tm : ""}</b> <span>${pr.home ? "vs" : "@"} ${opp}</span><span class="meta">${esc(shortName(p.name))}</span></div>
-    <div class="nxb"><div class="nxh nxhr"><span>${t("nx_tonight")}</span>${typeof nxBadge !== "undefined" ? nxBadge : ""}</div>${num}</div>
+    <div class="nxb"><div class="nxh nxhr"><span>${t("nx_tonight")}</span>${PRO && typeof nxBadge !== "undefined" ? nxBadge : ""}</div>${PRO ? num : `<div class="nxr"><span>${t("pw_tonight")}</span><span>${lockInline(t("pw_tonight"))}</span></div>`}</div>
     <div class="nxb"><div class="nxh">${t("nx_his")}</div>${his}</div>
     <div class="nxb"><div class="nxh">${t("nx_opp",{t:opp})}</div>${oppH || `<span class="meta">–</span>`}</div>
     <div class="nxf">${t("nx_foot")}${m === "h" || m === "b" ? " " + t("nx_foot_hb") : ""}</div>`;
@@ -3264,6 +3401,10 @@ function hitStrip(pr, g, m, line){
   }
   const cell = (lbl, h, n) => { if (!n) return ""; const r = h/n, c = n>=3 ? (r>=0.6?"hr-hi":r<=0.4?"hr-lo":"") : "";
     return `<span class="hr ${c}"><small>${lbl}</small><b><span data-cn="${h}" data-cf="i">${h}</span>/${n}</b></span>`; };
+  if (!PRO){   // free: last 5 only
+    const nm0 = m==="s" ? t("hr_over_s",{l:L}) : m==="g" ? t("hr_g") : m==="a" ? t("hr_a") : t("hr_p");
+    return `<div class="hrstrip"><div class="hrt">${nm0}</div><div class="hrc">${cell("L5",H[0],hr.n[0])}<span class="hr"><small>L10 · L20 · ${t("hr_season")}</small><b>${lockInline(t("pw_hr"))}</b></span></div></div>`;
+  }
   const pm = prob(pr, g, mk), b = book(g.id, pr.id, mk), mkt = noVig(b) ?? (b?.o ? 1/b.o : null);
   const name = m==="s" ? t("hr_over_s",{l:L}) : m==="g" ? t("hr_g") : m==="a" ? t("hr_a") : t("hr_p");
   return `<div class="hrstrip"><div class="hrt">${name}</div><div class="hrc">
@@ -3356,11 +3497,12 @@ function shotTier(metric, v, posg, enough){
 }
 const tierPill = tr => tr ? `<span class="tier ${tr.cls}">${tr.lab}${tr.rank?` <i>· ${tr.rank}</i>`:""}</span>` : "";
 function shotProfile(p){
+  if (!PRO && state.spw && state.spw !== "season") state.spw = "season";   // free: season map only
   const games10 = p.form.games.slice(0,10);
   if (state.spw && state.spw.startsWith("g:") && !games10.some(x=>x.d===state.spw.slice(2))) state.spw = "season";
   const gsel = state.spw && state.spw.startsWith("g:") ? state.spw.slice(2) : null;
   const opts = games10.map(x=>`<option value="${x.d}" ${gsel===x.d?"selected":""}>${dayLabel(x.d)} ${x.h?t("r6_vs"):"@"} ${x.o}</option>`).join("");
-  const head = `<h4>${t("sp_title")} <span class="spctl"><span class="seg spseg"><button data-sp="season" class="${!gsel&&(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}</button></span>${games10.length?`<select class="spgame ${gsel?"on":""}" aria-label="${t("sp_game")}"><option value="">${t("sp_game")} ▾</option>${opts}</select>`:""}</span></h4>`;
+  const head = `<h4>${t("sp_title")} <span class="spctl"><span class="seg spseg"><button data-sp="season" class="${!gsel&&(state.spw||"season")==="season"?"on":""}">${t("sp_season")}</button><button data-sp="l10" class="${state.spw==="l10"?"on":""}">${t("sp_l10")}${PRO ? "" : " 🔒"}</button></span>${games10.length?`<select class="spgame ${gsel?"on":""}" aria-label="${t("sp_game")}"><option value="">${t("sp_game")} ▾</option>${opts}</select>`:""}</span></h4>`;
   if (!SHOTS){ loadShots(); return head + `<p class="meta">${t("sp_loading")}</p>`; }
   const S = SHOTS[p.id] || SHOTS[String(p.id)];
   const l10 = state.spw === "l10";
@@ -3378,7 +3520,7 @@ function shotProfile(p){
   const season = !l10, pg = p.posg === "D" ? "D" : "F";
   const T = (m, v, ok) => season ? shotTier(m, v, pg, ok) : null;
   const xgps = cur && cur.s ? cur.xg/cur.s : null;
-  const kpi = (lbl, v, sub, tip, tr) => `<div class="spk tip" tabindex="0" data-tip="${esc(tip + (tr && tr.rank ? " " + t("tier_tip") : "") + (sub && sub.includes("spavg") ? " " + t("sp_avg_tip",{n:av.n, gp:Math.round(av.gp)}) : ""))}"><small>${lbl}</small><b>${v}${tierPill(tr)}</b>${sub?`<span class="meta">${sub}</span>`:""}</div>`;
+  const kpi = (lbl, v, sub, tip, tr) => !PRO ? `<div class="spk"><small>${lbl}</small><b>${lockInline(t("pw_shots"))}${tierPill(tr)}</b></div>` : `<div class="spk tip" tabindex="0" data-tip="${esc(tip + (tr && tr.rank ? " " + t("tier_tip") : "") + (sub && sub.includes("spavg") ? " " + t("sp_avg_tip",{n:av.n, gp:Math.round(av.gp)}) : ""))}"><small>${lbl}</small><b>${v}${tierPill(tr)}</b>${sub?`<span class="meta">${sub}</span>`:""}</div>`;
   const av = p.shp?.avg, pa = av && av.gp >= 20 && av.n >= 2 ? {apg: av.att/av.gp, sog: av.s/av.gp, on: av.att ? av.s/av.att : null, xg: av.s ? av.xg/av.s : null} : null;
   // "last season 1.2 (avg 1.4)": the average over all his earlier seasons we have (up to 5), weighted by games
   const lastY = pv ? (v, f, k) => t("sp_prev",{v:f(v)}) + (pa && pa[k] != null ? ` <span class="spavg">(${t("sp_avg",{v:f(pa[k])})})</span>` : "") : () => "";
@@ -3447,12 +3589,15 @@ function spRender(box){ const p = box && P(box.dataset.pid); if (p) box.innerHTM
   const det = box && box.closest(".detail"); if (det) det.querySelectorAll("tr[data-spd]").forEach(r=>r.classList.toggle("spsel", state.spw==="g:"+r.dataset.spd)); }
 document.addEventListener("click", e => {
   const r = e.target.closest("tr[data-spd]");
+  if (r && !PRO){ if (r.closest(".detail")?.querySelector(".spbox")) openUpgrade("shots"); return; }
   if (r){ const box = r.closest(".detail")?.querySelector(".spbox"); if (box){ state.spw = "g:"+r.dataset.spd; spRender(box); box.scrollIntoView({behavior:"smooth", block:"nearest"}); } return; }
   const b = e.target.closest("[data-sp]"); if (!b) return;
+  if (!PRO && b.dataset.sp !== "season") return openUpgrade("shots");
   state.spw = b.dataset.sp; spRender(b.closest(".spbox"));
 });
 document.addEventListener("change", e => {
   const sel = e.target.closest(".spgame"); if (!sel) return;
+  if (!PRO){ sel.value = ""; return openUpgrade("shots"); }
   state.spw = sel.value ? "g:"+sel.value : "season"; spRender(sel.closest(".spbox"));
 });
 
@@ -3539,8 +3684,8 @@ function shotsBox(g){
       <div><small>${gA?esc(gA.name):g.away}</small><b>${fmt(svA,1)}</b></div><div></div>
       <div><small>${gH?esc(gH.name):g.home}</small><b>${fmt(svH,1)}</b></div>
     </div>
-    <div class="tablewrap"><table class="mini shtab"><thead>${head(SL)}</thead><tbody>
-      ${lineRow(gA?esc(gA.name.split(" ").slice(-1)[0]):g.away, SL, svA, rs)}${lineRow(gH?esc(gH.name.split(" ").slice(-1)[0]):g.home, SL, svH, rs)}</tbody></table></div>
+    ${PRO ? `<div class="tablewrap"><table class="mini shtab"><thead>${head(SL)}</thead><tbody>
+      ${lineRow(gA?esc(gA.name.split(" ").slice(-1)[0]):g.away, SL, svA, rs)}${lineRow(gH?esc(gH.name.split(" ").slice(-1)[0]):g.home, SL, svH, rs)}</tbody></table></div>` : lockBox(t("pw_saves"), {feat:"saves", rows:2, cls:"sm"})}
     <p class="note">${t("sh_note")}</p></div>`;
 }
 document.addEventListener("click", e => {
@@ -3552,6 +3697,12 @@ document.addEventListener("click", e => {
 function rankOf(val, key, desc){ const arr = Object.values(DATA.teams).map(x=>x[key]).filter(v=>v!=null).sort((a,b)=>desc?b-a:a-b); const i = arr.indexOf(val); return i<0 ? null : i+1; }
 function roleBox(pr, g, p){
   const X = p.x; if (!X) return "";
+  if (!PRO){   // free: power-play minutes and unit only
+    const pp0 = X.pp || {}, u0 = p.mates?.pp;
+    return `<div class="box rolebox"><h4><span>${t("rb_title")} ${HI("tt_rb")}</span></h4><div class="rgrid"><div class="rsec"><h5>${t("rb_pp")} ${u0 ? `<span class="pill s-up">${u0.toUpperCase()}</span>` : `<span class="pill">${t("rb_nounit")}</span>`}</h5><div class="kv">
+      ${KL("tt_rb_ppmin", t("rb_ppmin"))}<span>${pp0.min_pg!=null?fmt(pp0.min_pg,1):"–"} <span class="meta">${t("rb_prev",{v:pp0.min_pg_prev!=null?fmt(pp0.min_pg_prev,1):"–"})}</span></span></div></div></div>
+      ${lockBox(t("pw_role"), {feat:"role", rows:3, cls:"sm"})}</div>`;
+  }
   const O = DATA.teams[pr.opp] || {}, unit = p.mates?.pp, sec = [];
   const row = (k, lbl, val) => `${KL(k, lbl)}<span>${val}</span>`;
   const pp = X.pp || {};
@@ -3596,7 +3747,7 @@ function previewBlock(g){
   const P_ = DATA.previews?.[g.id]; if (!P_) return "";
   const x = P_[LANG] || P_.en; if (!x) return "";
   state.pvOpen = state.pvOpen || {}; const open = !!state.pvOpen[g.id];
-  const ph = P_.photo, list = (h, arr) => arr?.length ? `<div class="pvsec"><h5>${h}</h5><ul>${arr.map(v=>`<li>${esc(v)}</li>`).join("")}</ul></div>` : "";
+  const ph = P_.photo, list = (h, arr) => arr?.length ? `<div class="pvsec"><h5>${h}</h5><ul>${arr.map(v=>`<li>${v === "\u0000LOCK" ? `${esc(t("pw_bullet"))} ${lockInline(t("pw_bullet"))}` : esc(v)}</li>`).join("")}</ul></div>` : "";
   return `<div class="card pvbox ${open?"open":""}" data-pv="${g.id}">
     ${ph?.src ? `<div class="pvimg" style="background-image:url('../${esc(ph.src)}');${ph.pos?`background-position:${esc(ph.pos)}`:""}" role="img" aria-label="${esc(ph.alt||"")}"></div>` : ""}
     <div class="pvtxt"><div class="pvk">${esc(x.kicker||t("pv_label"))}</div><h3>${esc(x.title||"")}</h3><p class="pvdeck">${esc(x.deck||"")}</p>
@@ -3654,6 +3805,12 @@ document.addEventListener("change", e => {
 });
 // ------------------------------------------------------------ first goalscorer
 function fgBox(g){
+  if (!PRO){   // free: each team's chance to score first (game model only); the player list is Pro
+    const mu = gameMu(g), J = regJoint(mu.h, mu.a), pAny = 1 - J[0][0] * (C.ot_no_goal ?? 0.4), sh = (mu.h+mu.a) ? mu.h/(mu.h+mu.a) : 0.5;
+    const tm = (t_, p) => `<div><div class="fgh">${logo(t_,18)} <b>${t_}</b> <span class="meta">${t("fg_team",{p:pct(p)})}</span></div></div>`;
+    return `<div class="box fgbox"><h4>${t("fg_title")} <span class="meta">${t("fg_none",{p:pct(1-pAny,1)})}</span></h4>
+      <div class="fggrid">${tm(g.away, pAny*(1-sh))}${tm(g.home, pAny*sh)}</div>${lockBox(t("pw_fg"), {feat:"fg", rows:3, cls:"sm"})}</div>`;
+  }
   const F = fgMap(g);
   const side = t_ => g.props.filter(pr=>pr.team===t_ && F[pr.id]>0).sort((a,b)=>F[b.id]-F[a.id]).slice(0,6).map(pr=>{
     const p = P(pr.id), v = F[pr.id], od = getOdds(g.id, pr.id, "fg"), ev = od ? v*od-1 : null;
@@ -3661,7 +3818,7 @@ function fgBox(g){
       <td class="n"><input class="odds fgodds" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,"fg")!=null?oddsTxt(userOdds(g.id,pr.id,"fg")):""}" placeholder="${book(g.id,pr.id,"fg")?.o!=null?oddsTxt(book(g.id,pr.id,"fg").o):t("odds_ph")}"></td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"":evTxt(ev)}</td></tr>`; }).join("");
   const tbl = t_ => `<div><div class="fgh">${logo(t_,18)} <b>${t_}</b> <span class="meta">${t("fg_team",{p:pct(g.props.filter(pr=>pr.team===t_).reduce((a,pr)=>a+(F[pr.id]||0),0))})}</span></div>
-    <table class="mini fgtab"><thead><tr><th>${t("h_player")}</th><th class="n">${t("model")}</th><th class="n">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th></tr></thead><tbody>${side(t_)}</tbody></table></div>`;
+    <div class="tablewrap"><table class="mini fgtab"><thead><tr><th>${t("h_player")}</th><th class="n">${t("model")}</th><th class="n">${t("h_fair")}</th><th class="n">${t("h_odds")}</th><th class="n">EV</th></tr></thead><tbody>${side(t_)}</tbody></table></div></div>`;
   return `<div class="box fgbox"><h4>${t("fg_title")} <span class="meta">${t("fg_none",{p:pct(F.none,1)})}</span></h4>
     <div class="fggrid">${tbl(g.away)}${tbl(g.home)}</div><p class="note">${t("fg_note")}</p></div>`;
 }
@@ -3707,6 +3864,7 @@ function oppPosBox(g){
 }
 function oppPosPlayer(pr, p){
   const x = DATA.opp_pos?.[pr.opp]?.[posGroup(p.pos)]; if (!x) return "";
+  if (!PRO) return `<div class="box"><h4>${t("op_player",{t:pr.opp, p:t("op_"+posGroup(p.pos)).toLowerCase()})}</h4>${lockBox(t("pw_matchup"), {feat:"matchup", rows:3, cls:"sm"})}</div>`;
   const r = (lbl, m, d) => `<span>${lbl}</span><span>${fmt(x[m],d)} <span class="meta">${t("op_vs_lg",{v:fmt(x[m+"_lg"],d)})}</span> ${rkTxt(x[m+"_rk"])}</span>`;
   return `<div class="box"><h4>${t("op_player",{t:pr.opp, p:t("op_"+posGroup(p.pos)).toLowerCase()})}</h4>
     <div class="kv">${r(t("op_shots_pg"),"s",1)}${r(t("op_goals_pg"),"g",2)}${r(t("op_pts_pg"),"pt",2)}</div>
@@ -3787,6 +3945,7 @@ function exNext(){ if (EX_NEXT) return EX_NEXT; EX_NEXT = {};
 const exVal = (k, p) => { const m = EX_M[k], v = m.f(p, exNext()[p.id]); return v == null || !isFinite(v) ? null : v; };
 const exFmt = (k, v) => v == null ? "–" : EX_M[k].pct ? pct(v, EX_M[k].d) : (k === "gmx" && v > 0 ? "+" : "") + fmt(v, EX_M[k].d);
 function exState(){ const S = state.ex = state.ex || {mode:"players", preset:"luck", pos:"all", team:"all", tonight:false, min:5, q:"", tpreset:"strength"};
+  if (!PRO && (S.preset === "tonight" || ["mkt","mod","hit","blk"].includes(S.x) || ["mkt","mod","hit","blk"].includes(S.y))){ S.preset = "luck"; S.x = EX_P.luck.x; S.y = EX_P.luck.y; }
   if (!S.view) S.view = store.get("ex_view") === "list" ? "list" : "chart";
   S.mode = S.mode || "players"; S.tpreset = S.tpreset === undefined ? "strength" : S.tpreset;
   if (S.mode === "teams"){ if (S.tpreset && EX_TP[S.tpreset]){ S.tx = EX_TP[S.tpreset].x; S.ty = EX_TP[S.tpreset].y; } }
@@ -3818,7 +3977,7 @@ function exRows(S){
 function exploreTab(){
   const S = exState(), TM = exT(S), MT = exMT(S), PT = exPT(S), [ax, ay] = exAx(S), pre = exPre(S);
   const teams = [...new Set(Object.values(DATA.players).map(p => p.team))].filter(Boolean).sort();
-  const opt = k => Object.keys(MT).filter(m => TM || !MT[m].rng && !["pace","ar","rr","m_g30","m_p100"].includes(m) || DATA.proj).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
+  const opt = k => Object.keys(MT).filter(m => TM || PRO || !["mkt","mod","hit","blk"].includes(m)).filter(m => TM || !MT[m].rng && !["pace","ar","rr","m_g30","m_p100"].includes(m) || DATA.proj).map(m => `<option value="${m}" ${k===m?"selected":""}>${exLbl(S, m)}</option>`).join("");
   const filters = TM ? `<label class="toggle"><input type="checkbox" id="extn" ${S.ttonight?"checked":""}> ${t("ext_playing")}</label>`
     : `<div class="seg olseg" id="expos">${[["all",t("tri_all")],["F",t("ex_f")],["D",t("ex_d")]].map(([k,l])=>`<button data-k="${k}" class="${S.pos===k?"on":""}">${l}</button>`).join("")}</div>
       <select id="exteam" aria-label="${t("fu_team")}"><option value="all">${t("ll_allteams")}</option>${teams.map(x=>`<option ${S.team===x?"selected":""}>${x}</option>`).join("")}</select>
@@ -3830,7 +3989,7 @@ function exploreTab(){
     <div class="exhead"><div><h2 class="exh2">${t(TM ? "ext_title" : "ex_title")}</h2><p class="meta">${t(TM ? "ext_sub" : "ex_sub")}</p></div>
       <div class="exhr"><div class="seg olseg exview" id="exview"><button data-k="chart" class="${S.view==="list"?"":"on"}">${t("ex_view_chart")}</button><button data-k="list" class="${S.view==="list"?"on":""}">${t("ex_view_list")}</button></div>
       <div class="seg olseg exmode" id="exmode"><button data-k="players" class="${TM?"":"on"}">${t("ex_m_players")}</button><button data-k="teams" class="${TM?"on":""}">${t("ex_m_teams")}</button></div></div></div>
-    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(PT).map(k=>`<button data-k="${k}" class="${pre===k?"on":""}">${t((TM?"extp_":"exp_")+k)}</button>`).join("")}</div></div>
+    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(PT).map(k=>`<button data-k="${k}" class="${pre===k?"on":""}">${t((TM?"extp_":"exp_")+k)}${!PRO && !TM && k==="tonight" ? " 🔒" : ""}</button>`).join("")}</div></div>
     <div class="controls exctl">
       <label class="exsel"><span>Y</span><select id="exy">${opt(ay)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(ax)}</select></label>
       ${filters}
@@ -3846,7 +4005,7 @@ function exploreTab(){
   $("#exview").onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === (S.view || "chart")) return; S.view = b.dataset.k; store.set("ex_view", S.view);
     $("#exview").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#exview [data-k="${b.dataset.k}"]`); exDraw(true); };
   $("#exmode").onclick = e => { const b = e.target.closest("button"); if (!b || b.dataset.k === S.mode) return; S.mode = b.dataset.k; exploreTab(); popBtn(`#exmode [data-k="${b.dataset.k}"]`); };
-  $("#expre").onclick = e => { const b = e.target.closest("button"); if (!b) return; const P_ = PT[b.dataset.k]; if (TM) S.tpreset = b.dataset.k; else S.preset = b.dataset.k; setAx(P_.x, P_.y);
+  $("#expre").onclick = e => { const b = e.target.closest("button"); if (!b) return; if (!PRO && !TM && b.dataset.k === "tonight") return openUpgrade("explore"); const P_ = PT[b.dataset.k]; if (TM) S.tpreset = b.dataset.k; else S.preset = b.dataset.k; setAx(P_.x, P_.y);
     $("#expre").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); popBtn(`#expre [data-k="${b.dataset.k}"]`); $("#exx").value = P_.x; $("#exy").value = P_.y; re(); };
   $("#exx").onchange = e => { const [, y] = exAx(S); setAx(e.target.value, y); clearPre(); re(); };
   $("#exy").onchange = e => { const [x] = exAx(S); setAx(x, e.target.value); clearPre(); re(); };
@@ -3997,7 +4156,8 @@ function exDraw(animate, first){
 function propsTab(){
   if (state.psort === "lines") return linesList();
   if (state.psort === "tri") return triageList();
-  const groups = GROUP_ORDER.filter(gk => DATA.games.some(g=>g.props.some(pr=>hasM(pr, MGROUPS[gk][0]))));
+  // free: Pro market groups stay visible and show a lock (their data isn't in the page)
+  const groups = GROUP_ORDER.filter(gk => (!PRO && !IS_SHL && gk !== "fo") || DATA.games.some(g=>g.props.some(pr=>hasM(pr, MGROUPS[gk][0]))));
   if (!groups.includes(mGroup(state.market))) state.market = "pt";
   const hbOn = true;
   const gameOpts = DATA.games.filter(g=>state.pday==="all"||g.ld===state.pday).map(g=>`<option value="${g.id}" ${state.pfilter==g.id?"selected":""}>${dayLabel(g.ld)} · ${g.away} @ ${g.home}</option>`).join("");
@@ -4027,6 +4187,12 @@ function propsTab(){
 // ------------------------------------------------------------ Lines & pairs: every line and pair in the league this season
 const LL_SORTS = ["xgp","xgpw","xg60","under","over","gah","gal","toi"];
 function linesList(){
+  if (!PRO){
+    $("#main").innerHTML = `<div class="controls"><div class="seg olseg" id="psort"><button data-s="p">${t("most_likely")}</button><button data-s="ev">${t("best_value")}</button>${triBtn(false)}<button data-s="streaks">${t("st_tab")}</button><button data-s="lines" class="on">${t("ll_tab")}</button></div></div>
+      <div class="box"><h4>${t("ll_tab")}</h4>${lockBox(t("pw_ll"), {feat:"lines", rows:6})}</div>`;
+    $("#psort").onclick = e => { const b=e.target.closest("button"); if(b){ state.psort=b.dataset.s; propsTab(); } };
+    return;
+  }
   const LL = DATA.league_lines || {rows:[]};
   state.llk = state.llk || "f"; state.lls = LL_SORTS.includes(state.lls) ? state.lls : "xgp";
   state.llmin = state.llmin || 40; state.llteam = state.llteam || "all";
@@ -4092,7 +4258,12 @@ function rowsTop(){
   }
   if (state.psort==="ev") rows.sort((a,b)=>(b.ev??-9)-(a.ev??-9)); else rows.sort((a,b)=>b.v-a.v);
   const PCAP = state.pall ? rows.length : 300;
-  $("#ptb").innerHTML = rows.slice(0,PCAP).map(({g,pr,p,v,od,ev})=>{
+  // free: the locked players are counted, never shown with numbers
+  let pwLocked = 0;
+  if (!PRO) for (const g of DATA.games){ if ((state.pday!=="all" && g.ld!==state.pday) || (state.pfilter!=="all" && String(g.id)!==String(state.pfilter))) continue;
+    for (const pr of g.props){ const p = P(pr.id); if (p?.active && !canM(pr, m) && (!state.q || p.name.toLowerCase().includes(state.q))) pwLocked++; } }
+  const pwRow = pwLocked ? `<tr class="pwtr"><td colspan="9">${lockBox(PRO_MKT(m) ? t("pw_unlock") + " · " + mName(m) : `+${pwLocked} · ${t("pw_player")}`, {feat:"props", rows:4, label: PRO_MKT(m) ? mName(m) : t("pw_unlock")})}</td></tr>` : "";
+  $("#ptb").innerHTML = pwRow.length && !rows.length ? pwRow : rows.slice(0,PCAP).map(({g,pr,p,v,od,ev})=>{
     const last = lastGames(p, m).slice(0,10);
     return `<tr class="row" data-g="${g.id}" data-id="${pr.id}">
       <td><div class="pl"><div class="jersey">${p.num??""}</div><div><div class="nm">${esc(p.name)} ${injPill(p.injury)}</div><div class="sub">${logo(pr.team,18)} ${p.pos} · ${pr.team} ${pr.home?"vs":"@"} ${pr.opp} · ${dayLabel(g.ld)}</div></div></div></td>
@@ -4102,7 +4273,7 @@ function rowsTop(){
       <td class="n"><input class="odds" id="to-${g.id}-${pr.id}" data-g="${g.id}" data-pid="${pr.id}" value="${userOdds(g.id,pr.id,m)!=null?oddsTxt(userOdds(g.id,pr.id,m)):""}" placeholder="${book(g.id,pr.id,m)?.o!=null?oddsTxt(book(g.id,pr.id,m).o):"—"}">${(()=>{const x=moveTag(g,pr,m,true);return x?`<div>${x}</div>`:"";})()}</td>
       <td class="n ${ev==null?"":ev>0?"ev-pos":"ev-neg"}">${ev==null?"–":evTxt(ev)}</td>
       <td class="hide-sm">${noHistory(m) ? `<span class="meta">–</span>` : `<div class="hits">${last.map(x=>`<i class="${hitGame(x,m)?"y":""} gtg" data-gtp="${pr.id}" data-gtd="${x.d}"></i>`).reverse().join("")}</div>${(()=>{ const H=p.hr?.[m], n=isHB(m) ? p.hr?.hbn : p.hr?.n; return H&&n&&n[1] ? `<div class="hrmini">${H[1]}/${n[1]}${n[3]>=5?` · ${t("hr_season")} ${pct(H[3]/n[3])}`:""}${pr.hv?.n&&pr.hv[m]!=null?` · ${t("hr_vs",{t:pr.opp})} ${pr.hv[m]}/${pr.hv.n}`:""}</div>` : ""; })()}`}</td>
-      <td><div class="ptsig">${regPills(p)}</div></td><td><div class="ptact">${watchBtn(pr.id)}${cmpBtn(g, pr)}${slipBtn(g, pr, m)}${saveBtn(g, pr, m)}</div></td></tr>`; }).join("") || `<tr><td colspan="9" class="empty">${t("no_match")}</td></tr>`;
+      <td><div class="ptsig">${regPills(p)}</div></td><td><div class="ptact">${watchBtn(pr.id)}${cmpBtn(g, pr)}${slipBtn(g, pr, m)}${saveBtn(g, pr, m)}</div></td></tr>`; }).join("") + (rows.length ? pwRow : "") || `<tr><td colspan="9" class="empty">${t("no_match")}</td></tr>`;
   if (rows.length > 300) $("#ptb").insertAdjacentHTML("beforeend", `<tr class="pmore"><td colspan="20"><button type="button" class="exlmore" id="pallbtn">${state.pall ? t("p_less") : t("p_more",{n:rows.length})}</button></td></tr>`);
   const pab = $("#pallbtn"); if (pab) pab.onclick = e => { e.stopPropagation(); state.pall = !state.pall; rowsTop(); };
   $("#ptb").onclick = e => { if (e.target.closest("input")) return; const tr=e.target.closest("tr.row"); if(tr){ const pr = P(tr.dataset.id); go({tab:"games", game:tr.dataset.g, side: pr.team}); state.open = tr.dataset.id; render(); revealPlayer(tr.dataset.id, {force:true}); } };
@@ -4121,6 +4292,7 @@ function cmpBtn(g, pr, wide){
   return `<button type="button" class="cmpbtn ${wide?"wide":""} ${on?"on":""}" data-cmp="${g.id}|${pr.id}" aria-pressed="${on}" title="${esc(t(on?"cmp_in":"cmp_add"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M17 4v16M3 9l4-5 4 5M13 15l4 5 4-5"/></svg>${wide?`<span>${t(on?"cmp_in":"cmp_add")}</span>`:""}</button>`;
 }
 function cmpToggle(gid, pid){
+  if (!cmpHas(gid, pid) && !isOpenP(pid)) return openUpgrade("compare");   // free compares the open players only
   if (cmpHas(gid, pid)) CMP = CMP.filter(x => !(String(x.g)===String(gid) && String(x.p)===String(pid)));
   else if (CMP.length >= CMP_MAX){ CMP_MSG = t("cmp_max",{n:CMP_MAX}); cmpTray(); setTimeout(()=>{ CMP_MSG = ""; cmpTray(); }, 2600); return; }
   else CMP.push({g:String(gid), p:String(pid)});
@@ -5095,6 +5267,8 @@ function howTab(){
 
 function render(){
   header();
+  { const pb = $("#pwstate"); if (pb) pb.remove();
+    if (PRO_STATE) $("#main").insertAdjacentHTML("beforebegin", `<p id="pwstate" class="pwnote" style="text-align:center">${t(PRO_STATE==="loading"?"pw_loading":"pw_err")}</p>`); }
   if (IS_SHL){ const h = $("#home"); if (h && !h.dataset.shl){ h.dataset.shl = "1"; h.innerHTML = `SHL Props <b>Lab</b> <span class="betap">beta</span>`; document.title = "SHL Props Lab (beta)"; }
     if (!["games","props"].includes(state.tab)) state.tab = "games"; }
   archBar();
@@ -5123,7 +5297,10 @@ function slipBtn(g, pr, m){
 function slipToggle(leg){
   const k = legKey(leg);
   if (inSlip(k)) SLIP = SLIP.filter(x => legKey(x) !== k);
-  else { if (SLIP.length >= SLIP_MAX) return; SLIP.push(leg); }
+  else { if (SLIP.length >= SLIP_MAX) return;
+    if (!PRO && SLIP.length >= FREE_LEGS){ openUpgrade("parlay"); const m = $("#modal .meta"); if (m) m.textContent = t("pw_legs_max",{n:FREE_LEGS}); return; }
+    if (leg.k === "p" && !isOpenP(leg.pid)) return openUpgrade("parlay");
+    SLIP.push(leg); }
   slipSave(); slipSync();
 }
 function slipSync(){
@@ -5352,6 +5529,7 @@ function openAuth(mode, after){
 }
 function openAccount(){
   modal(`<h3>${t("acct_h")}</h3><p class="meta">${esc(USER.email||"")}</p>
+    ${PAYWALLED ? `<p>${t("pw_plan")}: <span class="pwbadge ${PLAN}">${planName()}</span></p>${PLAN==="creator"||PLAN==="media" ? `<p class="pwnote">${t("pw_lic_"+PLAN)}</p>` : ""}${PRO ? "" : `<p class="pwnote">${t("pw_sub")}</p><div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a></div>`}` : ""}
     <div class="mrow"><button class="mbtn pri" id="ac_picks" type="button">${t("nav_picks")}</button><button class="mbtn" id="ac_out" type="button">${t("logout")}</button></div>`);
   $("#ac_picks").onclick = () => { closeModal(); go({tab:"picks", game:null}); };
   $("#ac_out").onclick = async () => { await sb.auth.signOut(); closeModal(); };
@@ -5404,6 +5582,7 @@ function nextGameOf(pid, team){
 async function watchToggle(pid){
   if (!USER) return openAuth("in", async () => { await loadWatch(); if (!watched(pid)) watchToggle(pid); else watchSync(); });
   const k = String(pid);
+  if (!WATCH.has(k) && !PRO && WATCH.size >= FREE_WATCH){ openUpgrade("watch"); const m = $("#modal .meta"); if (m) m.textContent = t("pw_watch_max",{n:FREE_WATCH}); return; }
   if (WATCH.has(k)){
     const {error} = await sb.from("watchlist").delete().eq("player_id", +k);
     if (!error) WATCH.delete(k);
@@ -5515,8 +5694,11 @@ function b64ToBytes(b64){ const pad = "=".repeat((4 - b64.length % 4) % 4); cons
 async function deviceSub(){ if (!pushOK()) return null; const r = SW || await navigator.serviceWorker.ready; return r.pushManager.getSubscription(); }
 async function alertsCard(){
   const box = $("#alertsbox"); if (!box || !sb || !USER) return;
+  if (!PRO){ box.innerHTML = lockBox(t("pw_alerts"), {feat:"alerts", rows:2, cls:"sm"}); return; }
   const {data: st} = await sb.from("alert_settings").select("edge_min, goalies, watch").maybeSingle();
+  if (!box.isConnected) return;   // a newer render replaced this card while we waited
   const sub = await deviceSub().catch(() => null);
+  if (!box.isConnected) return;
   const on = !!sub && Notification.permission === "granted";
   const lv = st?.edge_min ?? null, opts = [null, 0.05, 0.10, 0.15, 0.20];
   let device;
@@ -5600,7 +5782,33 @@ function parlaysCard(){
     ${kpi(t("pk_profit"), (profit>=0?"+":"")+profit.toFixed(2), profit>0?"ev-pos":profit<0?"ev-neg":"")}${kpi(t("pk_roi"), staked?((profit/staked*100>=0?"+":"")+(profit/staked*100).toFixed(1)+"%"):"–", profit>0?"ev-pos":profit<0?"ev-neg":"")}</div>
     <div class="card tablewrap"><table><thead><tr><th>${t("h_date")}</th><th>${t("sl_legs")}</th><th class="n">${t("h_odds")}</th><th class="n hide-xs">${t("pk_model")}</th><th class="n hide-xs">${t("pk_stake")}</th><th>${t("pk_result")}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null; setTimeout(async () => { await Promise.all([loadPicks(), loadWatch(), loadParlays()]); header(); render(); }, 0); });
+// plan from the profile (only the server can change it); Pro data comes from the pro-data function, which checks
+// the plan again, so changing PLAN in the browser unlocks nothing
+let PRO_LOADED = !PAYWALLED, PRO_ARCH = null;
+async function loadPlan(){
+  let plan = "visitor";
+  if (sb && USER){ try { const {data} = await sb.from("profiles").select("plan").eq("id", USER.id).maybeSingle(); plan = data?.plan || "free"; } catch(e){ plan = "free"; } }
+  PLAN = plan;
+  const want = PRO_PLANS.includes(PLAN);
+  if (want && !PRO_LOADED && sb){
+    PRO_STATE = "loading"; render();
+    try {
+      const ad = (typeof ARCH_PARAM !== "undefined" && ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)) ? ARCH_PARAM : null;
+      const d = ad ? "archive/" + ad : "latest";
+      const {data, error} = await sb.functions.invoke("pro-data", {body: {d}});
+      if (error || !data?.url) throw new Error(error?.message || data?.error || "no url");
+      const X = await (await fetch(data.url, {cache: "no-store"})).json();
+      if (ad){ PRO_ARCH = X; if (ARCH) applyArchive(X); }   // else the archive start-up applies it
+      else applyPro(X);
+      PRO_LOADED = true; PRO_STATE = "";
+    } catch(e){ console.warn("pro-data", e); PRO_STATE = "error"; }
+  }
+  PRO = !PAYWALLED || (want && PRO_LOADED);
+  if (PRO && document.querySelector("#modal .pwlist")) closeModal();
+}
+if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null;
+  if (ev === "SIGNED_OUT" && PAYWALLED && PRO_LOADED && PRO_PLANS.includes(PLAN)){ location.reload(); return; }   // drop Pro data from memory
+  setTimeout(async () => { await loadPlan(); await Promise.all([loadPicks(), loadWatch(), loadParlays()]); header(); render(); }, 0); });
 
 // ------------------------------------------------------------ live scores (official NHL feed via our scores function)
 // ------------------------------------------------------------ game recap (a past game: goals and every player's line)
@@ -5679,7 +5887,7 @@ function futuresTab(){
   const topSet = new Set(evs.sort((a, b) => b[1] - a[1]).slice(0, FUT_TOP).map(x => x[0]));
   const cell = (tm, v, k) => { const p = v[k]; const od = futBook(F, k, tm); const ev = od ? p * od - 1 : null;
     const strong = p >= 0.5 ? "hi" : p >= 0.15 ? "mid" : "lo";
-    return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b${(k === "playoffs" || k === "cup") && p >= 0.005 && p < 0.995 ? ` data-cn="${p}" data-cf="pc0"` : ""}>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
+    return `<td class="n fucell ${strong} ${topSet.has(`${tm}|${k}`) ? "val" : ""}" title="${od ? esc(t("fu_book_tip",{o:oddsTxt(od), m:pct(1/od,0), e:evTxt(ev)})) : ""}"><b${(k === "playoffs" || k === "cup") && p >= 0.005 && p < 0.995 ? ` data-cn="${p}" data-cf="pc0"` : ""}>${p >= 0.995 ? ">99%" : p > 0 && p < 0.005 ? "<1%" : pct(p,0)}</b><small>${!PRO ? "" : p>0.001 ? oddsTxt(1/p) : "–"}${od?` · <span class="bk ${ev>=FUT_VALUE?"pos":ev<0?"neg":""}">${oddsTxt(od)}</span>`:""}</small></td>`; };
   const ptsCell = (tm, v) => { const P_ = F.odds?.points?.[tm]; if (!P_) return `<td class="n hide-sm fucell"><b data-cn="${v.pts}" data-cf="i">${fmt(v.pts,0)}</b><small>${t("fu_proj")}</small></td>`;
     const po = ptsOver(v, P_.line), ev = po!=null && P_.over ? po * P_.over - 1 : null, evu = po!=null && P_.under ? (1-po) * P_.under - 1 : null;
     const best = ev!=null && evu!=null ? (ev >= evu ? ["o", ev, P_.over] : ["u", evu, P_.under]) : null;
@@ -5689,6 +5897,7 @@ function futuresTab(){
   const filters = [["all","fu_all"],["East","fu_east"],["West","fu_west"],["Atlantic","Atlantic"],["Metropolitan","Metropolitan"],["Central","Central"],["Pacific","Pacific"]];
   $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("fu_title")}</h2><p class="meta">${t("fu_sub",{n:(F.sims||0).toLocaleString(LOCALE()), g:F.remaining||0})}</p></div>${fuSwitch()}</div>
     <div class="controls"><div class="seg mgrp" id="fuf">${filters.map(([k,l])=>`<button data-f="${k}" class="${flt===k?"on":""}">${l.startsWith("fu_")?t(l):l}</button>`).join("")}</div></div>
+    ${PRO ? "" : `<p class="pwnote">🔒 ${t("pw_fut")} <button type="button" class="pwbtn" data-upgrade="futures">${t("pw_btn")}</button></p>`}
     <div class="card tablewrap futab"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span><span><small>2.38</small> ${t("fu_lg_fair")}</span><span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span></div>
     <p class="foot">${t("fu_foot")}</p>`;
@@ -5834,6 +6043,7 @@ function teamGoals(tm){
 }
 // public betting: share of tickets (number of bets) and of money on each side; money well above tickets = bigger bets
 function publicBox(g){
+  if (!PRO) return ARCH ? "" : `<div class="box pubbox"><h4><span>${t("pb_title")} ${HI("pb_tip")}</span></h4>${lockBox(t("pw_pub"), {feat:"public", rows:2, cls:"sm"})}</div>`;
   const P_ = DATA.odds?.[g.id]?.public; if (!P_) return "";
   const pair = (lab, a, b, la, lb, cv) => { if (!a || !b) return "";
     const bar = (k, i) => `<div class="pbrow"><span class="pbk">${t(k)}</span><span class="pbv pa">${a[i]}%</span><div class="pbbar"><i style="width:${a[i]}%"></i></div><span class="pbv pb">${b[i]}%</span></div>`;
@@ -5852,8 +6062,8 @@ function stakesBox(g){
   const side = tm => { const x = S[tm]; if (!x) return ""; const sw = x.swing;
     return `<div class="stk"><div class="stkt">${logo(tm,22)}<b>${tm}</b><span class="pill imp-${lvl(x)}">${t("imp_"+lvl(x))}</span></div>
       ${DATA.futures?.teams?.[tm] ? `<div class="stkl">${luckTag(S._lk?.[tm] ? {...DATA.futures.teams[tm], ...S._lk[tm]} : DATA.futures.teams[tm])}</div>` : ""}${teamGoals(tm)}
-      <div class="stkn"><span>${t("stk_now")} <b>${pct(x.now,0)}</b></span><span class="up">${t("stk_win")} <b>${pct(x.win,0)}</b></span><span class="down">${t("stk_lose")} <b>${pct(x.lose,0)}</b></span></div>
-      ${sw!=null?`<div class="stkbar"><i style="left:${Math.max(0,Math.min(100,x.lose*100))}%;width:${Math.max(1,Math.min(100,(x.win-x.lose)*100))}%"></i><s style="left:${Math.min(99.5,x.now*100)}%"></s></div>`:""}</div>`; };
+      ${!PRO ? `<div class="stkn"><span>${t("stk_now")} · ${t("stk_win")} · ${t("stk_lose")}</span> ${lockInline(t("pw_stakes"))}</div>` : `<div class="stkn"><span>${t("stk_now")} <b>${pct(x.now,0)}</b></span><span class="up">${t("stk_win")} <b>${pct(x.win,0)}</b></span><span class="down">${t("stk_lose")} <b>${pct(x.lose,0)}</b></span></div>`}
+      ${PRO && sw!=null?`<div class="stkbar"><i style="left:${Math.max(0,Math.min(100,x.lose*100))}%;width:${Math.max(1,Math.min(100,(x.win-x.lose)*100))}%"></i><s style="left:${Math.min(99.5,x.now*100)}%"></s></div>`:""}</div>`; };
   return `<div class="box stakes"><h4><span>${t("stk_title")} ${HI("stk_tip")}</span></h4><div class="stkgrid">${side(g.away)}${side(g.home)}</div><p class="note">${t("stk_note")}</p></div>`;
 }
 const impPill = g => { const S = DATA.futures?.games?.[String(g.id)]; if (!S) return ""; const lv = Object.values(S).map(x=>x.level); const top = ["critical","high"].find(l=>lv.includes(l)); return top ? `<span class="pill imp-${top}">${t("imp_card_"+top)}</span>` : ""; };
@@ -5940,7 +6150,7 @@ function startApp(){
 if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){
   $("#main").innerHTML = `<p class="meta">${t("sp_loading")}</p>`;
   fetch(new URL(`../data/archive/${ARCH_PARAM}.json`, location.href)).then(r => r.ok ? r.json() : null)
-    .then(A => { if (A) applyArchive(A); startApp(); }).catch(startApp);
+    .then(A => { if (A) applyArchive(PRO_ARCH || A); startApp(); }).catch(startApp);
 } else startApp();
 
 </script>
