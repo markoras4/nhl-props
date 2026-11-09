@@ -7,12 +7,12 @@
  "date_label": "November 9, 2026",
  "read_min": 6,
  "hero": {
-  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Ice_Hockey_Game_-_Madison_Square_Garden_-_Boston_vs_New_York.jpg/1920px-Ice_Hockey_Game_-_Madison_Square_Garden_-_Boston_vs_New_York.jpg",
-  "alt": "An NHL game seen from the stands at Madison Square Garden",
-  "credit": "Madison Square Garden, 2008 · Donatingpictures · CC BY-SA 3.0"
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Capitals-Maple_Leafs_%2833394930223%29.jpg/1920px-Capitals-Maple_Leafs_%2833394930223%29.jpg",
+  "alt": "Capitals and Maple Leafs players crowd the crease during a 2017 playoff game in Washington",
+  "credit": "Capitals vs Maple Leafs, 2017 playoffs · David from Washington, DC · CC BY 2.0"
  },
  "credits": [
-  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Ice_Hockey_Game_-_Madison_Square_Garden_-_Boston_vs_New_York.jpg\" rel=\"noopener\">Ice Hockey Game, Madison Square Garden</a> by Donatingpictures, CC BY-SA 3.0",
+  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Capitals-Maple_Leafs_(33394930223).jpg\" rel=\"noopener\">Capitals vs Maple Leafs, 2017 playoffs</a> by David from Washington, DC, CC BY 2.0",
   "Numbers: NHL Props Lab track record, data/bestpicks.json on the site branch as built November 9, 2026, covering October 25 to November 8 (205 graded picks on the All tab, one void left out; 102 graded picks on the Multi-point tab). Stakes are one unit per pick. Simulations: 40,000 replays of those same 205 picks and prices, run for this article. Charts: NHL Props Lab."
  ]
 }
