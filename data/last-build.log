@@ -5,23 +5,23 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 719 skaters and 74 goalies (careers + game logs) ...
+Fetching 720 skaters and 74 goalies (careers + game logs) ...
 Fetching 282 recent box scores (hits, blocks) ...
-News: 124 injuries, likely starters for 16 games (+20 backup reports), line combinations for 32/32 teams, game-day lineups for 12 teams (2026-11-08, updated 2026-11-08T22:12:22.992Z)
+News: 124 injuries, likely starters for 27 games (+20 backup reports), line combinations for 32/32 teams, game-day lineups for 12 teams (2026-11-08, updated 2026-11-08T22:12:22.992Z)
   shot maps: 282 games, 32243 attempts
-Model built: 48 games, 719 skaters (567 expected to play)
+Model built: 48 games, 720 skaters (567 expected to play)
 Odds: bookmaker prices for 3 games, 106 players
-Odds: sharp-book prices for 0 games, 0 player markets
+Odds: sharp-book prices for 2 games, 57 player markets
   Stoiximan sync: 2 games, 0 player prices (last push 2026-11-08T21:21:36.794875+00:00, pre)
 Public betting: splits for 3 games
-  season simulation: 10000 seasons, 1062 games left, top Cup: CAR 32%, COL 11%, MIN 10%
+  season simulation: 10000 seasons, 1062 games left, top Cup: CAR 32%, COL 12%, MIN 10%
 Futures odds: Cup 32, conference 32, division 32, playoffs 20, points 20
-Player projections: 719 skaters
+Player projections: 720 skaters
 Goalie projections: 74 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 8,543 player-games
-  history: game-by-game files for 715 players (3 seasons)
+  history: game-by-game files for 716 players (3 seasons)
   archive: 7 past dates published (2026-11-02, 2026-11-03, 2026-11-04, 2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08)
 Best picks record: 205 graded, 56 won, +8.57 units
 Triage ledger: 76 graded blocks bets: time to review whether blocks join the headline Solid record
