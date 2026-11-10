@@ -1,26 +1,9 @@
 {
- "2026-11-09-nyr-edm": [
-  "Connor McDavid Oilers",
-  "Leon Draisaitl Oilers",
-  "Zach Hyman Edmonton Oilers",
-  "Rogers Place Edmonton Oilers game",
-  "Mika Zibanejad Rangers",
-  "Artemi Panarin Rangers Madison Square Garden"
- ],
- "2026-11-09-phi-van": [
-  "Elias Pettersson Canucks",
-  "Quinn Hughes Canucks",
-  "Rogers Arena Vancouver Canucks game",
-  "Brock Boeser Canucks",
-  "Travis Konecny Flyers",
-  "Matvei Michkov Flyers"
- ],
- "2026-11-09-nyi-sjs": [
-  "Macklin Celebrini Sharks",
-  "William Eklund Sharks",
-  "SAP Center San Jose Sharks game",
-  "Bo Horvat Islanders",
-  "Ilya Sorokin Islanders",
-  "Tomas Hertl San Jose Sharks"
- ]
+ "2026-11-10-col-tor": ["Nathan MacKinnon Avalanche", "Cale Makar Avalanche", "Martin Necas Avalanche", "Colorado Avalanche game", "William Nylander Maple Leafs", "Toronto Maple Leafs game"],
+ "2026-11-10-min-mtl": ["Kirill Kaprizov Wild", "Nick Suzuki Canadiens", "Cole Caufield Canadiens", "Bell Centre Montreal Canadiens game", "Matt Boldy Wild", "Lane Hutson"],
+ "2026-11-10-wsh-ott": ["Tim Stützle Senators", "Drake Batherson Senators", "Ottawa Senators game", "Alex Ovechkin Capitals", "Dylan Strome Capitals", "Tom Wilson Capitals"],
+ "2026-11-10-njd-wpg": ["Jack Hughes Devils", "Jesper Bratt Devils", "Nico Hischier Devils", "Kyle Connor Jets", "Mark Scheifele Jets", "Winnipeg Jets game"],
+ "2026-11-10-fla-cbj": ["Zach Werenski Blue Jackets", "Columbus Blue Jackets game Nationwide Arena", "Matthew Tkachuk Panthers", "Sam Reinhart Panthers", "Brady Tkachuk", "Adam Fantilli"],
+ "2026-11-10-det-stl": ["Robert Thomas Blues", "St. Louis Blues game Enterprise Center", "Lucas Raymond Red Wings", "Moritz Seider Red Wings", "Alex DeBrincat Red Wings", "Jordan Binnington Blues"],
+ "2026-11-10-nsh-lak": ["Artemi Panarin", "Adrian Kempe Kings", "Los Angeles Kings game", "Filip Forsberg Predators", "Steven Stamkos Predators", "Roman Josi Predators"]
 }
