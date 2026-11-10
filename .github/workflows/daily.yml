@@ -8,7 +8,7 @@ on:
     - cron: "15 22 * * *"   # 23:15 - just before most puck drops
     - cron: "15 8 * * *"    # 09:15 Stockholm - morning results, after the late West Coast games
   workflow_dispatch:         # "Run workflow" button in the Actions tab
-  # pre-game checks + goalie watch come from Supabase pg_cron (every 10-15 min, 14:00-08:30 Stockholm), because
+  # pre-game checks + goalie watch come from Supabase pg_cron (every 30 min at :10 and :40, 14:00-08:30 Stockholm), because
   # GitHub's own schedule delays or skips runs on busy days
   repository_dispatch:       # external ticker (Supabase pg_cron): pre-game check + goalie watch
     types: [pregame, stx]   # stx: new Stoiximan prices pushed from the browser script -> full build
