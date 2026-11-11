@@ -1,9 +1,8 @@
 {
- "2026-11-10-col-tor": ["Nathan MacKinnon Avalanche", "Cale Makar Avalanche", "Martin Necas Avalanche", "Colorado Avalanche game", "William Nylander Maple Leafs", "Toronto Maple Leafs game"],
- "2026-11-10-min-mtl": ["Kirill Kaprizov Wild", "Nick Suzuki Canadiens", "Cole Caufield Canadiens", "Bell Centre Montreal Canadiens game", "Matt Boldy Wild", "Lane Hutson"],
- "2026-11-10-wsh-ott": ["Tim Stützle Senators", "Drake Batherson Senators", "Ottawa Senators game", "Alex Ovechkin Capitals", "Dylan Strome Capitals", "Tom Wilson Capitals"],
- "2026-11-10-njd-wpg": ["Jack Hughes Devils", "Jesper Bratt Devils", "Nico Hischier Devils", "Kyle Connor Jets", "Mark Scheifele Jets", "Winnipeg Jets game"],
- "2026-11-10-fla-cbj": ["Zach Werenski Blue Jackets", "Columbus Blue Jackets game Nationwide Arena", "Matthew Tkachuk Panthers", "Sam Reinhart Panthers", "Brady Tkachuk", "Adam Fantilli"],
- "2026-11-10-det-stl": ["Robert Thomas Blues", "St. Louis Blues game Enterprise Center", "Lucas Raymond Red Wings", "Moritz Seider Red Wings", "Alex DeBrincat Red Wings", "Jordan Binnington Blues"],
- "2026-11-10-nsh-lak": ["Artemi Panarin", "Adrian Kempe Kings", "Los Angeles Kings game", "Filip Forsberg Predators", "Steven Stamkos Predators", "Roman Josi Predators"]
+ "2026-11-11-tbl-buf": ["Nikita Kucherov Lightning", "Jake Guentzel Lightning", "Tage Thompson Sabres", "Rasmus Dahlin Sabres", "Brandon Hagel", "Buffalo Sabres game KeyBank Center"],
+ "2026-11-11-nyr-cgy": ["Adam Fox Rangers", "Mika Zibanejad Rangers", "Calgary Flames game Saddledome", "Mikael Backlund Flames", "Artemi Panarin Rangers", "New York Rangers game"],
+ "2026-11-11-phi-edm": ["Leon Draisaitl Oilers", "Connor McDavid", "Evan Bouchard Oilers", "Rogers Place Edmonton Oilers game", "Travis Konecny Flyers", "Matvei Michkov"],
+ "2026-11-11-uta-vgk": ["Jack Eichel Golden Knights", "Vegas Golden Knights game T-Mobile Arena", "Clayton Keller Utah", "Logan Cooley", "Mark Stone Golden Knights", "Mitch Marner"],
+ "2026-11-11-nsh-ana": ["Cutter Gauthier Ducks", "Leo Carlsson Ducks", "Anaheim Ducks game Honda Center", "Steven Stamkos Predators", "Juuse Saros Predators", "Filip Forsberg Predators"],
+ "2026-11-11-pit-sjs": ["Macklin Celebrini Sharks", "Sidney Crosby Penguins", "Evgeni Malkin", "San Jose Sharks game SAP Center", "Erik Karlsson Penguins", "Will Smith Sharks"]
 }
