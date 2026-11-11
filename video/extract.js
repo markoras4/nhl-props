@@ -28,11 +28,11 @@
       const p = P(pr.id);
       const cell = m => ({ v: r2(prob(pr, g, m)), od: book(g.id, pr.id, m)?.o ?? null });
       return { id: pr.id, name: p.name, team: pr.team, g: cell("g"), pt: cell("pt"), s: cell("s2.5") };
-    }).sort((a, b) => b.pt.v - a.pt.v);
+    }).sort((a, b) => (b.pt.v || -1) - (a.pt.v || -1));
     const top = rows.slice(0, 6);
     if (picks[0] && !top.some(x => x.id === picks[0].id)) { top.pop(); top.push(rows.find(x => x.id === picks[0].id)); }
     // every active player of the best pick's team, for the animated team table
-    const team_rows = picks[0] ? rows.filter(x => x.team === picks[0].team).sort((a, b) => b.g.v - a.g.v).slice(0, 18) : [];
+    const team_rows = picks[0] ? rows.filter(x => x.team === picks[0].team).sort((a, b) => (b.g.v || -1) - (a.g.v || -1)).slice(0, 18) : [];
     if (picks[0] && !team_rows.some(x => x.id === picks[0].id)) { team_rows.pop(); team_rows.push(rows.find(x => x.id === picks[0].id)); }
     const o = DATA.odds?.[g.id] || {};
     const nv = (a, b) => a && b ? (1 / a) / ((1 / a) + (1 / b)) : null;

@@ -326,7 +326,7 @@ window.render=function(t){
       s.trows.forEach((r,k)=>{const at=PB+.3+k*.045,p=eOut(seg(u,at,at+.4));
         r.style.opacity=p*(k===s.bi?1:lerp(1,.15,clamp(zp*2))); r.style.transform=`translateX(${(1-p)*120}px)`;
         const q=eOut(seg(u,at+.1,at+.75)); s.tgb[k].style.transform=`scaleX(${q})`;
-        s.tnums[k].forEach(b=>b.textContent=pct(+b.dataset.v*q));});
+        s.tnums[k].forEach(b=>{const v=parseFloat(b.dataset.v); if(isNaN(v)){b.textContent='PRO';b.style.opacity=.45;} else b.textContent=pct(v*q);});});
       // scan bar sweeps down to the pick's row
       const sp=eInOut(seg(u,PB+1.45,PB+2.2)), sy=lerp(s.trows[0].offsetTop,s.trows[s.bi].offsetTop,sp);
       s.tscan.style.top=sy+'px'; s.tscan.style.opacity=clamp(seg(u,PB+1.35,PB+1.5))*(1-seg(u,PB+2.2,PB+2.45));
