@@ -63,6 +63,7 @@ Also planned for that release: 18+ check on the landing page again, Stripe check
 | Lines & pairs list: every line/pair in the league, sortable by xG%, chances/60, over/under-scoring, goaltending luck | no | yes |
 | Parlay check: combined chance with same-game links, fair odds, EV, staking plans, saved and graded parlays | 2-leg check (free account to save) | full |
 | Public betting (tickets % and money % per side: moneyline, total, puck line) | no | yes |
+| Market line movement (Polymarket: moneyline, main total and -1.5 puck line from market open to puck drop, vs the model) | no | yes |
 | Triage grades (Solid / Lean / Fragile, reasons, season and last-10 checks) on prop cells, Best picks, Prices & value | only the open players (1 F + 1 D per team) | everyone |
 | Slate triage list (Props → Triage: every value bet of the day, game filter, linked warnings) | "How Triage works" panel + blurred list with the counts ("38 Solid · 52 Lean tonight") and an upgrade button | full list |
 | Track record: results by triage grade | yes (public) | yes |
