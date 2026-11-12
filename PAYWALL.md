@@ -41,6 +41,7 @@ Pro data must only be sent to Pro users (served by a Supabase function that chec
 | Shot profile tiers (elite / good / average / below) | season tiers | everything |
 | Odds movement | no | yes |
 | Player page: last 10 games + chart | yes | yes |
+| Heat Index (points vs expected, last 10 games, on the player page) | yes | yes |
 | Hit rates | L5, L10, L20, season (counts from the public game logs) | plus vs opponent and model vs market |
 | Per-player matchup (what the opponent allows his position) | yes (same numbers as the free defence-by-position table and the Tonight card) | yes |
 | Shot map | season, last 10 and single-game maps, with tiers | plus the shot-profile numbers |

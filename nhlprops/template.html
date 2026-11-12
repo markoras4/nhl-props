@@ -335,6 +335,18 @@ tr:hover .pbt i{box-shadow:0 0 16px rgba(var(--heat),.45)}
 .hits i.y{background:var(--hit)}
 .detail{padding:12px 4px 16px}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+.heat{--hc:var(--mute);margin:2px 0 12px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--hc) 9%,var(--panel2));border:1px solid color-mix(in srgb,var(--hc) 28%,transparent)}
+.heat.ht-vh,.heat.ht-h{--hc:var(--bad)}.heat.ht-w{--hc:var(--warn)}.heat.ht-c,.heat.ht-cc{--hc:var(--accent2)}
+.heath{display:flex;align-items:center;gap:8px;font-size:12px}.heatn{display:inline-flex;align-items:center;gap:5px;color:var(--mute);font-weight:600}
+.heatv{margin-left:auto;font:700 18px var(--f-num);color:var(--hc);font-variant-numeric:tabular-nums}
+.heatl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--hc);background:color-mix(in srgb,var(--hc) 15%,transparent);border-radius:5px;padding:2px 6px}
+.heat.ht-n .heatv,.heat.ht-n .heatl{color:var(--text)}
+.heatbar{position:relative;height:6px;margin:8px 0 7px;border-radius:3px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent2) 22%,var(--line)),var(--line) 50%,color-mix(in srgb,var(--bad) 22%,var(--line)))}
+.heatbar i{position:absolute;top:0;bottom:0;background:var(--hc);border-radius:3px;animation:heatin .7s cubic-bezier(.2,.8,.2,1) both}
+.heatbar s{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--mute);border-radius:1px}
+@keyframes heatin{from{width:0}}
+@media (prefers-reduced-motion:reduce){.heatbar i{animation:none}}
+.heatm{font-size:12px;line-height:1.45;color:var(--mute)}
 .l10row{grid-column:1/-1;display:grid;grid-template-columns:minmax(280px,1fr) minmax(0,2.4fr);gap:12px;align-items:stretch}
 .l10box{display:flex;flex-direction:column}.l10box .l10svg{margin-top:auto;margin-bottom:auto}
 @media (max-width:900px){.l10row{grid-template-columns:minmax(0,1fr)}}
@@ -3122,6 +3134,33 @@ const CL_OPEN = k => { try { return localStorage.getItem("cl:"+k) === "1"; } cat
 const CL_SET = k => { try { return localStorage.getItem("cl:"+k) != null; } catch(e){ return false; } };
 document.addEventListener("click", e => { const h = e.target.closest(".clph"); if (!h || e.target.closest(".hinfo")) return; const c = h.parentElement, on = !c.classList.contains("open");
   c.classList.toggle("open", on); h.setAttribute("aria-expanded", on); try { localStorage.setItem("cl:"+c.dataset.clk, on ? "1" : "0"); } catch(e){} });
+// ------------------------------------------------------------ Heat Index (nhlprops/backtest_heat.py): points in the last 10
+//   games minus what his scoring rate gives in the ice time he got. Free: built from public game logs and public rates.
+Object.assign(I18N.en, {ht_name:"Heat Index", ht_vh:"Very hot", ht_h:"Hot", ht_w:"Warm", ht_n:"Normal", ht_c:"Cool", ht_cc:"Cold",
+  ht_line:"{x} points in his last {n} games vs {e} expected for his ice time",
+  ht_hot:"Mostly luck: about 1 point in 10 of a run like this carries over, and the model already counts it. Sportsbooks move their prices with it too, so don't pay extra for the streak.",
+  ht_vhot:"Mostly luck, but at +4 and above part of it is real: in four seasons these players still beat the model by about 2 percentage points. Sportsbooks move with the streak as much as the model does.",
+  ht_cold:"Slumps don't carry over: in four seasons the model's number held exactly for cold players. Don't write him off; check whether his price has drifted past the model's chance.",
+  ht_norm:"Producing about what his role gives him.",
+  tt_heat:"Heat Index = points in his last 10 games minus the points his scoring rate would produce in the ice time he got. It shows how much of a hot or cold run is luck. Tested on four seasons (155,000 player-games): about a tenth of the heat carries over to the next games, and the model's recent-form term already adds that part to tonight's number."});
+Object.assign(I18N.sv, {ht_name:"Heat Index", ht_vh:"Mycket het", ht_h:"Het", ht_w:"Varm", ht_n:"Normal", ht_c:"Sval", ht_cc:"Kall",
+  ht_line:"{x} poäng på hans senaste {n} matcher mot {e} förväntat för hans istid",
+  ht_hot:"Mest tur: ungefär 1 poäng av 10 i en sådan svit håller i sig, och modellen räknar redan med den. Spelbolagen flyttar sina odds med den också, så betala inte extra för sviten.",
+  ht_vhot:"Mest tur, men från +4 och uppåt är en del äkta: under fyra säsonger slog sådana spelare fortfarande modellen med ungefär 2 procentenheter. Spelbolagen följer sviten lika mycket som modellen.",
+  ht_cold:"Svackor håller inte i sig: under fyra säsonger stämde modellens siffra exakt för kalla spelare. Avskriv honom inte; kolla om hans odds har drivit förbi modellens chans.",
+  ht_norm:"Producerar ungefär vad hans roll ger.",
+  tt_heat:"Heat Index = poäng på hans senaste 10 matcher minus de poäng hans poängtakt skulle ge på den istid han fick. Den visar hur mycket av en het eller kall svit som är tur. Testat på fyra säsonger (155 000 spelarmatcher): ungefär en tiondel av hettan håller i sig, och modellens formterm lägger redan till den delen i kvällens siffra."});
+function heatLevel(v){ return v >= 4 ? "vh" : v >= 2.5 ? "h" : v >= 1 ? "w" : v > -1 ? "n" : v > -2.5 ? "c" : "cc"; }
+function heatStrip(p){
+  const h = p?.streaks?.heat; if (!h || h.v == null) return "";
+  const lv = heatLevel(h.v), M = 6, w = Math.min(Math.abs(h.v), M) / M * 50;
+  const msg = lv === "vh" ? "ht_vhot" : lv === "h" || lv === "w" ? "ht_hot" : lv === "c" || lv === "cc" ? "ht_cold" : "ht_norm";
+  const fill = h.v >= 0 ? `left:50%;width:${w}%` : `right:50%;width:${w}%`;
+  return `<div class="heat ht-${lv}">
+    <div class="heath"><span class="heatn">${t("ht_name")} ${HI("tt_heat")}</span><b class="heatv">${h.v >= 0 ? "+" : "−"}${fmt(Math.abs(h.v),1)}</b><span class="heatl">${t("ht_" + lv)}</span></div>
+    <div class="heatbar" role="img" aria-label="${esc(t("ht_name"))} ${h.v >= 0 ? "+" : "−"}${fmt(Math.abs(h.v),1)}"><i style="${fill}"></i><s></s></div>
+    <div class="heatm">${t("ht_line",{x:h.x, n:h.n, e:fmt(h.e,1)})}. ${t(msg)}</div></div>`;
+}
 function detail(pr, g){
   const p = P(pr.id), l = lambdas(pr, g), r = p.rates, f = pr.factors, rg = p.regress, d = p.drought, xgw = p.xg_windows;
   const og = G(state.goalie[g.id][pr.opp]);
@@ -3172,7 +3211,7 @@ function detail(pr, g){
         ${KL("tt_drought", t("k_drought"))}<span>${pct(d.p,0)}${d.p>0&&d.p<0.5?` <span class="meta">(1 / ${Math.round(1/d.p)})</span>`:""}</span>
       </div></div>
     ${oppPosPlayer(pr, p)}
-    <div class="l10row"><div class="box"><h4>${t("last10")}</h4>
+    <div class="l10row"><div class="box"><h4>${t("last10")}</h4>${heatStrip(p)}
       <table class="mini"><thead><tr><th>${t("h_date")}</th><th>${t("h_opp")}</th><th class="n">${t("h_g")}</th><th class="n">${t("h_a")}</th><th class="n">${t("h_s")}</th><th class="n">${t("toi")}</th></tr></thead>
       <tbody>${p.form.games.map(x=>`<tr data-spd="${x.d}" class="${state.spw==="g:"+x.d?"spsel":""}" title="${esc(t("sp_row_tip"))}"><td>${x.d.slice(5)}</td><td>${x.h?"":"@"}${x.o}</td><td class="n ${x.g?"hit":""}">${x.g}</td><td class="n ${x.a?"hit":""}">${x.a}</td><td class="n">${x.s}</td><td class="n">${fmt(x.t,1)}</td></tr>`).join("")||`<tr><td colspan="6" class="meta">${t("no_games_yet")}</td></tr>`}</tbody></table></div>
     ${p.form.games.length ? `<div class="box l10box" data-pid="${pr.id}" data-gid="${g.id}">${l10Chart(pr, g)}</div>` : ""}</div>

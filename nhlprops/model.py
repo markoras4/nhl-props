@@ -788,6 +788,13 @@ def skater_profile(p: dict, sf: pd.DataFrame, lgpos: dict, land: dict | None, lo
     streaks = {"pd": pt_dry, "pp": (1 - p_pt_game) ** pt_dry if pt_found else None, "ppg": round(p_pt_game, 3),
                "ps": pt_streak, "gst": g_streak,
                "ps_pts": sum(g["g"] + g["a"] for g in lc[:pt_streak]), "gst_g": sum(g["g"] for g in lc[:g_streak])}
+    # ---- Heat Index (backtest_heat): points in his last 10 games minus what his level would have produced in the ice
+    #      time he got. About a tenth of it carries over and the recent-form term above already counts that part;
+    #      bookmakers' prices move with it just as much as the model's (checked on this season's prices, 2026-11-12).
+    if len(last10) >= 5:
+        x10 = sum(x["g"] + x["a"] for x in last10)
+        e10 = (g60 + a60) * sum(x["toi"] for x in last10) / 60
+        streaks["heat"] = {"v": round(x10 - e10, 2), "x": x10, "e": round(e10, 2), "n": len(last10)}
     # ---- career totals (regular season, including this season) for milestones
     ct = ((land or {}).get("careerTotals") or {}).get("regularSeason") or {}
     career = {k: int(ct[k]) for k in ("goals", "assists", "points", "gamesPlayed") if isinstance(ct.get(k), (int, float))}

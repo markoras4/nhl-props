@@ -619,6 +619,8 @@ def main(argv=None):
     bt.add_argument("--teamluck", action="store_true", help="test whether team luck affects player props")
     bt.add_argument("--matchups", action="store_true", help="test line matchups (which defence pairs forwards face) from shift charts")
     bt.add_argument("--ptsluck", action="store_true", help="test whether team points luck predicts future team results")
+    bt.add_argument("--heat", action="store_true", help="test the Heat Index (points above the model, last 10 games)")
+    bt.add_argument("--metrics", action="store_true", help="test the Spread Index and Script Beta player metrics")
     bt.add_argument("--streak", action="store_true", help="test a point-streak bonus for established players and a stronger depth correction")
     args = ap.parse_args(argv)
 
@@ -749,6 +751,14 @@ def main(argv=None):
         if args.hot:
             from .backtest_hot import run as run_hot
             run_hot(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.heat:
+            from .backtest_heat import run as run_heat
+            run_heat(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.metrics:
+            from .backtest_metrics import run as run_metrics
+            run_metrics(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.streak:
             from .backtest_streak import run as run_streak
