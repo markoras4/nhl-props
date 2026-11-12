@@ -7,10 +7,10 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 720 skaters and 74 goalies (careers + game logs) ...
 Fetching 298 recent box scores (hits, blocks) ...
-News: 110 injuries, likely starters for 26 games (+26 backup reports), line combinations for 32/32 teams, game-day lineups for 15 teams (2026-11-12, updated 2026-11-12T19:35:52.573Z)
+News: 107 injuries, likely starters for 26 games (+26 backup reports), line combinations for 32/32 teams, game-day lineups for 17 teams (2026-11-12, updated 2026-11-12T20:02:59.047Z)
   shot maps: 298 games, 34053 attempts
-Model built: 48 games, 720 skaters (563 expected to play)
-Odds: bookmaker prices for 12 games, 352 players
+Model built: 48 games, 720 skaters (564 expected to play)
+Odds: bookmaker prices for 12 games, 422 players
 Odds: sharp-book prices for 10 games, 551 player markets
   Stoiximan sync: 11 games, 2245 player prices (last push 2026-11-12T13:31:54.228702+00:00, hourly); unmatched: Artyom Duda, Trey Taylor
   manual odds: 979 player prices added
@@ -24,7 +24,7 @@ Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 9,052 player-games
   history: game-by-game files for 714 players (3 seasons)
   archive: 7 past dates published (2026-11-05, 2026-11-06, 2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11)
-Best picks record: 237 graded, 63 won, -3.93 units
-Triage ledger: 101 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 1099 bets +21.2u, L 2402 bets -141.1u, F 1754 bets -26.8u
+Best picks record: 239 graded, 63 won, -5.93 units
+Triage ledger: 104 graded blocks bets: time to review whether blocks join the headline Solid record
+Triage ledger: S 1115 bets +18.7u, L 2417 bets -129.8u, F 1776 bets -30.0u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-12.html
