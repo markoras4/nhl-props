@@ -1092,6 +1092,13 @@ tr.row.pwopen td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .pwbadge.free,.pwbadge.visitor{background:color-mix(in srgb,var(--mute) 18%,transparent);color:var(--mute)}
 .pwlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:6px;font-size:14px}.pwfree{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
 .pwnote{font-size:12.5px;color:var(--mute);margin:6px 0}
+/* remembered Pro sign-in while the Pro data loads: placeholders, not locks */
+@keyframes pwpulse{0%,100%{opacity:.35}50%{opacity:.7}}
+.pwwait .pwlock{border-style:solid;border-color:var(--line)}.pwwait .pwover{display:none}.pwwait .pwblur{animation:pwpulse 1.4s ease-in-out infinite}
+.pwwait .cell.pwc{cursor:default}.pwwait .cell.pwc small{visibility:hidden}.pwwait .cell.pwc b{animation:pwpulse 1.4s ease-in-out infinite}
+.pwwait .pwin{font-size:0;cursor:default}.pwwait .pwin i{font-size:12px;animation:pwpulse 1.4s ease-in-out infinite}
+.pwwait .pwnote.pwlk{display:none}
+
 a.mbtn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 </style>
 <script>/* light/dark choice before the first paint, so a refresh never flashes the default */(function(){ try { const s = localStorage.getItem("set:theme"); if (s==="light"||s==="dark") document.documentElement.setAttribute("data-theme", s); } catch(e){} })();</script>
@@ -1994,6 +2001,13 @@ const FREE_WATCH = DATA.paywall?.free_watch ?? 3, FREE_LEGS = DATA.paywall?.free
 let PLAN = "visitor";                                     // visitor | free | pro | creator | media
 let PRO = !PAYWALLED;                                     // Pro features on (and Pro data loaded)
 let PRO_STATE = "";                                       // "" | loading | error
+// A browser that is signed in and was on a Pro plan last time shows "loading" placeholders instead of locks until
+// the Pro data arrives (loadPlan), so a paying user never sees locks flash on a refresh. Nothing is unlocked by it.
+const PW_REMEMBER = "pw:plan";
+try { if (PAYWALLED && PRO_PLANS.includes(localStorage.getItem(PW_REMEMBER)) && Object.keys(localStorage).some(k => /^sb-.*-auth-token$/.test(k))){
+  PRO_STATE = "loading"; document.documentElement.classList.add("pwwait");
+  setTimeout(() => { if (PRO_STATE === "loading" && !PRO_LOADED){ PRO_STATE = ""; document.documentElement.classList.remove("pwwait"); render(); } }, 15000);
+} } catch(e){}
 const OPEN = new Set((DATA.open_ids || []).map(String));  // 1 forward + 1 defenceman per team, open to everyone
 const isOpenP = id => PRO || OPEN.has(String(id));
 const prOpen = pr => PRO || (!!pr && !pr.locked && OPEN.has(String(pr.id)));   // archive props are all locked for free
@@ -3979,7 +3993,7 @@ function exploreTab(){
     <div class="exhead"><div><h2 class="exh2">${t(TM ? "ext_title" : "ex_title")}</h2><p class="meta">${t(TM ? "ext_sub" : "ex_sub")}</p></div>
       <div class="exhr"><div class="seg olseg exview" id="exview"><button data-k="chart" class="${S.view==="list"?"":"on"}">${t("ex_view_chart")}</button><button data-k="list" class="${S.view==="list"?"on":""}">${t("ex_view_list")}</button></div>
       <div class="seg olseg exmode" id="exmode"><button data-k="players" class="${TM?"":"on"}">${t("ex_m_players")}</button><button data-k="teams" class="${TM?"on":""}">${t("ex_m_teams")}</button></div></div></div>
-    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(PT).map(k=>`<button data-k="${k}" class="${pre===k?"on":""}">${t((TM?"extp_":"exp_")+k)}${!PRO && !TM && k==="tonight" ? " 🔒" : ""}</button>`).join("")}</div></div>
+    <div class="controls"><div class="seg olseg" id="expre">${Object.keys(PT).map(k=>`<button data-k="${k}" class="${pre===k?"on":""}">${t((TM?"extp_":"exp_")+k)}${!PRO && !TM && k==="tonight" && PRO_STATE !== "loading" ? " 🔒" : ""}</button>`).join("")}</div></div>
     <div class="controls exctl">
       <label class="exsel"><span>Y</span><select id="exy">${opt(ay)}</select></label><label class="exsel"><span>X</span><select id="exx">${opt(ax)}</select></label>
       ${filters}
@@ -5795,6 +5809,9 @@ async function loadPlan(){
     } catch(e){ console.warn("pro-data", e); PRO_STATE = "error"; }
   }
   PRO = !PAYWALLED || (want && PRO_LOADED);
+  if (!want && PRO_STATE === "loading") PRO_STATE = "";   // the remembered Pro plan has ended or someone else signed in
+  document.documentElement.classList.toggle("pwwait", PRO_STATE === "loading");
+  try { if (PLAN === "visitor") localStorage.removeItem(PW_REMEMBER); else localStorage.setItem(PW_REMEMBER, PLAN); } catch(e){}
   if (PRO && document.querySelector("#modal .pwlist")) closeModal();
   if (PRO && PAYWALLED) loadSharp();
   if (PRO && sb) loadPM();
@@ -5986,7 +6003,7 @@ function futuresTab(){
   const filters = [["all","fu_all"],["East","fu_east"],["West","fu_west"],["Atlantic","Atlantic"],["Metropolitan","Metropolitan"],["Central","Central"],["Pacific","Pacific"]];
   $("#main").innerHTML = `<div class="fuhead fuhead2"><div><h2>${t("fu_title")}</h2><p class="meta">${t("fu_sub",{n:(F.sims||0).toLocaleString(LOCALE()), g:F.remaining||0})}</p></div>${fuSwitch()}</div>
     <div class="controls"><div class="seg mgrp" id="fuf">${filters.map(([k,l])=>`<button data-f="${k}" class="${flt===k?"on":""}">${l.startsWith("fu_")?t(l):l}</button>`).join("")}</div></div>
-    ${PRO ? "" : `<p class="pwnote">🔒 ${t("pw_fut")} <button type="button" class="pwbtn" data-upgrade="futures">${t("pw_btn")}</button></p>`}
+    ${PRO ? "" : `<p class="pwnote pwlk">🔒 ${t("pw_fut")} <button type="button" class="pwbtn" data-upgrade="futures">${t("pw_btn")}</button></p>`}
     <div class="card tablewrap futab"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>
     <div class="legend"><span><b>42%</b> ${t("fu_lg_p")}</span><span><small>2.38</small> ${t("fu_lg_fair")}</span>${PRO ? `<span><span class="bk pos">3.10</span> ${t("fu_lg_book")}</span>` : ""}</div>
     <p class="foot">${t("fu_foot")}</p>`;
