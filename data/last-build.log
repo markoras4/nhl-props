@@ -11,10 +11,11 @@ News: 111 injuries, likely starters for 28 games (+34 backup reports), line comb
   shot maps: 292 games, 33390 attempts
 Model built: 51 games, 719 skaters (565 expected to play)
 Odds: bookmaker prices for 17 games, 605 players
-Odds: sharp-book prices for 6 games, 350 player markets
-  Stoiximan sync: 11 games, 1462 player prices (last push 2026-11-11T23:48:02.259414+00:00, close); unmatched: Artyom Duda
-  manual odds: 539 player prices added
-Public betting: splits for 17 games
+Odds: sharp-book prices for 5 games, 297 player markets
+  Stoiximan sync: 11 games, 1380 player prices (last push 2026-11-12T00:04:02.939836+00:00, pre); unmatched: Artyom Duda
+  manual odds: 514 player prices added
+Public betting: splits for 16 games
+Public betting: saved 1 locked splits (80 this season)
   season simulation: 10000 seasons, 1052 games left, top Cup: CAR 33%, COL 13%, MIN 9%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
 Player projections: 719 skaters
