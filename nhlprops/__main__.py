@@ -619,6 +619,7 @@ def main(argv=None):
     bt.add_argument("--teamluck", action="store_true", help="test whether team luck affects player props")
     bt.add_argument("--matchups", action="store_true", help="test line matchups (which defence pairs forwards face) from shift charts")
     bt.add_argument("--ptsluck", action="store_true", help="test whether team points luck predicts future team results")
+    bt.add_argument("--streak", action="store_true", help="test a point-streak bonus for established players and a stronger depth correction")
     args = ap.parse_args(argv)
 
     data_dir = ROOT / "data"
@@ -748,6 +749,10 @@ def main(argv=None):
         if args.hot:
             from .backtest_hot import run as run_hot
             run_hot(src, seasons, CONFIG, ROOT / "backtest")
+            return 0
+        if args.streak:
+            from .backtest_streak import run as run_streak
+            run_streak(src, seasons, CONFIG, ROOT / "backtest")
             return 0
         if args.context:
             from .backtest_context import run as run_cx
