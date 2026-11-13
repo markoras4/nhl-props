@@ -267,6 +267,8 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font:700 22px/1 var(--f-disp);color:var(--accent);transition:transform .2s}
 .faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq details.closing{border-color:var(--line)}.faq details.closing summary::after{transform:translateY(-50%)}
+.faq summary::after{transition:transform .3s cubic-bezier(.22,.8,.22,1)}
 .faq .a{padding:0 18px 16px;color:var(--mute);font-size:15px}
 .faq .a p{margin:0 0 8px}.faq .a a{color:var(--text);text-decoration:underline;text-underline-offset:2px}
 
@@ -871,6 +873,23 @@ function render(){
   strip(); previews(); plans();
   $("#yr").textContent = new Date().getFullYear();
 }
+// FAQ: <details> that slide open and closed (height animated, answer fades in); plain toggle with reduced motion
+$("#faqlist").addEventListener("click", e => {
+  const s = e.target.closest("summary"); if (!s || e.target.closest(".a")) return;
+  const d = s.parentElement, a = d.querySelector(".a");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !d.animate) return;
+  e.preventDefault();
+  const from = d.offsetHeight, closing = d.open && !d.classList.contains("closing");
+  if (d._anim) d._anim.cancel();
+  let to;
+  if (closing){ d.classList.add("closing"); to = s.offsetHeight + (d.offsetHeight - d.clientHeight); }
+  else { d.classList.remove("closing"); d.open = true; to = d.offsetHeight;
+    a.animate({opacity:[0, 1], transform:["translateY(-6px)", "none"]}, {duration:320, delay:60, easing:"ease-out", fill:"backwards"}); }
+  d.style.overflow = "hidden";
+  const an = d._anim = d.animate({height:[from + "px", to + "px"]}, {duration:closing ? 260 : 340, easing:"cubic-bezier(.22,.8,.22,1)"});
+  const done = () => { if (d._anim !== an) return; d._anim = null; d.style.overflow = ""; if (closing){ d.open = false; d.classList.remove("closing"); } };
+  an.onfinish = done; an.oncancel = () => { if (d._anim === an){ d._anim = null; d.style.overflow = ""; } };
+});
 document.addEventListener("click", e => { const b = e.target.closest("[data-pm]"); if (!b) return; const pl = b.closest(".plan"); pl.classList.toggle("open"); plans(); });
 $("#lang").addEventListener("click", e => { const b = e.target.closest("button[data-l]"); if (!b) return; LANG = b.dataset.l; store.set("set:lang", LANG); render(); });
 document.querySelectorAll(".themebtn").forEach(btn => btn.addEventListener("click", () => { const nx = currentTheme()==="light" ? "dark" : "light"; store.set("set:theme", nx); applyTheme(nx); }));
