@@ -1,13 +1,4 @@
 {
- "2026-11-12-car-sea": ["Sebastian Aho Hurricanes", "Andrei Svechnikov", "Matty Beniers Kraken", "Carolina Hurricanes at Seattle Kraken", "Seth Jarvis Hurricanes", "Helsinki ice hockey arena"],
- "2026-11-12-mtl-bos": ["Nick Suzuki Canadiens", "Lane Hutson", "David Pastrnak Bruins", "TD Garden Bruins game", "Cole Caufield", "Jeremy Swayman"],
- "2026-11-12-min-tor": ["Kirill Kaprizov Wild", "Quinn Hughes", "Auston Matthews Maple Leafs", "William Nylander", "Matt Boldy Wild", "Toronto Maple Leafs game"],
- "2026-11-12-col-ott": ["Nathan MacKinnon Avalanche", "Cale Makar", "Brady Tkachuk Senators", "Tim Stutzle", "Ottawa Senators game Canadian Tire Centre", "Martin Necas"],
- "2026-11-12-wsh-njd": ["Jack Hughes Devils", "Nico Hischier", "Alex Ovechkin Capitals", "Dylan Strome", "Jesper Bratt", "Washington Capitals game"],
- "2026-11-12-tbl-cbj": ["Nikita Kucherov", "Zach Werenski Blue Jackets", "Adam Fantilli", "Nationwide Arena Blue Jackets game", "Andrei Vasilevskiy", "Brandon Hagel Lightning"],
- "2026-11-12-det-fla": ["Aleksander Barkov Panthers", "Sam Reinhart", "Lucas Raymond Red Wings", "Moritz Seider", "Florida Panthers game", "Matthew Tkachuk Panthers"],
- "2026-11-12-buf-chi": ["Connor Bedard Blackhawks", "Rasmus Dahlin Sabres", "Tage Thompson", "United Center Blackhawks game", "Frank Nazar", "Alex Tuch"],
- "2026-11-12-wpg-dal": ["Kyle Connor Jets", "Mark Scheifele", "Jason Robertson Stars", "Mikko Rantanen Stars", "Dallas Stars game American Airlines Center", "Wyatt Johnston"],
- "2026-11-12-stl-uta": ["Clayton Keller Utah", "Robert Thomas Blues", "Jordan Kyrou", "Utah Hockey Club game Delta Center", "Dylan Guenther", "St. Louis Blues game"],
- "2026-11-12-nyi-lak": ["Artemi Panarin", "Bo Horvat Islanders", "Ilya Sorokin", "Los Angeles Kings game Crypto.com Arena", "Adrian Kempe", "New York Islanders game"]
+  "2026-11-13-nyr-van": ["Mika Zibanejad Rangers", "Adam Fox Rangers", "Brock Boeser Canucks", "Vancouver Canucks Rogers Arena", "New York Rangers Canucks", "Alexis Lafreniere"],
+  "2026-11-13-nsh-vgk": ["Jack Eichel Golden Knights", "Mark Stone Golden Knights", "Steven Stamkos Predators", "Filip Forsberg Predators", "Nashville Predators Vegas Golden Knights", "T-Mobile Arena Golden Knights"]
 }
