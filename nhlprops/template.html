@@ -2027,7 +2027,7 @@ const PRO_MKT = m => /^(h|b|fo)\d|^(pt2|pt3|g2|g3|a2|ppp|pim0\.5|pim2\.5|fg)$/.t
 const canM = (pr, m) => PRO || (OPEN.has(String(pr?.id ?? pr)) && !PRO_MKT(m));
 const ACCOUNT = () => PLAN !== "visitor";
 Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t:"Pro", pw_player:"Pro player: unlock every player with Pro",
-  pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more.",
+  pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. €12.99 a month, or €89 for the whole season.",
   pw_feats:["Every player, not just 1 forward and 1 defenceman per team","Hits, blocks, multi-point, PP points, faceoffs, penalties, first goalscorer","Best picks and Triage, live until the lock","Odds movement, sharp-book prices, public betting","Season ranges, milestone and award chances","Hit rates vs the opponent and model vs market, shot-profile numbers","Alerts, unlimited watchlist, full parlay check"],
   pw_see_plans:"See plans", pw_signup:"Create a free account", pw_login:"Log in", pw_later:"Not now",
   pw_free_h:"Free with an account", pw_free_sub:"Create a free account to save picks, track closing odds, follow up to {n} players and save 2-leg parlays.",
@@ -2046,7 +2046,7 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
   pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games.", sharp_upd:"Sharp-book prices updated {t}."});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
-  pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera.",
+  pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. 12,99 € i månaden, eller 89 € för hela säsongen.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Säsongsspann, chanser för milstolpar och priser","Träffprocent mot motståndaren och modell mot marknad, skottprofilens siffror","Larm, obegränsad bevakning, full kombikoll"],
   pw_see_plans:"Se planer", pw_signup:"Skapa ett gratiskonto", pw_login:"Logga in", pw_later:"Inte nu",
   pw_free_h:"Gratis med konto", pw_free_sub:"Skapa ett gratiskonto för att spara spel, följa stängningsodds, bevaka upp till {n} spelare och spara kombos med 2 delar.",

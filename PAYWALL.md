@@ -1,5 +1,8 @@
 # Free / Pro / visitors: agreed plan (build together with Stripe)
 
+Prices (2026-11-13): Pro EUR 12.99 a month or EUR 89 for the season (October-June). A founder / Black Friday price
+(planned EUR 7.99 a month or EUR 59 a season, kept while subscribed, limited) comes with the domain and payments.
+
 Rule of thumb: anything about the game or the teams is free; anything that helps decide a bet on a specific player is Pro.
 Consistency rules (2026-11-09):
 * A chance and its fair odds are always shown together or locked together (fair odds = 1 / chance). What is always
