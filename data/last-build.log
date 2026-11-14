@@ -6,25 +6,29 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 717 skaters and 74 goalies (careers + game logs) ...
-Fetching 311 recent box scores (hits, blocks) ...
-News: 107 injuries, likely starters for 20 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 26 teams (2026-11-14, updated 2026-11-14T20:51:12.708Z)
-  shot maps: 311 games, 35561 attempts
+Fetching 312 recent box scores (hits, blocks) ...
+News: 107 injuries, likely starters for 20 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 26 teams (2026-11-14, updated 2026-11-14T21:12:34.692Z)
+  34 requests failed (first: https://www.dailyfaceoff.com/starting-goalies/2026-11-14 -> HTTP 403)
+Shot maps: downloading play-by-play for 1 new games ...
+  shot maps: 312 games, 35685 attempts
 Model built: 46 games, 717 skaters (563 expected to play)
-Odds: bookmaker prices for 17 games, 422 players
+Odds: bookmaker prices for 17 games, 596 players
 Odds: sharp-book prices for 12 games, 616 player markets
   Stoiximan sync: 16 games, 2589 player prices (last push 2026-11-14T20:24:56.284344+00:00, manual); unmatched: Anton Silayev, Artyom Duda, Ben McCartney, Kyle Burroughs, Trey Taylor, Zac Jones
-  manual odds: 1129 player prices added
-Public betting: splits for 16 games
-  season simulation: 10000 seasons, 1033 games left, top Cup: CAR 34%, COL 12%, MIN 11%
+  manual odds: 1128 player prices added
+Public betting: splits for 17 games
+  season simulation: 10000 seasons, 1032 games left, top Cup: CAR 35%, COL 12%, MIN 10%
 Futures odds: Cup 32, conference 32, division 32, playoffs 30, points 30
 Player projections: 717 skaters
 Goalie projections: 74 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 9,452 player-games
+  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 711 players (3 seasons)
   archive: 7 past dates published (2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13)
 Best picks record: 264 graded, 72 won, +5.85 units
 Triage ledger: 137 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 1259 bets +6.7u, L 2613 bets -121.8u, F 1933 bets -52.1u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-14.html
+Note: 34 downloads failed - see data/errors.log
