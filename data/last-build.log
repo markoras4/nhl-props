@@ -7,16 +7,16 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 717 skaters and 74 goalies (careers + game logs) ...
 Fetching 311 recent box scores (hits, blocks) ...
-News: 106 injuries, likely starters for 22 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 20 teams (2026-11-14, updated 2026-11-14T18:59:21.179Z)
+News: 106 injuries, likely starters for 22 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 22 teams (2026-11-14, updated 2026-11-14T19:16:43.344Z)
   shot maps: 311 games, 35561 attempts
 Model built: 47 games, 717 skaters (564 expected to play)
-Odds: bookmaker prices for 13 games, 456 players
+Odds: bookmaker prices for 15 games, 454 players
 Odds: sharp-book prices for 13 games, 669 player markets
   Stoiximan sync: 14 games, 2844 player prices (last push 2026-11-14T17:47:37.467449+00:00, close); unmatched: Anton Silayev, Artyom Duda, Ben McCartney, Kyle Burroughs, Phillip Tomasino, Trey Taylor, Zac Jones
-  manual odds: 1246 player prices added
-Public betting: splits for 14 games
+  manual odds: 1249 player prices added
+Public betting: splits for 15 games
   season simulation: 10000 seasons, 1033 games left, top Cup: CAR 34%, COL 12%, MIN 11%
-Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
+Futures odds: Cup 32, conference 32, division 32, playoffs 30, points 30
 Player projections: 717 skaters
 Goalie projections: 74 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal, Theo Lindstein
