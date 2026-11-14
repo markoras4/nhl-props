@@ -1,0 +1,1773 @@
+{
+ "2026-11-14-sea-car": [
+  [
+   "2026-11-14-sea-car_0.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Andr\u00e9 Burakovsky, Jaden Schwartz, Teuvo Ter\u00e4v\u00e4inen, Brett Pesce, Sebastian Aho and Jared McCann (52438502003).jpg",
+   "CC BY-SA 2.0",
+   6833,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_1.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Andr\u00e9 Burakovsky, Teuvo Ter\u00e4v\u00e4inen, Sebastian Aho, and Brett Pesce (52438255289).jpg",
+   "CC BY-SA 2.0",
+   5653,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_2.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Philipp Grubauer, Will Borgen, and Sebastian Aho (52438256344).jpg",
+   "CC BY-SA 2.0",
+   4590,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_3.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Seth Jarvis, Sebastian Aho, Alexander Wennberg, Justin Schultz and Philipp Grubauer save (52438434800).jpg",
+   "CC BY-SA 2.0",
+   6579,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_4.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Philipp Grubauer (52437474077).jpg",
+   "CC BY-SA 2.0",
+   5153,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_5.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Pre-game tentacle (52438254124).jpg",
+   "CC BY-SA 2.0",
+   6630,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_6.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Will Borgen and Carson Soucy (52437978951).jpg",
+   "CC BY-SA 2.0",
+   5019,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_7.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Will Borgen and Carson Soucy (52438436520).jpg",
+   "CC BY-SA 2.0",
+   5508,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_8.jpg",
+   "File:Calgary Flames at Seattle Kraken - 2024-09-22 - Matty Beniers (54017423673).jpg",
+   "CC BY-SA 2.0",
+   5997,
+   "2024-09-22"
+  ],
+  [
+   "2026-11-14-sea-car_9.jpg",
+   "File:Calgary Flames at Seattle Kraken - 2024-09-22 - Matty Beniers (54017517814).jpg",
+   "CC BY-SA 2.0",
+   5997,
+   "2024-09-22"
+  ],
+  [
+   "2026-11-14-sea-car_10.jpg",
+   "File:2023-10-17 pre-game Matty Beniers-1.jpg",
+   "CC BY-SA 2.0",
+   5910,
+   "2023-10-17"
+  ],
+  [
+   "2026-11-14-sea-car_11.jpg",
+   "File:Arizona Coyotes at Seattle Kraken - 2023-04-06 - Matty Beniers and Barrett Hayton (52800892695).jpg",
+   "CC BY-SA 2.0",
+   5677,
+   "2023-04-06"
+  ],
+  [
+   "2026-11-14-sea-car_12.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Jamie Oleksiak, Philipp Grubauer and Andrei Svechnikov (52437979446).jpg",
+   "CC BY-SA 2.0",
+   6275,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_13.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Vince Dunn, Yanni Gourde and Andrei Svechnikov (52438256714).jpg",
+   "CC BY-SA 2.0",
+   4714,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_14.jpg",
+   "File:Lillehammer 2016 Hockey Norv\u00e8ge - Russie (25025956436).jpg",
+   "CC BY-SA 2.0",
+   4052,
+   "2016-02-15"
+  ],
+  [
+   "2026-11-14-sea-car_15.jpg",
+   "File:Don Waddell, Andrei Svechnikov, and Rod Brind'Amour.jpg",
+   "CC0",
+   2904,
+   "2018-06-30"
+  ],
+  [
+   "2026-11-14-sea-car_16.jpg",
+   "File:Dumoulin 10 19 (53272873391).jpg",
+   "CC BY-SA 2.0",
+   5893,
+   "2023-10-19"
+  ],
+  [
+   "2026-11-14-sea-car_17.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Philipp Grubauer, Jamie Oleksiak, Justin Schultz and Seth Jarvis (52438501443).jpg",
+   "CC BY-SA 2.0",
+   6960,
+   "2022-10-18"
+  ],
+  [
+   "2026-11-14-sea-car_18.jpg",
+   "File:Carolina Hurricanes at Seattle Kraken - October 17, 2022 - Philipp Grubauer, Vince Dunn, Matty Beniers and Seth Jarvis (52437978496).jpg",
+   "CC BY-SA 2.0",
+   5412,
+   "2022-10-18"
+  ]
+ ],
+ "2026-11-14-wpg-chi": [
+  [
+   "2026-11-14-wpg-chi_0.jpg",
+   "File:Addison station before Frozen Confines IMG 4915.jpg",
+   "CC BY 4.0",
+   4032,
+   "2025-01-04"
+  ],
+  [
+   "2026-11-14-wpg-chi_1.jpg",
+   "File:Frozen Confines IMG 4920.jpg",
+   "CC BY 4.0",
+   4032,
+   "2025-01-04"
+  ],
+  [
+   "2026-11-14-wpg-chi_2.jpg",
+   "File:Frozen Confines IMG 4923.jpg",
+   "CC BY 4.0",
+   4032,
+   "2025-01-04"
+  ],
+  [
+   "2026-11-14-wpg-chi_3.jpg",
+   "File:Frozen Confines IMG 4932.jpg",
+   "CC BY 4.0",
+   4032,
+   "2025-01-04"
+  ],
+  [
+   "2026-11-14-wpg-chi_4.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Joey Daccord, Kyle Connor and Brian Dumoulin (53581308527).jpg",
+   "CC BY-SA 2.0",
+   5051,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_5.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Joey Daccord, Adam Larsson. Brian Dumoulin and Kyle Connor (53582498674).jpg",
+   "CC BY-SA 2.0",
+   4672,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_6.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Yanni Gourde, (53577594303).jpg",
+   "CC BY-SA 2.0",
+   3482,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_7.jpg",
+   "File:Winnipeg Jets at Washington Capitals - January 18, 2022 - Nic Dowd and Mark Scheifele (51832204797).jpg",
+   "CC BY-SA 2.0",
+   3510,
+   "2022-01-18"
+  ],
+  [
+   "2026-11-14-wpg-chi_8.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Mark Scheifele and Brandon Tanev (53577594268).jpg",
+   "CC BY-SA 2.0",
+   3877,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_9.jpg",
+   "File:7 Mark Scheifele Jersey.jpg",
+   "CC BY 2.0",
+   2896,
+   "2011-06-24"
+  ],
+  [
+   "2026-11-14-wpg-chi_10.jpg",
+   "File:7 Mark Scheifele Photo (5868731090).jpg",
+   "CC BY 2.0",
+   2896,
+   "2011-06-24"
+  ],
+  [
+   "2026-11-14-wpg-chi_11.jpg",
+   "File:Blackhawk Forward Marian Hossa's Gaming-Winning OT Goal Against the Dallas Stars United Center Chicago (IL) Sunday November 6, 2016 (30760243351).jpg",
+   "CC BY 2.0",
+   6000,
+   "2016-11-06"
+  ],
+  [
+   "2026-11-14-wpg-chi_12.jpg",
+   "File:Chicago Blackhawks vs. Buffalo Sabres December 2024 01 (arena).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "Taken on 2"
+  ],
+  [
+   "2026-11-14-wpg-chi_13.jpg",
+   "File:Chicago Blackhawks vs. Buffalo Sabres December 2024 02 (arena).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "Taken on 2"
+  ],
+  [
+   "2026-11-14-wpg-chi_14.jpg",
+   "File:Chicago Blackhawks vs. Buffalo Sabres December 2024 03 (face-off).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "Taken on 2"
+  ],
+  [
+   "2026-11-14-wpg-chi_15.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Adam Larsson (53582498624).jpg",
+   "CC BY-SA 2.0",
+   4555,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_16.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Dylan Samberg (53576516497).jpg",
+   "CC BY-SA 2.0",
+   5305,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_17.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Oliver Bjorkstrand (53577824505).jpg",
+   "CC BY-SA 2.0",
+   4120,
+   "2024-03-08"
+  ],
+  [
+   "2026-11-14-wpg-chi_18.jpg",
+   "File:Winnipeg Jets at Seattle Kraken - 2024-03-08 - Philipp Grubauer warmups (53577377036).jpg",
+   "CC BY-SA 2.0",
+   5139,
+   "2024-03-08"
+  ]
+ ],
+ "2026-11-14-min-bos": [
+  [
+   "2026-11-14-min-bos_0.jpg",
+   "File:Grubauer dunn kaprisov 3rd 1 8 (55032834760).jpg",
+   "CC BY-SA 4.0",
+   4576,
+   "2026-01-08"
+  ],
+  [
+   "2026-11-14-min-bos_1.jpg",
+   "File:Joel Eriksson Ek and Kirill Kaprizov.jpg",
+   "CC BY-SA 2.0",
+   6000,
+   "2023-12-10"
+  ],
+  [
+   "2026-11-14-min-bos_2.jpg",
+   "File:Lindgren kaprizov 1st 1 8 (55031753010).jpg",
+   "CC BY-SA 4.0",
+   4361,
+   "2026-01-08"
+  ],
+  [
+   "2026-11-14-min-bos_3.jpg",
+   "File:Vince Dunn and Kirill Kaprizov.jpg",
+   "CC BY-SA 2.0",
+   4438,
+   "2022-11-11"
+  ],
+  [
+   "2026-11-14-min-bos_4.jpg",
+   "File:Match de pools Tch\u00e9quie-France 11.jpg",
+   "CC BY 4.0",
+   5184,
+   "2026-02-13"
+  ],
+  [
+   "2026-11-14-min-bos_5.jpg",
+   "File:Larsson pastrnak 2 23 (52709286609).jpg",
+   "CC BY-SA 2.0",
+   5450,
+   "2023-02-23"
+  ],
+  [
+   "2026-11-14-min-bos_6.jpg",
+   "File:David Pastr\u0148\u00e1k 2024.jpg",
+   "CC BY-SA 4.0",
+   2644,
+   "2024-05-27"
+  ],
+  [
+   "2026-11-14-min-bos_7.jpg",
+   "File:TDBanknorthGardenBeforeGame.jpg",
+   "Public domain",
+   4272,
+   "2008-11-13"
+  ],
+  [
+   "2026-11-14-min-bos_8.jpg",
+   "File:JordanCaronBruins.JPG",
+   "CC BY-SA 3.0",
+   3456,
+   "2012-03-17"
+  ],
+  [
+   "2026-11-14-min-bos_9.jpg",
+   "File:071220 bruins (155) (2130957955).jpg",
+   "CC BY 2.0",
+   3264,
+   "2007-12-20"
+  ],
+  [
+   "2026-11-14-min-bos_10.jpg",
+   "File:Joe Corvo of the Boston Bruins at TD Garden, Boston, Massachusetts - 20120204.jpg",
+   "CC BY 2.0",
+   3264,
+   "2012-02-04"
+  ],
+  [
+   "2026-11-14-min-bos_11.jpg",
+   "File:Mascots on the ice at a Minnesota Wild ice hockey game.jpg",
+   "CC BY-SA 4.0",
+   4000,
+   "2025-03-09"
+  ],
+  [
+   "2026-11-14-min-bos_12.jpg",
+   "File:AHL outdoor game between Milwaukee Admirals and Iowa Wild in Hastings, Minnesota on January 23, 2026.jpg",
+   "CC BY 4.0",
+   2000,
+   "2026-01-23"
+  ],
+  [
+   "2026-11-14-min-bos_13.jpg",
+   "File:Minnesota Wild - Kris Fredheim and Nick Schultz.jpg",
+   "CC BY-SA 3.0",
+   4000,
+   "Taken on 1"
+  ],
+  [
+   "2026-11-14-min-bos_14.jpg",
+   "File:Minnesota Wild vs. Chicago Blackhawks October 2022 01 (Fiserv Forum).jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "Taken on 2"
+  ],
+  [
+   "2026-11-14-min-bos_15.jpg",
+   "File:P20260224DT-2875.jpg",
+   "Public domain",
+   3000,
+   "2026-02-24"
+  ],
+  [
+   "2026-11-14-min-bos_16.jpg",
+   "File:McAvoy.jpg",
+   "CC BY-SA 4.0",
+   3098,
+   "2017-04-23"
+  ]
+ ],
+ "2026-11-14-edm-tor": [
+  [
+   "2026-11-14-edm-tor_0.jpg",
+   "File:Connor McDavid of the Edmonton Oilers.jpg",
+   "CC BY-SA 2.0",
+   3000,
+   "2022-02-02"
+  ],
+  [
+   "2026-11-14-edm-tor_1.jpg",
+   "File:Garnet Hathaway fights Connor McDavid.jpg",
+   "CC BY-SA 2.0",
+   3000,
+   "2022-02-02"
+  ],
+  [
+   "2026-11-14-edm-tor_2.jpg",
+   "File:Beniers fleury mcdavid grubauer 10 2 (53232376480).jpg",
+   "CC BY-SA 2.0",
+   3986,
+   "2023-10-02"
+  ],
+  [
+   "2026-11-14-edm-tor_3.jpg",
+   "File:Larsson mcdavid 10 2 (53232115796).jpg",
+   "CC BY-SA 2.0",
+   3483,
+   "2023-10-02"
+  ],
+  [
+   "2026-11-14-edm-tor_4.jpg",
+   "File:Jaden Schwartz and Leon Draisaitl.jpg",
+   "CC BY-SA 2.0",
+   5934,
+   "2023-03-18"
+  ],
+  [
+   "2026-11-14-edm-tor_5.jpg",
+   "File:Shore 10 2 (53232139738).jpg",
+   "CC BY-SA 2.0",
+   4802,
+   "2023-10-02"
+  ],
+  [
+   "2026-11-14-edm-tor_6.jpg",
+   "File:Kartye draisaitl 10 2-2 (53232337605).jpg",
+   "CC BY-SA 2.0",
+   4882,
+   "2023-10-02"
+  ],
+  [
+   "2026-11-14-edm-tor_7.jpg",
+   "File:Kartye draisaitl 10 2 (53232336515).jpg",
+   "CC BY-SA 2.0",
+   4550,
+   "2023-10-02"
+  ],
+  [
+   "2026-11-14-edm-tor_8.jpg",
+   "File:Toronto Maple Leafs at Seattle Kraken - 2024-01-21 - Jaden Schwartz, Auston Matthews and Eeli Tolvanen (53481296365).jpg",
+   "CC BY-SA 2.0",
+   4071,
+   "2024-01-21"
+  ],
+  [
+   "2026-11-14-edm-tor_9.jpg",
+   "File:2022-02-28 Auston Matthews.jpeg",
+   "CC BY-SA 2.0",
+   3000,
+   "2022-02-28"
+  ],
+  [
+   "2026-11-14-edm-tor_10.jpg",
+   "File:Toronto Maple Leafs at Seattle Kraken - 2024-01-21 - Jaden Schwartz and Auston Matthews (53481297300).jpg",
+   "CC BY-SA 2.0",
+   3677,
+   "2024-01-21"
+  ],
+  [
+   "2026-11-14-edm-tor_11.jpg",
+   "File:Auston Matthews 9.jpg",
+   "CC BY-SA 4.0",
+   3387,
+   "2020-01-09"
+  ],
+  [
+   "2026-11-14-edm-tor_12.jpg",
+   "File:Scotiabank Arena Toronto Carolina March 20 2026.jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2026-03-20"
+  ],
+  [
+   "2026-11-14-edm-tor_13.jpg",
+   "File:Air Canada Centre, Toronto, Ontario (29376422943).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-28"
+  ],
+  [
+   "2026-11-14-edm-tor_14.jpg",
+   "File:Air Canada Centre, Toronto, Ontario (29376429253).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-28"
+  ],
+  [
+   "2026-11-14-edm-tor_15.jpg",
+   "File:Air Canada Centre, Toronto, Ontario (29709198220).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-28"
+  ],
+  [
+   "2026-11-14-edm-tor_16.jpg",
+   "File:Toronto Maple Leafs at Seattle Kraken - 2024-01-21 - Andr\u00e9 Burakovsky and William Nylander (53481195244).jpg",
+   "CC BY-SA 2.0",
+   6141,
+   "2024-01-21"
+  ],
+  [
+   "2026-11-14-edm-tor_17.jpg",
+   "File:Toronto Maple Leafs at Seattle Kraken - 2024-01-21 - Tomas Tatar, Jordan Eberle and William Nylander (53481029398).jpg",
+   "CC BY-SA 2.0",
+   5061,
+   "2024-01-21"
+  ],
+  [
+   "2026-11-14-edm-tor_18.jpg",
+   "File:Toronto Maple Leafs at Seattle Kraken - 2024-01-21 - Jordan Eberle and William Nylander (53481195279).jpg",
+   "CC BY-SA 2.0",
+   3847,
+   "2024-01-21"
+  ],
+  [
+   "2026-11-14-edm-tor_19.jpg",
+   "File:Toronto Maple Leafs at Seattle Kraken - 2024-01-21 - William Nylander (53480729074).jpg",
+   "CC BY-SA 2.0",
+   2848,
+   "2024-01-21"
+  ]
+ ],
+ "2026-11-14-col-mtl": [
+  [
+   "2026-11-14-col-mtl_0.jpg",
+   "File:Montour during Oct. 22, 2024 Colorado Avalanche at Seattle Kraken game (54088098777).jpg",
+   "CC BY-SA 2.0",
+   4436,
+   "2024-10-22"
+  ],
+  [
+   "2026-11-14-col-mtl_1.jpg",
+   "File:Colorado Avalanche at Seattle Kraken - 2023-04-24 - Round 1 Game 4 - Eeli Tolvanen, Oliver Bjorkstrand, Nathan MacKinnon, Bowen Byram and Alexandar Georgiev (52846688174).jpg",
+   "CC BY-SA 2.0",
+   4583,
+   "2023-04-24"
+  ],
+  [
+   "2026-11-14-col-mtl_2.jpg",
+   "File:MacKinnon warms up (25338626042).jpg",
+   "CC BY-SA 2.0",
+   3508,
+   "2016-02-24"
+  ],
+  [
+   "2026-11-14-col-mtl_3.jpg",
+   "File:Colorado warming up.png",
+   "CC BY 4.0",
+   2024,
+   "2019-12-28"
+  ],
+  [
+   "2026-11-14-col-mtl_4.jpg",
+   "File:Eberle makar during October 22, 2024 Colorado Avalanche at Seattle Kraken game (54091511721).jpg",
+   "CC BY-SA 2.0",
+   5777,
+   "2024-10-22"
+  ],
+  [
+   "2026-11-14-col-mtl_5.jpg",
+   "File:Mccann makar during Oct. 22, 2024 Colorado Avalanche at Seattle Kraken game (54091964400).jpg",
+   "CC BY-SA 2.0",
+   3934,
+   "2024-10-22"
+  ],
+  [
+   "2026-11-14-col-mtl_6.jpg",
+   "File:Colorado Avalanche at Seattle Kraken - 2023-04-24 - Round 1 Game 4 - Alexander Wennberg and Cale Makar (52847019529).jpg",
+   "CC BY-SA 2.0",
+   5990,
+   "2023-04-24"
+  ],
+  [
+   "2026-11-14-col-mtl_7.jpg",
+   "File:Colorado Avalanche at Seattle Kraken - 2023-04-24 - Round 1 Game 4 - Cale Makar, Jaden Schwartz, Matty Beniers, Jordan Eberle and Alexandar Georgiev (52846688469).jpg",
+   "CC BY-SA 2.0",
+   6323,
+   "2023-04-24"
+  ],
+  [
+   "2026-11-14-col-mtl_8.jpg",
+   "File:Nick Suzuki and Jakub Dobe\u0161.jpg",
+   "CC BY-SA 2.0",
+   5314,
+   "2025-03-12"
+  ],
+  [
+   "2026-11-14-col-mtl_9.jpg",
+   "File:Canadiens Capitals Hockey (51706740221).jpg",
+   "CC BY-SA 2.0",
+   6700,
+   "2021-11-24"
+  ],
+  [
+   "2026-11-14-col-mtl_10.jpg",
+   "File:Canadiens Capitals Hockey (51707415014).jpg",
+   "CC BY-SA 2.0",
+   7343,
+   "2021-11-24"
+  ],
+  [
+   "2026-11-14-col-mtl_11.jpg",
+   "File:Canadiens Capitals Hockey (51707418809).jpg",
+   "CC BY-SA 2.0",
+   7835,
+   "2021-11-24"
+  ],
+  [
+   "2026-11-14-col-mtl_12.jpg",
+   "File:Charlie Lindgren, Montreal Canadiens 3, Ottawa Senators 4, Centre Bell, Montreal, Quebec (30033619526).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-29"
+  ],
+  [
+   "2026-11-14-col-mtl_13.jpg",
+   "File:Game Summary After First Period, Montreal Canadiens 3, Ottawa Senators 4, Centre Bell, Montreal, Quebec (30033597926).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-29"
+  ],
+  [
+   "2026-11-14-col-mtl_14.jpg",
+   "File:Mike Condon, Montreal Canadiens 3, Ottawa Senators 4, Centre Bell, Montreal, Quebec (29773480240).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-29"
+  ],
+  [
+   "2026-11-14-col-mtl_15.jpg",
+   "File:Montreal's Francophone MC for Hockey Game, Montreal Canadiens 3, Ottawa Senators 4, Centre Bell, Montreal, Quebec (29439836634).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-29"
+  ],
+  [
+   "2026-11-14-col-mtl_16.jpg",
+   "File:Jeseys of Wisconsin Badgers NHL alumni in the lower concourse of the Kohl Center IMG 0720.jpg",
+   "CC BY 4.0",
+   4032,
+   "2022-10-15"
+  ],
+  [
+   "2026-11-14-col-mtl_17.jpg",
+   "File:Jeseys of Wisconsin Badgers NHL alumni in the lower concourse of the Kohl Center IMG 0721.jpg",
+   "CC BY 4.0",
+   4032,
+   "2022-10-15"
+  ],
+  [
+   "2026-11-14-col-mtl_18.jpg",
+   "File:Canadiens Capitals Hockey - 51705958267.jpg",
+   "CC BY-SA 2.0",
+   7780,
+   "2021-11-24"
+  ],
+  [
+   "2026-11-14-col-mtl_19.jpg",
+   "File:Schwartz caufield 3rd 3 12 (54383495717).jpg",
+   "CC BY-SA 2.0",
+   4772,
+   "2025-03-12"
+  ]
+ ],
+ "2026-11-14-det-tbl": [
+  [
+   "2026-11-14-det-tbl_0.jpg",
+   "File:Blue Jackets-Lightning (15559129429).jpg",
+   "CC BY 2.0",
+   6016,
+   "2014-11-08"
+  ],
+  [
+   "2026-11-14-det-tbl_1.jpg",
+   "File:Blue Jackets-Lightning (15559547068).jpg",
+   "CC BY 2.0",
+   6016,
+   "2014-11-08"
+  ],
+  [
+   "2026-11-14-det-tbl_2.jpg",
+   "File:Blue Jackets-Lightning (15721269596).jpg",
+   "CC BY 2.0",
+   6016,
+   "2014-11-08"
+  ],
+  [
+   "2026-11-14-det-tbl_3.jpg",
+   "File:Blue Jackets-Lightning (15721270396).jpg",
+   "CC BY 2.0",
+   6016,
+   "2014-11-08"
+  ],
+  [
+   "2026-11-14-det-tbl_4.jpg",
+   "File:Blackhawks-Red Wings 20180125 204725(0).jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2018-01-25"
+  ],
+  [
+   "2026-11-14-det-tbl_5.jpg",
+   "File:Chicago Blackhawks at Detroit Red Wings 20180125 203020.jpg",
+   "CC BY 4.0",
+   5952,
+   "2018-01-25"
+  ],
+  [
+   "2026-11-14-det-tbl_6.jpg",
+   "File:Chicago Blackhawks at Detroit Red Wings 20180125 203521.jpg",
+   "CC BY 4.0",
+   4032,
+   "2018-01-25"
+  ],
+  [
+   "2026-11-14-det-tbl_7.jpg",
+   "File:Chicago Blackhawks at Detroit Red Wings 20180125 203527.jpg",
+   "CC BY 4.0",
+   4032,
+   "2018-01-25"
+  ],
+  [
+   "2026-11-14-det-tbl_8.jpg",
+   "File:Hendrix Lapierre.jpg",
+   "CC BY-SA 2.0",
+   5040,
+   "2021-10-27"
+  ],
+  [
+   "2026-11-14-det-tbl_9.jpg",
+   "File:UFO - Rob de Luca & Paul Raymond \u2013 Hamburg Harley Days 2015 01.jpg",
+   "CC BY-SA 3.0",
+   5525,
+   "2015-06-27"
+  ],
+  [
+   "2026-11-14-det-tbl_10.jpg",
+   "File:Pont Raymond-Barre (Unsplash).jpg",
+   "CC0",
+   3264,
+   "2016-06-29"
+  ],
+  [
+   "2026-11-14-det-tbl_11.jpg",
+   "File:Pre-Game Tampa Bay Lightning (24278516697).jpg",
+   "CC BY 2.0",
+   5312,
+   "2017-11-04"
+  ],
+  [
+   "2026-11-14-det-tbl_12.jpg",
+   "File:Pre-Game Tampa Bay Lightning (27360587789).jpg",
+   "CC BY 2.0",
+   5312,
+   "2017-11-04"
+  ],
+  [
+   "2026-11-14-det-tbl_13.jpg",
+   "File:Pre-Game Tampa Bay Lightning (27360590569).jpg",
+   "CC BY 2.0",
+   5312,
+   "2017-11-04"
+  ],
+  [
+   "2026-11-14-det-tbl_14.jpg",
+   "File:NHL All-Star game brings Stanley Cup to MacDill (7).jpg",
+   "Public domain",
+   3830,
+   "2017-01-24"
+  ],
+  [
+   "2026-11-14-det-tbl_15.jpg",
+   "File:2026-05-10 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013203.jpg",
+   "CC BY-SA 4.0",
+   4430,
+   "2026-05-10"
+  ],
+  [
+   "2026-11-14-det-tbl_16.jpg",
+   "File:2026-05-10 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013204.jpg",
+   "CC BY-SA 4.0",
+   5478,
+   "2026-05-10"
+  ],
+  [
+   "2026-11-14-det-tbl_17.jpg",
+   "File:2026-05-10 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013205.jpg",
+   "CC BY-SA 4.0",
+   4672,
+   "2026-05-10"
+  ],
+  [
+   "2026-11-14-det-tbl_18.jpg",
+   "File:2026-05-10 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013206.jpg",
+   "CC BY-SA 4.0",
+   4871,
+   "2026-05-10"
+  ]
+ ],
+ "2026-11-14-ott-pit": [
+  [
+   "2026-11-14-ott-pit_0.jpg",
+   "File:Sidney Crosby 2018-12-19 2.jpg",
+   "CC BY-SA 4.0",
+   4482,
+   "2018-12-19"
+  ],
+  [
+   "2026-11-14-ott-pit_1.jpg",
+   "File:Sidney Crosby 2018-12-19 4.jpg",
+   "CC BY-SA 4.0",
+   4797,
+   "2018-12-19"
+  ],
+  [
+   "2026-11-14-ott-pit_2.jpg",
+   "File:Sidney Crosby (27596105842).jpg",
+   "CC BY 2.0",
+   3456,
+   "2016-06-15"
+  ],
+  [
+   "2026-11-14-ott-pit_3.jpg",
+   "File:Sidney Crosby (4457964794).jpg",
+   "CC BY 2.0",
+   3264,
+   "2010-03-18"
+  ],
+  [
+   "2026-11-14-ott-pit_4.jpg",
+   "File:Ottawa Senators at Seattle Kraken - 2024-01-04 - Eeli Tolvanen, Will Borgen, Brady Tkachuk (53450732337).jpg",
+   "CC BY-SA 2.0",
+   5076,
+   "2024-01-04"
+  ],
+  [
+   "2026-11-14-ott-pit_5.jpg",
+   "File:Ottawa Senators at Seattle Kraken - 2024-01-04 - Jared McCann, Brady Tkachuk, Eeli Tolvanen and Will Borgen (53451657956).jpg",
+   "CC BY-SA 2.0",
+   6138,
+   "2024-01-04"
+  ],
+  [
+   "2026-11-14-ott-pit_6.jpg",
+   "File:Ottawa Senators at Seattle Kraken - 2024-01-04 - Joey Daccord, Jamie Oleksiak, Brian Dumoulin and Brady Tkachuk (53444441936).jpg",
+   "CC BY-SA 2.0",
+   4856,
+   "2024-01-04"
+  ],
+  [
+   "2026-11-14-ott-pit_7.jpg",
+   "File:Ottawa Senators at Seattle Kraken - 2023-03-09 - Brady Tkachuk and Oliver Bjorkstrand (52739047017).jpg",
+   "CC BY-SA 2.0",
+   6046,
+   "2023-03-09"
+  ],
+  [
+   "2026-11-14-ott-pit_8.jpg",
+   "File:Evgeni Malkin 2018-12-19 1.jpg",
+   "CC BY-SA 4.0",
+   4036,
+   "2018-12-19"
+  ],
+  [
+   "2026-11-14-ott-pit_9.jpg",
+   "File:Evgeni Malkin Sergei Gonchar Mario Lemieux and Rick Tocchet 2017-06-11 1.jpg",
+   "CC BY-SA 4.0",
+   4227,
+   "2017-06-11"
+  ],
+  [
+   "2026-11-14-ott-pit_10.jpg",
+   "File:Evgeni Malkin 2017-06-08 2.jpg",
+   "CC BY-SA 4.0",
+   3982,
+   "2017-06-08"
+  ],
+  [
+   "2026-11-14-ott-pit_11.jpg",
+   "File:Evgeni Malkin 2019-04-14.jpg",
+   "CC BY-SA 4.0",
+   3217,
+   "2019-04-14"
+  ],
+  [
+   "2026-11-14-ott-pit_12.jpg",
+   "File:Consol Energy Center Panoramic2.jpg",
+   "CC BY-SA 3.0",
+   11556,
+   "2011-04-13"
+  ],
+  [
+   "2026-11-14-ott-pit_13.jpg",
+   "File:Mario Lemieux with Civic Arena Ice 2010-10-07.JPG",
+   "CC BY-SA 3.0",
+   3648,
+   "2010-10-07"
+  ],
+  [
+   "2026-11-14-ott-pit_14.jpg",
+   "File:PPG Paints Arena Scoreboard.jpg",
+   "CC BY-SA 4.0",
+   2000,
+   "2019-04-20"
+  ],
+  [
+   "2026-11-14-ott-pit_15.jpg",
+   "File:Sidney Crosby 2018-03-03 19625.jpg",
+   "CC BY-SA 4.0",
+   3440,
+   "2018-03-03"
+  ],
+  [
+   "2026-11-14-ott-pit_16.jpg",
+   "File:Schwartz, St\u00fctzle, and Ullmark 2024-12-17.jpg",
+   "CC BY-SA 2.0",
+   5315,
+   "2024-12-17"
+  ]
+ ],
+ "2026-11-14-njd-wsh": [
+  [
+   "2026-11-14-njd-wsh_0.jpg",
+   "File:New Jersey Devils at Seattle Kraken - 2023-12-07 - Vince Dunn and Jesper Bratt (53384406596).jpg",
+   "CC BY-SA 2.0",
+   4692,
+   "2023-12-07"
+  ],
+  [
+   "2026-11-14-njd-wsh_1.jpg",
+   "File:New Jersey Devils at Seattle Kraken - 2023-12-07 - Jack Hughes and V\u00edtek Van\u011b\u010dek (53384406596) (cropped).jpg",
+   "CC BY-SA 2.0",
+   1881,
+   "2023-12-07"
+  ],
+  [
+   "2026-11-14-njd-wsh_2.jpg",
+   "File:Alex Ovechkin 1.jpg",
+   "CC BY-SA 2.0",
+   4780,
+   "2022-01-02"
+  ],
+  [
+   "2026-11-14-njd-wsh_3.jpg",
+   "File:Alex Ovechkin Standing in Front of Mackenzie Blackwood - Washington Capitals vs. New Jersey Devils 1-2-22.jpg",
+   "CC BY-SA 2.0",
+   4804,
+   "2022-01-02"
+  ],
+  [
+   "2026-11-14-njd-wsh_4.jpg",
+   "File:Forward Alex Ovechkin.jpg",
+   "CC BY-SA 2.0",
+   4146,
+   "2022-01-02"
+  ],
+  [
+   "2026-11-14-njd-wsh_5.jpg",
+   "File:Forward Alex Ovechkin Skating Up Ice from Washington Capitals vs. New Jersey Devils - Billy Sabatini - All-Pro Reels (51800334286).jpg",
+   "CC BY-SA 2.0",
+   4770,
+   "2022-01-02"
+  ],
+  [
+   "2026-11-14-njd-wsh_6.jpg",
+   "File:3d U.S. Infantry Regiment (The Old Guard) at the Washington Capitals Salute to the Military game in Capital One Arena in Washington on February 25, 2025 - 1.jpg",
+   "Public domain",
+   5775,
+   "2025-02-25"
+  ],
+  [
+   "2026-11-14-njd-wsh_7.jpg",
+   "File:3d U.S. Infantry Regiment (The Old Guard) at the Washington Capitals Salute to the Military game in Capital One Arena in Washington on February 25, 2025 - 10.jpg",
+   "Public domain",
+   6000,
+   "2025-02-25"
+  ],
+  [
+   "2026-11-14-njd-wsh_8.jpg",
+   "File:3d U.S. Infantry Regiment (The Old Guard) at the Washington Capitals Salute to the Military game in Capital One Arena in Washington on February 25, 2025 - 11.jpg",
+   "Public domain",
+   4791,
+   "2025-02-25"
+  ],
+  [
+   "2026-11-14-njd-wsh_9.jpg",
+   "File:3d U.S. Infantry Regiment (The Old Guard) at the Washington Capitals Salute to the Military game in Capital One Arena in Washington on February 25, 2025 - 12.jpg",
+   "Public domain",
+   5583,
+   "2025-02-25"
+  ],
+  [
+   "2026-11-14-njd-wsh_10.jpg",
+   "File:New Jersey Devils at Seattle Kraken - 2023-12-07 - Akira Schmid and Nico Hischier (53383206547).jpg",
+   "CC BY-SA 2.0",
+   5464,
+   "2023-12-07"
+  ],
+  [
+   "2026-11-14-njd-wsh_11.jpg",
+   "File:New Jersey Devils at Seattle Kraken - 2023-12-07 - Nico Hischier and Akira Schmid (53384842440).jpg",
+   "CC BY-SA 2.0",
+   6905,
+   "2023-12-07"
+  ],
+  [
+   "2026-11-14-njd-wsh_12.jpg",
+   "File:Nico Hischier scoring game winner vs Washington Capitals on Jan 2 2022.jpg",
+   "CC BY-SA 2.0",
+   4655,
+   "2022-01-02"
+  ],
+  [
+   "2026-11-14-njd-wsh_13.jpg",
+   "File:2017 NHL Entry Draft (34703419283).jpg",
+   "CC BY-SA 2.0",
+   3264,
+   "2017-06-23"
+  ],
+  [
+   "2026-11-14-njd-wsh_14.jpg",
+   "File:Carson Soucy and Dylan Strome.jpg",
+   "CC BY-SA 2.0",
+   4415,
+   "2022-12-01"
+  ],
+  [
+   "2026-11-14-njd-wsh_15.jpg",
+   "File:BWP 4505 (39245838644).jpg",
+   "CC BY 2.0",
+   7360,
+   "2018-01-28"
+  ],
+  [
+   "2026-11-14-njd-wsh_16.jpg",
+   "File:BWP 4518 (39245853794).jpg",
+   "CC BY 2.0",
+   7360,
+   "2018-01-28"
+  ],
+  [
+   "2026-11-14-njd-wsh_17.jpg",
+   "File:BWP 4538 (39245866774).jpg",
+   "CC BY 2.0",
+   7360,
+   "2018-01-28"
+  ]
+ ],
+ "2026-11-14-phi-cbj": [
+  [
+   "2026-11-14-phi-cbj_0.jpg",
+   "File:Mike Johnston 2014-12-13 3.JPG",
+   "CC BY-SA 4.0",
+   2963,
+   "2014-12-13"
+  ],
+  [
+   "2026-11-14-phi-cbj_1.jpg",
+   "File:NationwideArena.jpg",
+   "Public domain",
+   2304,
+   "2007-01-15"
+  ],
+  [
+   "2026-11-14-phi-cbj_2.jpg",
+   "File:Cam Atkinson 2014-12-13.JPG",
+   "CC BY-SA 4.0",
+   3165,
+   "2014-12-13"
+  ],
+  [
+   "2026-11-14-phi-cbj_3.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Alexander Wennberg, Andr\u00e9 Burakovsky, Erik Gudbranson and Daniil Tarasov (53498216381).jpg",
+   "CC BY-SA 2.0",
+   4831,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_4.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Brandon Tanev and Zach Werenski (53496790100).jpg",
+   "CC BY-SA 2.0",
+   4647,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_5.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Daniil Tarasov (53496668379).jpg",
+   "CC BY-SA 2.0",
+   5758,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_6.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Eeli Tolvanen and Zach Werenski (53498637055).jpg",
+   "CC BY-SA 2.0",
+   5255,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_7.jpg",
+   "File:Kraken\u2013Flyers opening faceoff 2025-12-28.jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2025-12-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_8.jpg",
+   "File:Kraken\u2013Flyers opening faceoff close-up 2025-12-28.jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2025-12-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_9.jpg",
+   "File:Philadelphia Flyers at Seattle Kraken - December 29, 2023 - Chris Driedger warmups (53430911662).jpg",
+   "CC BY-SA 2.0",
+   5275,
+   "2023-12-29"
+  ],
+  [
+   "2026-11-14-phi-cbj_10.jpg",
+   "File:Philadelphia Flyers at Seattle Kraken - December 29, 2023 - Jared McCann and Nick Seeler (53431233082).jpg",
+   "CC BY-SA 2.0",
+   4922,
+   "2023-12-29"
+  ],
+  [
+   "2026-11-14-phi-cbj_11.jpg",
+   "File:Gourde fight 10 17 (54075581277).jpg",
+   "CC BY-SA 2.0",
+   4576,
+   "2024-10-17"
+  ],
+  [
+   "2026-11-14-phi-cbj_12.jpg",
+   "File:Philadelphia Flyers at Seattle Kraken - December 29, 2023 - Jamie Oleksiak, Travis Konecny, and Alexander Wennberg (53431069532).jpg",
+   "CC BY-SA 2.0",
+   6060,
+   "2023-12-29"
+  ],
+  [
+   "2026-11-14-phi-cbj_13.jpg",
+   "File:Philadelphia Flyers at Seattle Kraken - December 29, 2023 - Joey Daccord and Travis Konecny (53431992091).jpg",
+   "CC BY-SA 2.0",
+   5243,
+   "2023-12-29"
+  ],
+  [
+   "2026-11-14-phi-cbj_14.jpg",
+   "File:Philadelphia Flyers at Seattle Kraken - December 29, 2023 - Will Borgen, Jamie Oleksiak and Travis Konecny (53430910317).jpg",
+   "CC BY-SA 2.0",
+   6267,
+   "2023-12-29"
+  ],
+  [
+   "2026-11-14-phi-cbj_15.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Ivan Provorov, Jordan Eberle, Justin Schultz and Kirill Marchenko (53496519708).jpg",
+   "CC BY-SA 2.0",
+   5501,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_16.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Kirill Marchenko, Tom\u00e1\u0161 Tatar, and Daniil Tarasov (53496668309).jpg",
+   "CC BY-SA 2.0",
+   6456,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_17.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Brian Dumoulin and Kirill Marchenko (53502114162).jpg",
+   "CC BY-SA 2.0",
+   4190,
+   "2024-01-28"
+  ],
+  [
+   "2026-11-14-phi-cbj_18.jpg",
+   "File:Columbus Blue Jackets at Seattle Kraken - 2024-01-28 - Justin Schultz and Kirill Marchenko (53503307359).jpg",
+   "CC BY-SA 2.0",
+   4716,
+   "2024-01-28"
+  ]
+ ],
+ "2026-11-14-fla-stl": [
+  [
+   "2026-11-14-fla-stl_0.jpg",
+   "File:P20260115DT-1084 President Donald Trump hosts the 2025 Stanley Cup champion Florida Panthers.jpg",
+   "Public domain",
+   3000,
+   "2026-01-15"
+  ],
+  [
+   "2026-11-14-fla-stl_1.jpg",
+   "File:IIHF16WC - Game FIN v BLR.jpg",
+   "CC0",
+   4608,
+   "2016-05-06"
+  ],
+  [
+   "2026-11-14-fla-stl_2.jpg",
+   "File:Sedin among the panthers (23711165263).jpg",
+   "CC BY-SA 2.0",
+   3300,
+   "2016-01-11"
+  ],
+  [
+   "2026-11-14-fla-stl_3.jpg",
+   "File:Aleksander Barkov 2015-03-14.jpg",
+   "CC BY-SA 2.0",
+   3264,
+   "2015-03-14"
+  ],
+  [
+   "2026-11-14-fla-stl_4.jpg",
+   "File:Beale Street and Rufus Thomas Boulevard, Memphis, TN (53700619355).jpg",
+   "CC BY-SA 2.0",
+   3761,
+   "2023-07-25"
+  ],
+  [
+   "2026-11-14-fla-stl_5.jpg",
+   "File:St. Louis Blues at Seattle Kraken - 2024-01-26 - Jared McCann and Robert Thomas (53492181961).jpg",
+   "CC BY-SA 2.0",
+   4036,
+   "2024-01-26"
+  ],
+  [
+   "2026-11-14-fla-stl_6.jpg",
+   "File:St. Louis Blues at Seattle Kraken - 2024-01-26 - Alexander Wennberg and Robert Thomas (53492182776).jpg",
+   "CC BY-SA 2.0",
+   3724,
+   "2024-01-26"
+  ],
+  [
+   "2026-11-14-fla-stl_7.jpg",
+   "File:Adam Larsson checking Robert Thomas.jpg",
+   "CC BY-SA 2.0",
+   4851,
+   "2022-12-20"
+  ],
+  [
+   "2026-11-14-fla-stl_8.jpg",
+   "File:Chicago Blackhawks vs. St. Louis Blues game on Dec. 3, 2011 at Scottrade Center in St. Louis 8496 (6458136309).jpg",
+   "CC BY 2.0",
+   3872,
+   "2011-12-03"
+  ],
+  [
+   "2026-11-14-fla-stl_9.jpg",
+   "File:Chicago Blackhawks vs. St. Louis Blues game on Dec. 3, 2011 at Scottrade Center in St. Louis 8576 (6470000489).jpg",
+   "CC BY 2.0",
+   3872,
+   "2011-12-03"
+  ],
+  [
+   "2026-11-14-fla-stl_10.jpg",
+   "File:Chicago Blackhawks vs. St. Louis Blues game on Dec. 3, 2011 at Scottrade Center in St. Louis 8549 (6469923257).jpg",
+   "CC BY 2.0",
+   3581,
+   "2011-12-03"
+  ],
+  [
+   "2026-11-14-fla-stl_11.jpg",
+   "File:Chicago Blackhawks vs. St. Louis Blues game on Dec. 3, 2011 at Scottrade Center in St. Louis 8527 (6469814223).jpg",
+   "CC BY 2.0",
+   3470,
+   "2011-12-03"
+  ],
+  [
+   "2026-11-14-fla-stl_12.jpg",
+   "File:Sam Reinhart - 2014 Top Prospect.jpg",
+   "CC BY-SA 2.0",
+   5184,
+   "2014-01-15"
+  ],
+  [
+   "2026-11-14-fla-stl_13.jpg",
+   "File:Team Orr - 2014 Top Prospects (12113805564).jpg",
+   "CC BY-SA 2.0",
+   4397,
+   "2014-01-15"
+  ],
+  [
+   "2026-11-14-fla-stl_14.jpg",
+   "File:TradeDollarCartoon.jpg",
+   "Public domain",
+   2336,
+   "1874"
+  ]
+ ],
+ "2026-11-14-buf-dal": [
+  [
+   "2026-11-14-buf-dal_0.jpg",
+   "File:Dallas Stars at Seattle Kraken - May 13, 2023 - Round 2 Game 6 - Philipp Grubauer and Jason Robertson (52900760470).jpg",
+   "CC BY-SA 2.0",
+   4316,
+   "2023-05-13"
+  ],
+  [
+   "2026-11-14-buf-dal_1.jpg",
+   "File:Medal of Honor Kyle Carpenter 140617-M-LI307-452.jpg",
+   "Public domain",
+   5616,
+   "Taken on 1"
+  ],
+  [
+   "2026-11-14-buf-dal_2.jpg",
+   "File:US Air Force (USAF) Air Mobility Command (AMC) Vice Commander Lieutenant General (LGEN) John Baker, left, presents MacDill Air Force base (AFB) members, Major (MAJ) Jeanette Voigt, - DPLA - 2fd7327125cb7869b058088c9d370799.jpeg",
+   "Public domain",
+   3000,
+   "22 October"
+  ],
+  [
+   "2026-11-14-buf-dal_3.jpg",
+   "File:Dallas Stars at Seattle Kraken - May 13, 2023 - Round 2 Game 6 - Jake Oettinger, Jared McCann,.and Miro Heiskanen (52898955919).jpg",
+   "CC BY-SA 2.0",
+   4671,
+   "2023-05-13"
+  ],
+  [
+   "2026-11-14-buf-dal_4.jpg",
+   "File:Dallas Stars at Seattle Kraken - May 13, 2023 - Round 2 Game 6 - Yanni Gourde, Mason Marchment and Miro Heiskanen (52898955679).jpg",
+   "CC BY-SA 2.0",
+   4896,
+   "2023-05-13"
+  ],
+  [
+   "2026-11-14-buf-dal_5.jpg",
+   "File:Yanni Gourde and Miro Heiskanen.jpg",
+   "CC BY-SA 2.0",
+   3986,
+   "2023-03-13"
+  ],
+  [
+   "2026-11-14-buf-dal_6.jpg",
+   "File:Teemu Laakso, Don Bigileone & Miro Heiskanen (26863228368).jpg",
+   "CC BY 2.0",
+   5152,
+   "2017-08-02"
+  ],
+  [
+   "2026-11-14-buf-dal_7.jpg",
+   "File:Buffalo Sabres at Seattle Kraken - October 25, 2022 - Jaden Schwartz and Rasmus Dahlin (52457875392).jpg",
+   "CC BY-SA 2.0",
+   3888,
+   "2022-10-25"
+  ],
+  [
+   "2026-11-14-buf-dal_8.jpg",
+   "File:Buffalo Sabres at Seattle Kraken - October 25, 2022 - Rasmus Dahlin, Jordan Eberle, Matty Beniers, Jaden Schwartz and Eric Comrie (52458396886).jpg",
+   "CC BY-SA 2.0",
+   3054,
+   "2022-10-25"
+  ],
+  [
+   "2026-11-14-buf-dal_9.jpg",
+   "File:Buffalo Sabres at Seattle Kraken - October 25, 2022 - Rasmus Dahlin, Jordan Eberle, Eric Comrie and Casey Fitzgerald (52458926673).jpg",
+   "CC BY-SA 2.0",
+   4025,
+   "2022-10-25"
+  ],
+  [
+   "2026-11-14-buf-dal_10.jpg",
+   "File:Buffalo Sabres at Seattle Kraken - October 25, 2022 - Jaden Schwartz and Rasmus Dahlin (52458398866).jpg",
+   "CC BY-SA 2.0",
+   3844,
+   "2022-10-25"
+  ],
+  [
+   "2026-11-14-buf-dal_11.jpg",
+   "File:Detroit Red Wings vs. Dallas Stars January 2020 02 (in-game action).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "2020-01-03"
+  ],
+  [
+   "2026-11-14-buf-dal_12.jpg",
+   "File:Detroit Red Wings vs. Dallas Stars January 2020 03 (in-game action).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "2020-01-03"
+  ],
+  [
+   "2026-11-14-buf-dal_13.jpg",
+   "File:Detroit Red Wings vs. Dallas Stars January 2020 05 (in-game action).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "2020-01-03"
+  ],
+  [
+   "2026-11-14-buf-dal_14.jpg",
+   "File:Detroit Red Wings vs. Dallas Stars January 2020 06 (in-game action).jpg",
+   "CC BY-SA 4.0",
+   6000,
+   "2020-01-03"
+  ],
+  [
+   "2026-11-14-buf-dal_15.jpg",
+   "File:2025-05-04 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013067.jpg",
+   "CC BY-SA 4.0",
+   4960,
+   "2025-05-04"
+  ],
+  [
+   "2026-11-14-buf-dal_16.jpg",
+   "File:2025-05-04 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013102.jpg",
+   "CC BY-SA 4.0",
+   4363,
+   "2025-05-04"
+  ],
+  [
+   "2026-11-14-buf-dal_17.jpg",
+   "File:2025-05-04 Deutschland gegen USA (Eishockey-L\u00e4nderspiel) by Sandro Halank\u2013145.jpg",
+   "CC BY-SA 4.0",
+   5666,
+   "2025-05-04"
+  ],
+  [
+   "2026-11-14-buf-dal_18.jpg",
+   "File:P20260224DT-2832.jpg",
+   "Public domain",
+   3000,
+   "2026-02-24"
+  ]
+ ],
+ "2026-11-14-sjs-uta": [
+  [
+   "2026-11-14-sjs-uta_0.jpg",
+   "File:Macklin Celebrini San Jose Sharks Practice 2 Oct 2026 01.jpg",
+   "CC BY-SA 4.0",
+   4907,
+   "2026-10-02"
+  ],
+  [
+   "2026-11-14-sjs-uta_1.jpg",
+   "File:Arizona Coyotes at Seattle Kraken - 2023-04-06 - Ryan Donato, Eeli Tolvanen and Clayton Keller (52800938368).jpg",
+   "CC BY-SA 2.0",
+   6646,
+   "2023-04-06"
+  ],
+  [
+   "2026-11-14-sjs-uta_2.jpg",
+   "File:Arizona Coyotes at Seattle Kraken - 2023-04-06 - Nick Schmaltz, Clayton Keller and Philipp Grubauer (52799391622).jpg",
+   "CC BY-SA 2.0",
+   4831,
+   "2023-04-06"
+  ],
+  [
+   "2026-11-14-sjs-uta_3.jpg",
+   "File:1979 University of Michigan Football Team group photo.jpg",
+   "CC BY 4.0",
+   9612,
+   "1979"
+  ],
+  [
+   "2026-11-14-sjs-uta_4.jpg",
+   "File:New York- KINGS County, Enumeration District 888, Sheet No. 2A - DPLA - 8b1e894d9cde95fba3fcdf263e66aee6.jpg",
+   "Public domain",
+   5816,
+   "1920-01-01"
+  ],
+  [
+   "2026-11-14-sjs-uta_5.jpg",
+   "File:NHL-Utah-STL-DesMoines2024.jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2024-09-22"
+  ],
+  [
+   "2026-11-14-sjs-uta_6.jpg",
+   "File:McBain, Vejmelka, and Sergachev - December 2024.jpg",
+   "CC BY-SA 2.0",
+   4252,
+   "2024-12-30"
+  ],
+  [
+   "2026-11-14-sjs-uta_7.jpg",
+   "File:Brandon Tanev and Mikhail Sergachev 2024-12-30.jpg",
+   "CC BY-SA 2.0",
+   3522,
+   "2024-12-30"
+  ],
+  [
+   "2026-11-14-sjs-uta_8.jpg",
+   "File:Sharks Pre-game April 23, 2019.jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2025-04-22"
+  ],
+  [
+   "2026-11-14-sjs-uta_9.jpg",
+   "File:San Jose Sharks at Seattle Kraken - November 22, 2023 - Matty Beniers and Mike Hoffman (53351817028).jpg",
+   "CC BY-SA 2.0",
+   4686,
+   "2023-11-22"
+  ],
+  [
+   "2026-11-14-sjs-uta_10.jpg",
+   "File:San Jose Sharks at Seattle Kraken - November 22, 2023 - Adam Larsson and Anthony Duclair (53351817168).jpg",
+   "CC BY-SA 2.0",
+   3208,
+   "2023-11-22"
+  ],
+  [
+   "2026-11-14-sjs-uta_11.jpg",
+   "File:San Jose Sharks at Seattle Kraken - November 22, 2023 - Brandon Tanev and Filip Zadina (53352044700).jpg",
+   "CC BY-SA 2.0",
+   4962,
+   "2023-11-22"
+  ],
+  [
+   "2026-11-14-sjs-uta_12.jpg",
+   "File:Microraptor models.png",
+   "CC BY 2.5",
+   2725,
+   "2014"
+  ]
+ ],
+ "2026-11-14-nyi-ana": [
+  [
+   "2026-11-14-nyi-ana_0.jpg",
+   "File:Honda Center interior 2021.jpg",
+   "CC BY-SA 4.0",
+   3955,
+   "2021-11-26"
+  ],
+  [
+   "2026-11-14-nyi-ana_1.jpg",
+   "File:Zegras, Benoit, and Shattenkirk.jpg",
+   "CC BY-SA 4.0",
+   3024,
+   "2022-10-26"
+  ],
+  [
+   "2026-11-14-nyi-ana_2.jpg",
+   "File:'Johnny Five' keeps 9th CST members out of hot zone, Cal Guard pilot program tests robot for chemical, biological, radiological, nuclear response 151111-A-AB123-001.jpg",
+   "Public domain",
+   4928,
+   "Taken on 1"
+  ],
+  [
+   "2026-11-14-nyi-ana_3.jpg",
+   "File:O\u00f9 allons-nous, o\u00f9 allons-nous? Nous marchons sur un volcan... - DPLA - 1401c212e4741186737022168fc0bd0c.jpg",
+   "Public domain",
+   4448,
+   ""
+  ],
+  [
+   "2026-11-14-nyi-ana_4.jpg",
+   "File:DD5 9424 (51941224338).jpg",
+   "CC BY-SA 2.0",
+   4945,
+   "2022-03-15"
+  ],
+  [
+   "2026-11-14-nyi-ana_5.jpg",
+   "File:Nick Holowko, Dalton Sward, Roberts Lipsbergs & Matthew Barzal (16788900479).jpg",
+   "CC BY-SA 2.0",
+   3033,
+   "2015-02-09"
+  ],
+  [
+   "2026-11-14-nyi-ana_6.jpg",
+   "File:Alexander Ovechkin (Washington Capitals captain) during March 15, 2022 game against New York Islanders at Capital One Arena in Washington, D.C. (51941760985).jpg",
+   "CC BY-SA 2.0",
+   5001,
+   "2022-03-15"
+  ],
+  [
+   "2026-11-14-nyi-ana_7.jpg",
+   "File:New York Islanders Lining Up For National Anthem (51757809641).jpg",
+   "CC BY 2.0",
+   5184,
+   "2021-12-19"
+  ],
+  [
+   "2026-11-14-nyi-ana_8.jpg",
+   "File:Gabriel Landeskog with the Avalanche vs Islanders on January 6, 2020 (Quintin Soloviev).jpg",
+   "CC BY-SA 4.0",
+   5472,
+   "2020-01-06"
+  ],
+  [
+   "2026-11-14-nyi-ana_9.jpg",
+   "File:Islanders Goalie Robin Lehner (33832856238).jpg",
+   "CC BY 2.0",
+   4096,
+   "2019-04-26"
+  ],
+  [
+   "2026-11-14-nyi-ana_10.jpg",
+   "File:Gourde terry during March 26, 2024 Anaheim Ducks at Seattle Kraken game (53615356519).jpg",
+   "CC BY-SA 2.0",
+   4912,
+   "2024-03-26"
+  ],
+  [
+   "2026-11-14-nyi-ana_11.jpg",
+   "File:Troy Terry in 2023 (1).jpg",
+   "CC BY-SA 2.0",
+   4245,
+   "2023-03-07"
+  ],
+  [
+   "2026-11-14-nyi-ana_12.jpg",
+   "File:Troy Terry and Vince Dunn.jpg",
+   "CC BY-SA 2.0",
+   3835,
+   "2023-03-07"
+  ],
+  [
+   "2026-11-14-nyi-ana_13.jpg",
+   "File:Weninger watching Ian Brady dive to prevent a shot.jpg",
+   "CC BY 2.0",
+   4851,
+   "2017-03-04"
+  ]
+ ],
+ "2026-11-14-cgy-lak": [
+  [
+   "2026-11-14-cgy-lak_0.jpg",
+   "File:Ben Chiarot Red Wings Warmup.jpg",
+   "CC0",
+   1883,
+   "2024-01-04"
+  ],
+  [
+   "2026-11-14-cgy-lak_1.jpg",
+   "File:Erik Karlsson Warmup.jpg",
+   "CC0",
+   1883,
+   "2023-11-09"
+  ],
+  [
+   "2026-11-14-cgy-lak_2.jpg",
+   "File:Joel Blomqvist Warmup.jpg",
+   "CC0",
+   1883,
+   "2023-11-09"
+  ],
+  [
+   "2026-11-14-cgy-lak_3.jpg",
+   "File:Matthew Nieto Warmup.jpg",
+   "CC0",
+   1883,
+   "2023-11-09"
+  ],
+  [
+   "2026-11-14-cgy-lak_4.jpg",
+   "File:Los Angeles Kings at Seattle Kraken - April 1, 2023 - Adrian Kempe and Matt Roy (52787336957).jpg",
+   "CC BY-SA 2.0",
+   5819,
+   "2023-04-01"
+  ],
+  [
+   "2026-11-14-cgy-lak_5.jpg",
+   "File:Los Angeles Kings at Seattle Kraken - November 19, 2022 - Adam Larsson, Adrian Kempe and Kevin Fiala (52519199959).jpg",
+   "CC BY-SA 2.0",
+   4401,
+   "2022-11-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_6.jpg",
+   "File:Los Angeles Kings at Seattle Kraken - November 19, 2022 - Yanni Gourde and Adrian Kempe (52517202329).jpg",
+   "CC BY-SA 2.0",
+   3957,
+   "2022-11-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_7.jpg",
+   "File:Los Angeles Kings at Seattle Kraken - November 19, 2022 - Carson Soucy, Martin Jones and Adrian Kempe (52516933811).jpg",
+   "CC BY-SA 2.0",
+   3897,
+   "2022-11-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_8.jpg",
+   "File:Calgary Flames at Seattle Kraken - January 27, 2023 - Carson Soucy, Nazem Kadri, Morgan Geekie.jpg",
+   "CC BY-SA 2.0",
+   4653,
+   "2023-01-27"
+  ],
+  [
+   "2026-11-14-cgy-lak_9.jpg",
+   "File:Calgary Flames at Seattle Kraken - November 20, 2023 - Pierre-\u00c9douard Bellemare, Will Borgen and Nazem Kadri (53348168047).jpg",
+   "CC BY-SA 2.0",
+   5668,
+   "2023-11-20"
+  ],
+  [
+   "2026-11-14-cgy-lak_10.jpg",
+   "File:Calgary Flames at Seattle Kraken - November 20, 2023 - Pierre-\u00c9douard Bellemare, Will Borgen and Nazem Kadri (53349040211).jpg",
+   "CC BY-SA 2.0",
+   5423,
+   "2023-11-20"
+  ],
+  [
+   "2026-11-14-cgy-lak_11.jpg",
+   "File:Calgary Flames at Seattle Kraken - November 4, 2023 - Jamie Oleksiak and Nazem Kadri (53316881076).jpg",
+   "CC BY-SA 2.0",
+   5603,
+   "2023-11-04"
+  ],
+  [
+   "2026-11-14-cgy-lak_12.jpg",
+   "File:Beniers montour during Calgary Flames at Seattle Kraken game on Oct. 19, 2024 (54081116751).jpg",
+   "CC BY-SA 2.0",
+   6372,
+   "2024-10-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_13.jpg",
+   "File:Burakovsky during Calgary Flames at Seattle Kraken game on Oct. 19, 2024 (54084034706).jpg",
+   "CC BY-SA 2.0",
+   5415,
+   "2024-10-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_14.jpg",
+   "File:Daccord during Calgary Flames at Seattle Kraken game on Oct. 19, 2024-2 (54079586379).jpg",
+   "CC BY-SA 2.0",
+   5912,
+   "2024-10-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_15.jpg",
+   "File:Daccord during Calgary Flames at Seattle Kraken game on Oct. 19, 2024 (54079264416).jpg",
+   "CC BY-SA 2.0",
+   4439,
+   "2024-10-19"
+  ],
+  [
+   "2026-11-14-cgy-lak_16.jpg",
+   "File:Los Angeles Kings at Seattle Kraken - April 1, 2023 - Morgan Geekie, Vladislav Gavrikov and Quinton Byfield (52789146503).jpg",
+   "CC BY-SA 2.0",
+   5316,
+   "2023-04-01"
+  ],
+  [
+   "2026-11-14-cgy-lak_17.jpg",
+   "File:Byfield, Quinton (54720627274).jpg",
+   "CC BY 4.0",
+   2509,
+   "2022-01-17"
+  ],
+  [
+   "2026-11-14-cgy-lak_18.jpg",
+   "File:Quinton Byfield 12 16-2023 (5x4).jpg",
+   "CC BY-SA 2.0",
+   3020,
+   "2023-12-16"
+  ],
+  [
+   "2026-11-14-cgy-lak_19.jpg",
+   "File:Los Angeles Kings at Seattle Kraken - December 16, 2023 - Will Borgen, Quinton Byfield and Adrian Kempe (53408907980).jpg",
+   "CC BY-SA 2.0",
+   2967,
+   "2023-12-16"
+  ]
+ ]
+}
