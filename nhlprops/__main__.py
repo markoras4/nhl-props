@@ -382,6 +382,50 @@ def team_logos(src: Source, slate: dict, logo_dir: Path) -> dict:
 LANDING = Path(__file__).resolve().parent / "landing.html"
 
 
+def _ledger_family(m: str) -> str:
+    """Market family for the one-per-player rule (mGroup in template.html, with multi-point counted as points)."""
+    if m[:1] in ("s", "h", "b") and m[1:2].isdigit():
+        return ("s" if float(m[1:]) < 4 else "pts") if m[0] == "s" else m[0]
+    if m.startswith("fo"):
+        return "fo"
+    if m.startswith("pim"):
+        return "pim"
+    return "pp" if m == "ppp" else "pts"
+
+
+def one_per_player(rows: list) -> list:
+    """One bet per player per game, as the Triage ledger's default view (lgOnePer in template.html): the biggest
+    edge, or the more likely option in the same family when its edge is within 3 points."""
+    by: dict = {}
+    for r in rows:
+        by.setdefault((r["g"], r["pid"]), []).append(r)
+    out = []
+    for rs in by.values():
+        top = rs[0]
+        for r in rs[1:]:
+            if r["ev"] > top["ev"]:
+                top = r
+        safer = sorted((r for r in rs if _ledger_family(r["m"]) == _ledger_family(top["m"]) and r["p"] > top["p"]
+                        and r["ev"] >= top["ev"] - 0.03), key=lambda r: -r["p"])
+        out.append(safer[0] if safer else top)
+    return out
+
+
+def solid_summary(rows: list) -> dict | None:
+    """Landing card: the Solid bets of the one-per-player view. Blocked shots are graded but kept out of the headline
+    record until enough graded blocks bets prove them."""
+    nb = [r for r in rows if not (r["m"][0] == "b" and r["m"][1:2].isdigit())]
+    sr = [r for r in one_per_player(nb) if r.get("gr") == "S"]
+    done = [r for r in sr if r.get("r") in ("w", "l")]
+    if not done:
+        return None
+    u = sum(r["u"] for r in done)
+    sh = [r["od"] / r["sf"] - 1 for r in sr if r.get("sf") and r.get("r") in ("w", "l", "p")]
+    return {"n": len(done), "w": sum(r["r"] == "w" for r in done), "u": round(u, 2), "roi": round(u / len(done), 4),
+            "hit": round(sum(r["r"] == "w" for r in done) / len(done), 4), "exp": round(sum(r["p"] for r in done) / len(done), 4),
+            "sh": round(sum(sh) / len(sh), 4) if sh else None, "since": min(r["d"] for r in rows), "one": 1}
+
+
 def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
     """Public landing page: next slate's games (score/win chance only), previews if written."""
     now = dt.datetime.now(dt.timezone.utc).isoformat()
@@ -418,15 +462,7 @@ def render_landing(slate: dict, out_dir: Path, app_url: str = "./") -> Path:
     solid = None
     try:   # Triage ledger: every bet graded Solid at the lock (the landing card shows this record)
         rows = json.loads((out_dir / "ledger.json").read_text(encoding="utf-8")).get("rows") or []
-        # blocked shots are graded but kept out of the headline record until ~50 graded blocks bets prove them
-        sr = [r for r in rows if r.get("gr") == "S" and not (r["m"][0] == "b" and r["m"][1:2].isdigit())]
-        done = [r for r in sr if r.get("r") in ("w", "l")]
-        if done:
-            u = sum(r["u"] for r in done)
-            sh = [r["od"] / r["sf"] - 1 for r in sr if r.get("sf") and r.get("r") in ("w", "l", "p")]
-            solid = {"n": len(done), "w": sum(r["r"] == "w" for r in done), "u": round(u, 2), "roi": round(u / len(done), 4),
-                     "hit": round(sum(r["r"] == "w" for r in done) / len(done), 4), "exp": round(sum(r["p"] for r in done) / len(done), 4),
-                     "sh": round(sum(sh) / len(sh), 4) if sh else None, "since": min(r["d"] for r in rows)}
+        solid = solid_summary(rows)
     except Exception:
         solid = None
     payload = clean({"date": day, "games": games, "previews": previews, "built": now, "record": record, "solid": solid,
