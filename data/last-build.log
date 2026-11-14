@@ -5,24 +5,25 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 720 skaters and 74 goalies (careers + game logs) ...
+Fetching 717 skaters and 74 goalies (careers + game logs) ...
 Fetching 311 recent box scores (hits, blocks) ...
-News: 106 injuries, likely starters for 25 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-11-14, updated 2026-11-14T17:30:30.995Z)
+News: 106 injuries, likely starters for 24 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 14 teams (2026-11-14, updated 2026-11-14T18:01:16.168Z)
   shot maps: 311 games, 35561 attempts
-Model built: 47 games, 720 skaters (565 expected to play)
-Odds: bookmaker prices for 14 games, 490 players
-Odds: sharp-book prices for 14 games, 735 player markets
+Model built: 47 games, 717 skaters (565 expected to play)
+Odds: bookmaker prices for 13 games, 455 players
+Odds: sharp-book prices for 13 games, 669 player markets
   Stoiximan sync: 14 games, 2844 player prices (last push 2026-11-14T17:47:37.467449+00:00, close); unmatched: Anton Silayev, Artyom Duda, Ben McCartney, Kyle Burroughs, Phillip Tomasino, Trey Taylor, Zac Jones
-  manual odds: 1095 player prices added
-Public betting: splits for 14 games
+  manual odds: 1246 player prices added
+Public betting: splits for 13 games
+Public betting: saved 1 locked splits (95 this season)
   season simulation: 10000 seasons, 1033 games left, top Cup: CAR 34%, COL 12%, MIN 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
-Player projections: 720 skaters
+Player projections: 717 skaters
 Goalie projections: 74 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 9,452 player-games
-  history: game-by-game files for 713 players (3 seasons)
+  history: game-by-game files for 711 players (3 seasons)
   archive: 7 past dates published (2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13)
 Best picks record: 262 graded, 71 won, +3.50 units
 Triage ledger: 134 graded blocks bets: time to review whether blocks join the headline Solid record
