@@ -1,0 +1,35 @@
+{
+ "seasons": {
+  "2026": "ndcf81nlb3",
+  "2025": "xs4m9qupsi",
+  "2024": "qeb-73bZkIm9A",
+  "2023": "qcz-3NvSZ2Cmh"
+ },
+ "per_season": {
+  "2023": {
+   "games": 364,
+   "finished": 364,
+   "new": 0,
+   "stored": 364
+  },
+  "2024": {
+   "games": 364,
+   "finished": 364,
+   "new": 0,
+   "stored": 364
+  },
+  "2025": {
+   "games": 364,
+   "finished": 364,
+   "new": 0,
+   "stored": 364
+  },
+  "2026": {
+   "games": 364,
+   "finished": 107,
+   "new": 0,
+   "stored": 107
+  }
+ },
+ "at": "2026-11-14T07:41+00:00"
+}
