@@ -10,12 +10,11 @@ Fetching 309 recent box scores (hits, blocks) ...
 News: 110 injuries, likely starters for 21 games (+32 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-13, updated 2026-11-13T20:35:17.432Z)
   shot maps: 309 games, 35313 attempts
 Model built: 49 games, 719 skaters (561 expected to play)
-Odds: bookmaker prices for 16 games, 559 players
+Odds: bookmaker prices for 15 games, 525 players
 Odds: sharp-book prices for 1 games, 59 player markets
   Stoiximan sync: 8 games, 635 player prices (last push 2026-11-13T21:29:06.062234+00:00, manual); unmatched: Ben McCartney, No Scorer, Zac Jones
-  manual odds: 245 player prices added
+  manual odds: 370 player prices added
 Public betting: splits for 15 games
-Public betting: saved 1 locked splits (94 this season)
   season simulation: 10000 seasons, 1035 games left, top Cup: CAR 33%, COL 12%, MIN 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 30, points 30
 Player projections: 719 skaters
