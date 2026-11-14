@@ -12,7 +12,7 @@ News: 107 injuries, likely starters for 20 games (+38 backup reports), line comb
 Model built: 46 games, 717 skaters (563 expected to play)
 Odds: bookmaker prices for 17 games, 597 players
 Odds: sharp-book prices for 12 games, 616 player markets
-  Stoiximan sync: 16 games, 2592 player prices (last push 2026-11-14T22:54:17.642668+00:00, manual); unmatched: Anton Silayev, Artyom Duda, Ben McCartney, Kyle Burroughs, Trey Taylor, Zac Jones
+  Stoiximan sync: 16 games, 2592 player prices (last push 2026-11-14T23:29:49.730969+00:00, pre); unmatched: Anton Silayev, Artyom Duda, Ben McCartney, Kyle Burroughs, Trey Taylor, Zac Jones
   manual odds: 1133 player prices added
 Public betting: splits for 17 games
   season simulation: 10000 seasons, 1032 games left, top Cup: CAR 35%, COL 12%, MIN 10%
@@ -24,7 +24,7 @@ Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 9,452 player-games
   history: game-by-game files for 712 players (3 seasons)
   archive: 7 past dates published (2026-11-07, 2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13)
-Best picks record: 264 graded, 72 won, +5.85 units
-Triage ledger: 137 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 1259 bets +6.7u, L 2613 bets -121.8u, F 1933 bets -52.1u
+Best picks record: 266 graded, 72 won, +3.85 units
+Triage ledger: 140 graded blocks bets: time to review whether blocks join the headline Solid record
+Triage ledger: S 1266 bets +3.1u, L 2626 bets -123.6u, F 1952 bets -55.4u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-14.html
