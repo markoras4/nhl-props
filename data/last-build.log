@@ -5,25 +5,23 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 717 skaters and 74 goalies (careers + game logs) ...
+Fetching 719 skaters and 73 goalies (careers + game logs) ...
 Fetching 325 recent box scores (hits, blocks) ...
 News: 110 injuries, likely starters for 18 games (+14 backup reports), line combinations for 32/32 teams, game-day lineups for 26 teams (2026-11-14, updated 2026-11-14T21:12:34.692Z)
-Shot maps: downloading play-by-play for 9 new games ...
   shot maps: 325 games, 37131 attempts
-Model built: 47 games, 717 skaters (565 expected to play)
-Odds: bookmaker prices for 5 games, 175 players
+Model built: 47 games, 719 skaters (568 expected to play)
+Odds: bookmaker prices for 5 games, 177 players
 Odds: sharp-book prices for 0 games, 0 player markets
   Stoiximan sync: 3 games, 0 player prices (last push 2026-11-14T23:55:35.103613+00:00, close)
 Public betting: splits for 5 games
-  season simulation: 10000 seasons, 1019 games left, top Cup: CAR 34%, COL 12%, MIN 12%
+  season simulation: 10000 seasons, 1019 games left, top Cup: CAR 36%, COL 13%, MIN 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 4, points 5
-Player projections: 717 skaters
-Goalie projections: 74 goalies
-  awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Mathew Barzal, Theo Lindstein
+Player projections: 719 skaters
+Goalie projections: 73 goalies
+  awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 9,753 player-games
-  history: 9 box scores for hits/blocks (2026)
-  history: game-by-game files for 714 players (3 seasons)
+  history: game-by-game files for 716 players (3 seasons)
   archive: 7 past dates published (2026-11-08, 2026-11-09, 2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14)
 Best picks record: 289 graded, 78 won, +10.45 units
 Triage ledger: 158 graded blocks bets: time to review whether blocks join the headline Solid record
