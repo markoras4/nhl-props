@@ -1,45 +1,49 @@
 // Walkthrough recorder: drives the real site, captures every repaint (CDP screencast, JPEG q92) with timestamps.
 // Usage: node rec.js <outdir> [stillsOnly]
-const { chromium } = require('playwright');
+let chromium, LAUNCH = {};
+try { ({ chromium } = require('playwright')); } catch (e) { ({ chromium } = require('playwright-core')); LAUNCH = { channel: 'chrome' }; }
+const URL = process.env.TOUR_URL || 'http://localhost:8771/app/index.html';   // e.g. the paywall dev server: http://localhost:8787/app/?as=pro
 const fs = require('fs'), path = require('path');
 const OUT = process.argv[2], STILLS = process.argv[3] === "stills";
-const W = 1440, H = 810, DSF = 4/3;     // -> 1920x1080 frames
+const W = 1920, H = 1080, DSF = 1, ZOOM = 4/3;   // 1920x1080 frames of a 1440x810 layout (the screencast ignores the device pixel ratio)
 
 const OVERLAY_CSS = `
 #vo-cap{position:fixed;left:50%;bottom:34px;transform:translate(-50%,14px);z-index:9998;display:flex;align-items:center;gap:14px;
-  max-width:min(980px,82vw);padding:13px 22px 13px 14px;border-radius:16px;background:rgba(9,13,19,.86);backdrop-filter:blur(14px);
-  border:1px solid rgba(61,220,151,.35);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.03) inset;
-  font:600 23px/1.35 "Exo 2",sans-serif;color:#e7eef6;opacity:0;transition:opacity .45s ease,transform .55s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+  max-width:min(980px,82vw);padding:13px 22px 13px 14px;border-radius:16px;background:rgba(16,10,18,.88);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,79,168,.35);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.03) inset;
+  font:600 23px/1.35 "Exo 2",sans-serif;color:#f7ebf4;opacity:0;transition:opacity .45s ease,transform .55s cubic-bezier(.2,.8,.2,1);pointer-events:none}
 #vo-cap.on{opacity:1;transform:translate(-50%,0)}
-#vo-cap b.n{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#3ddc97;color:#04170d;font:800 17px "Oxanium",sans-serif}
-#vo-cap em{font-style:normal;color:#3ddc97}
+#vo-cap b.n{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#ff4fa8;color:#2b0016;font:800 17px "Oxanium",sans-serif}
+#vo-cap em{font-style:normal;color:#ff4fa8}
 #vo-cur{position:fixed;left:0;top:0;z-index:9999;width:26px;height:26px;margin:-3px 0 0 -3px;pointer-events:none;opacity:0;transition:opacity .3s;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
 #vo-cur.on{opacity:1}
-.vo-rip{position:fixed;z-index:9998;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid #3ddc97;pointer-events:none;animation:vorip .6s ease-out forwards}
+.vo-rip{position:fixed;z-index:9998;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:2px solid #ff4fa8;pointer-events:none;animation:vorip .6s ease-out forwards}
 @keyframes vorip{from{transform:scale(.4);opacity:1}to{transform:scale(3.2);opacity:0}}
-#vo-card{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:radial-gradient(120% 90% at 50% 0%,#12301f 0%,#0a0e13 55%);
+#vo-card{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:radial-gradient(120% 90% at 50% 0%,#3d1733 0%,#100a12 55%);
   opacity:0;transition:opacity .7s ease;pointer-events:none}
 #vo-card.on{opacity:1}
 #vo-card .in{text-align:center;transform:translateY(10px);transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
 #vo-card.on .in{transform:none}
-#vo-card h1{margin:0;font:800 74px/1 "Oxanium",sans-serif;letter-spacing:1px;color:#e7eef6}
-#vo-card h1 b{color:#3ddc97}
-#vo-card p{margin:18px 0 0;font:500 25px/1.4 "Exo 2",sans-serif;color:#8796a8}
-#vo-card p.s{margin-top:28px;font-size:18px;color:#5f6f82}
-#vo-card .bar{width:120px;height:3px;margin:26px auto 0;border-radius:3px;background:linear-gradient(90deg,transparent,#3ddc97,transparent)}
+#vo-card img.logo{display:block;height:132px;margin:0 auto}
+#vo-card p{margin:18px 0 0;font:500 25px/1.4 "Exo 2",sans-serif;color:#aa93a5}
+#vo-card p.s{margin-top:28px;font-size:18px;color:#7d6878}
+#vo-card .bar{width:120px;height:3px;margin:26px auto 0;border-radius:3px;background:linear-gradient(90deg,transparent,#ff4fa8,transparent)}
 .totop{display:none!important}
 `;
-const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 1.3 3.9 7.4-2.9 1.5-3.9-7.5L4.6 19z" fill="#fff" stroke="#0a0e13" stroke-width="1.3" stroke-linejoin="round"/></svg>`;
+const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 1.3 3.9 7.4-2.9 1.5-3.9-7.5L4.6 19z" fill="#fff" stroke="#100a12" stroke-width="1.3" stroke-linejoin="round"/></svg>`;
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  const b = await chromium.launch();
+  const b = await chromium.launch().catch(() => chromium.launch(LAUNCH));   // the bundled headless shell keeps the 4/3 pixel ratio in the screencast (1920x1080 frames)
   const ctx = await b.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: DSF, colorScheme: "dark" });
-  await ctx.addInitScript(() => { localStorage.setItem('age18', '1'); });
+  await ctx.addInitScript((z) => { localStorage.setItem('age18', '1'); const zz = () => { if (document.documentElement) document.documentElement.style.zoom = z; }; zz(); addEventListener('DOMContentLoaded', zz); }, ZOOM);
   const p = await ctx.newPage();
   p.on('pageerror', e => console.log('PAGEERR', e.message));
-  await p.goto('http://localhost:8771/app/index.html');
+  await p.goto(URL);
   await p.waitForTimeout(1500);
+  // on a paywalled build, wait for the Pro patch (every player's numbers) before recording
+  await p.waitForFunction(() => typeof PAYWALLED === "undefined" || !PAYWALLED || PRO_LOADED, null, { timeout: 20000 }).catch(() => console.log("Pro data not loaded"));
+  await p.evaluate(() => { try { render(); } catch (e) {} });
   await p.evaluate(() => document.fonts.ready);
   await p.addStyleTag({ content: OVERLAY_CSS });
   await p.evaluate((cur) => {
@@ -103,7 +107,7 @@ const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 
   else await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: 1920, maxHeight: 1080, everyNthFrame: 1 });
 
   // ---------------- 0. title card
-  await card(`<h1>even<b>out</b></h1><p>The model vs the market, for every NHL player prop</p><div class="bar"></div>`);
+  await card(`<img class="logo" src="/brand/evenout-logo-dark.svg" alt="evenout"><p>The model vs the market, for every NHL player prop</p><div class="bar"></div>`);
   await wait(2600);
   await mark("intro");
   // ---------------- 1. tonight's games
@@ -124,7 +128,7 @@ const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 
   await click('.bpseg button[data-bpg="all"]'); await wait(900);
   await mark("picks");
   // ---------------- 3. roster grid
-  await cap(3, `Every player's chances next to the odds. Green tags show the <em>edge</em>; outlined = value`);
+  await cap(3, `Every player's chances next to the odds. Tags show the <em>edge</em>; outlined = value`);
   await scrollToEl('#sidebody table', 70, 1300); await wait(700);
   const tag = await p.$('#sidebody .cell .evtag.big') || await p.$('#sidebody .cell .evtag');
   let tagRow = null;
@@ -138,7 +142,8 @@ const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 
   await cap(4, `<em>Game by game</em>: every game with ice time, shots, xG, hits and blocks, against the line`);
   await scrollToEl('.l10box', 100, 1200); await wait(600);
   const bars = await p.$$('.l10box .gtg');
-  if (bars.length > 5) { await moveTo(bars[bars.length - 3], { fy: 0.7 }); await wait(1500); await moveTo(bars[bars.length - 6], { fy: 0.7 }); await wait(1300); }
+  // no bar hover: under the page zoom used for 1080p frames the hover box lands to the right of the bar
+  if (bars.length > 5) { await moveTo('.l10box h4', { fx: 0.2 }); await wait(2600); }
   const lb = await p.$('.l10lines-pick .seg button:nth-child(3)'); if (lb) { await click(lb); await wait(1300); }
   await mark("player");
   // ---------------- 5. props tab + parlay check
@@ -170,7 +175,7 @@ const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 
   await mark("record");
   // ---------------- outro
   await capOff(); await curOn(false);
-  await card(`<h1>even<b>out</b></h1><p>A tool and a guide for your own decisions</p><p class="s">Analysis, not a promise of profit · 18+ · Play responsibly</p>`);
+  await card(`<img class="logo" src="/brand/evenout-logo-dark.svg" alt="evenout"><p>A tool and a guide for your own decisions</p><p class="s">Analysis, not a promise of profit · 18+ · Play responsibly</p>`);
   await wait(3400);
   await mark("end");
   await cdp.send('Page.stopScreencast');
