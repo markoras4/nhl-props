@@ -235,7 +235,7 @@ const GS=G.map((g,i)=>{
   // D: game numbers
   const pub=g.public&&g.public.ml?g.public.ml:null;
   let stake='';
-  if(g.stakes){ const tms=[g.home,g.away].filter(t=>g.stakes[t]); tms.sort((a,b)=>(g.stakes[b].swing||0)-(g.stakes[a].swing||0)); const t=tms[0];
+  if(g.stakes){ const tms=[g.home,g.away].filter(t=>g.stakes[t]&&typeof g.stakes[t].now==='number'); tms.sort((a,b)=>(g.stakes[b].swing||0)-(g.stakes[a].swing||0)); const t=tms[0];
     if(t){const s=g.stakes[t]; stake=`${t} playoff chance <em>${pct(s.now)}</em> · ${pct(s.win)} with a win · ${pct(s.lose)} with a loss`;} }
   const tr=(lbl)=>`<div class="row"><div class="who">${lbl}</div><div class="track"><b style="background:${g.ac}"></b><b class="r" style="background:${g.hc}"></b></div></div>`;
   const gn=el('div','card',`<div class="lab">Who wins?</div>${tr('MODEL')}${g.mk_home!=null?tr('MARKET'):''}${pub?tr('PUBLIC BETS'):''}
