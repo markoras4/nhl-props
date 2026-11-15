@@ -1002,7 +1002,7 @@ body.has-cmp main{padding-bottom:110px}
 .lgtot td{border-top:1px solid var(--line)}.cnt{font-variant-numeric:tabular-nums}.lgtab td,.lgtab th{white-space:nowrap}
 .lgcbox{overflow:hidden}.lgwrap{position:relative}
 .lgchart{width:100%;height:auto;display:block;overflow:visible}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-dasharray:3 4}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
-.lgl{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
+.lgl{fill:none;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
 @keyframes lgdraw{to{stroke-dashoffset:0px}}
 .lga{opacity:0;animation:lgfade 1s ease forwards;animation-delay:calc(.9s + var(--k)*.18s)}@keyframes lgfade{to{opacity:1}}
 .lgl.lg-S{stroke:var(--good)}.lgl.lg-L{stroke:#e3a33b}.lgl.lg-F{stroke:var(--bad)}
@@ -1014,7 +1014,7 @@ body.has-cmp main{padding-bottom:110px}
 .lgchart .lghov{stroke:color-mix(in srgb,var(--text) 45%,transparent);stroke-width:1;opacity:0;pointer-events:none}.lgdim{fill:color-mix(in srgb,var(--panel) 62%,transparent);opacity:0;pointer-events:none}
 .lgchart text.lgdate{fill:var(--text);font:700 11.5px var(--f-ui);opacity:0;pointer-events:none}.lghd{opacity:0;pointer-events:none;stroke:var(--panel);stroke-width:2}.lghd.lg-S{fill:var(--good)}.lghd.lg-L{fill:#e3a33b}.lghd.lg-F{fill:var(--bad)}
 .lgchart.hov .lghov,.lgchart.hov .lgdim,.lgchart.hov text.lgdate,.lgchart.hov .lghd{opacity:1}.lgchart.hov .lgd,.lgchart.hov .lgp{visibility:hidden}
-.lgchart text.lgt{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;transition:y .12s ease-out}
+.lgchart text.lgt{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
 .lgtip-old{position:absolute;top:6px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none;display:flex;flex-direction:column;gap:3px;min-width:130px;z-index:2}
 .lgtip[hidden]{display:none}.lgtip span{display:flex;align-items:center;gap:6px}.lgtip i{width:8px;height:8px;border-radius:50%;display:inline-block}.lgtip em{font-style:normal;font-weight:700;margin-left:auto}.lgtip .up{color:var(--good)}.lgtip .dn{color:var(--bad)}
 .lghist .lghh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.lghist h4{margin:0}
@@ -4971,27 +4971,44 @@ document.addEventListener("click", e => {
 document.addEventListener("change", e => { if (e.target.id === "lgfam"){ LG().fam = e.target.value; ledgerView(); } });
 // chart hover, like the matchup line-movement charts: a guide line that follows the pointer, everything to its right
 // dimmed, a dot on each line, the date on top, and each grade's label moved to the hovered day with its running units
-function lgHover(svg, clientX){
+// The guide glides: it eases toward the pointer every frame (like Polymarket) instead of jumping day to day, the dots
+// ride along the lines between days, and the date and units show the nearest day.
+const LGA = new WeakMap();   // svg -> {f: shown position, to: target position (fractional day index), raf}
+function lgHover(svg, clientX, snap){
   const C = window.__lgc; if (!C) return;
   const r = svg.getBoundingClientRect(), vx = (clientX - r.left) / r.width * svg.viewBox.baseVal.width;
-  const n = C.days.length, i = Math.max(0, Math.min(n - 1, Math.round((vx - C.L) / ((C.W - C.L - C.R) / (n - 1))))), x = C.X(i);
-  svg.classList.add("hov"); svg.dataset.i = i;
+  const n = C.days.length, to = Math.max(0, Math.min(n - 1, (vx - C.L) / ((C.W - C.L - C.R) / Math.max(1, n - 1))));
+  let a = LGA.get(svg);
+  if (!a || !svg.classList.contains("hov")){ a = {f: to, to, raf: 0}; LGA.set(svg, a); }
+  a.to = to; svg.classList.add("hov");
+  if (snap || matchMedia("(prefers-reduced-motion: reduce)").matches){ a.f = to; lgDraw(svg); return; }
+  if (!a.raf) a.raf = requestAnimationFrame(function step(){
+    a.f += (a.to - a.f) * .24; if (Math.abs(a.to - a.f) < .004) a.f = a.to;
+    lgDraw(svg); a.raf = a.f !== a.to && svg.classList.contains("hov") ? requestAnimationFrame(step) : 0; });
+}
+function lgDraw(svg){
+  const C = window.__lgc, a = LGA.get(svg); if (!C || !a) return;
+  const n = C.days.length, f = a.f, i0 = Math.floor(f), i1 = Math.min(n - 1, i0 + 1), u = f - i0, i = Math.round(f);
+  const x = C.X(i0) + (C.X(i1) - C.X(i0)) * u, val = s => s.pts[i0] + (s.pts[i1] - s.pts[i0]) * u;
+  svg.dataset.i = i;
   const hov = svg.querySelector(".lghov"); hov.setAttribute("x1", x); hov.setAttribute("x2", x);
   const dim = svg.querySelector(".lgdim"); dim.setAttribute("x", x); dim.setAttribute("width", Math.max(0, C.W - C.R - x));
   const dt = svg.querySelector(".lgdate"); dt.textContent = dayLabel(C.days[i]); dt.setAttribute("x", Math.max(C.L + 40, Math.min(C.W - C.R - 40, x)));
   // labels beside the dots, pushed apart so they never overlap
-  const labs = C.series.map(s => ({s, y: C.Y(s.pts[i]) + 4})).sort((p, q) => p.y - q.y);
+  const labs = C.series.map(s => ({s, y: C.Y(val(s)) + 4})).sort((p, q) => p.y - q.y);
   for (let k = 1; k < labs.length; k++) if (labs[k].y - labs[k-1].y < 15) labs[k].y = labs[k-1].y + 15;
+  const right = x + 10 > C.W - C.R - 70 && f < n - 1;
   labs.forEach(({s, y}) => {
-    const d = svg.querySelector(`.lghd.lg-${s.g}`); d.setAttribute("cx", x); d.setAttribute("cy", C.Y(s.pts[i]));
-    const tx = svg.querySelector(`.lgt.lg-${s.g}`), sp = tx.querySelector("tspan"), right = x + 10 > C.W - C.R - 70 && i < n - 1;
+    const d = svg.querySelector(`.lghd.lg-${s.g}`); d.setAttribute("cx", x); d.setAttribute("cy", C.Y(val(s)));
+    const tx = svg.querySelector(`.lgt.lg-${s.g}`), sp = tx.querySelector("tspan");
     tx.setAttribute("x", right ? x - 10 : x + 10); tx.setAttribute("text-anchor", right ? "end" : "start"); tx.setAttribute("y", y);
     sp.textContent = sgnU(s.pts[i], 1); tx.classList.toggle("dn", s.pts[i] < 0);
   });
 }
 function lgLeave(svg){
   const C = window.__lgc; if (!C || !svg.classList.contains("hov")) return;
-  svg.classList.remove("hov"); delete svg.dataset.i; const n = C.days.length;
+  svg.classList.remove("hov"); delete svg.dataset.i; const n = C.days.length, a = LGA.get(svg);
+  if (a?.raf){ cancelAnimationFrame(a.raf); a.raf = 0; }
   C.series.forEach(s => { const tx = svg.querySelector(`.lgt.lg-${s.g}`), last = s.pts[n - 1];
     tx.setAttribute("x", C.X(n - 1) + 10); tx.setAttribute("y", C.Y(last) + 4); tx.setAttribute("text-anchor", "start");
     tx.querySelector("tspan").textContent = sgnU(last, 1); tx.classList.remove("dn"); });
