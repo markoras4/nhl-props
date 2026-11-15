@@ -1,4 +1,4 @@
-# NHL Props Lab
+# evenout
 
 A personal NHL player-props and game-totals model built on **regression to the mean**.
 It downloads stats from the NHL API and MoneyPuck, computes probabilities for

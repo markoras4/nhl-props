@@ -1,10 +1,10 @@
-// NHL Props Lab service worker: shows push alerts and opens the right page when one is tapped.
+// evenout service worker: shows push alerts and opens the right page when one is tapped.
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 self.addEventListener("push", e => {
   let d = {};
-  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: "NHL Props Lab", body: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.title || "NHL Props Lab", {
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: "evenout", body: e.data ? e.data.text() : "" }; }
+  e.waitUntil(self.registration.showNotification(d.title || "evenout", {
     body: d.body || "", tag: d.tag || undefined, icon: "/icons/icon-192.png", badge: "/icons/icon-192.png",
     data: { url: d.url || "/app/" }
   }));

@@ -261,7 +261,7 @@ const fcells=[...feat.children];
 let cupc=null;
 if(SPEC.cup){ const c=SPEC.cup; cupc=css(el('div','card',`<div class="lab">Stanley Cup · model favourite</div><div style="display:flex;align-items:flex-end;gap:26px;margin-top:10px"><div style="font:400 120px/0.9 Anton">${c.team}</div><div style="font:400 120px/0.9 Anton;color:var(--mint)">${pct(c.p)}</div>${c.implied?`<div style="font:700 32px 'Exo 2';color:var(--mute);padding-bottom:10px">market ${pct(c.implied)}</div>`:''}</div>`,outro),{top:'1080px'}); }
 const oicon=el('img','abs',null,outro); oicon.src='img/icon.png'; css(oicon,{left:'442px',top:'330px',width:'196px',height:'196px',borderRadius:'44px',boxShadow:'0 0 120px rgba(61,220,151,.45)'});
-const oname=css(el('div','abs','NHL PROPS LAB',outro),{left:0,right:0,top:'570px',textAlign:'center',font:'800 100px Oxanium',letterSpacing:'4px'});
+const oname=css(el('div','abs','EVENOUT',outro),{left:0,right:0,top:'570px',textAlign:'center',font:'800 100px Oxanium',letterSpacing:'4px'});
 const ourl=css(el('div','abs',`<span class="chip" style="font-size:38px;letter-spacing:1px;text-transform:none;border-color:rgba(61,220,151,.6)"><span class="dot"></span>${esc(SPEC.site)}</span>`,outro),{left:0,right:0,top:'720px',textAlign:'center'});
 const ofol=css(el('div','abs anton','FOLLOW FOR<br>TOMORROW’S BETS',outro),{left:0,right:0,top:'880px',textAlign:'center',fontSize:'128px'});
 const odis=css(el('div','abs','Model numbers, not betting advice · 18+ · Play responsibly',outro),{left:'40px',right:'40px',top:'1400px',textAlign:'center',font:'500 28px "Exo 2"',color:'var(--mute)'});
@@ -271,7 +271,7 @@ const leak1=el('div','leak'); leak1.style.background='radial-gradient(circle,rgb
 const leak2=el('div','leak'); leak2.style.background='radial-gradient(circle,rgba(90,169,255,.45),transparent 60%)';
 el('div',null).id='vig';
 const prog=el('div',null,G.map(()=>'<i><u></u></i>').join('')); prog.id='prog'; const progU=[...prog.querySelectorAll('u')];
-const brand=el('div',null,`<img src="img/icon.png">NHL PROPS LAB`); brand.id='brand';
+const brand=el('div',null,`<img src="img/icon.png">EVENOUT`); brand.id='brand';
 const bdate=el('div',null,esc(SPEC.day)); bdate.id='bdate';
 const wipe=el('div',null); wipe.id='wipe';
 const flash=el('div',null); flash.id='flash';

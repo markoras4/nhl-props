@@ -103,7 +103,7 @@ const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 
   else await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: 1920, maxHeight: 1080, everyNthFrame: 1 });
 
   // ---------------- 0. title card
-  await card(`<h1>NHL PROPS <b>LAB</b></h1><p>The model vs the market, for every NHL player prop</p><div class="bar"></div>`);
+  await card(`<h1>even<b>out</b></h1><p>The model vs the market, for every NHL player prop</p><div class="bar"></div>`);
   await wait(2600);
   await mark("intro");
   // ---------------- 1. tonight's games
@@ -170,7 +170,7 @@ const CURSOR = `<svg id="vo-cur" viewBox="0 0 24 24"><path d="M4 2.5l15 9.2-6.6 
   await mark("record");
   // ---------------- outro
   await capOff(); await curOn(false);
-  await card(`<h1>NHL PROPS <b>LAB</b></h1><p>A tool and a guide for your own decisions</p><p class="s">Analysis, not a promise of profit · 18+ · Play responsibly</p>`);
+  await card(`<h1>even<b>out</b></h1><p>A tool and a guide for your own decisions</p><p class="s">Analysis, not a promise of profit · 18+ · Play responsibly</p>`);
   await wait(3400);
   await mark("end");
   await cdp.send('Page.stopScreencast');

@@ -13,6 +13,6 @@
  },
  "credits": [
   "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Winter_Classic_-_Vegas_Golden_Knights_at_Seattle_Kraken_-_January_1,_2024_-_Jonathan_Marchessault,_Vince_Dunn_and_Joey_Daccord_(53441245715).jpg\" rel=\"noopener\">Winter Classic, Vegas Golden Knights at Seattle Kraken, January 1, 2024</a> by Jenn G from Seattle, WA, CC BY-SA 2.0",
-  "Numbers: NHL Props Lab triage ledger, data/ledger.json on the site branch as built November 15, 2026, covering October 25 to November 14 (6,321 graded bets in all three grades, 61 voids left out), one unit per bet at the price at the lock. Sharp comparison: the 2,286 of those bets with a sharp bookmaker's fair price (margin removed) recorded at the lock. Charts: NHL Props Lab."
+  "Numbers: evenout triage ledger, data/ledger.json on the site branch as built November 15, 2026, covering October 25 to November 14 (6,321 graded bets in all three grades, 61 voids left out), one unit per bet at the price at the lock. Sharp comparison: the 2,286 of those bets with a sharp bookmaker's fair price (margin removed) recorded at the lock. Charts: evenout."
  ]
 }

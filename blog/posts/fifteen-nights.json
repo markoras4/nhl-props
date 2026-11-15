@@ -13,6 +13,6 @@
  },
  "credits": [
   "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Capitals-Maple_Leafs_(33394930223).jpg\" rel=\"noopener\">Capitals vs Maple Leafs, 2017 playoffs</a> by David from Washington, DC, CC BY 2.0",
-  "Numbers: NHL Props Lab track record, data/bestpicks.json on the site branch as built November 9, 2026, covering October 25 to November 8 (205 graded picks on the All tab, one void left out; 102 graded picks on the Multi-point tab). Stakes are one unit per pick. Simulations: 40,000 replays of those same 205 picks and prices, run for this article. Charts: NHL Props Lab."
+  "Numbers: evenout track record, data/bestpicks.json on the site branch as built November 9, 2026, covering October 25 to November 8 (205 graded picks on the All tab, one void left out; 102 graded picks on the Multi-point tab). Stakes are one unit per pick. Simulations: 40,000 replays of those same 205 picks and prices, run for this article. Charts: evenout."
  ]
 }

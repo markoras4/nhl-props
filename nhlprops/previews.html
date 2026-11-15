@@ -171,7 +171,7 @@ footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}foote
 <body>
 <header>
   <div class="wrap top">
-    <a class="brand" href="./"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="NHL Props Lab" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></a>
+    <a class="brand" href="./"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="evenout" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></a>
     <div class="hright">
       <div class="seg" id="lang"><button data-l="en">EN</button><button data-l="sv">SV</button></div>
       <button class="iconbtn hide-m" id="theme" type="button" aria-label="Theme"></button>
@@ -191,14 +191,14 @@ const I18N = {
       proj:"Projected", total:"Expected total {x} goals", win:"win", photo:"Photo", sources:"Sources",
       none:"Previews for the next slate are written on game day.",
       note:"Model numbers are probabilities, not tips. Odds are the market's at the time of writing and change during the day.",
-      rg:`18+. Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.` },
+      rg:`18+. Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). evenout is an analysis tool and does not take bets.` },
  sv:{ terms:"Villkor", disclaimer:"Ansvarsfriskrivning", privacy:"Integritet", eyebrow:"Förhandstittar", h1:"Måndagens matcher, lästa på två minuter", h1_any:"{d}: varje match, läst på två minuter",
       intro:"Nyheter från ligan, sviterna och rekorden som spelar roll, och var vår modell och spelmarknaden är oense. Siffrorna uppdateras vid varje uppdatering.",
       news:"Nyheter", records:"Sviter & rekord", betting:"Spelinsikter", open_app:"Öppna appen", open_match:"Öppna matchen →",
       proj:"Beräknat", total:"Förväntat totalt {x} mål", win:"vinst", photo:"Foto", sources:"Källor",
       none:"Förhandstittar för nästa omgång skrivs på matchdagen.",
       note:"Modellens siffror är sannolikheter, inte tips. Oddsen är marknadens när texten skrevs och ändras under dagen.",
-      rg:`18+. Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.` }
+      rg:`18+. Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). evenout är ett analysverktyg och tar inte emot spel.` }
 };
 let LANG = (()=>{ const s=store.get("set:lang"); if(s==="en"||s==="sv") return s; return (navigator.language||"").toLowerCase().startsWith("sv")?"sv":"en"; })();
 const t = (k,v={}) => { let s = I18N[LANG][k] ?? I18N.en[k] ?? k; for (const [a,b] of Object.entries(v)) s = s.replaceAll("{"+a+"}", b); return s; };
@@ -269,9 +269,9 @@ render();
 <script>
 (function(){
   const S = {
-    en:{h:"Are you 18 or older?", p:"NHL Props Lab is an analysis tool for sports betting and is only for adults. We don't take bets.", yes:"Yes, I'm 18+", no:"No",
+    en:{h:"Are you 18 or older?", p:"evenout is an analysis tool for sports betting and is only for adults. We don't take bets.", yes:"Yes, I'm 18+", no:"No",
         msg:'Sorry, this site is only for people aged 18 and over. Worried about gambling? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'},
-    sv:{h:"Är du 18 år eller äldre?", p:"NHL Props Lab är ett analysverktyg för sportspel och är bara för vuxna. Vi tar inte emot spel.", yes:"Ja, jag är 18+", no:"Nej",
+    sv:{h:"Är du 18 år eller äldre?", p:"evenout är ett analysverktyg för sportspel och är bara för vuxna. Vi tar inte emot spel.", yes:"Ja, jag är 18+", no:"Nej",
         msg:'Tyvärr, sajten är bara för personer som fyllt 18. Orolig för spel? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'}};
   let ok = null; try { ok = localStorage.getItem("age18"); } catch(e) {}
   if (ok === "1") return;

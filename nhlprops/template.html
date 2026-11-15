@@ -310,7 +310,7 @@ td.h{text-align:center;padding:4px}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:5px}
 /* small credit in the corner of charts, so screenshots carry the source */
 .l10box,.rkchart,.pjbox,.pjcard,.spbox,.exchart,.lgchart{position:relative}
-.l10box::after,.rkchart::after,.pjbox::after,.pjcard::after,.spbox::after,.exchart::after,.lgchart::after{content:"NHL Props Lab";position:absolute;right:12px;bottom:6px;font:700 9.5px/1 var(--f-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);opacity:.45;pointer-events:none;z-index:1}
+.l10box::after,.rkchart::after,.pjbox::after,.pjcard::after,.spbox::after,.exchart::after,.lgchart::after{content:"evenout";position:absolute;right:12px;bottom:6px;font:700 9.5px/1 var(--f-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);opacity:.45;pointer-events:none;z-index:1}
 @media print{.l10box::after,.rkchart::after,.pjbox::after,.pjcard::after,.spbox::after,.exchart::after,.lgchart::after{opacity:.7}}
 .pbar{display:flex;align-items:center;gap:11px;min-width:138px}
 .pbar b{min-width:48px;font:700 14px/1 var(--f-disp);font-variant-numeric:tabular-nums;letter-spacing:.2px}.pbar b.hi{color:var(--accent)}
@@ -1190,7 +1190,7 @@ a.mbtn{text-decoration:none;display:inline-flex;align-items:center;justify-conte
 <body>
 <header>
   <div class="wrap top">
-    <div class="brand" id="home"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="NHL Props Lab" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></div>
+    <div class="brand" id="home"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="evenout" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></div>
     <div class="meta" id="meta"></div>
     <nav id="nav"></nav>
     <div class="tools"><select id="ofmt" class="ofmt" aria-label="Odds format"></select><div class="seg" id="lang"></div><button class="iconbtn" id="theme" type="button"></button><button class="acctbtn" id="acct" type="button"></button></div>
@@ -1390,7 +1390,7 @@ const I18N = {
     trm_Power_play_point:"Power-play point", trm_Faceoffs_won__all_lines_:"Faceoffs won (all lines)",
     trg_1:"1X2 home (60 min)", trg_X:"Draw after 60 min", trg_2:"1X2 away (60 min)", trg_hpl:"Home −1.5", trg_apl:"Away −1.5", trg_btts:"Both teams to score (incl. OT)", trg_b60:"Both score (60 min)", trg_b2:"Both 2+ goals (60 min)",
     trg_htt2_5:"Home over 2.5", trg_htt3_5:"Home over 3.5", trg_att2_5:"Away over 2.5", trg_att3_5:"Away over 3.5", trg_p1o0_5:"1st period over 0.5", trg_p1o1_5:"1st period over 1.5", trg_p1o2_5:"1st period over 2.5", trg_p1x:"1st period draw", trg_sh_h:"Home shutout", trg_sh_a:"Away shutout",
-    rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). NHL Props Lab is an analysis tool and does not take bets.`, au_18:"I am 18 or older, understand that NHL Props Lab is an analysis tool, not a sportsbook, and accept the <a href='/legal.html#terms' target='_blank' rel='noopener'>Terms</a> and <a href='/legal.html#privacy' target='_blank' rel='noopener'>Privacy policy</a>.", legal_links:"<a href='/legal.html#terms'>Terms</a> · <a href='/legal.html#disclaimer'>Disclaimer</a> · <a href='/legal.html#privacy'>Privacy</a>", au_need18:"Please confirm that you are 18 or older.",
+    rg_foot:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). evenout is an analysis tool and does not take bets.`, au_18:"I am 18 or older, understand that evenout is an analysis tool, not a sportsbook, and accept the <a href='/legal.html#terms' target='_blank' rel='noopener'>Terms</a> and <a href='/legal.html#privacy' target='_blank' rel='noopener'>Privacy policy</a>.", legal_links:"<a href='/legal.html#terms'>Terms</a> · <a href='/legal.html#disclaimer'>Disclaimer</a> · <a href='/legal.html#privacy'>Privacy</a>", au_need18:"Please confirm that you are 18 or older.",
     tr_val:"Value bets (model EV ≥ 5% at the market price)", tr_won:"Won", tr_profit:"Profit (1 unit each)", tr_calib:"Calibration: {k}",
     tr_blend:"Over {l}: best history weight", tr_weight:"Weight", tr_lowest:"Lowest Brier so far: {w}%.", predicted:"predicted", actual:"actual",
     pill_due:"▲ Due", pill_hot:"▼ Hot", pill_dry:"{n} shots dry",
@@ -1432,8 +1432,8 @@ const I18N = {
     al_title:"Alerts", al_sub:"push notifications to this device", al_enable:"Turn on notifications on this device", al_on:"On for this device", al_turn_off:"Turn off", al_test:"Send a test",
     al_edge:"Alert me when a prop's edge is at least", al_off:"Off", al_goalies:"Alert me when a starting goalie is confirmed", al_saved:"Saved.",
     al_unsupported:"This browser can't receive notifications. Try Chrome, Edge, Firefox or Safari.", al_blocked:"Notifications are blocked for this site. Allow them in your browser settings, then reload.",
-    al_ios:"On iPhone and iPad: tap Share, then “Add to Home Screen”, open Props Lab from your home screen and turn notifications on here.",
-    al_test_title:"Props Lab alerts work", al_test_body:"You'll get a notification like this when one of your alerts fires.", proj_short:"proj.", frozen_note:"Locked 5 minutes before puck drop: probabilities, odds, picks and player details stay exactly as they were then.",
+    al_ios:"On iPhone and iPad: tap Share, then “Add to Home Screen”, open evenout from your home screen and turn notifications on here.",
+    al_test_title:"evenout alerts work", al_test_body:"You'll get a notification like this when one of your alerts fires.", proj_short:"proj.", frozen_note:"Locked 5 minutes before puck drop: probabilities, odds, picks and player details stay exactly as they were then.",
     st_uncertain:"Not decided", or_g:"or {n}", alt_note:"Sources disagree on the starter. {n} may start instead – switch below to see his effect.",
     st_expected:"Expected", inj_play:"Playing", lu_day:"Game-day lineup", why_scr:"Scratched", why_tonight:"Not in tonight's lineup", team_news:"Team news", news_n:"{n} notes", upd_at:"updated {t}",
     st_projected:"Projected", st_likely:"Likely", st_very:"Very Likely", st_confirmed:"Confirmed", st_unconfirmed:"Unconfirmed",
@@ -1615,7 +1615,7 @@ const I18N = {
     trm_Power_play_point:"PP-poäng", trm_Faceoffs_won__all_lines_:"Vunna tekningar (alla linjer)",
     trg_1:"1X2 hemma (60 min)", trg_X:"Oavgjort efter 60 min", trg_2:"1X2 borta (60 min)", trg_hpl:"Hemma −1,5", trg_apl:"Borta −1,5", trg_btts:"Båda gör mål (inkl. förl.)", trg_b60:"Båda gör mål (60 min)", trg_b2:"Båda 2+ mål (60 min)",
     trg_htt2_5:"Hemma över 2,5", trg_htt3_5:"Hemma över 3,5", trg_att2_5:"Borta över 2,5", trg_att3_5:"Borta över 3,5", trg_p1o0_5:"1:a perioden över 0,5", trg_p1o1_5:"1:a perioden över 1,5", trg_p1o2_5:"1:a perioden över 2,5", trg_p1x:"1:a perioden oavgjort", trg_sh_h:"Hemmanolla", trg_sh_a:"Bortanolla",
-    rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). NHL Props Lab är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre, förstår att NHL Props Lab är ett analysverktyg, inte ett spelbolag, och godkänner <a href='/legal.html#terms' target='_blank' rel='noopener'>villkoren</a> och <a href='/legal.html#privacy' target='_blank' rel='noopener'>integritetspolicyn</a>.", legal_links:"<a href='/legal.html#terms'>Villkor</a> · <a href='/legal.html#disclaimer'>Ansvarsfriskrivning</a> · <a href='/legal.html#privacy'>Integritet</a>", au_need18:"Bekräfta att du är 18 år eller äldre.",
+    rg_foot:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). evenout är ett analysverktyg och tar inte emot spel.`, au_18:"Jag är 18 år eller äldre, förstår att evenout är ett analysverktyg, inte ett spelbolag, och godkänner <a href='/legal.html#terms' target='_blank' rel='noopener'>villkoren</a> och <a href='/legal.html#privacy' target='_blank' rel='noopener'>integritetspolicyn</a>.", legal_links:"<a href='/legal.html#terms'>Villkor</a> · <a href='/legal.html#disclaimer'>Ansvarsfriskrivning</a> · <a href='/legal.html#privacy'>Integritet</a>", au_need18:"Bekräfta att du är 18 år eller äldre.",
     tr_val:"Värdespel (modellens EV ≥ 5% till marknadspris)", tr_won:"Vunna", tr_profit:"Vinst (1 enhet per spel)", tr_calib:"Kalibrering: {k}",
     tr_blend:"Över {l}: bästa historikvikt", tr_weight:"Vikt", tr_lowest:"Lägst Brier hittills: {w}%.", predicted:"förutsagt", actual:"utfall",
     pill_due:"▲ Bör lyfta", pill_hot:"▼ Kan svalna", pill_dry:"{n} skott utan mål",
@@ -1657,8 +1657,8 @@ const I18N = {
     al_title:"Aviseringar", al_sub:"pushnotiser till den här enheten", al_enable:"Slå på notiser på den här enheten", al_on:"På för den här enheten", al_turn_off:"Stäng av", al_test:"Skicka ett test",
     al_edge:"Avisera mig när ett spels edge är minst", al_off:"Av", al_goalies:"Avisera mig när en startmålvakt bekräftas", al_saved:"Sparat.",
     al_unsupported:"Den här webbläsaren kan inte ta emot notiser. Prova Chrome, Edge, Firefox eller Safari.", al_blocked:"Notiser är blockerade för sidan. Tillåt dem i webbläsarens inställningar och ladda om.",
-    al_ios:"På iPhone och iPad: tryck på Dela, sedan ”Lägg till på hemskärmen”, öppna Props Lab från hemskärmen och slå på notiser här.",
-    al_test_title:"Props Lab-aviseringar fungerar", al_test_body:"Du får en notis som den här när en av dina aviseringar slår till.", proj_short:"ber.", frozen_note:"Låst 5 minuter före nedsläpp: sannolikheter, odds, spel och spelardetaljer står kvar precis som de var då.",
+    al_ios:"På iPhone och iPad: tryck på Dela, sedan ”Lägg till på hemskärmen”, öppna evenout från hemskärmen och slå på notiser här.",
+    al_test_title:"evenout-aviseringar fungerar", al_test_body:"Du får en notis som den här när en av dina aviseringar slår till.", proj_short:"ber.", frozen_note:"Låst 5 minuter före nedsläpp: sannolikheter, odds, spel och spelardetaljer står kvar precis som de var då.",
     st_uncertain:"Inte avgjort", or_g:"eller {n}", alt_note:"Källorna är oense om startmålvakten. {n} kan starta i stället – byt nedan för att se effekten.",
     st_expected:"Väntas starta", inj_play:"Spelar", lu_day:"Matchdagens uppställning", why_scr:"Petad", why_tonight:"Inte med i kvällens uppställning", team_news:"Lagnyheter", news_n:"{n} notiser", upd_at:"uppdaterad {t}",
     st_projected:"Prognos", st_likely:"Trolig", st_very:"Mycket trolig", st_confirmed:"Bekräftad", st_unconfirmed:"Obekräftad",
@@ -5148,7 +5148,7 @@ en: `<h3>What the site does</h3>
   </ul>
 
   <h3>Questions</h3>
-  <details><summary>Is this a betting site?</summary><p>No. NHL Props Lab is an analysis tool. We don't take bets or hold money; you place bets with your own licensed sportsbook, if you want to.</p></details>
+  <details><summary>Is this a betting site?</summary><p>No. evenout is an analysis tool. We don't take bets or hold money; you place bets with your own licensed sportsbook, if you want to.</p></details>
   <details><summary>Does a high percentage mean I should bet?</summary><p>Not on its own. What matters is the chance compared with the odds: a 60% chance at 1.50 loses money over time, a 30% chance at 4.00 makes money. That's what value and EV show.</p></details>
   <details><summary>My sportsbook has different odds. What do I do?</summary><p>Type your odds in the odds box (decimal, American or fractional). The EV updates for your price.</p></details>
   <details><summary>Can I follow a player for a later bet?</summary><p>Yes. Tap the bookmark next to any player (free account needed). He's listed under My picks with his next game, tonight's chance and odds, and a note if you want one; his game gets a marker on the Games tab, and you can get a push alert on game day.</p></details>
@@ -5288,7 +5288,7 @@ sv: `<h3>Vad sajten gör</h3>
   </ul>
 
   <h3>Frågor</h3>
-  <details><summary>Är det här en spelsajt?</summary><p>Nej. NHL Props Lab är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar; du spelar hos ditt eget licensierade spelbolag, om du vill.</p></details>
+  <details><summary>Är det här en spelsajt?</summary><p>Nej. evenout är ett analysverktyg. Vi tar inte emot spel och förvarar inga pengar; du spelar hos ditt eget licensierade spelbolag, om du vill.</p></details>
   <details><summary>Betyder en hög procent att jag ska spela?</summary><p>Inte i sig. Det som räknas är chansen jämfört med oddset: en chans på 60 % till 1,50 förlorar pengar över tid, en chans på 30 % till 4,00 vinner. Det är det värde och EV visar.</p></details>
   <details><summary>Mitt spelbolag har andra odds. Vad gör jag?</summary><p>Skriv in ditt odds i oddsrutan (decimal, amerikanska eller bråk). EV uppdateras för ditt pris.</p></details>
   <details><summary>Kan jag följa en spelare inför ett senare spel?</summary><p>Ja. Tryck på bokmärket bredvid valfri spelare (gratis konto krävs). Han listas under Mina spel med nästa match, kvällens chans och odds och en anteckning om du vill; matchen markeras under Matcher, och du kan få en pushnotis på matchdagen.</p></details>
@@ -6412,9 +6412,9 @@ if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){
 <script>
 (function(){
   const S = {
-    en:{h:"Are you 18 or older?", p:"NHL Props Lab is an analysis tool for sports betting and is only for adults. We don't take bets.", yes:"Yes, I'm 18+", no:"No",
+    en:{h:"Are you 18 or older?", p:"evenout is an analysis tool for sports betting and is only for adults. We don't take bets.", yes:"Yes, I'm 18+", no:"No",
         msg:'Sorry, this site is only for people aged 18 and over. Worried about gambling? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'},
-    sv:{h:"Är du 18 år eller äldre?", p:"NHL Props Lab är ett analysverktyg för sportspel och är bara för vuxna. Vi tar inte emot spel.", yes:"Ja, jag är 18+", no:"Nej",
+    sv:{h:"Är du 18 år eller äldre?", p:"evenout är ett analysverktyg för sportspel och är bara för vuxna. Vi tar inte emot spel.", yes:"Ja, jag är 18+", no:"Nej",
         msg:'Tyvärr, sajten är bara för personer som fyllt 18. Orolig för spel? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00.'}};
   let ok = null; try { ok = localStorage.getItem("age18"); } catch(e) {}
   if (ok === "1") return;
