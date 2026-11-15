@@ -1,0 +1,64 @@
+<p>Every bettor who uses a model, or a tipster, or just a strong opinion, eventually ends up with a list of bets and a number next to each one that says how good it is. The obvious move is to sort that list and start at the top. The bigger the edge, the better the bet. It sounds like plain arithmetic.</p>
+
+<p>Our own records say otherwise. Over the three weeks our ledger has been running, the bets our model rated as its very best were by a distance its worst. That isn't bad luck, or not only bad luck. It is one of the most reliable traps in betting, and it catches good models as well as bad ones.</p>
+
+<h2>Where the numbers come from</h2>
+
+<p>The site keeps a second record next to the best picks. It is the triage ledger: every value bet the model flags on every slate, in all three grades (Solid, Lean and Fragile), overs and unders, at the price on offer when the game locks five minutes before puck drop. Each one is graded after the game at one unit. Nothing is picked out of it afterwards. That makes it a much bigger and blunter sample than the best picks, and a good place to check whether the model's numbers deserve to be believed.</p>
+
+<p>From October 25 to November 14 the ledger holds <b>6,321</b> graded bets (61 voids left out). On average the model said each one had an edge of <b>+7.1%</b>. The actual result was <b>−158.3 units</b>, a loss of 2.5% per bet.</p>
+
+<div class="stat reveal"><div><b>3,553</b><span>wins the model expected</span></div><div><b>3,363</b><span>wins the bookmaker prices implied</span></div><div><b>3,250</b><span>wins that actually happened</span></div></div>
+
+<p>The model was too optimistic by about 300 wins. Even the bookmakers' prices, which include their margin and so should overstate every chance a little, were closer.</p>
+
+<h2>The bigger the edge, the bigger the miss</h2>
+
+<p>Now split those bets by how big the model said the edge was. In every group, fewer bets won than the model expected. But one group stands out.</p>
+
+<div class="viz reveal"><h4>Wins per 100 the model expected</h4><p>Triage ledger, October 25 to November 14, grouped by the edge the model claimed. 100 would mean the model's chances were spot on.</p>
+<svg viewBox="0 0 700 250" role="img" aria-label="Wins per 100 expected: edge under 5 percent 93, 5 to 10 percent 90, 10 to 20 percent 89, 20 to 35 percent 92, 35 percent or more 36">
+<g font-family="Exo 2,sans-serif" font-size="13" fill="#8796a8"><text x="0" y="37">Under 5%</text><text x="0" y="82">5–10%</text><text x="0" y="127">10–20%</text><text x="0" y="172">20–35%</text><text x="0" y="217">35% or more</text></g>
+<line x1="610" y1="12" x2="610" y2="236" stroke="#8796a8" stroke-dasharray="4 4" opacity=".6"/>
+<g style="transform-origin:left">
+<rect class="bar" style="transform-origin:left;animation-name:growx" x="110" y="20" width="467" height="24" rx="6" fill="#3ddc97"/>
+<rect class="bar" style="transform-origin:left;animation-name:growx;animation-delay:.1s" x="110" y="65" width="449" height="24" rx="6" fill="#3ddc97"/>
+<rect class="bar" style="transform-origin:left;animation-name:growx;animation-delay:.2s" x="110" y="110" width="446" height="24" rx="6" fill="#3ddc97"/>
+<rect class="bar" style="transform-origin:left;animation-name:growx;animation-delay:.3s" x="110" y="155" width="458" height="24" rx="6" fill="#3ddc97"/>
+<rect class="bar" style="transform-origin:left;animation-name:growx;animation-delay:.4s" x="110" y="200" width="181" height="24" rx="6" fill="#e3a33b"/></g>
+<g font-family="Oxanium,sans-serif" font-weight="800" font-size="15" fill="currentColor"><text x="620" y="37">93</text><text x="620" y="82">90</text><text x="620" y="127">89</text><text x="620" y="172">92</text><text x="300" y="217">36</text></g>
+<style>@keyframes growx{from{transform:scaleX(0)}}</style></svg></div>
+
+<p>The 86 bets where the model claimed an edge of 35% or more had an average claimed edge of +66%. The model expected about 17 of them to win. The bookmaker prices implied about 11. Six won, and the group lost 66.5 units, more than three-quarters of everything staked on it. Almost half were bets on a player to get two or more assists, points or goals, and 33 of them were priced above 50.</p>
+
+<h2>Why the top of the list is the worst place to be</h2>
+
+<p>This has a name in statistics: the winner's curse, or the optimizer's curse. It shows up whenever you choose the best-looking options from a list of estimates, and it doesn't need the estimates to be bad. They only need to be imperfect.</p>
+
+<p>Picture two players who each have a true 25% chance to score, both priced at exactly fair odds. Your model is decent and unbiased, but it isn't perfect. It rates one of them at 20% and the other at 30%. Averaged across the pair, the model is spot on. But you don't bet the pair. You skip the 20% player because there's no value, and you bet the 30% one because the edge looks like 20%. Every bet you place is the one where the model's error happened to point up.</p>
+
+<blockquote>When you only bet where your number beats the market's, you collect your mistakes as well as your edges.</blockquote>
+
+<p>Do that across thousands of bets and the effect gets stronger at the top of the list. A small claimed edge can come from a small error or a real edge. A huge claimed edge is much more often a big error, because real gaps that large between a good model and a whole market are rare. The bookmaker isn't usually wrong about a third-pair defenceman by a factor of three. More often, the model is missing something: a line change, a role that shrank, a market that is priced differently for good reason.</p>
+
+<h2>The sharp price was closer</h2>
+
+<p>For 2,286 of the ledger bets we also have a sharp bookmaker's price at the lock, with its margin removed. That gives a fair line from a market that is very hard to beat, and it lets us ask who was nearer the truth.</p>
+
+<p>On those bets the model expected 1,228 wins. The sharp fair prices expected 1,119. The actual number was <b>1,096</b>. The model said the average edge was +5.4%. Measured against the sharp line, the same bets had an average edge of −3.7%, and they lost 139.2 units. In plain terms, the sharp market saw these bets more clearly than our model did, and when the two disagreed it was usually the market that was right.</p>
+
+<h2>A fair caveat</h2>
+
+<p>The middle of the list did make money. Bets with a claimed edge between 10% and 35% won 156.2 units across 1,270 bets. Even there, fewer of them won than the model expected (569 against 636). They paid off because the prices were long enough to cover the shortfall, and with average odds above 4 and some far longer, a few winners can carry a whole group for weeks. Three weeks of results, with many bets on the same games and the same players, is not enough to say that part works. It is enough to say the model's raw numbers run high.</p>
+
+<p>There is also one small sign that our grades help. The Solid grade, the strictest of the three, is up 21.8 units on 1,373 bets so far, while Lean and Fragile are both down. That is the comparison the ledger exists to test, and it is still early.</p>
+
+<h2>How to use an edge number</h2>
+<ul>
+<li><b>Read a big edge as a question.</b> When a number looks too good, the first thing to ask is what the market knows that the model doesn't.</li>
+<li><b>Pull it back toward the market.</b> If you use any model, assume its edges are too large and shrink them, more so the larger they are.</li>
+<li><b>Check it against a sharp price.</b> An edge that disappears against a sharp, margin-free line probably wasn't there.</li>
+<li><b>Be most careful with long shots.</b> At prices of 20, 50 or more, a small error in the chance turns into a huge claimed edge.</li>
+</ul>
+
+<p>None of this means a model is useless. It means a model's number is an estimate, and the ones that look best are the ones most likely to be flattering themselves. Sorting by edge and starting at the top feels disciplined. Our three weeks of results say it is the fastest way through a bankroll.</p>

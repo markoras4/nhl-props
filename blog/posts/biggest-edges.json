@@ -1,0 +1,18 @@
+{
+ "slug": "biggest-edges",
+ "section": "betting",
+ "title": "Why the Biggest Edges Lie the Most",
+ "deck": "Sort your bets by edge and start at the top. It feels like discipline. Three weeks of our own ledger show why the bets that look best on paper are the ones most likely to be a mistake.",
+ "date": "2026-11-15",
+ "date_label": "November 15, 2026",
+ "read_min": 6,
+ "hero": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Winter_Classic_-_Vegas_Golden_Knights_at_Seattle_Kraken_-_January_1,_2024_-_Jonathan_Marchessault,_Vince_Dunn_and_Joey_Daccord_%2853441245715%29.jpg/1920px-Winter_Classic_-_Vegas_Golden_Knights_at_Seattle_Kraken_-_January_1,_2024_-_Jonathan_Marchessault,_Vince_Dunn_and_Joey_Daccord_%2853441245715%29.jpg",
+  "alt": "Jonathan Marchessault battles in front of the Seattle net, watched by Vince Dunn and goaltender Joey Daccord, at the 2024 Winter Classic",
+  "credit": "Golden Knights at Kraken, 2024 Winter Classic · Jenn G from Seattle, WA · CC BY-SA 2.0"
+ },
+ "credits": [
+  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Winter_Classic_-_Vegas_Golden_Knights_at_Seattle_Kraken_-_January_1,_2024_-_Jonathan_Marchessault,_Vince_Dunn_and_Joey_Daccord_(53441245715).jpg\" rel=\"noopener\">Winter Classic, Vegas Golden Knights at Seattle Kraken, January 1, 2024</a> by Jenn G from Seattle, WA, CC BY-SA 2.0",
+  "Numbers: NHL Props Lab triage ledger, data/ledger.json on the site branch as built November 15, 2026, covering October 25 to November 14 (6,321 graded bets in all three grades, 61 voids left out), one unit per bet at the price at the lock. Sharp comparison: the 2,286 of those bets with a sharp bookmaker's fair price (margin removed) recorded at the lock. Charts: NHL Props Lab."
+ ]
+}
