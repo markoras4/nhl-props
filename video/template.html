@@ -7,7 +7,7 @@
 @font-face{font-family:"Exo 2";font-weight:800;src:url(fonts/exo2-800.woff2) format("woff2")}
 @font-face{font-family:Oxanium;font-weight:600;src:url(fonts/oxanium-600.woff2) format("woff2")}
 @font-face{font-family:Oxanium;font-weight:800;src:url(fonts/oxanium-800.woff2) format("woff2")}
-:root{--bg:#07090d;--mint:#3ddc97;--blue:#5aa9ff;--text:#f2f6fb;--mute:#93a3b6;--warn:#ffb547;--pink:#f07ac0}
+:root{--bg:#100a12;--mint:#ff4fa8;--blue:#b794ff;--text:#f7ebf4;--mute:#aa93a5;--warn:#ffb547;--pink:#ff9ad5}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 #stage{position:absolute;inset:0;overflow:hidden;background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif}
@@ -16,7 +16,7 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .bgimg{position:absolute;inset:-80px;background-size:cover;background-position:center}
 .shade{position:absolute;inset:0}
 .anton{font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.5px;line-height:.92}
-.chip{display:inline-flex;align-items:center;gap:14px;padding:12px 24px;border-radius:999px;background:rgba(10,14,19,.78);
+.chip{display:inline-flex;align-items:center;gap:14px;padding:12px 24px;border-radius:999px;background:rgba(20,12,22,.78);
   border:2px solid rgba(255,255,255,.14);font:600 30px Oxanium;letter-spacing:3px;text-transform:uppercase}
 .dot{width:14px;height:14px;border-radius:50%;background:var(--mint);box-shadow:0 0 18px var(--mint)}
 .pcard{position:absolute;border-radius:34px;overflow:hidden;background:#111;box-shadow:0 40px 90px rgba(0,0,0,.65),0 0 0 2px rgba(255,255,255,.14) inset}
@@ -31,11 +31,11 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .headline{position:absolute;left:60px;right:60px;top:1200px;text-align:center;font:800 62px/1.13 "Exo 2";text-wrap:balance}
 .headline span{display:inline-block;margin:0 .13em}
 .headline .hl{color:var(--mint)}
-.credit{position:absolute;left:40px;right:40px;top:1462px;font:500 22px "Exo 2";color:rgba(242,246,251,.62)}
-.card{position:absolute;left:40px;width:1000px;border-radius:32px;background:linear-gradient(160deg,rgba(23,32,43,.94),rgba(10,14,19,.94));
+.credit{position:absolute;left:40px;right:40px;top:1462px;font:500 22px "Exo 2";color:rgba(247,235,244,.62)}
+.card{position:absolute;left:40px;width:1000px;border-radius:32px;background:linear-gradient(160deg,rgba(38,24,42,.94),rgba(20,12,22,.94));
   border:2px solid rgba(255,255,255,.10);box-shadow:0 30px 80px rgba(0,0,0,.55);padding:30px 36px}
 .lab{font:600 28px Oxanium;letter-spacing:5px;text-transform:uppercase;color:var(--mute)}
-.tag{display:inline-block;padding:8px 18px;border-radius:999px;font:800 24px Oxanium;letter-spacing:3px;text-transform:uppercase;background:var(--mint);color:#06210f}
+.tag{display:inline-block;padding:8px 18px;border-radius:999px;font:800 24px Oxanium;letter-spacing:3px;text-transform:uppercase;background:var(--mint);color:#2b0016}
 /* player table */
 .tbl{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:8px}
 .tbl th{font:700 24px Oxanium;letter-spacing:3px;color:var(--mute);text-align:right;padding:0 14px 4px}
@@ -45,11 +45,11 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .tbl td:last-child{border-radius:0 18px 18px 0}
 .tbl td .tm{display:inline-block;width:10px;height:44px;border-radius:5px;vertical-align:-8px;margin-right:16px}
 .tbl td small{display:block;font:600 22px Oxanium;color:var(--mute);letter-spacing:1px;margin-top:2px}
-.tbl tr.best td{background:rgba(61,220,151,.13);box-shadow:inset 0 2px 0 rgba(61,220,151,.5),inset 0 -2px 0 rgba(61,220,151,.5)}
-.tbl tr.best td:first-child{box-shadow:inset 2px 2px 0 rgba(61,220,151,.5),inset 0 -2px 0 rgba(61,220,151,.5)}
-.tbl tr.best td:last-child{box-shadow:inset -2px 2px 0 rgba(61,220,151,.5),inset 0 -2px 0 rgba(61,220,151,.5)}
+.tbl tr.best td{background:rgba(255,79,168,.13);box-shadow:inset 0 2px 0 rgba(255,79,168,.5),inset 0 -2px 0 rgba(255,79,168,.5)}
+.tbl tr.best td:first-child{box-shadow:inset 2px 2px 0 rgba(255,79,168,.5),inset 0 -2px 0 rgba(255,79,168,.5)}
+.tbl tr.best td:last-child{box-shadow:inset -2px 2px 0 rgba(255,79,168,.5),inset 0 -2px 0 rgba(255,79,168,.5)}
 .tbl td.on{color:var(--mint)}
-.tbl td.on b{display:inline-block;padding:4px 14px;border-radius:14px;background:rgba(61,220,151,.18);border:2px solid var(--mint)}
+.tbl td.on b{display:inline-block;padding:4px 14px;border-radius:14px;background:rgba(255,79,168,.18);border:2px solid var(--mint)}
 /* team table */
 .ttl{display:flex;align-items:center;gap:18px}
 .ttl .tb{width:14px;height:54px;border-radius:7px}
@@ -62,29 +62,29 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .tt .r>span{text-align:right;position:relative;z-index:1}
 .tt .r .nm{text-align:left;font:800 29px "Exo 2";white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tt .r .nm small{font:600 20px Oxanium;color:var(--mute);letter-spacing:1px;margin-left:10px}
-.tt .r .gb{position:absolute;left:0;top:9px;bottom:9px;border-radius:9px;background:linear-gradient(90deg,rgba(61,220,151,.08),rgba(61,220,151,.38));transform-origin:left}
+.tt .r .gb{position:absolute;left:0;top:9px;bottom:9px;border-radius:9px;background:linear-gradient(90deg,rgba(255,79,168,.08),rgba(255,79,168,.38));transform-origin:left}
 .tt .r .gc{position:relative}
 .tt .r .od{font:400 30px/1 Anton;letter-spacing:1px;color:#fff}
 .tt .r .od.na{color:var(--mute);font:600 24px Oxanium}
-.tt .r.best{background:rgba(61,220,151,.16);box-shadow:inset 0 0 0 3px var(--mint),0 0 40px rgba(61,220,151,.35)}
+.tt .r.best{background:rgba(255,79,168,.16);box-shadow:inset 0 0 0 3px var(--mint),0 0 40px rgba(255,79,168,.35)}
 .tt .r.best .nm{color:var(--mint)}
-.tt .r .bt{position:absolute;right:-6px;top:-24px;padding:3px 12px;border-radius:999px;background:var(--mint);color:#06210f;font:800 18px Oxanium;letter-spacing:2px;z-index:3;white-space:nowrap}
-.tt .scan{position:absolute;left:0;right:0;height:52px;border-radius:14px;background:linear-gradient(90deg,rgba(61,220,151,0),rgba(61,220,151,.35),rgba(61,220,151,0));pointer-events:none}
+.tt .r .bt{position:absolute;right:-6px;top:-24px;padding:3px 12px;border-radius:999px;background:var(--mint);color:#2b0016;font:800 18px Oxanium;letter-spacing:2px;z-index:3;white-space:nowrap}
+.tt .scan{position:absolute;left:0;right:0;height:52px;border-radius:14px;background:linear-gradient(90deg,rgba(255,79,168,0),rgba(255,79,168,.35),rgba(255,79,168,0));pointer-events:none}
 .tt .r span.on b{display:inline-block;padding:0 10px;border-radius:10px;border:2px solid var(--mint);color:var(--mint)}
 /* phone with the site's player profile */
-.phone{position:absolute;left:130px;top:322px;width:820px;height:1158px;border-radius:72px;background:#0b0e13;
-  box-shadow:0 0 0 3px #2a313b,0 0 0 9px #151a21,0 50px 120px rgba(0,0,0,.75),0 0 90px rgba(61,220,151,.18)}
-.phone .scr{position:absolute;left:14px;top:14px;right:14px;bottom:14px;border-radius:58px;overflow:hidden;background:#0d1117}
+.phone{position:absolute;left:130px;top:322px;width:820px;height:1158px;border-radius:72px;background:#0d080f;
+  box-shadow:0 0 0 3px #3a2a3e,0 0 0 9px #1d1420,0 50px 120px rgba(0,0,0,.75),0 0 90px rgba(255,79,168,.18)}
+.phone .scr{position:absolute;left:14px;top:14px;right:14px;bottom:14px;border-radius:58px;overflow:hidden;background:#100a12}
 .phone .scr img{position:absolute;left:0;top:146px;width:100%;transform-origin:0 0}
-.phone .top{position:absolute;left:0;right:0;top:0;height:146px;background:#0d1117;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.phone .top{position:absolute;left:0;right:0;top:0;height:146px;background:#100a12;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.45)}
 .phone .tm{position:absolute;left:62px;top:30px;font:700 30px 'Exo 2';color:#fff}
 .phone .ic{position:absolute;right:58px;top:34px;display:flex;gap:8px;align-items:flex-end}
 .phone .ic i{width:7px;border-radius:2px;background:#fff}
-.phone .url{position:absolute;left:26px;right:26px;top:82px;height:52px;border-radius:26px;background:#1b222c;display:flex;align-items:center;justify-content:center;gap:10px;font:600 26px 'Exo 2';color:#cfd8e3}
-.phone .url b{width:16px;height:16px;border-radius:4px;border:3px solid #8fa0b3;border-bottom-width:6px}
+.phone .url{position:absolute;left:26px;right:26px;top:82px;height:52px;border-radius:26px;background:#27192b;display:flex;align-items:center;justify-content:center;gap:10px;font:600 26px 'Exo 2';color:#e6d3df}
+.phone .url b{width:16px;height:16px;border-radius:4px;border:3px solid #a8909f;border-bottom-width:6px}
 .phone .isl{position:absolute;left:50%;top:22px;width:200px;height:52px;margin-left:-100px;border-radius:26px;background:#000;z-index:3}
 .phone .sb{position:absolute;right:8px;top:90px;width:8px;border-radius:4px;background:rgba(255,255,255,.45);z-index:3}
-.phone .fade{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,rgba(13,17,23,0),rgba(13,17,23,.85));z-index:2}
+.phone .fade{position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg,rgba(16,10,18,0),rgba(16,10,18,.85));z-index:2}
 .plab{position:absolute;left:0;right:0;top:238px;text-align:center}
 /* profile */
 .av{position:absolute;left:36px;top:30px;width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -97,11 +97,11 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .tiles span{font:700 22px Oxanium;letter-spacing:3px;color:var(--mute)}
 .chart{position:absolute;left:36px;right:36px;top:400px;height:140px;display:flex;align-items:flex-end;gap:14px}
 .chart .c{flex:1;position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
-.chart .c i{width:100%;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,#5aa9ff,#2b5f9a);transform-origin:bottom}
+.chart .c i{width:100%;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,#b794ff,#6b4fb0);transform-origin:bottom}
 .chart .c em{position:absolute;top:-6px;font-style:normal;font:800 22px "Exo 2"}
 .chart .c u{font:600 18px Oxanium;color:var(--mute);text-decoration:none;margin-top:6px}
 .bet .big{font:400 128px/0.9 Anton;letter-spacing:1px}
-.odds{display:inline-block;padding:10px 24px;border-radius:18px;background:#fff;color:#07090d;font:400 70px/1 Anton;letter-spacing:1px}
+.odds{display:inline-block;padding:10px 24px;border-radius:18px;background:#fff;color:#100a12;font:400 70px/1 Anton;letter-spacing:1px}
 .vrow{display:flex;align-items:center;gap:20px;margin-top:18px}
 .vrow .who{width:170px;font:700 26px Oxanium;letter-spacing:3px;color:var(--mute)}
 .vtrack{flex:1;height:58px;border-radius:16px;background:rgba(255,255,255,.07);overflow:hidden;position:relative}
@@ -110,8 +110,10 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .edge{position:absolute;right:36px;top:30px;text-align:right}
 .edge b{display:block;font:400 92px/0.95 Anton;color:var(--mint)}
 .edge span{font:700 24px Oxanium;letter-spacing:3px;color:var(--mute)}
-.why{margin-top:22px;font:600 30px/1.35 "Exo 2";color:#d6e0ea}
+.why{margin-top:22px;font:600 30px/1.35 "Exo 2";color:#eedde8}
 .why div{display:flex;gap:14px}
+.heatln{margin-top:16px;display:flex;align-items:center;gap:16px;font:600 28px/1.25 "Exo 2";color:#eedde8}
+.heatln b{flex:none;padding:6px 16px;border-radius:12px;border:2px solid var(--hc);color:var(--hc);font:800 24px Oxanium;letter-spacing:2px;white-space:nowrap}
 .why div::before{content:"";flex:0 0 12px;height:12px;border-radius:50%;background:var(--mint);margin-top:14px}
 /* game numbers */
 .row{display:flex;align-items:center;gap:20px;margin-top:20px}
@@ -119,22 +121,22 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden}
 .track{flex:1;height:70px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.06);display:flex}
 .track b{display:flex;align-items:center;height:100%;font:800 32px "Exo 2";padding:0 18px;white-space:nowrap;overflow:hidden}
 .track b.r{justify-content:flex-end}
-.stake{margin-top:24px;font:700 32px "Exo 2";color:#d6e0ea}
+.stake{margin-top:24px;font:700 32px "Exo 2";color:#eedde8}
 .stake em{font-style:normal;color:var(--mint)}
 /* outro */
 .feat{position:absolute;left:40px;right:40px;top:520px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.feat div{border-radius:26px;padding:26px 26px;background:linear-gradient(160deg,rgba(23,32,43,.95),rgba(10,14,19,.95));border:2px solid rgba(255,255,255,.1);
+.feat div{border-radius:26px;padding:26px 26px;background:linear-gradient(160deg,rgba(38,24,42,.95),rgba(20,12,22,.95));border:2px solid rgba(255,255,255,.1);
   font:800 40px/1.1 "Exo 2";display:flex;align-items:center;gap:18px}
 .feat div i{flex:0 0 18px;height:18px;border-radius:6px;transform:rotate(45deg)}
 #vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
 .leak{position:absolute;width:1400px;height:1400px;border-radius:50%;pointer-events:none}
 #flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
-#wipe{position:absolute;left:-400px;top:-300px;width:900px;height:2600px;background:linear-gradient(90deg,var(--mint),var(--blue));pointer-events:none;display:none;box-shadow:0 0 120px rgba(61,220,151,.8)}
+#wipe{position:absolute;left:-400px;top:-300px;width:900px;height:2600px;background:linear-gradient(90deg,var(--mint),var(--blue));pointer-events:none;display:none;box-shadow:0 0 120px rgba(255,79,168,.8)}
 #prog{position:absolute;left:40px;right:40px;top:150px;height:8px;display:flex;gap:10px}
 #prog i{flex:1;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
 #prog i u{position:absolute;left:0;top:0;bottom:0;background:#fff;width:0}
 #brand{position:absolute;left:40px;top:182px;display:flex;align-items:center;gap:14px;font:800 30px Oxanium;letter-spacing:3px}
-#brand img{width:46px;height:46px;border-radius:12px}
+#brand img{height:52px;width:auto;display:block}
 #bdate{position:absolute;right:40px;top:188px;font:600 28px Oxanium;letter-spacing:3px;color:var(--mute)}
 .glitch{text-shadow:-7px 0 rgba(255,45,85,.85),7px 0 rgba(0,229,255,.85)}
 </style></head>
@@ -157,6 +159,11 @@ function css(e,o){Object.assign(e.style,o);return e}
 const MCOL = {g:'g', pt:'pt', s2_5:'s'};
 const colOf = m => m==='g'?'g':m==='pt'?'pt':m==='s2.5'?'s':null;
 
+// Heat Index (as on the site): points in his last 10 minus what his rates give for the ice time he got
+function heatLine(pk){const h=pk.streak&&pk.streak.heat; if(!h||h.v==null) return '';
+  const v=h.v, lv=v>=4?'Very hot':v>=2.5?'Hot':v>=1?'Warm':v>-1?'Normal':v>-2.5?'Cool':'Cold';
+  const c=v>=2.5?'#ff6a3d':v>=1?'#ffb547':v>-1?'#aa93a5':'#b794ff';
+  return `<div class="heatln" style="--hc:${c}"><b>HEAT ${v>=0?'+':'−'}${Math.abs(v).toFixed(1)}</b><span>${lv}: ${h.x} pts in last ${h.n} vs ${h.e.toFixed(1)} expected</span></div>`;}
 const S0=T.intro, gStart=i=>S0+i*T.game, outroStart=S0+NG*T.game, TOTAL=outroStart+T.outro;
 // phases inside a game
 const PA=0, PB=3.0, PZ=5.7, PC=6.5, PD=13.0;
@@ -165,7 +172,7 @@ const scenes=[];
 // ---------------- intro ----------------
 const intro=el('div','scene'); scenes.push({el:intro,a:0,b:S0});
 const ibg=el('div','bgimg',null,intro); if(G[0]) ibg.style.backgroundImage=`url(${G[0].bsrc})`;
-css(el('div','shade',null,intro),{background:'linear-gradient(180deg,rgba(7,9,13,.75),rgba(7,9,13,.55) 45%,rgba(7,9,13,.92))'});
+css(el('div','shade',null,intro),{background:'linear-gradient(180deg,rgba(16,10,18,.75),rgba(16,10,18,.55) 45%,rgba(16,10,18,.92))'});
 const i1=css(el('div','abs anton',"TONIGHT'S",intro),{left:0,right:0,top:'250px',textAlign:'center',fontSize:'190px'});
 const i2=css(el('div','abs anton','BEST BETS',intro),{left:0,right:0,top:'430px',textAlign:'center',fontSize:'230px',color:'var(--mint)'});
 const icards=G.map((g,i)=>{const c=el('div','pcard',`<img src="${g.src}">`,intro); css(c,{left:'90px',top:'720px',width:'900px',height:'580px'}); return c});
@@ -176,8 +183,8 @@ const ivs=css(el('div','abs',`<span style="color:var(--mint)">MODEL</span> &nbsp
 const GS=G.map((g,i)=>{
   const root=el('div','scene'); scenes.push({el:root,a:gStart(i),b:gStart(i)+T.game});
   const bg=el('div','bgimg',null,root); bg.style.backgroundImage=`url(${g.bsrc})`;
-  const dim=css(el('div','shade',null,root),{background:'#07090d'});
-  css(el('div','shade',null,root),{background:`radial-gradient(1200px 900px at 50% 30%, ${g.hc}44, transparent 70%), linear-gradient(180deg,rgba(7,9,13,.55),rgba(7,9,13,.4) 35%,rgba(7,9,13,.92) 72%)`});
+  const dim=css(el('div','shade',null,root),{background:'#100a12'});
+  css(el('div','shade',null,root),{background:`radial-gradient(1200px 900px at 50% 30%, ${g.hc}44, transparent 70%), linear-gradient(180deg,rgba(16,10,18,.55),rgba(16,10,18,.4) 35%,rgba(16,10,18,.92) 72%)`});
   const chip=css(el('div','abs',`<span class="chip"><span class="dot"></span>GAME ${i+1}/${NG} · ${esc(g.time)}</span>`,root),{left:'40px',top:'245px'});
   const card=el('div','pcard',`<img src="${g.src}">`,root); css(card,{left:'40px',top:'330px',width:'1000px',height:'640px'});
   const cimg=card.querySelector('img');
@@ -226,10 +233,10 @@ const GS=G.map((g,i)=>{
   const bet=el('div','card bet',`<div class="lab">Best bet · ${esc(pk.team)} ${pk.home?'vs':'@'} ${esc(pk.opp)}</div>
     <div style="display:flex;align-items:center;gap:26px;margin-top:12px"><div class="big">${esc(pk.market)}</div>${pk.od?`<div class="odds">${odd(pk.od)}</div>`:''}</div>
     ${pk.ev!=null?`<div class="edge"><b>+${(pk.ev*100).toFixed(1)}%</b><span>MODEL EDGE</span></div>`:''}
-    <div class="vrow"><div class="who">MODEL</div><div class="vtrack"><i class="m" style="background:linear-gradient(90deg,#1f9e68,var(--mint))"></i><b class="mv">0%</b></div></div>
-    ${mkp!=null?`<div class="vrow"><div class="who">${pk.nv!=null?'MARKET':'ODDS SAY'}</div><div class="vtrack"><i class="k" style="background:linear-gradient(90deg,#2b5f9a,var(--blue))"></i><b class="kv">0%</b></div></div>`:''}
-    <div class="why">${reasons.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`,root);
-  css(bet,{top:'330px',height:'455px'});
+    <div class="vrow"><div class="who">MODEL</div><div class="vtrack"><i class="m" style="background:linear-gradient(90deg,#b8287a,var(--mint))"></i><b class="mv">0%</b></div></div>
+    ${mkp!=null?`<div class="vrow"><div class="who">${pk.nv!=null?'MARKET':'ODDS SAY'}</div><div class="vtrack"><i class="k" style="background:linear-gradient(90deg,#6b4fb0,var(--blue))"></i><b class="kv">0%</b></div></div>`:''}
+    <div class="why">${reasons.map(x=>`<div>${esc(x)}</div>`).join('')}</div>${heatLine(pk)}`,root);
+  css(bet,{top:'330px',height:pk.streak&&pk.streak.heat?'530px':'455px'});
   const bm=bet.querySelector('i.m'), bmv=bet.querySelector('.mv'), bk=bet.querySelector('i.k'), bkv=bet.querySelector('.kv');
 
   // D: game numbers
@@ -242,7 +249,7 @@ const GS=G.map((g,i)=>{
     <div style="display:flex;align-items:flex-end;gap:30px;margin-top:30px"><div style="font:400 120px/0.9 Anton;color:var(--mint)" class="gt">0.0</div>
     <div style="padding-bottom:12px"><div class="lab" style="font-size:24px">PROJECTED GOALS</div><div style="font:800 38px 'Exo 2';margin-top:4px">Over 5.5: model ${pct(g.over)}${g.mk_over!=null?` · market ${pct(g.mk_over)}`:''}</div></div></div>
     ${stake?`<div class="stake">${stake}</div>`:''}`,root);
-  css(gn,{top:'810px'});
+  css(gn,{top:(pk.streak&&pk.streak.heat?885:810)+'px'});
   const gtracks=[...gn.querySelectorAll('.track')], gt=gn.querySelector('.gt');
   const gvals=[g.p_home, g.mk_home, pub?pub.home[0]/100:null].filter(x=>x!=null);
   const glabs=[null,null,pub?'tickets':null];
@@ -252,26 +259,26 @@ const GS=G.map((g,i)=>{
 // ---------------- outro ----------------
 const outro=el('div','scene'); scenes.push({el:outro,a:outroStart,b:TOTAL+1});
 const obg=el('div','bgimg',null,outro); if(G[NG-1]) obg.style.backgroundImage=`url(${G[NG-1].bsrc})`;
-css(el('div','shade',null,outro),{background:'linear-gradient(180deg,rgba(7,9,13,.85),rgba(7,9,13,.94))'});
+css(el('div','shade',null,outro),{background:'linear-gradient(180deg,rgba(16,10,18,.85),rgba(16,10,18,.94))'});
 const oh1=css(el('div','abs anton','THERE’S WAY MORE',outro),{left:0,right:0,top:'260px',textAlign:'center',fontSize:'128px'});
 const oh2=css(el('div','abs anton','ON THE SITE',outro),{left:0,right:0,top:'390px',textAlign:'center',fontSize:'110px',color:'var(--mint)'});
-const FEATS=[['Shots on goal','#5aa9ff'],['Hits & blocks','#ffb547'],['Lines & PP units','#3ddc97'],['Goalie matchups','#f07ac0'],['Public betting %','#5aa9ff'],['Playoff & Cup odds','#ffb547'],['Hot & cold streaks','#f07ac0'],['Build your slip','#3ddc97']];
+const FEATS=[['Shots on goal','#b794ff'],['Hits & blocks','#ffb547'],['Lines & PP units','#ff4fa8'],['Goalie matchups','#ff9ad5'],['Public betting %','#b794ff'],['Playoff & Cup odds','#ffb547'],['Heat Index: hot or lucky?','#ff6a3d'],['Build your slip','#ff4fa8']];
 const feat=el('div','feat',FEATS.map(([f,c])=>`<div><i style="background:${c}"></i>${f}</div>`).join(''),outro);
 const fcells=[...feat.children];
 let cupc=null;
 if(SPEC.cup){ const c=SPEC.cup; cupc=css(el('div','card',`<div class="lab">Stanley Cup · model favourite</div><div style="display:flex;align-items:flex-end;gap:26px;margin-top:10px"><div style="font:400 120px/0.9 Anton">${c.team}</div><div style="font:400 120px/0.9 Anton;color:var(--mint)">${pct(c.p)}</div>${c.implied?`<div style="font:700 32px 'Exo 2';color:var(--mute);padding-bottom:10px">market ${pct(c.implied)}</div>`:''}</div>`,outro),{top:'1080px'}); }
-const oicon=el('img','abs',null,outro); oicon.src='img/icon.png'; css(oicon,{left:'442px',top:'330px',width:'196px',height:'196px',borderRadius:'44px',boxShadow:'0 0 120px rgba(61,220,151,.45)'});
-const oname=css(el('div','abs','EVENOUT',outro),{left:0,right:0,top:'570px',textAlign:'center',font:'800 100px Oxanium',letterSpacing:'4px'});
-const ourl=css(el('div','abs',`<span class="chip" style="font-size:38px;letter-spacing:1px;text-transform:none;border-color:rgba(61,220,151,.6)"><span class="dot"></span>${esc(SPEC.site)}</span>`,outro),{left:0,right:0,top:'720px',textAlign:'center'});
+const oicon=el('img','abs',null,outro); oicon.src='img/logo.svg'; css(oicon,{left:'140px',top:'400px',width:'800px',height:'auto',filter:'drop-shadow(0 0 60px rgba(255,79,168,.45))'});
+const oname=css(el('div','abs','',outro),{left:0,right:0,top:'570px'});
+const ourl=css(el('div','abs',`<span class="chip" style="font-size:38px;letter-spacing:1px;text-transform:none;border-color:rgba(255,79,168,.6)"><span class="dot"></span>${esc(SPEC.site)}</span>`,outro),{left:0,right:0,top:'720px',textAlign:'center'});
 const ofol=css(el('div','abs anton','FOLLOW FOR<br>TOMORROW’S BETS',outro),{left:0,right:0,top:'880px',textAlign:'center',fontSize:'128px'});
 const odis=css(el('div','abs','Model numbers, not betting advice · 18+ · Play responsibly',outro),{left:'40px',right:'40px',top:'1400px',textAlign:'center',font:'500 28px "Exo 2"',color:'var(--mute)'});
 
 // ---------------- overlays ----------------
-const leak1=el('div','leak'); leak1.style.background='radial-gradient(circle,rgba(61,220,151,.5),transparent 60%)';
-const leak2=el('div','leak'); leak2.style.background='radial-gradient(circle,rgba(90,169,255,.45),transparent 60%)';
+const leak1=el('div','leak'); leak1.style.background='radial-gradient(circle,rgba(255,79,168,.5),transparent 60%)';
+const leak2=el('div','leak'); leak2.style.background='radial-gradient(circle,rgba(183,148,255,.45),transparent 60%)';
 el('div',null).id='vig';
 const prog=el('div',null,G.map(()=>'<i><u></u></i>').join('')); prog.id='prog'; const progU=[...prog.querySelectorAll('u')];
-const brand=el('div',null,`<img src="img/icon.png">EVENOUT`); brand.id='brand';
+const brand=el('div',null,`<img src="img/logo.svg" alt="evenout">`); brand.id='brand';
 const bdate=el('div',null,esc(SPEC.day)); bdate.id='bdate';
 const wipe=el('div',null); wipe.id='wipe';
 const flash=el('div',null); flash.id='flash';

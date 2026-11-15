@@ -5,6 +5,11 @@ Renders a ~76 s vertical video (1080x1920, 30 fps, H.264 + AAC) for TikTok, Inst
     python video/render.py --date 2026-10-28                 # numbers from origin/site:app/index.html
     python video/render.py --date 2026-10-28 --preview 2,5,9 # still frames only, for checking
 
+On Windows use `py` and UTF-8 mode: `set PYTHONUTF8=1` (cmd) or `$env:PYTHONUTF8=1` (PowerShell) first.
+
+Look: the site's Neon colours (pink #ff4fa8, purple #b794ff, amber #ffb547, orange #ff6a3d) and the evenout logo
+(site-assets/brand/evenout-logo-dark.svg) in the top bar and on the end card.
+
 Output in `video/out/` (git-ignored): `<DATE>-nhl-best-bets.mp4`, `<DATE>-cover.jpg`, `<DATE>-captions.txt`.
 
 How it works
@@ -17,7 +22,7 @@ How it works
   point and SOG 3+ chances next to the book's goal odds, rows and bars animate in), a scan bar finds the best pick
   and the table zooms into his row -> his real player profile from the site (captured in dark theme at phone width
   by `capture_profiles` in render.py) in a phone frame, scrolling down at an even pace to the game-by-game chart ->
-  the bet (model vs market, edge, reasons) and who wins (model, market, public bets), projected goals, playoff stakes.
+  the bet (model vs market, edge, reasons, his Heat Index) and who wins (model, market, public bets), projected goals, playoff stakes.
 - Outro: the site's other features (shots, hits & blocks, lines & PP units, goalies, public %, playoff & Cup odds,
   streaks, slip) with the model's Stanley Cup favourite, then the brand, URL, follow and an 18+ / not-advice line.
 - Text stays between y=150 and y=1480 so platform buttons and captions don't cover it. Photo credits are on screen.
@@ -38,8 +43,8 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
   -> profit spotlights (up to 4 winners, 7.5 s each): his real site profile (the site's archive view of that date,
   served from the origin/site tree, dark theme, phone width) in a phone. Every spotlight opens on Prices & value
   (his pick's row highlighted), then flicks to one more section, a different one per spotlight, chosen for the market:
-  points -> Averages chart (season by season, 82-game pace) / Game by game (P, with the line) / How the number is
-  built / Skill or luck; goals -> Skill or luck first; shots -> Shot profile / Game by game (S). The callout uses his
+  points -> Averages chart (season by season, 82-game pace) / Heat Index / Game by game (P, with the line) / How the number is
+  built / Skill or luck; sections the public site locks for Pro are skipped; goals -> Skill or luck first; shots -> Shot profile / Game by game (S). The callout uses his
   own numbers from that section. Then the result. Varied entrances (flip, rise, zoom), camera push-ins, spotlight
   masks and gold frames on the highlighted parts -> outro (every pick tracked).
 - Music: `music.review_track`, a different original song, no rising build-up at the start (half-time groove, FM electric piano, 808, bell sparkles on

@@ -137,7 +137,7 @@ def build_spec(date, ext, previews):
         names = {short_name(g["home_name"]), short_name(g["away_name"])} | {r["name"].split()[-1] for r in g["table"]}
         cands.append({
             **g, "slug": pv["slug"], "title": pv["en"]["title"], "kicker": pv["en"]["kicker"],
-            "time": start.strftime("%-I:%M %p ET"), "hc": TEAM.get(g["home"], "#3ddc97"), "ac": TEAM.get(g["away"], "#5aa9ff"),
+            "time": start.strftime("%I:%M %p ET").lstrip("0"), "hc": TEAM.get(g["home"], "#ff4fa8"), "ac": TEAM.get(g["away"], "#b794ff"),
             "home_short": short_name(g["home_name"]), "away_short": short_name(g["away_name"]),
             "names": sorted(n for n in names if len(n) > 2),
             "img": str(img), "photo_w": w, "photo_q": (w >= MIN_PHOTO_W and w > h),
@@ -157,7 +157,7 @@ def build_spec(date, ext, previews):
         o = (fut.get("cup_odds") or {}).get(t)
         cup = {"team": t, "name": name, "p": p, "implied": (1 / o) if o else None}
     return {
-        "date": date, "day": day.strftime("%a · %b %-d").upper(), "n": len(ext["games"]),
+        "date": date, "day": (day.strftime("%a · %b ") + str(day.day)).upper(), "n": len(ext["games"]),
         "games": chosen, "site": SITE, "cup": cup,
         "timing": {"intro": INTRO, "game": GAME, "outro": OUTRO, "beat": BEAT},
     }
@@ -214,6 +214,7 @@ def render(spec, out_dir, work, fps=FPS, preview_frames=None):
     icon = ROOT / "site-assets" / "icons" / "icon-512.png"
     if icon.exists():
         shutil.copy(icon, work / "img" / "icon.png")
+    shutil.copy(ROOT / "site-assets" / "brand" / "evenout-logo-dark.svg", work / "img" / "logo.svg")
     prep_images(spec, work)
     (work / "index.html").write_text((HERE / "template.html").read_text().replace("/*SPEC*/null", json.dumps(spec)))
     total = duration(spec)

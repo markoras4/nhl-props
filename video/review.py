@@ -121,6 +121,8 @@ def site_pass(html, archive, rows, spots, work, date=None):
                       const k = KEYS.find(([, w]) => h.startsWith(w));
                       if (k && !boxes[k[0]]) { boxes[k[0]] = rel(b.getBoundingClientRect()); text[k[0]] = b.innerText; }
                     }
+                    const hb = d.querySelector('.heat');
+                    if (hb) { boxes.heat = rel(hb.getBoundingClientRect()); text.heat = hb.innerText; }
                     const lab = [...d.querySelectorAll('span')].find(s => s.textContent.trim().replace(/[✓✗]/g, '').trim() === mName(m));
                     if (lab) {
                       const lt = lab.getBoundingClientRect().top;
@@ -134,7 +136,7 @@ def site_pass(html, archive, rows, spots, work, date=None):
                     const p = P(pid), w = p.windows || {}, cur = w.cur || {}, prev = w.prev3 || {};
                     const k = {g: 'g', a: 'a', p: 'p', s: 's'}[st];
                     const facts = {gp: cur.gp, cur_pg: cur[k + '_pg'], prev_pg: prev[k + '_pg'], prev_seasons: prev.seasons,
-                                   sh: p.rates?.recent_sh, sh_cur: cur.sh, lg_sh: p.rates?.lg_sh, g: cur.g, xg: p.xg_windows?.cur?.xg, s: cur.s};
+                                   sh: p.rates?.recent_sh, sh_cur: cur.sh, heat: p.streaks?.heat || null, lg_sh: p.rates?.lg_sh, g: cur.g, xg: p.xg_windows?.cur?.xg, s: cur.s};
                     return {top: a.top + scrollY, bottom: d.getBoundingClientRect().bottom + scrollY, row: a.height, boxes, text, facts};
                 }""", [sp["g"], sp["pid"], sp["m"], PVTAB.get(sp["m"], "sh" if sp["m"][0] == "s" else "sc"), st, line_of(sp["m"])])
             box = measure()
@@ -166,7 +168,7 @@ def site_pass(html, archive, rows, spots, work, date=None):
 
 SECTIONS = {
     "built": "How the number is built", "luck": "Skill or luck?", "chart": "Game by game",
-    "shots": "Shot profile", "avg": "Averages · season by season",
+    "shots": "Shot profile", "avg": "Averages · season by season", "heat": "Heat Index",
 }
 
 
@@ -211,6 +213,17 @@ def section_call(sp, sec):
         what = head.split(":")[0].strip().capitalize() if head else stat_name
         return {"big": f"{what} in <em>{l10}</em> of his last 10" if l10 else f"Every game, bar by bar",
                 "sm": f"Each bar is one game against the line. Model tonight {mt} vs market {mk}." if mt and mk else "Each bar is one game against the line."}
+    if sec == "heat":
+        h = f.get("heat") or {}
+        v = h.get("v") or 0
+        lv = "Very hot" if v >= 4 else "Hot" if v >= 2.5 else "Warm" if v >= 1 else "Normal" if v > -1 else "Cool" if v > -2.5 else "Cold"
+        sign = "+" if v >= 0 else "−"
+        big = f"Heat Index <em>{sign}{abs(v):.1f}</em> · {lv}"
+        line = f"{h.get('x')} points in his last {h.get('n')} games vs {h.get('e', 0):.1f} expected for his ice time. "
+        tail = ("Mostly luck, so the model only nudges him up a little." if v >= 1 else
+                "Slumps don't carry over: the model priced his real level." if v <= -1 else
+                "Producing what his role gives him: no streak to pay for.")
+        return {"big": big, "sm": line + tail}
     if sec == "shots":
         return {"big": "Where his shots come from", "sm": f"Every attempt this season on the rink map: {f.get('s', 0)} shots in {f.get('gp', 0)} games, season or last 10."}
     if sec == "avg":
@@ -229,12 +242,14 @@ def assign_sections(spots, date):
     """Every spotlight opens on Prices & value; its second stop is a different section each time, picked for the
     pick's market (points -> averages chart / game by game, goals -> skill or luck, shots -> shot profile); the
     most fitting section that no earlier spotlight in the video has used yet."""
-    REL = {"g": ["luck", "chart", "avg", "built", "shots"], "s": ["shots", "chart", "avg", "built", "luck"],
-           "p": ["avg", "chart", "built", "luck", "shots"], "a": ["avg", "chart", "built", "luck", "shots"]}
+    REL = {"g": ["luck", "heat", "chart", "avg", "built", "shots"], "s": ["shots", "chart", "avg", "built", "heat", "luck"],
+           "p": ["avg", "heat", "chart", "built", "luck", "shots"], "a": ["avg", "heat", "chart", "built", "luck", "shots"]}
     used, out = set(), []
     for i, sp in enumerate(spots):
         bx, tx = sp["prof"]["boxes"], sp.get("text") or {}
-        ok = lambda k: k in bx and (k != "shots" or ("No shot attempts" not in tx.get("shots", "") and "Loading" not in tx.get("shots", "")))
+        # sections the public site keeps behind Pro (blurred numbers) are never a spotlight's second stop
+        locked = lambda k: "unlock with pro" in (tx.get(k) or "").lower() or (k == "shots" and "🔒" in (tx.get(k) or ""))
+        ok = lambda k: k in bx and not locked(k) and (k != "heat" or (sp.get("facts") or {}).get("heat")) and (k != "shots" or ("No shot attempts" not in tx.get("shots", "") and "Loading" not in tx.get("shots", "")))
         order = REL[stat_of(sp["m"])]
         sec = next((k for k in order if ok(k) and k not in used), None) or next((k for k in order if ok(k)), None)
         if not sec:
@@ -261,9 +276,9 @@ def build(date, bp, archive, previews):
         tm = r["t"]
         start = g.get("start")
         return {**r, "home": r["h"], "away": r["a"], "hs": R.get("hs", g.get("hs")), "as": R.get("as", g.get("as")),
-                "last": R.get("last"), "st": st, "tc": TEAM.get(tm, "#3ddc97"), "hc": TEAM.get(r["h"], "#5aa9ff"),
-                "ac": TEAM.get(r["a"], "#5aa9ff"), "home_name": g.get("home_name") or r["h"], "away_name": g.get("away_name") or r["a"],
-                "time": dt.datetime.fromisoformat(start.replace("Z", "+00:00")).astimezone(et).strftime("%-I:%M %p") if start else "",
+                "last": R.get("last"), "st": st, "tc": TEAM.get(tm, "#ff4fa8"), "hc": TEAM.get(r["h"], "#b794ff"),
+                "ac": TEAM.get(r["a"], "#b794ff"), "home_name": g.get("home_name") or r["h"], "away_name": g.get("away_name") or r["a"],
+                "time": dt.datetime.fromisoformat(start.replace("Z", "+00:00")).astimezone(et).strftime("%I:%M %p").lstrip("0") if start else "",
                 "photo": (pv.get(str(r["g"])) or {}).get("photo"), "slug": (pv.get(str(r["g"])) or {}).get("slug")}
     main = sorted([enrich(r) for r in rows if r["k"] == "all"], key=lambda r: ((games.get(str(r["g"])) or {}).get("start") or "", r["g"], r["rk"]))
     multi = sorted([enrich(r) for r in rows if r["k"] == "multi"], key=lambda r: ((games.get(str(r["g"])) or {}).get("start") or "", r["g"], r["rk"]))
@@ -289,7 +304,7 @@ def build(date, bp, archive, previews):
         if len(spots) >= CAND_SPOTS:
             break
     day = dt.date.fromisoformat(date)
-    return {"date": date, "day": day.strftime("%a · %b %-d").upper(), "dlong": day.strftime("%A, %B %-d"),
+    return {"date": date, "day": (day.strftime("%a · %b ") + str(day.day)).upper(), "dlong": (day.strftime("%A, %B ") + str(day.day)),
             "ngames": len({r["g"] for r in rows}), "picks": main, "multi": multi, "sum": summary, "spots": spots,
             "site": SITE}
 
@@ -368,6 +383,7 @@ def render(spec, out_dir, work, preview_frames=None, fps=FPS):
     icon = ROOT / "site-assets" / "icons" / "icon-512.png"
     if icon.exists():
         shutil.copy(icon, work / "img" / "icon.png")
+    shutil.copy(ROOT / "site-assets" / "brand" / "evenout-logo-dark.svg", work / "img" / "logo.svg")
     prep_images(spec, work)
     (work / "index.html").write_text((HERE / "review.html").read_text().replace("/*SPEC*/null", json.dumps(spec)))
     total = duration(spec)
