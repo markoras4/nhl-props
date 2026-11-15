@@ -1002,7 +1002,7 @@ body.has-cmp main{padding-bottom:110px}
 .lgtot td{border-top:1px solid var(--line)}.cnt{font-variant-numeric:tabular-nums}.lgtab td,.lgtab th{white-space:nowrap}
 .lgcbox{overflow:hidden}.lgwrap{position:relative}
 .lgchart{width:100%;height:auto;display:block;overflow:visible}.lgchart line{stroke:color-mix(in srgb,var(--text) 8%,transparent)}.lgchart line.z{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-dasharray:3 4}.lgchart text{fill:var(--mute);font:500 11px var(--f-ui)}
-.lgl{fill:none;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
+.lgl{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1px;stroke-dashoffset:1px;animation:lgdraw 1.5s cubic-bezier(.3,.7,.2,1) forwards;animation-delay:calc(var(--k)*.18s)}
 @keyframes lgdraw{to{stroke-dashoffset:0px}}
 .lga{opacity:0;animation:lgfade 1s ease forwards;animation-delay:calc(.9s + var(--k)*.18s)}@keyframes lgfade{to{opacity:1}}
 .lgl.lg-S{stroke:var(--good)}.lgl.lg-L{stroke:#e3a33b}.lgl.lg-F{stroke:var(--bad)}
@@ -1010,8 +1010,12 @@ body.has-cmp main{padding-bottom:110px}
 .lgp{transform-box:fill-box;transform-origin:center;animation:lgfade .4s ease forwards,lgpulse 2.2s ease-out infinite;animation-delay:calc(1.35s + var(--k)*.18s),calc(1.8s + var(--k)*.18s)}
 @keyframes lgpulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(3.2);opacity:0}}
 .lgchart text.lgt{font:700 12px var(--f-ui);opacity:0;animation:lgfade .5s ease forwards;animation-delay:calc(1.4s + var(--k)*.18s)}.lgchart text.lg-S{fill:var(--good)}.lgchart text.lg-L{fill:#e3a33b}.lgchart text.lg-F{fill:var(--bad)}
-.lgh{fill:transparent;cursor:crosshair}.lghov{stroke:var(--text)!important;stroke-opacity:.35;stroke-dasharray:3 3;opacity:0;transition:opacity .15s;pointer-events:none}
-.lgtip{position:absolute;top:6px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none;display:flex;flex-direction:column;gap:3px;min-width:130px;z-index:2}
+.lgh{fill:transparent;cursor:crosshair;touch-action:pan-y}.lgchart{outline:none}.lgchart:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 45%,transparent);border-radius:8px}
+.lgchart .lghov{stroke:color-mix(in srgb,var(--text) 45%,transparent);stroke-width:1;opacity:0;pointer-events:none}.lgdim{fill:color-mix(in srgb,var(--panel) 62%,transparent);opacity:0;pointer-events:none}
+.lgchart text.lgdate{fill:var(--text);font:700 11.5px var(--f-ui);opacity:0;pointer-events:none}.lghd{opacity:0;pointer-events:none;stroke:var(--panel);stroke-width:2}.lghd.lg-S{fill:var(--good)}.lghd.lg-L{fill:#e3a33b}.lghd.lg-F{fill:var(--bad)}
+.lgchart.hov .lghov,.lgchart.hov .lgdim,.lgchart.hov text.lgdate,.lgchart.hov .lghd{opacity:1}.lgchart.hov .lgd,.lgchart.hov .lgp{visibility:hidden}
+.lgchart text.lgt{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;transition:y .12s ease-out}
+.lgtip-old{position:absolute;top:6px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none;display:flex;flex-direction:column;gap:3px;min-width:130px;z-index:2}
 .lgtip[hidden]{display:none}.lgtip span{display:flex;align-items:center;gap:6px}.lgtip i{width:8px;height:8px;border-radius:50%;display:inline-block}.lgtip em{font-style:normal;font-weight:700;margin-left:auto}.lgtip .up{color:var(--good)}.lgtip .dn{color:var(--bad)}
 .lghist .lghh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.lghist h4{margin:0}
 .lgchips{position:relative;display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin;scroll-snap-type:x proximity}
@@ -4873,11 +4877,12 @@ function lgChart(rows){
     <filter id="lgglow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
   const path = s => s.pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)).join("");
   const areas = series.map((s,k) => `<path class="lga" style="--k:${k}" fill="url(#lgg-${s.g})" d="${path(s)}L${X(days.length-1).toFixed(1)} ${Y(0).toFixed(1)}L${X(0).toFixed(1)} ${Y(0).toFixed(1)}Z"/>`).join("");
+  const paths = series.map((s,k) => `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" d="${path(s)}"/>`).join("");
   const lines = series.map((s,k) => { const last = s.pts[s.pts.length-1];
-    return `<path class="lgl lg-${s.g}" style="--k:${k}" pathLength="1" filter="url(#lgglow)" d="${path(s)}"/><circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="3.8"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="3.8"/><text class="lgt lg-${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan data-cn="${last}" data-cf="u1" data-cd="${1350 + k*180}">${sgnU(last,1)}</tspan></text>`; }).join("");
-  const hits = days.map((d,i) => `<rect class="lgh" x="${X(i) - iw/(days.length-1)/2}" y="${T}" width="${iw/(days.length-1)}" height="${ih}" data-i="${i}"/>`).join("");
-  window.__lgc = {days, series};
-  return `<div class="box lgcbox"><h4>${t("lg_chart")}</h4><div class="lgwrap"><svg viewBox="0 0 ${W} ${H}" class="lgchart">${defs}${grid}${xl}${areas}${lines}<line class="lghov" x1="0" x2="0" y1="${T}" y2="${T+ih}"/>${hits}</svg><div class="lgtip" hidden></div></div></div>`;
+    return `<circle class="lgd lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="3.8"/><circle class="lgp lg-${s.g}" style="--k:${k}" cx="${X(days.length-1)}" cy="${Y(last)}" r="3.8"/><circle class="lghd lg-${s.g}" r="4.2" cx="0" cy="0"/><text class="lgt lg-${s.g}" data-g="${s.g}" style="--k:${k}" x="${X(days.length-1)+10}" y="${Y(last)+4}">${t("tri_"+s.g)} <tspan data-cn="${last}" data-cf="u1" data-cd="${1350 + k*180}">${sgnU(last,1)}</tspan></text>`; }).join("");
+  const hits = `<rect class="lgh" x="${L}" y="${T}" width="${iw}" height="${ih}"/>`;
+  window.__lgc = {days, series, X, Y, L, R, T, W, ih};
+  return `<div class="box lgcbox"><h4>${t("lg_chart")}</h4><div class="lgwrap"><svg viewBox="0 0 ${W} ${H}" class="lgchart" tabindex="0" aria-label="${esc(t("pm_kb"))}">${defs}${grid}${xl}${areas}${paths}<rect class="lgdim" x="${W-R}" y="${T-4}" width="0" height="${ih+8}"/><line class="lghov" x1="0" x2="0" y1="${T-4}" y2="${T+ih}"/><text class="lgdate" x="0" y="${T-7}" text-anchor="middle"></text>${lines}${hits}</svg></div></div>`;
 }
 const lgRes = r => r.r==="w" ? `<span class="lgr w">${t("rk_w")}</span>` : r.r==="l" ? `<span class="lgr l">${t("rk_l")}</span>` : r.r==="v" ? `<span class="lgr v">${t("rk_v")}</span>` : `<span class="lgr p">${t("rk_p")}</span>`;
 function lgHistory(rows, S_){
@@ -4964,18 +4969,42 @@ document.addEventListener("click", e => {
   const y = scrollY; ledgerView(); if (d.lghg) scrollTo(0, y);
 });
 document.addEventListener("change", e => { if (e.target.id === "lgfam"){ LG().fam = e.target.value; ledgerView(); } });
-// chart hover: a guide line and each grade's running units that day
-document.addEventListener("pointermove", e => {
-  const h = e.target.closest?.(".lgh"), wrap = e.target.closest?.(".lgwrap"); if (!wrap) return;
-  const tip = wrap.querySelector(".lgtip"), hov = wrap.querySelector(".lghov"), C = window.__lgc;
-  if (!h || !C){ tip.hidden = true; hov.style.opacity = 0; return; }
-  const i = +h.dataset.i, x = +h.getAttribute("x") + +h.getAttribute("width")/2;
-  hov.setAttribute("x1", x); hov.setAttribute("x2", x); hov.style.opacity = 1;
-  tip.innerHTML = `<b>${dayLabel(C.days[i])}</b>` + C.series.map(s => `<span><i style="background:${LG_COL[s.g]}"></i>${t("tri_"+s.g)} <em class="${uCls(s.pts[i])}">${sgnU(s.pts[i],1)}</em></span>`).join("");
-  tip.hidden = false; const r = wrap.getBoundingClientRect(), svg = wrap.querySelector("svg"), sc = r.width / svg.viewBox.baseVal.width;
-  tip.style.left = Math.max(70, Math.min(r.width - 70, x * sc)) + "px";
-});
-document.addEventListener("pointerleave", e => { const w = e.target.closest?.(".lgwrap"); if (w){ w.querySelector(".lgtip").hidden = true; w.querySelector(".lghov").style.opacity = 0; } }, true);
+// chart hover, like the matchup line-movement charts: a guide line that follows the pointer, everything to its right
+// dimmed, a dot on each line, the date on top, and each grade's label moved to the hovered day with its running units
+function lgHover(svg, clientX){
+  const C = window.__lgc; if (!C) return;
+  const r = svg.getBoundingClientRect(), vx = (clientX - r.left) / r.width * svg.viewBox.baseVal.width;
+  const n = C.days.length, i = Math.max(0, Math.min(n - 1, Math.round((vx - C.L) / ((C.W - C.L - C.R) / (n - 1))))), x = C.X(i);
+  svg.classList.add("hov"); svg.dataset.i = i;
+  const hov = svg.querySelector(".lghov"); hov.setAttribute("x1", x); hov.setAttribute("x2", x);
+  const dim = svg.querySelector(".lgdim"); dim.setAttribute("x", x); dim.setAttribute("width", Math.max(0, C.W - C.R - x));
+  const dt = svg.querySelector(".lgdate"); dt.textContent = dayLabel(C.days[i]); dt.setAttribute("x", Math.max(C.L + 40, Math.min(C.W - C.R - 40, x)));
+  // labels beside the dots, pushed apart so they never overlap
+  const labs = C.series.map(s => ({s, y: C.Y(s.pts[i]) + 4})).sort((p, q) => p.y - q.y);
+  for (let k = 1; k < labs.length; k++) if (labs[k].y - labs[k-1].y < 15) labs[k].y = labs[k-1].y + 15;
+  labs.forEach(({s, y}) => {
+    const d = svg.querySelector(`.lghd.lg-${s.g}`); d.setAttribute("cx", x); d.setAttribute("cy", C.Y(s.pts[i]));
+    const tx = svg.querySelector(`.lgt.lg-${s.g}`), sp = tx.querySelector("tspan"), right = x + 10 > C.W - C.R - 70 && i < n - 1;
+    tx.setAttribute("x", right ? x - 10 : x + 10); tx.setAttribute("text-anchor", right ? "end" : "start"); tx.setAttribute("y", y);
+    sp.textContent = sgnU(s.pts[i], 1); tx.classList.toggle("dn", s.pts[i] < 0);
+  });
+}
+function lgLeave(svg){
+  const C = window.__lgc; if (!C || !svg.classList.contains("hov")) return;
+  svg.classList.remove("hov"); delete svg.dataset.i; const n = C.days.length;
+  C.series.forEach(s => { const tx = svg.querySelector(`.lgt.lg-${s.g}`), last = s.pts[n - 1];
+    tx.setAttribute("x", C.X(n - 1) + 10); tx.setAttribute("y", C.Y(last) + 4); tx.setAttribute("text-anchor", "start");
+    tx.querySelector("tspan").textContent = sgnU(last, 1); tx.classList.remove("dn"); });
+}
+document.addEventListener("pointermove", e => { const h = e.target.closest?.(".lgh"); const svg = e.target.closest?.(".lgchart");
+  if (h) lgHover(h.ownerSVGElement, e.clientX); else if (svg) lgLeave(svg); });
+document.addEventListener("pointerdown", e => { const h = e.target.closest?.(".lgh"); if (h) lgHover(h.ownerSVGElement, e.clientX); });
+document.addEventListener("pointerout", e => { const svg = e.target.closest?.(".lgchart"); if (svg && !svg.contains(e.relatedTarget)) lgLeave(svg); });
+document.addEventListener("keydown", e => { const svg = e.target.closest?.(".lgchart"); if (!svg || !["ArrowLeft","ArrowRight"].includes(e.key) || !window.__lgc) return;
+  e.preventDefault(); const C = window.__lgc, n = C.days.length, cur = svg.dataset.i != null ? +svg.dataset.i : n - 1;
+  const i = Math.max(0, Math.min(n - 1, cur + (e.key === "ArrowLeft" ? -1 : 1))), r = svg.getBoundingClientRect();
+  lgHover(svg, r.left + C.X(i) / svg.viewBox.baseVal.width * r.width); });
+document.addEventListener("focusout", e => { const svg = e.target.closest?.(".lgchart"); if (svg) lgLeave(svg); });
 function trackTab(){
   const k = state.trk || "bp";
   const sw = `<div class="trksw"><span class="seg olseg">${[["bp",t("trk_bp")],["ledger",t("trk_ledger")],["model",t("trk_model")]].map(([v,l])=>`<button type="button" data-trk="${v}" class="${k===v?"on":""} ${k===v && SEG_POP==="trk:"+v?"pop":""}">${l}</button>`).join("")}</span></div>`;
