@@ -493,7 +493,12 @@ def version_assets(html: str) -> str:
     def rep(m):
         f = ROOT / "site-assets" / m.group(1)
         return f'assets/{m.group(1)}?v={hashlib.md5(f.read_bytes()).hexdigest()[:8]}' if f.exists() else m.group(0)
-    return re.sub(r"assets/([a-z0-9-]+\.(?:webp|mp4|jpg))(?!\?)", rep, html)
+    html = re.sub(r"assets/([a-z0-9-]+\.(?:webp|mp4|jpg))(?!\?)", rep, html)
+    # the theme variants (-neon, -ember) are picked in the browser, so their hashes go in as a map the page reads
+    import json
+    av = {f.name: hashlib.md5(f.read_bytes()).hexdigest()[:8] for f in sorted((ROOT / "site-assets").glob("*-*.*"))
+          if f.suffix in (".webp", ".mp4", ".jpg") and any(f.stem.endswith("-" + k) for k in ("neon", "ember"))}
+    return html.replace("/*ASSET_V*/{}", json.dumps(av, separators=(",", ":")))
 
 
 def photo_version(p: dict) -> dict:

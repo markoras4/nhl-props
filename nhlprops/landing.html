@@ -358,11 +358,15 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
   const get = () => "neon";   // one look for everyone: Neon (light and dark stay switchable)
   const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
   const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
+  // theme variants carry their own content hash (filled in by the build), so a replaced poster, video or screenshot
+  // shows up at once instead of after the week-long browser cache
+  const AV = window.ASSET_V = /*ASSET_V*/{};
+  window.assetV = n => "assets/" + n + (AV[n] ? "?v=" + AV[n] : "");
   function apply(){
     const k = get(), v = A[k][theme()==="light" ? "l" : "d"], st = document.documentElement.style;
     VARS.forEach(p => st.removeProperty("--" + p));
-    const tv = document.getElementById("tourvid"); if (tv && !tv.currentSrc) tv.setAttribute("poster", "assets/tour-poster" + (k === "rink" ? "" : "-" + k) + ".jpg");
-    document.querySelectorAll("img[data-shot]").forEach(im => { const src = "assets/" + im.dataset.shot + (k === "rink" ? "" : "-" + k) + ".webp"; if (im.getAttribute("src") !== src) im.setAttribute("src", src); });
+    const tv = document.getElementById("tourvid"); if (tv && !tv.currentSrc) tv.setAttribute("poster", assetV("tour-poster" + (k === "rink" ? "" : "-" + k) + ".jpg"));
+    document.querySelectorAll("img[data-shot]").forEach(im => { const src = assetV(im.dataset.shot + (k === "rink" ? "" : "-" + k) + ".webp"); if (im.getAttribute("src") !== src) im.setAttribute("src", src); });
     if (v) Object.entries(v).forEach(([p, x]) => st.setProperty("--" + p, x));
     const mc = document.querySelector('meta[name="theme-color"]'); if (mc){ if (!mc.dataset.c0) mc.dataset.c0 = mc.getAttribute("content") || ""; mc.setAttribute("content", v ? v.bg : mc.dataset.c0); }
     document.documentElement.dataset.accent = k;
@@ -949,7 +953,8 @@ render();
   let loaded = false;
   const load = () => { if (loaded) return; loaded = true;
     const k = document.documentElement.dataset.accent, suf = k && k !== "rink" ? "-" + k : "";   // the tour in the visitor's theme
-    v.src = ((window.innerWidth * (window.devicePixelRatio || 1)) > 1500 ? v.dataset.src1080 : v.dataset.src720).replace(/\.mp4(\?|$)/, suf + ".mp4$1"); };
+    const src = (window.innerWidth * (window.devicePixelRatio || 1)) > 1500 ? v.dataset.src1080 : v.dataset.src720;
+    v.src = suf ? window.assetV(src.replace(/^assets\//, "").replace(/\.mp4(\?.*)?$/, suf + ".mp4")) : src; };
   const start = (fromStart) => { load(); v.controls = true; btn.hidden = true; if (fromStart) { try { v.currentTime = 0; } catch(e){} } v.play().catch(() => {}); };
   btn.addEventListener("click", () => start(false));
   v.addEventListener("click", () => { if (!loaded) start(false); });
