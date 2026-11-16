@@ -1,0 +1,26 @@
+{
+ "board-2026-11-16:tiktok": {
+  "uploaded_at": "2026-11-16T23:22:00Z",
+  "via": "manual (TikTok Studio)",
+  "file": "video/out/2026-11-17/board-2026-11-17.mp4"
+ },
+ "board-2026-11-16:youtube": {
+  "video_id": "yDnXEaQi8xc",
+  "url": "https://youtube.com/shorts/yDnXEaQi8xc",
+  "uploaded_at": "2026-11-16T23:16:00Z",
+  "via": "manual (YouTube Studio)",
+  "file": "video/out/2026-11-17/board-2026-11-17.mp4"
+ },
+ "hot-2026-11-16:tiktok": {
+  "uploaded_at": "2026-11-16T23:25:00Z",
+  "via": "manual (TikTok Studio)",
+  "file": "video/out/2026-11-17/hot-2026-11-17.mp4"
+ },
+ "hot-2026-11-16:youtube": {
+  "video_id": "zHLYcZRorl8",
+  "url": "https://youtube.com/shorts/zHLYcZRorl8",
+  "uploaded_at": "2026-11-16T23:19:00Z",
+  "via": "manual (YouTube Studio)",
+  "file": "video/out/2026-11-17/hot-2026-11-17.mp4"
+ }
+}
