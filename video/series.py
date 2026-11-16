@@ -16,8 +16,8 @@ output/pro/latest.json): the page's own triageRows / heat index, so videos alway
 come from the Triage ledger (data/ledger.json). Music: music.series_track (original, synthesised, varies by day).
 
 Output in --out/<DATE>/: <series>-<DATE>.mp4, <series>-<DATE>-cover.jpg and manifest.json (titles, descriptions and
-captions per platform; video/upload.py posts them). One video file serves both platforms; the wording stays about
-stats and model numbers (no bookmakers, no "bet now"), which TikTok requires.
+captions per platform; video/upload.py posts them). One video file serves both platforms. Pick videos (board,
+report) go to YouTube only (see PLATFORMS): TikTok treats picks and odds as gambling promotion.
 """
 from __future__ import annotations
 
@@ -169,6 +169,10 @@ def spec_hot(ext: dict, day: dt.date, bpm: float) -> dict | None:
             "linkSub": "Heat Index for every player", "outro1": "Streak or skill? Check any player.", "outro3": "Free to start · link in bio",
             "_players": players}
 
+
+# Where each series is posted. TikTok removes pick/odds videos as gambling promotion (the Board was taken down on
+# 2026-11-17 for Community Guidelines), so picks stay on YouTube; TikTok gets the stats-only series.
+PLATFORMS = {"board": ("youtube",), "hot": ("youtube", "tiktok"), "report": ("youtube",)}
 
 VIDEO_PICKS = ROOT / "data" / "video_picks.json"
 
@@ -394,6 +398,8 @@ def main():
             rel = lambda p: str(Path(p).resolve().relative_to(ROOT)).replace("\\", "/") if str(Path(p).resolve()).startswith(str(ROOT)) else str(p)
             manifest["items"] = [i for i in manifest["items"] if i.get("series") != s]
             for plat, c in cap.items():
+                if plat not in PLATFORMS[s]:
+                    continue
                 manifest["items"].append({"id": f"{s}-{a.date}", "series": s, "platform": plat, "file": rel(f"{base}.mp4"),
                                           "cover": rel(f"{base}-cover.jpg"), **c})
     if not a.preview:
