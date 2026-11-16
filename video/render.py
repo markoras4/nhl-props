@@ -33,7 +33,7 @@ GAME = 32 * BEAT          # 16 s: story 3 s, team table + zoom 3.5 s, site profi
 OUTRO = 16 * BEAT         # 8 s: features, then brand
 MAX_GAMES = 4
 MIN_PHOTO_W = 3000        # originals at least this wide count as "very high quality"
-SITE = "nhl-props-lab.vercel.app"
+SITE = "evenout.app"
 
 TEAM = {
     "ANA": "#F47A38", "BOS": "#FFB81C", "BUF": "#2a5cc9", "CAR": "#CE1126", "CBJ": "#2a5bb5", "CGY": "#D2001C",

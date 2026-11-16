@@ -14,7 +14,7 @@ Deno.serve(async () => {
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
   const { data: priv } = await db.rpc("get_vapid_private");
   if (!priv) return new Response("no key", { status: 500 });
-  webpush.setVapidDetails("https://nhl-props-lab.vercel.app", PUBLIC_KEY, priv as string);
+  webpush.setVapidDetails("https://evenout.app", PUBLIC_KEY, priv as string);
 
   let feed: any;
   try {

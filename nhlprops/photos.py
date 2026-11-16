@@ -19,7 +19,7 @@ import urllib.request
 from pathlib import Path
 
 API = "https://commons.wikimedia.org/w/api.php"
-UA = "NHLPropsLab/1.0 (https://nhl-props-lab.vercel.app; https://github.com/markoras4) python-urllib"
+UA = "NHLPropsLab/1.0 (https://evenout.app; https://github.com/markoras4) python-urllib"
 OK_LICENSES = re.compile(r"^(cc0|public domain|pd|cc by(-sa)? ?\d(\.\d)?.*)$", re.I)
 
 

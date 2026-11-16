@@ -1,7 +1,8 @@
 # Free / Pro / visitors: agreed plan (build together with Stripe)
 
-Prices (2026-11-13): Pro EUR 12.99 a month or EUR 89 for the season (October-June). A founder / Black Friday price
-(planned EUR 7.99 a month or EUR 59 a season, kept while subscribed, limited) comes with the domain and payments.
+Prices (2026-11-13): Pro EUR 12.99 a month or EUR 89 for the season (October-June). Founder / Black Friday price
+(2026-11-16, with the evenout.app domain): EUR 7.99 a month or EUR 59 a season, kept while subscribed, shown until the
+end of 30 November 2026 (Swedish time). The landing page and the app's paywall switch back to the normal price by themselves.
 
 Rule of thumb: anything about the game or the teams is free; anything that helps decide a bet on a specific player is Pro.
 Consistency rules (2026-11-09):

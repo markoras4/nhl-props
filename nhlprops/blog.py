@@ -15,6 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "blog" / "posts"
 OUT = ROOT / "output" / "blog"
+SITE_URL = "https://evenout.app"   # absolute links for share previews (og:image / og:url)
+abs_url = lambda u: SITE_URL + u if u and u.startswith("/") else u
 UA = {"User-Agent": "NHLPropsLab-blog/1.0 (article images, credited)"}
 SECTIONS = {"history": "History", "betting": "Betting Lab"}
 
@@ -164,7 +166,7 @@ def build(log=print) -> int:
               'Need help? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>.</div>') if m["section"] == "betting" else ""
         others = [o for o in ps if o["slug"] != m["slug"]][:3]
         page = HEAD.format(themejs=THEME_JS, title=html.escape(m["title"]) + " · evenout", desc=html.escape(m["deck"]), css=CSS, on_blog="on", ogtype="article",
-                           ogimg=f'<meta property="og:image" content="{m["hero_src"]}">')
+                           ogimg=f'<meta property="og:image" content="{abs_url(m["hero_src"])}"><meta property="og:url" content="{SITE_URL}/blog/{m["slug"]}.html">')
         page += (f'<main><section class="hero"><img src="{m["hero_src"]}" alt="{html.escape(m["hero"]["alt"])}"><div class="wrap in">'
                  f'<span class="tag {m["section"]}">{SECTIONS[m["section"]]}</span><h1>{html.escape(m["title"])}</h1><p class="deck">{html.escape(m["deck"])}</p>'
                  f'<span class="meta">{m["date_label"]} · {m["read_min"]} min read</span></div><span class="cr">{m["hero"]["credit"]}</span></section>'
@@ -173,7 +175,7 @@ def build(log=print) -> int:
                  + '</main>' + FOOT)
         (OUT / f'{m["slug"]}.html').write_text(page, encoding="utf-8")
     idx = HEAD.format(themejs=THEME_JS, title="Blog · evenout", desc="Legendary nights, rivalries and characters from NHL history, and the Betting Lab: how to think about betting.",
-                      css=CSS, on_blog="on", ogtype="website", ogimg=(f'<meta property="og:image" content="{ps[0]["hero_src"]}">' if ps else ""))
+                      css=CSS, on_blog="on", ogtype="website", ogimg=(f'<meta property="og:image" content="{abs_url(ps[0]["hero_src"])}"><meta property="og:url" content="{SITE_URL}/blog/">' if ps else ""))
     idx += ('<main class="wrap"><section class="bh"><span class="kick">The blog</span><h1>Stories from the ice</h1>'
             '<p>Legendary nights, bitter rivalries, records and characters from hockey\'s past, and the Betting Lab, where we take apart how to think about a bet.</p>'
             '<div class="tabs"><button class="on" data-k="all">All</button><button data-k="history">History</button><button data-k="betting">Betting Lab</button></div></section>')

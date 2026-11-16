@@ -2032,6 +2032,7 @@ const canM = (pr, m) => PRO || (OPEN.has(String(pr?.id ?? pr)) && !PRO_MKT(m));
 const ACCOUNT = () => PLAN !== "visitor";
 Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t:"Pro", pw_player:"Pro player: unlock every player with Pro",
   pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. €12.99 a month, or €89 for the whole season.",
+pw_sub_f:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. Founder price until 30 November: €7.99 a month or €59 for the whole season (normally €12.99 / €89), yours for as long as you stay subscribed.",
   pw_feats:["Every player, not just 1 forward and 1 defenceman per team","Hits, blocks, multi-point, PP points, faceoffs, penalties, first goalscorer","Best picks and Triage, live until the lock","Odds movement, sharp-book prices, public betting","Season ranges, milestone and award chances","Hit rates vs the opponent and model vs market, shot-profile numbers","Alerts, unlimited watchlist, full parlay check"],
   pw_see_plans:"See plans", pw_signup:"Create a free account", pw_login:"Log in", pw_later:"Not now",
   pw_free_h:"Free with an account", pw_free_sub:"Create a free account to save picks, track closing odds, follow up to {n} players and save 2-leg parlays.",
@@ -2051,6 +2052,7 @@ Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t
   pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games.", sharp_upd:"Sharp-book prices updated {t}."});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
   pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. 12,99 € i månaden, eller 89 € för hela säsongen.",
+pw_sub_f:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. Grundarpris till 30 november: 7,99 € i månaden eller 59 € för hela säsongen (annars 12,99 € / 89 €), ditt så länge du är prenumerant.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Säsongsspann, chanser för milstolpar och priser","Träffprocent mot motståndaren och modell mot marknad, skottprofilens siffror","Larm, obegränsad bevakning, full kombikoll"],
   pw_see_plans:"Se planer", pw_signup:"Skapa ett gratiskonto", pw_login:"Logga in", pw_later:"Inte nu",
   pw_free_h:"Gratis med konto", pw_free_sub:"Skapa ett gratiskonto för att spara spel, följa stängningsodds, bevaka upp till {n} spelare och spara kombos med 2 delar.",
@@ -2086,7 +2088,7 @@ function openUpgrade(feat){
   if (!ACCOUNT() && feat === "acct") return openAuth("up");
   const feats = (I18N[LANG]?.pw_feats || I18N.en.pw_feats).map(x => `<li>✓ ${esc(x)}</li>`).join("");
   const why = {compare:"pw_cmp_lock", explore:"pw_explore", shots:"pw_shots", alerts:"pw_alerts", matchup:"pw_matchup", fg:"pw_fg", saves:"pw_saves", public:"pw_pub", lines:"pw_ll", pm:"pw_pm"}[feat];
-  modal(`<h3>🔒 ${t("pw_h")}</h3>${why ? `<p><b>${esc(t(why))}.</b></p>` : ""}<p class="meta">${t("pw_sub")}</p><ul class="pwlist">${feats}</ul>
+  modal(`<h3>🔒 ${t("pw_h")}</h3>${why ? `<p><b>${esc(t(why))}.</b></p>` : ""}<p class="meta">${t(pwSub())}</p><ul class="pwlist">${feats}</ul>
     ${ACCOUNT() ? "" : `<div class="pwfree"><b>${t("pw_free_h")}</b><p class="meta">${t("pw_free_sub",{n:FREE_WATCH})}</p></div>`}
     <div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a>${ACCOUNT() ? "" : `<button class="mbtn" id="pw_up" type="button">${t("pw_signup")}</button>`}<button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`);
   const up = $("#pw_up"); if (up) up.onclick = () => openAuth("up");
@@ -3154,6 +3156,8 @@ Object.assign(I18N.sv, {ht_name:"Heat Index", ht_vh:"Mycket het", ht_h:"Het", ht
   ht_cold:"Svackor håller inte i sig: under fyra säsonger stämde modellens siffra exakt för kalla spelare. Avskriv honom inte; kolla om hans odds har drivit förbi modellens chans.",
   ht_norm:"Producerar ungefär vad hans roll ger.",
   tt_heat:"Heat Index = poäng på hans senaste 10 matcher minus de poäng hans poängtakt skulle ge på den istid han fick. Den visar hur mycket av en het eller kall svit som är tur. Testat på fyra säsonger (155 000 spelarmatcher): ungefär en tiondel av hettan håller i sig, och modellens formterm lägger redan till den delen i kvällens siffra."});
+// founder / Black Friday price until the end of 30 November (Swedish time), then the normal price text again
+const pwSub = () => Date.now() < Date.parse("2026-12-01T00:00:00+01:00") ? "pw_sub_f" : "pw_sub";
 function heatLevel(v){ return v >= 4 ? "vh" : v >= 2.5 ? "h" : v >= 1 ? "w" : v > -1 ? "n" : v > -2.5 ? "c" : "cc"; }
 function heatStrip(p){
   const h = p?.streaks?.heat; if (!h || h.v == null) return "";
@@ -5619,7 +5623,7 @@ function openAuth(mode, after){
 }
 function openAccount(){
   modal(`<h3>${t("acct_h")}</h3><p class="meta">${esc(USER.email||"")}</p>
-    ${PAYWALLED ? `<p>${t("pw_plan")}: <span class="pwbadge ${PLAN}">${planName()}</span></p>${PLAN==="creator"||PLAN==="media" ? `<p class="pwnote">${t("pw_lic_"+PLAN)}</p>` : ""}${PRO ? "" : `<p class="pwnote">${t("pw_sub")}</p><div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a></div>`}` : ""}
+    ${PAYWALLED ? `<p>${t("pw_plan")}: <span class="pwbadge ${PLAN}">${planName()}</span></p>${PLAN==="creator"||PLAN==="media" ? `<p class="pwnote">${t("pw_lic_"+PLAN)}</p>` : ""}${PRO ? "" : `<p class="pwnote">${t(pwSub())}</p><div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a></div>`}` : ""}
     <div class="mrow"><button class="mbtn pri" id="ac_picks" type="button">${t("nav_picks")}</button><button class="mbtn" id="ac_out" type="button">${t("logout")}</button></div>`);
   $("#ac_picks").onclick = () => { closeModal(); go({tab:"picks", game:null}); };
   $("#ac_out").onclick = async () => { await sb.auth.signOut(); closeModal(); };
