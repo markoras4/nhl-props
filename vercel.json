@@ -34,7 +34,7 @@
   "rewrites": [
     {
       "source": "/app/:path+",
-      "destination": "/app/index.html"
+      "destination": "/app"
     }
   ]
 }
