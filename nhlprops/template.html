@@ -1106,6 +1106,12 @@ body.has-cmp main{padding-bottom:110px}
 tr.row.pwopen td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .pwbadge{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font:700 10.5px/1.6 var(--f-ui,inherit);letter-spacing:.3px;text-transform:uppercase;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
 .pwbadge.free,.pwbadge.visitor{background:color-mix(in srgb,var(--mute) 18%,transparent);color:var(--mute)}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);max-width:min(92vw,460px);background:var(--panel2);color:var(--text);border:1px solid var(--accent);border-radius:12px;padding:12px 16px;font-weight:700;font-size:14px;box-shadow:0 14px 40px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:400}#toast.on{opacity:1;transform:translate(-50%,0)}
+.plgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}@media (max-width:460px){.plgrid{grid-template-columns:1fr}}
+.plcard{display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);cursor:pointer;font:inherit}
+.plcard:hover,.plcard:focus-visible{border-color:var(--accent)}.plcard:disabled{opacity:.6;cursor:wait}.plcard b{font:700 15px var(--f-disp)}
+.plp{font:800 22px/1.1 var(--f-disp)}.plp s{color:var(--mute);font-size:.6em;font-weight:600;margin-right:6px}.plp small{color:var(--mute);font:600 12px var(--f-ui);white-space:nowrap}.plp{white-space:nowrap}
+.plx{font-size:12px;font-weight:700;color:var(--accent)}.plcard .mbtn{width:100%;text-align:center;margin-top:auto}.plcard .plx{margin-bottom:4px}.plf{color:var(--accent);font-weight:700;font-size:13.5px;margin:4px 0 0}
 .pwlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:6px;font-size:14px}.pwfree{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
 .pwnote{font-size:12.5px;color:var(--mute);margin:6px 0}
 /* remembered Pro sign-in while the Pro data loads: placeholders, not locks */
@@ -2031,10 +2037,17 @@ const PRO_MKT = m => /^(h|b|fo)\d|^(pt2|pt3|g2|g3|a2|ppp|pim0\.5|pim2\.5|fg)$/.t
 const canM = (pr, m) => PRO || (OPEN.has(String(pr?.id ?? pr)) && !PRO_MKT(m));
 const ACCOUNT = () => PLAN !== "visitor";
 Object.assign(I18N.en, {pw_unlock:"Unlock with Pro", pw_btn:"See Pro", pw_lock_t:"Pro", pw_player:"Pro player: unlock every player with Pro",
-  pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. €12.99 a month, or €89 for the whole season.",
-pw_sub_f:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. Founder price until 30 November: €7.99 a month or €59 for the whole season (normally €12.99 / €89), yours for as long as you stay subscribed.",
+  pw_open:"Open player: free for everyone", pw_h:"Unlock with Pro", pw_sub:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. €12.99 a month, or €89 a year.",
+pw_sub_f:"Pro opens every player and every market, best picks live until the lock, Triage grades, odds movement, alerts and more. Founder price until 30 November: €7.99 a month or €59 a year (normally €12.99 / €89), yours for as long as you stay subscribed.",
   pw_feats:["Every player, not just 1 forward and 1 defenceman per team","Hits, blocks, multi-point, PP points, faceoffs, penalties, first goalscorer","Best picks and Triage, live until the lock","Odds movement, sharp-book prices, public betting","Season ranges, milestone and award chances","Hit rates vs the opponent and model vs market, shot-profile numbers","Alerts, unlimited watchlist, full parlay check"],
   pw_see_plans:"See plans", pw_signup:"Create a free account", pw_login:"Log in", pw_later:"Not now",
+  pw_go:"Go Pro", pl_h:"Choose your Pro plan", pl_month:"Monthly", pl_year:"Yearly", pl_pm:"/ month", pl_py:"/ year",
+  pl_save:"Save {p}%", pl_btn_m:"Pay monthly", pl_btn_y:"Pay yearly", pl_founder:"Founder price until 30 November, yours for as long as you stay subscribed.",
+  pl_note:"Secure payment with Stripe. Pro starts right away. Cancel any time under Account → Manage subscription and keep Pro until the end of the paid period.",
+  pl_terms:"By continuing you accept the <a href=\"../legal#terms\">terms</a>.", pl_wait:"Opening secure checkout…", pl_err:"Couldn't open the payment page. Please try again in a minute.",
+  pl_already:"You already have Pro.", pl_signin:"Create a free account or log in first, then pay.",
+  ac_manage:"Manage subscription", ac_renews:"Renews on {d}", ac_ends:"Pro until {d} (cancelled, won't renew)", ac_pastdue:"Payment failed: update your card to keep Pro.",
+  co_ok:"Payment received. Welcome to Pro! Unlocking…", co_slow:"Payment received. Pro unlocks within a minute; refresh the page if it hasn't.", co_cancel:"Payment cancelled. Nothing was charged.",
   pw_free_h:"Free with an account", pw_free_sub:"Create a free account to save picks, track closing odds, follow up to {n} players and save 2-leg parlays.",
   pw_plan:"Plan", pw_plan_visitor:"Visitor", pw_plan_free:"Free", pw_plan_pro:"Pro", pw_plan_creator:"Creator", pw_plan_media:"Media",
   pw_lic_creator:"Creator licence: you may show and quote our numbers in your content, with credit on screen or in the show notes.",
@@ -2051,10 +2064,17 @@ pw_sub_f:"Pro opens every player and every market, best picks live until the loc
   pw_streak:"Chance tonight, fair odds and EV are Pro", pw_ll:"Every line and pair in the league, sortable, is Pro", pw_alerts:"Alerts are Pro",
   pw_explore:"The Tonight preset and model / market axes are Pro", pw_bullet:"Player chances (model vs market) are Pro", pw_fu_proj:"model projection", pw_ms:"Milestone chances", pw_season:"Milestone and award chances are Pro", pw_range:"The range and the season-end chart are Pro", pw_pj_now:"Now {p} in {gp} games.", sharp_upd:"Sharp-book prices updated {t}."});
 Object.assign(I18N.sv, {pw_unlock:"Lås upp med Pro", pw_btn:"Se Pro", pw_lock_t:"Pro", pw_player:"Pro-spelare: lås upp alla spelare med Pro",
-  pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. 12,99 € i månaden, eller 89 € för hela säsongen.",
-pw_sub_f:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. Grundarpris till 30 november: 7,99 € i månaden eller 59 € för hela säsongen (annars 12,99 € / 89 €), ditt så länge du är prenumerant.",
+  pw_open:"Öppen spelare: gratis för alla", pw_h:"Lås upp med Pro", pw_sub:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. 12,99 € i månaden, eller 89 € om året.",
+pw_sub_f:"Pro öppnar varje spelare och varje marknad, bästa spel live fram till låsningen, Triage-betyg, oddsrörelser, larm med mera. Grundarpris till 30 november: 7,99 € i månaden eller 59 € om året (annars 12,99 € / 89 €), ditt så länge du är prenumerant.",
   pw_feats:["Alla spelare, inte bara 1 forward och 1 back per lag","Tacklingar, blockeringar, flerpoäng, PP-poäng, tekningar, utvisningar, första målskytt","Bästa spel och Triage, live fram till låsningen","Oddsrörelser, skarpa bookens odds, publikens spel","Säsongsspann, chanser för milstolpar och priser","Träffprocent mot motståndaren och modell mot marknad, skottprofilens siffror","Larm, obegränsad bevakning, full kombikoll"],
   pw_see_plans:"Se planer", pw_signup:"Skapa ett gratiskonto", pw_login:"Logga in", pw_later:"Inte nu",
+  pw_go:"Skaffa Pro", pl_h:"Välj din Pro-plan", pl_month:"Månadsvis", pl_year:"Årsvis", pl_pm:"/ månad", pl_py:"/ år",
+  pl_save:"Spara {p} %", pl_btn_m:"Betala månadsvis", pl_btn_y:"Betala årsvis", pl_founder:"Grundarpris till 30 november, ditt så länge du är prenumerant.",
+  pl_note:"Säker betalning med Stripe. Pro startar direkt. Säg upp när du vill under Konto → Hantera prenumeration och behåll Pro till slutet av den betalda perioden.",
+  pl_terms:"Genom att fortsätta godkänner du <a href=\"../legal#terms\">villkoren</a>.", pl_wait:"Öppnar säker betalning…", pl_err:"Betalsidan kunde inte öppnas. Försök igen om en minut.",
+  pl_already:"Du har redan Pro.", pl_signin:"Skapa ett gratiskonto eller logga in först, sedan betalar du.",
+  ac_manage:"Hantera prenumeration", ac_renews:"Förnyas {d}", ac_ends:"Pro till {d} (uppsagd, förnyas inte)", ac_pastdue:"Betalningen misslyckades: uppdatera kortet för att behålla Pro.",
+  co_ok:"Betalningen är klar. Välkommen till Pro! Låser upp…", co_slow:"Betalningen är klar. Pro låses upp inom en minut; ladda om sidan om det inte har hänt.", co_cancel:"Betalningen avbröts. Inget drogs.",
   pw_free_h:"Gratis med konto", pw_free_sub:"Skapa ett gratiskonto för att spara spel, följa stängningsodds, bevaka upp till {n} spelare och spara kombos med 2 delar.",
   pw_plan:"Plan", pw_plan_visitor:"Besökare", pw_plan_free:"Gratis", pw_plan_pro:"Pro", pw_plan_creator:"Kreatör", pw_plan_media:"Media",
   pw_lic_creator:"Kreatörslicens: du får visa och citera våra siffror i ditt innehåll, med källa i bild eller i beskrivningen.",
@@ -2090,8 +2110,9 @@ function openUpgrade(feat){
   const why = {compare:"pw_cmp_lock", explore:"pw_explore", shots:"pw_shots", alerts:"pw_alerts", matchup:"pw_matchup", fg:"pw_fg", saves:"pw_saves", public:"pw_pub", lines:"pw_ll", pm:"pw_pm"}[feat];
   modal(`<h3>🔒 ${t("pw_h")}</h3>${why ? `<p><b>${esc(t(why))}.</b></p>` : ""}<p class="meta">${t(pwSub())}</p><ul class="pwlist">${feats}</ul>
     ${ACCOUNT() ? "" : `<div class="pwfree"><b>${t("pw_free_h")}</b><p class="meta">${t("pw_free_sub",{n:FREE_WATCH})}</p></div>`}
-    <div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a>${ACCOUNT() ? "" : `<button class="mbtn" id="pw_up" type="button">${t("pw_signup")}</button>`}<button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`);
+    <div class="mrow"><button class="mbtn pri" id="pw_go" type="button">${t("pw_go")}</button>${ACCOUNT() ? "" : `<button class="mbtn" id="pw_up" type="button">${t("pw_signup")}</button>`}<button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`);
   const up = $("#pw_up"); if (up) up.onclick = () => openAuth("up");
+  $("#pw_go").onclick = () => openPlans();
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-upgrade]"); if (!b) return; e.preventDefault(); e.stopPropagation(); openUpgrade(b.dataset.upgrade); }, true);
 // merge the Pro patch (nhlprops/paywall.split) into DATA
@@ -5623,10 +5644,75 @@ function openAuth(mode, after){
 }
 function openAccount(){
   modal(`<h3>${t("acct_h")}</h3><p class="meta">${esc(USER.email||"")}</p>
-    ${PAYWALLED ? `<p>${t("pw_plan")}: <span class="pwbadge ${PLAN}">${planName()}</span></p>${PLAN==="creator"||PLAN==="media" ? `<p class="pwnote">${t("pw_lic_"+PLAN)}</p>` : ""}${PRO ? "" : `<p class="pwnote">${t(pwSub())}</p><div class="mrow"><a class="mbtn pri" href="../#plans">${t("pw_see_plans")}</a></div>`}` : ""}
+    ${PAYWALLED ? `<p>${t("pw_plan")}: <span class="pwbadge ${PLAN}">${planName()}</span></p>${PLAN==="creator"||PLAN==="media" ? `<p class="pwnote">${t("pw_lic_"+PLAN)}</p>` : ""}${PRO ? "" : `<p class="pwnote">${t(pwSub())}</p><div class="mrow"><button class="mbtn pri" id="ac_go" type="button">${t("pw_go")}</button></div>`}` : ""}
+    <div id="ac_bill"></div>
     <div class="mrow"><button class="mbtn pri" id="ac_picks" type="button">${t("nav_picks")}</button><button class="mbtn" id="ac_out" type="button">${t("logout")}</button></div>`);
+  const go = $("#ac_go"); if (go) go.onclick = () => openPlans();
+  billBox();
   $("#ac_picks").onclick = () => { closeModal(); go({tab:"picks", game:null}); };
   $("#ac_out").onclick = async () => { await sb.auth.signOut(); closeModal(); };
+}
+// ------------------------------------------------------------ Pro checkout (Stripe), see supabase/functions/stripe-*
+// The price is decided by the server (founder price until 30 November); the picker only shows it.
+const FOUNDER = () => Date.now() < Date.parse("2026-12-01T00:00:00+01:00");
+const eur = v => { const n = Number.isInteger(v) ? String(v) : v.toFixed(2); return LANG === "sv" ? n.replace(".", ",") + " €" : "€" + n; };
+function openPlans(){
+  if (PRO && PLAN !== "visitor") return modal(`<h3>${t("pl_h")}</h3><p>${t("pl_already")}</p><div class="mrow"><button class="mbtn" type="button" data-close>OK</button></div>`);
+  const f = FOUNDER(), m = f ? 7.99 : 12.99, y = f ? 59 : 89, save = Math.round((1 - y / (m * 12)) * 100);
+  const card = (k, price, per, was, extra) => `<button type="button" class="plcard" data-iv="${k}"><b>${t(k === "month" ? "pl_month" : "pl_year")}</b>
+    <span class="plp">${was ? `<s>${eur(was)}</s>` : ""}${eur(price)} <small>${t(per)}</small></span>${extra ? `<span class="plx">${extra}</span>` : ""}
+    <span class="mbtn pri">${t(k === "month" ? "pl_btn_m" : "pl_btn_y")}</span></button>`;
+  modal(`<h3>${t("pl_h")}</h3>${f ? `<p class="plf">${t("pl_founder")}</p>` : ""}
+    <div class="plgrid">${card("month", m, "pl_pm", f ? 12.99 : 0, "")}${card("year", y, "pl_py", f ? 89 : 0, t("pl_save", {p: save}))}</div>
+    <p class="meta">${t("pl_note")}</p><p class="meta">${t("pl_terms")}</p>${ACCOUNT() ? "" : `<p class="pwnote">${t("pl_signin")}</p>`}
+    <div class="mmsg" id="pl_msg"></div><div class="mrow"><button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`);
+  document.querySelectorAll(".plcard").forEach(b => b.onclick = () => startCheckout(b.dataset.iv));
+}
+async function startCheckout(interval){
+  if (!sb) return;
+  if (!USER) return openAuth("up", () => startCheckout(interval));
+  const msg = $("#pl_msg"), say = (x, ok) => { if (msg){ msg.textContent = x; msg.className = "mmsg " + (ok ? "ok" : "err"); } };
+  say(t("pl_wait"), true); document.querySelectorAll(".plcard").forEach(b => b.disabled = true);
+  try {
+    const {data, error} = await sb.functions.invoke("stripe-checkout", {body: {interval}});
+    if (data?.url) { location.href = data.url; return; }
+    if (data?.error === "already pro" || /409/.test(String(error?.context?.status))) { say(t("pl_already"), true); await loadPlan(); return; }
+    throw new Error(error?.message || data?.error || "no url");
+  } catch(e){ console.warn("checkout", e); say(t("pl_err")); document.querySelectorAll(".plcard").forEach(b => b.disabled = false); }
+}
+async function openPortal(){
+  try { const {data} = await sb.functions.invoke("stripe-portal", {body: {}}); if (data?.url) { location.href = data.url; return; } } catch(e){ console.warn("portal", e); }
+  const m = $("#ac_msg"); if (m){ m.textContent = t("pl_err"); m.className = "mmsg err"; }
+}
+// the subscription line in Account: renews / ends / payment failed, and Manage subscription
+async function billBox(){
+  const el = $("#ac_bill"); if (!el || !sb || !USER) return;
+  let b = null; try { ({data: b} = await sb.from("billing").select("status,current_period_end,cancel_at_period_end").eq("user_id", USER.id).maybeSingle()); } catch(e){}
+  if (!b?.status) return;
+  const d = b.current_period_end ? new Date(b.current_period_end).toLocaleDateString(LOCALE(), {day: "numeric", month: "long", year: "numeric"}) : "";
+  const line = b.status === "past_due" ? t("ac_pastdue") : ["active", "trialing"].includes(b.status) && d ? t(b.cancel_at_period_end ? "ac_ends" : "ac_renews", {d}) : "";
+  el.innerHTML = `${line ? `<p class="pwnote">${esc(line)}</p>` : ""}<div class="mrow"><button class="mbtn" id="ac_portal" type="button">${t("ac_manage")}</button></div><div class="mmsg" id="ac_msg"></div>`;
+  $("#ac_portal").onclick = openPortal;
+}
+function toast(txt){
+  let el = document.getElementById("toast");
+  if (!el){ el = document.createElement("div"); el.id = "toast"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+  el.textContent = txt; el.classList.add("on"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("on"), 6000);
+}
+// back from Stripe: wait for the webhook to switch the plan, then Pro data loads (loadPlan does it)
+async function checkoutReturn(){
+  let q; try { q = new URLSearchParams(location.search); } catch(e){ return; }
+  const st = q.get("checkout"), go = q.get("go");
+  if (st || go){ q.delete("checkout"); q.delete("go"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash); }
+  if (go === "pro") return setTimeout(openPlans, 300);
+  if (st === "cancel") return toast(t("co_cancel"));
+  if (st !== "success") return;
+  toast(t("co_ok"));
+  for (let i = 0; i < 20; i++){
+    await new Promise(r => setTimeout(r, 1500));
+    await loadPlan(); if (PRO_PLANS.includes(PLAN)) { header(); render(); return; }
+  }
+  toast(t("co_slow"));
 }
 function openSave(gid, pid, m){
   if (!USER) return openAuth("in", () => openSave(gid, pid, m));
@@ -6064,7 +6150,8 @@ function pmBox(g, d){
 }
 if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null;
   if (ev === "SIGNED_OUT" && PAYWALLED && PRO_LOADED && PRO_PLANS.includes(PLAN)){ location.reload(); return; }   // drop Pro data from memory
-  setTimeout(async () => { await loadPlan(); await Promise.all([loadPicks(), loadWatch(), loadParlays()]); header(); render(); }, 0); });
+  setTimeout(async () => { await loadPlan(); await Promise.all([loadPicks(), loadWatch(), loadParlays()]); header(); render();
+    if (!window.__coDone){ window.__coDone = 1; checkoutReturn(); } }, 0); });
 
 // ------------------------------------------------------------ live scores (official NHL feed via our scores function)
 // ------------------------------------------------------------ game recap (a past game: goals and every player's line)

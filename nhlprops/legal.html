@@ -144,7 +144,7 @@ h2[id],h3[id]{scroll-margin-top:140px}
 <script>
 // Set this to the contact address before launch; the contact lines stay hidden while it is empty.
 const CONTACT = "";
-const UPDATED = "2026-11-06";
+const UPDATED = "2026-11-16";
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const mail = () => CONTACT ? `<a href="mailto:${CONTACT}">${CONTACT}</a>` : "";
 const C = {
@@ -166,7 +166,14 @@ en:{
     <li>We may suspend or close accounts that break these terms.</li>
   </ul>
   <h3>4. Pro subscription</h3>
-  <p>When Pro is available, the price, billing period and how to cancel are shown before you pay. A subscription renews until you cancel it. You can cancel at any time and keep Pro until the end of the period you've paid for. Your right of withdrawal under consumer law, and how it applies to a digital service you start using straight away, is explained at checkout.</p>
+  <ul>
+    <li><b>Price and billing:</b> Pro costs €12.99 a month or €89 a year, VAT included where it applies. During an offer (such as the founder price) the offer price is shown before you pay and stays the same for as long as your subscription runs without a break. Payments are handled by Stripe; we never see your full card details.</li>
+    <li><b>Renewal:</b> the subscription renews automatically at the end of each month or year until you cancel it. Stripe emails a receipt for every payment.</li>
+    <li><b>Cancelling:</b> cancel at any time under Account → Manage subscription. Pro stays on until the end of the period you've paid for and isn't renewed after that. We don't refund the rest of a period you've started, except as described below or where the law requires it.</li>
+    <li><b>Right of withdrawal:</b> as a consumer in the EU you have 14 days from your first payment to withdraw from the subscription. Pro starts as soon as you pay, because you ask for it to. If you withdraw within the 14 days, write to us and we refund what you paid, less a fair amount for the days you've already used.</li>
+    <li><b>Failed payments:</b> if a renewal payment fails, Stripe tries again for a short period and you keep Pro meanwhile. If it still fails, the subscription ends and the account goes back to the free plan.</li>
+    <li><b>Price changes:</b> we tell you at least 30 days before a new price applies to your subscription, and you can cancel before then.</li>
+  </ul>
   <h3>5. Personal use and sharing</h3>
   <p>Your account and Pro access are for your own personal use. You may:</p>
   <ul>
@@ -226,20 +233,20 @@ en:{
     <li><b>Account:</b> your email address and login details (your password is stored encrypted by our login provider; we never see it), and your confirmation that you are 18 or older.</li>
     <li><b>What you save:</b> your picks, the odds and closing odds you entered, the players you follow (with any note you add), and your alert settings.</li>
     <li><b>Notifications:</b> if you turn on alerts, a push-notification address for your device.</li>
-    <li><b>Payments (when Pro launches):</b> handled by a payment provider. We see your subscription status, never your full card details.</li>
+    <li><b>Payments:</b> handled by Stripe. We store your Stripe customer number and your subscription's status, plan and renewal date; Stripe handles your card and billing details, and we never see your full card number.</li>
     <li><b>Licence requests:</b> if you ask for a commercial licence, the name, email, organisation, links and message you send. We use them only to answer you and to agree a licence, and delete them within 12 months if no licence follows.</li>
     <li><b>Technical logs:</b> our hosting providers keep short-lived logs such as IP address and browser type, for security and to keep the site running.</li>
   </ul>
   <h3>In your browser</h3>
   <p>The site remembers your language, theme, odds format and similar settings in your browser's local storage, and keeps you logged in. We don't use advertising or tracking cookies, and we don't run analytics trackers.</p>
   <h3>Why we use it</h3>
-  <p>To give you the account and features you asked for (contract), to keep the site secure (legitimate interest), and, once payments exist, to keep accounting records required by law.</p>
+  <p>To give you the account and features you asked for (contract), to keep the site secure (legitimate interest), and to keep the accounting records the law requires for payments.</p>
   <h3>Who helps us</h3>
   <ul>
     <li>Supabase: database and login, hosted in the EU (Ireland).</li>
     <li>Vercel and Cloudflare: hosting and fast delivery of the site.</li>
     <li>Google Fonts: the site's fonts are loaded from Google, which receives your IP address when it delivers them.</li>
-    <li>A payment provider, when Pro launches.</li>
+    <li>Stripe (Stripe Payments Europe, Ireland): payments and subscriptions. Stripe is also responsible for the data it needs to process payments, under its own privacy policy.</li>
   </ul>
   <p>Some of these companies are based in the US; transfers are covered by the EU's standard safeguards.</p>
   <h3>How long we keep it</h3>
@@ -265,7 +272,14 @@ sv:{
     <li>Vi kan stänga av eller avsluta konton som bryter mot villkoren.</li>
   </ul>
   <h3>4. Pro-prenumeration</h3>
-  <p>När Pro finns visas pris, betalningsperiod och hur du säger upp innan du betalar. En prenumeration förnyas tills du säger upp den. Du kan säga upp när som helst och behåller Pro till slutet av perioden du betalat för. Din ångerrätt enligt konsumentlagstiftningen, och hur den gäller för en digital tjänst som du börjar använda direkt, förklaras i kassan.</p>
+  <ul>
+    <li><b>Pris och betalning:</b> Pro kostar 12,99 € i månaden eller 89 € om året, inklusive moms där den gäller. Under ett erbjudande (till exempel grundarpriset) visas erbjudandepriset innan du betalar, och det gäller så länge din prenumeration löper utan avbrott. Betalningar hanteras av Stripe; vi ser aldrig dina fullständiga kortuppgifter.</li>
+    <li><b>Förnyelse:</b> prenumerationen förnyas automatiskt i slutet av varje månad eller år tills du säger upp den. Stripe mejlar ett kvitto för varje betalning.</li>
+    <li><b>Uppsägning:</b> säg upp när du vill under Konto → Hantera prenumeration. Pro gäller till slutet av perioden du betalat för och förnyas inte därefter. Vi återbetalar inte resten av en påbörjad period, utom enligt nedan eller där lagen kräver det.</li>
+    <li><b>Ångerrätt:</b> som konsument i EU har du 14 dagar från din första betalning att ångra prenumerationen. Pro startar direkt när du betalar, eftersom du ber om det. Ångrar du dig inom 14 dagar, skriv till oss så återbetalar vi det du betalat, minus en skälig del för dagarna du redan använt.</li>
+    <li><b>Misslyckade betalningar:</b> om en förnyelse inte går igenom försöker Stripe igen under en kort tid och du behåller Pro under tiden. Går den ändå inte igenom avslutas prenumerationen och kontot går tillbaka till gratisplanen.</li>
+    <li><b>Prisändringar:</b> vi meddelar dig minst 30 dagar innan ett nytt pris gäller för din prenumeration, och du kan säga upp innan dess.</li>
+  </ul>
   <h3>5. Personligt bruk och delning</h3>
   <p>Ditt konto och din Pro-tillgång är för ditt eget, personliga bruk. Du får:</p>
   <ul>
@@ -325,20 +339,20 @@ sv:{
     <li><b>Konto:</b> din e-postadress och inloggningsuppgifter (lösenordet lagras krypterat hos vår inloggningsleverantör; vi ser det aldrig) och din bekräftelse på att du är 18 år eller äldre.</li>
     <li><b>Det du sparar:</b> dina spel, oddsen och stängningsoddsen du angett, spelarna du följer (med eventuell anteckning) och dina aviseringsinställningar.</li>
     <li><b>Aviseringar:</b> om du slår på aviseringar, en pushadress för din enhet.</li>
-    <li><b>Betalningar (när Pro lanseras):</b> hanteras av en betalleverantör. Vi ser din prenumerationsstatus, aldrig dina fullständiga kortuppgifter.</li>
+    <li><b>Betalningar:</b> hanteras av Stripe. Vi sparar ditt kundnummer hos Stripe och din prenumerations status, plan och förnyelsedatum; Stripe hanterar kort- och faktureringsuppgifter, och vi ser aldrig ditt fullständiga kortnummer.</li>
     <li><b>Licensförfrågningar:</b> om du ansöker om en kommersiell licens, namnet, e-postadressen, organisationen, länkarna och meddelandet du skickar. Vi använder dem bara för att svara dig och avtala en licens, och raderar dem inom 12 månader om ingen licens blir av.</li>
     <li><b>Tekniska loggar:</b> våra driftleverantörer sparar kortlivade loggar som IP-adress och webbläsartyp, för säkerhet och drift.</li>
   </ul>
   <h3>I din webbläsare</h3>
   <p>Sajten kommer ihåg språk, tema, oddsformat och liknande inställningar i webbläsarens lokala lagring, och håller dig inloggad. Vi använder inga reklam- eller spårningskakor och inga analysverktyg som spårar dig.</p>
   <h3>Varför vi använder uppgifterna</h3>
-  <p>För att ge dig kontot och funktionerna du bett om (avtal), för att hålla sajten säker (berättigat intresse) och, när betalningar finns, för bokföring som lagen kräver.</p>
+  <p>För att ge dig kontot och funktionerna du bett om (avtal), för att hålla sajten säker (berättigat intresse) och för bokföring av betalningar som lagen kräver.</p>
   <h3>Vem som hjälper oss</h3>
   <ul>
     <li>Supabase: databas och inloggning, i EU (Irland).</li>
     <li>Vercel och Cloudflare: drift och snabb leverans av sajten.</li>
     <li>Google Fonts: sajtens typsnitt hämtas från Google, som får din IP-adress när de levereras.</li>
-    <li>En betalleverantör, när Pro lanseras.</li>
+    <li>Stripe (Stripe Payments Europe, Irland): betalningar och prenumerationer. Stripe ansvarar också själv för de uppgifter som behövs för att genomföra betalningar, enligt sin egen integritetspolicy.</li>
   </ul>
   <p>Vissa av företagen finns i USA; överföringar skyddas av EU:s standardskydd.</p>
   <h3>Hur länge vi sparar</h3>

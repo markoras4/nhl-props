@@ -1,6 +1,6 @@
 # Free / Pro / visitors: agreed plan (build together with Stripe)
 
-Prices (2026-11-13): Pro EUR 12.99 a month or EUR 89 for the season (October-June). Founder / Black Friday price
+Prices (2026-11-13, yearly from 2026-11-16): Pro EUR 12.99 a month or EUR 89 a year. Founder / Black Friday price
 (2026-11-16, with the evenout.app domain): EUR 7.99 a month or EUR 59 a season, kept while subscribed, shown until the
 end of 30 November 2026 (Swedish time). The landing page and the app's paywall switch back to the normal price by themselves.
 
@@ -109,3 +109,16 @@ How it is enforced:
   `GET pin-sync` returns how old the newest stored price is; the step skips when it is under 50 minutes.
 * Table `pin_odds` (Pro-only reads). The app merges newer prices for Pro accounts on load and every 15 minutes, and
   the roster grid footer shows "Sharp-book prices updated HH:MM". Site builds still fetch Pinnacle themselves.
+
+## Payments (Stripe, 2026-11-16)
+
+- Stripe account "evenout" (Sweden). Product "evenout Pro" in both live and test mode, four prices found by lookup key:
+  `pro_monthly` (EUR 12.99/month), `pro_season` (EUR 89/year), `founder_monthly` (EUR 7.99/month), `founder_season` (EUR 59/year).
+  The server picks the founder keys until the end of 30 Nov 2026 (Swedish time); subscribers keep the price they started on.
+- `supabase/functions/stripe-checkout`: signed-in user + `{interval: "month" | "year"}` -> Stripe Checkout URL (one Stripe customer per account).
+- `supabase/functions/stripe-portal`: Stripe customer portal (cancel at period end, change card, invoices).
+- `supabase/functions/stripe-webhook`: `checkout.session.completed` and `customer.subscription.*` -> `public.billing` row and
+  `profiles.plan` (`pro` while active / trialing / past_due, back to `free` when it ends; creator / media are never touched).
+- Secrets in Supabase (Edge Functions -> Secrets), never in the repo: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
+  Test mode first (sk_test + the sandbox webhook's signing secret), then swap both for the live ones.
+- Webhook endpoint: https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/stripe-webhook
