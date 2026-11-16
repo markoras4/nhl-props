@@ -39,9 +39,9 @@
   // one "looks like value, but Fragile" teaching moment when the slate has one with a big model edge
   const trap = rows.filter(r => r.gr === "F" && r.ev >= 0.08 && r.od >= 1.5 && r.od <= 6 && !seenP.has(r.pr.id)).sort((a, b) => b.ev - a.ev)[0];
 
-  // ---- hot or lucky: biggest Heat Index swings among regulars playing soon ----
+  // ---- hot or lucky: biggest Heat Index swings among regulars playing on this slate (the video is for these games) ----
   const playing = new Map();
-  for (const g of DATA.games) if (g.ld >= day) for (const pr of g.props || []) if (!playing.has(String(pr.id))) playing.set(String(pr.id), {g, pr});
+  for (const g of games) for (const pr of g.props || []) if (!playing.has(String(pr.id))) playing.set(String(pr.id), {g, pr});
   const heat = [];
   for (const [pid, {g, pr}] of playing) {
     const p = P(pid); const h = p?.streaks?.heat; if (!p?.active || !h || h.v == null || h.n < 8) continue;
