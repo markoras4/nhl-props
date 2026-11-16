@@ -50,24 +50,25 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
 - Music: `music.review_track`, a different original song, no rising build-up at the start (half-time groove, FM electric piano, 808, bell sparkles on
   each winning pick). Template: `review.html`.
 
-# Series music (80s synthwave, varied per day)
+# Series music (original styles in the vibe of the user's reference tracks)
 
     import music
     x = music.series_track("hot", duration, cues=[4.0, 12.0], seed="2026-11-16")   # float32 stereo (n, 2) at music.SR
     music.write_wav("music.wav", x)
-    music.style_track("outrun", duration, cues, seed=7)  # force one style
-    music.SERIES_STYLES                                  # {"board": ["outrun", "synthpop80", "nightdrive"], ...}
+    music.style_track("basshouse", duration, cues, seed=7)  # force one style
+    music.SERIES_STYLES                                     # {"board": ["basshouse", "deserthouse", "deephouse"], ...}
 
-- Everything is energetic 80s synthwave (110-150 BPM, gated-reverb snare, driving saw bass, polysynth chords, arps,
-  saw/square lead hook from the first bar). Three styles per series (`music.STYLES[name]["desc"]`):
-  board: `outrun`, `synthpop80`, `nightdrive` | hot: `darksynth`, `cyberwave`, `synthtrap` |
-  report: `anthem80`, `funksynth`, `sunset` | preview: `action80`, `stadium80`, `chase80` |
-  lab: `popbells`, `neonbounce`, `arcade80`. Unknown series -> `board`.
+- 15 styles, 3 per series, modelled on genre / tempo / groove / sound / mix balance of 9 reference tracks (HiLau,
+  Moavii, Nebulite, Zambolino, bensound; their licences exclude brand videos, so nothing from them is used: no
+  samples, melodies, hooks or chord sequences). `music.STYLES[name]["ref"]` / `["desc"]` say which and how.
+  board (house): `basshouse`, `deserthouse`, `deephouse` | hot (darker): `trespass`, `machine`, `darkdesert` |
+  report (hip-hop): `boombap`, `dreamhop`, `moonlight` | preview (bouncy): `bounce`, `funkmachine`, `futurepop` |
+  lab (light): `brightfeel`, `nightcruise`, `dreamloop`. Unknown series -> `board`.
+- Bass-heavy (sub + bass carry most of the energy), dark top end, dense master, loop-based, one short hook per style,
+  full groove from the first beat.
+- `cues`: no risers/sweeps/uplifts. Each cue gets a one-beat drum fill (kick/backbeat drop out, bass keeps going) and
+  the next segment alternates A/B (extra percussion or a second layer joins in B parts); the groove stays on one bar
+  grid. Ends on a final chord + hit and fades to silence in the last ~1.5 s.
 - `seed`: int or string. An ISO date rotates through the series' styles day by day (consecutive days never repeat a
-  style); tempo, key, mode, chord progressions, drum groove, bass/arp patterns and melody also come from the seed.
-  Same seed -> identical audio; `None` -> random. `music.pick_style(series, seed)` tells which style will be used.
-- `cues`: no transition effects at all (no risers, whooshes, filter sweeps, drop-outs or hits). The groove runs
-  continuously on one bar grid; a cue only switches the chord progression / arp pattern / melody answer on the
-  nearest downbeat. One crash at 0 s, full groove from the first beat; ends on a final chord + hit and fades to
-  silence in the last ~1.5 s.
-- All synthesised from scratch (no samples, no known melodies). Peak 0.89; a 60 s track renders in about 2 s.
+  style); tempo, key, mode, chord loop and patterns also come from the seed. Same seed -> identical audio.
+- Preview all styles: `video/out/music-sampler-v3.mp3` (12 s each, in `STYLES` order). 60 s renders in ~1.5 s.
