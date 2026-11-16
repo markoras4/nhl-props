@@ -4,6 +4,10 @@ real Supabase client for tools/paywall/mock-supabase.js, so each plan can be tri
     py tools/paywall/devserver.py .local-test/site 8787
     http://localhost:8787/app/?as=visitor   (or free, pro, creator, media)
 
+    py tools/paywall/devserver.py .local-test/site 8787 --real
+    keeps the real Supabase client (real accounts, real Stripe test checkout), for the end-to-end payment test
+    (.local-test/e2e/bots.mjs).
+
 Pro files are served from <site>/../pro/ under /__dev/pro/ only to requests the mock makes for Pro plans;
 the real protection is the pro-data edge function (supabase/functions/pro-data).
 """
@@ -21,6 +25,7 @@ CDN = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/di
 class Handler(http.server.SimpleHTTPRequestHandler):
     site: Path
     pro: Path
+    real = False
 
     def log_message(self, *a):  # quiet
         pass
@@ -45,7 +50,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._send(b'{"error":"not found"}', "application/json", 404)
         if path in ("/app", "/app/", "/app/index.html"):
             html = (self.site / "app" / "index.html").read_text(encoding="utf-8")
-            html = html.replace(CDN, '<script src="/__dev/mock-supabase.js"></script>')
+            if not self.real:
+                html = html.replace(CDN, '<script src="/__dev/mock-supabase.js"></script>')
             return self._send(html.encode("utf-8"), "text/html; charset=utf-8")
         # clean URLs like Vercel (cleanUrls: true)
         if "." not in path.rsplit("/", 1)[-1] and not path.endswith("/") and (self.site / (path.lstrip("/") + ".html")).exists():
@@ -53,13 +59,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
 
-def main(site: str, port: int = 8787):
+def main(site: str, port: int = 8787, real: bool = False):
     s = Path(site).resolve()
-    Handler.site, Handler.pro = s, s.parent / "pro"
+    Handler.site, Handler.pro, Handler.real = s, s.parent / "pro", real
     srv = http.server.ThreadingHTTPServer(("127.0.0.1", port), partial(Handler, directory=str(s)))
     print(f"Paywall test server: http://localhost:{port}/app/?as=visitor|free|pro|creator|media")
     srv.serve_forever()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 8787)
+    args = [a for a in sys.argv[1:] if a != "--real"]
+    main(args[0], int(args[1]) if len(args) > 1 else 8787, real="--real" in sys.argv)

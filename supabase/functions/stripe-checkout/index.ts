@@ -19,8 +19,13 @@ Deno.serve(async (req) => {
   if (bill?.subscription_id && LIVE.includes(bill.status)) return json({ error: "already pro" }, 409);
 
   try {
-    // one Stripe customer per account, created on the first checkout
+    // one Stripe customer per account, created on the first checkout; a stored customer that this Stripe key
+    // can't see (deleted, or made with the other mode's key: test vs live) is replaced with a new one
     let customer = bill?.stripe_customer_id as string | undefined;
+    if (customer) {
+      try { const c = await stripe.customers.retrieve(customer); if ((c as { deleted?: boolean }).deleted) customer = undefined; }
+      catch (e) { if ((e as { code?: string }).code === "resource_missing") customer = undefined; else throw e; }
+    }
     if (!customer) {
       const c = await stripe.customers.create({ email: user.email, metadata: { user_id: user.id } });
       customer = c.id;
