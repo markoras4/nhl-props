@@ -1,0 +1,235 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- evenout short videos (9:16): one template, three series (board, hot, report). video/series.py injects SPEC and
+     renders render(t) frame by frame. Everything stays between y=150 and y=1500 (platform buttons cover the rest). -->
+<style>
+@font-face{font-family:Anton;src:url(fonts/anton.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:500;src:url(fonts/exo2-500.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:700;src:url(fonts/exo2-700.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:800;src:url(fonts/exo2-800.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:600;src:url(fonts/oxanium-600.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:800;src:url(fonts/oxanium-800.woff2) format("woff2")}
+:root{--bg:#100a12;--panel:#1a111d;--panel2:#241827;--line:#37253b;--text:#f7ebf4;--mute:#aa93a5;
+  --pink:#ff4fa8;--purple:#b794ff;--amber:#ffb547;--orange:#ff6a3d;--S:#ff4fa8;--L:#ffb547;--F:#ff6a3d}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+#stage{position:absolute;inset:0;overflow:hidden;color:var(--text);font-family:"Exo 2",sans-serif}
+.abs{position:absolute}
+.scene{position:absolute;inset:0;display:none}
+.anton{font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.5px;line-height:.9}
+.ox{font-family:Oxanium,sans-serif;letter-spacing:3px;text-transform:uppercase}
+/* background: moving colour blobs, a faint rink-like grid, grain, vignette */
+#bg{position:absolute;inset:-200px;background:radial-gradient(1200px 900px at 50% 40%,#1d1222,var(--bg) 70%)}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.55;mix-blend-mode:screen}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,79,168,.06) 2px,transparent 2px),linear-gradient(90deg,rgba(255,79,168,.06) 2px,transparent 2px);background-size:120px 120px;mask-image:radial-gradient(ellipse at 50% 55%,#000 30%,transparent 75%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%);pointer-events:none}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+/* frame chrome: series badge + date, progress, the always-on link */
+#top{position:absolute;left:56px;right:56px;top:150px;display:flex;align-items:center;gap:18px}
+#badge{display:inline-flex;align-items:center;gap:14px;padding:12px 26px 12px 18px;border-radius:999px;background:rgba(255,79,168,.14);border:2px solid rgba(255,79,168,.55);font:800 30px Oxanium;letter-spacing:3px;text-transform:uppercase;color:#ffd3ea}
+#badge i{width:16px;height:16px;border-radius:50%;background:var(--pink);box-shadow:0 0 18px var(--pink)}
+#date{margin-left:auto;font:600 28px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase}
+#prog{position:absolute;left:56px;right:56px;top:226px;height:8px;display:flex;gap:10px}
+#prog i{flex:1;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden;position:relative}
+#prog i u{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--pink),var(--purple))}
+#link{position:absolute;z-index:5;left:56px;top:1405px;display:flex;align-items:center;gap:16px;padding:16px 30px 16px 18px;border-radius:999px;background:rgba(16,10,18,.82);border:2px solid rgba(183,148,255,.55);box-shadow:0 10px 40px rgba(0,0,0,.45)}
+#link img{height:44px;display:block}
+#link b{font:800 38px "Exo 2";color:#fff;letter-spacing:.5px}
+#link span{font:700 24px Oxanium;letter-spacing:3px;color:var(--purple);text-transform:uppercase}
+/* cards */
+.card{position:absolute;left:56px;right:56px;border-radius:36px;background:linear-gradient(160deg,rgba(38,24,42,.96),rgba(16,10,18,.96));border:2px solid rgba(255,255,255,.08);box-shadow:0 40px 100px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);padding:38px 40px;overflow:hidden}
+.card::before{content:"";position:absolute;inset:-2px;border-radius:36px;padding:2px;background:linear-gradient(140deg,rgba(255,79,168,.7),transparent 35%,transparent 65%,rgba(183,148,255,.6));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.lab{font:700 24px Oxanium;letter-spacing:5px;text-transform:uppercase;color:var(--mute)}
+.av{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:400 78px Anton;color:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.1),0 20px 50px rgba(0,0,0,.5);flex:none}
+.who{display:flex;align-items:center;gap:30px;padding-right:250px}
+.who .nm{font:800 64px/1 "Exo 2"}
+.who .mt{margin-top:12px;font:700 28px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase}
+.stamp{position:absolute;right:36px;top:52px;padding:10px 24px 8px;border-radius:18px;border:5px solid;font:400 60px/1 Anton;letter-spacing:3px;text-transform:uppercase;transform-origin:center}
+.mk{margin-top:34px;font:400 112px/0.9 Anton;text-transform:uppercase;letter-spacing:1px}
+.vrow{display:flex;align-items:center;gap:22px;margin-top:22px}
+.vrow .k{width:180px;font:700 26px Oxanium;letter-spacing:3px;color:var(--mute)}
+.track{flex:1;height:62px;border-radius:18px;background:rgba(255,255,255,.07);position:relative;overflow:hidden}
+.track i{position:absolute;left:0;top:0;bottom:0;border-radius:18px}
+.track b{position:absolute;right:20px;top:0;line-height:62px;font:800 34px "Exo 2"}
+.edge{display:flex;align-items:baseline;gap:18px;margin-top:26px}
+.edge b{font:400 92px/1 Anton;color:var(--pink)}
+.edge span{font:700 26px Oxanium;letter-spacing:4px;color:var(--mute)}
+.why{margin-top:26px;display:grid;gap:14px}
+.why div{display:flex;gap:16px;font:700 32px/1.25 "Exo 2";color:#eedde8}
+.why div::before{content:"";flex:0 0 14px;height:14px;border-radius:50%;margin-top:13px;background:var(--c,var(--pink));box-shadow:0 0 14px var(--c,var(--pink))}
+/* hot or lucky */
+.gauge{margin-top:30px;height:44px;border-radius:22px;background:linear-gradient(90deg,rgba(183,148,255,.35),rgba(255,255,255,.06) 45%,rgba(255,255,255,.06) 55%,rgba(255,106,61,.4));position:relative}
+.gauge::after{content:"";position:absolute;left:50%;top:-10px;bottom:-10px;width:3px;background:rgba(255,255,255,.5)}
+.gauge i{position:absolute;top:-14px;width:72px;height:72px;margin-left:-36px;border-radius:50%;border:6px solid #fff;box-shadow:0 0 30px currentColor}
+.hv{display:flex;align-items:baseline;gap:22px;margin-top:22px}
+.hv b{font:400 120px/0.9 Anton}
+.hv span{font:800 40px Oxanium;letter-spacing:4px;text-transform:uppercase}
+.bars{display:flex;align-items:flex-end;gap:14px;height:130px;margin-top:22px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bars i{width:100%;border-radius:10px 10px 4px 4px;transform-origin:bottom}
+.bars u{text-decoration:none;font:600 20px Oxanium;color:var(--mute);margin-top:8px}
+.bars em{font-style:normal;font:800 24px "Exo 2";margin-bottom:6px}
+.verdict{margin-top:24px;padding:20px 26px;border-radius:24px;background:rgba(255,255,255,.05);border-left:10px solid var(--c);font:700 32px/1.3 "Exo 2"}
+.verdict b{display:block;font:400 64px/1 Anton;letter-spacing:1px;text-transform:uppercase;color:var(--c);margin-bottom:10px}
+/* report card */
+.grow{display:grid;grid-template-columns:230px 1fr 190px;align-items:center;gap:22px;margin-top:26px}
+.grow .g{font:400 58px/1 Anton;text-transform:uppercase;letter-spacing:1px}
+.grow .rec{font:800 30px "Exo 2";color:#eedde8;margin-top:6px}
+.grow .u{text-align:right;font:400 64px/1 Anton}
+.big{font:400 220px/0.85 Anton;letter-spacing:2px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:34px}
+.kv div{padding:26px 28px;border-radius:26px;background:rgba(255,255,255,.05)}
+.kv b{display:block;font:400 76px/1 Anton;margin-top:10px}
+/* outro */
+#outro .logo{position:absolute;left:140px;width:800px;top:430px}
+.slam{position:absolute;left:0;right:0;text-align:center}
+.glitch{text-shadow:-6px 0 rgba(255,79,168,.85),6px 0 rgba(183,148,255,.85)}
+</style></head>
+<body><div id="stage"></div>
+<script>
+const SPEC = /*SPEC*/null;
+const T = SPEC.timing, stage = document.getElementById('stage');
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)), seg=(t,a,b)=>clamp((t-a)/(b-a)), lerp=(a,b,x)=>a+(b-a)*x;
+const eOut=x=>1-Math.pow(1-x,3), eExpo=x=>x>=1?1:1-Math.pow(2,-10*x), eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c1=1.7,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const pct=x=>Math.round(x*100)+'%', sgn=(x,d=1)=>(x>=0?'+':'−')+Math.abs(x).toFixed(d);
+function el(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;(parent||stage).appendChild(e);return e}
+function css(e,o){Object.assign(e.style,o);return e}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function hash(n){const x=Math.sin(n*127.1)*43758.5453;return x-Math.floor(x)}
+const beat=t=>Math.exp(-((t%T.beat)/T.beat)*6);
+
+// ---------------- background + chrome ----------------
+const bg=el('div',null,null); bg.id='bg';
+const blobs=[['#ff4fa8',900],['#b794ff',800],['#ff6a3d',600]].map(([c,s])=>css(el('div','blob',null,bg),{width:s+'px',height:s+'px',background:c}));
+el('div',null,null).id='grid';
+const scenes=[]; // {el,a,b,draw(u)}
+const topBar=el('div',null,`<span id="badge"><i></i>${esc(SPEC.badge)}</span><span id="date">${esc(SPEC.day)}</span>`); topBar.id='top';
+const prog=el('div',null,(SPEC.parts||[]).map(()=>'<i><u></u></i>').join('')); prog.id='prog'; const progU=[...prog.querySelectorAll('u')];
+const link=el('div',null,`<img src="img/icon.png" alt=""><div><b>evenout.app</b><br><span>${esc(SPEC.linkSub||'Free stats for every player')}</span></div>`); link.id='link';
+el('div',null,null).id='vig';
+const flash=el('div',null,null); flash.id='flash';
+
+function scene(a,b){const root=el('div','scene');const s={el:root,a,b,draw:()=>{}};scenes.push(s);return s}
+function popIn(e,u,at,dy=90,dur=.5){const p=eBack(seg(u,at,at+dur));e.style.opacity=clamp(seg(u,at,at+.18));e.style.transform=`translateY(${(1-p)*dy}px) scale(${lerp(.94,1,p)})`;}
+function slam(e,u,at,from=1.6){const p=seg(u,at,at+.3),q=eExpo(p);e.style.opacity=p<=0?0:clamp(p*3);e.style.transform=`scale(${lerp(from,1,q)})`;e.style.filter=q<1?`blur(${(1-q)*12}px)`:'none';e.classList.toggle('glitch',u>=at&&u<at+.12);}
+function words(e,u,at,step=.07){[...e.querySelectorAll('span.w')].forEach((s,i)=>{const p=eOut(seg(u,at+i*step,at+i*step+.35));s.style.opacity=p;s.style.display='inline-block';s.style.transform=`translateY(${(1-p)*40}px)`;});}
+const W=s=>String(s).split(/\s+/).map(w=>`<span class="w">${esc(w)}</span>`).join(' ');
+function count(e,u,at,dur,to,fmt){e.textContent=fmt(to*eOut(seg(u,at,at+dur)));}
+function out(e,u,at){const q=eInOut(seg(u,at,at+.35));if(q>0){e.style.opacity=(+e.style.opacity||1)*(1-q);e.style.transform+=` translateX(${-q*140}px)`;}}
+
+// ---------------- intro (all series) ----------------
+{const s=scene(0,T.intro);
+ const l1=css(el('div','slam anton',esc(SPEC.title1),s.el),{top:'520px',fontSize:'150px'});
+ const l2=css(el('div','slam anton',esc(SPEC.title2),s.el),{top:'680px',fontSize:'190px',color:'var(--pink)'});
+ const sub=css(el('div','slam',W(SPEC.sub||''),s.el),{top:'930px',font:'800 44px "Exo 2"',color:'#eedde8',padding:'0 80px'});
+ const chips=css(el('div','slam',(SPEC.chips||[]).map(([txt,c])=>`<span style="display:inline-block;margin:0 8px;padding:10px 22px;border-radius:999px;border:3px solid ${c};color:${c};font:800 28px Oxanium;letter-spacing:3px">${esc(txt)}</span>`).join(''),s.el),{top:'1060px'});
+ s.draw=u=>{slam(l1,u,0,1.8);slam(l2,u,T.beat,1.8);words(sub,u,2*T.beat);chips.style.opacity=eOut(seg(u,3*T.beat,3*T.beat+.4));chips.style.transform=`scale(${lerp(.8,1,eBack(seg(u,3*T.beat,3*T.beat+.5)))})`;
+   s.el.style.opacity=1-seg(u,T.intro-.2,T.intro);};}
+
+// ---------------- series scenes ----------------
+const parts=SPEC.parts||[];
+parts.forEach((P,i)=>{
+  const s=scene(P.a,P.b); const root=s.el;
+  if(P.kind==='pick'){
+    const g=P.grade, gc=`var(--${g})`;
+    const card=el('div','card',`
+      <div class="who"><div class="av" style="background:${P.color}">${esc(P.num||'')}</div>
+        <div><div class="nm">${esc(P.name)}</div><div class="mt">${esc(P.meta)}</div></div></div>
+      <div class="stamp" style="color:${gc};border-color:${gc};background:color-mix(in srgb,${gc} 14%,transparent)">${esc(P.gradeTxt)}</div>
+      ${P.trap?`<div class="lab" style="margin-top:30px;color:var(--orange)">${esc(P.trap)}</div>`:''}
+      <div class="mk">${esc(P.market)}</div>
+      <div class="vrow"><div class="k">MODEL</div><div class="track"><i class="m" style="background:linear-gradient(90deg,#b8287a,var(--pink))"></i><b class="mv">0%</b></div></div>
+      <div class="vrow"><div class="k">MARKET</div><div class="track"><i class="k2" style="background:linear-gradient(90deg,#6b4fb0,var(--purple))"></i><b class="kp">0%</b></div></div>
+      <div class="edge"><b class="ev">+0.0%</b><span>MODEL EDGE</span></div>
+      <div class="why" style="--c:${gc}">${P.why.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`,root);
+    css(card,{top:'300px'});
+    const st=card.querySelector('.stamp'),m=card.querySelector('i.m'),mv=card.querySelector('.mv'),k=card.querySelector('i.k2'),kv=card.querySelector('.kp'),ev=card.querySelector('.ev'),why=[...card.querySelectorAll('.why div')];
+    s.draw=u=>{const ci=eExpo(seg(u,0,.55));card.style.opacity=clamp(ci*1.5);card.style.transform=`translateX(${(1-ci)*700}px) rotate(${(1-ci)*4}deg)`;
+      const sp=eBack(seg(u,.55,.85));st.style.opacity=clamp(seg(u,.55,.62));st.style.transform=`rotate(${lerp(-18,-6,sp)}deg) scale(${lerp(2.2,1,sp)})`;
+      const b1=eOut(seg(u,1.0,1.9)),b2=eOut(seg(u,1.25,2.15));m.style.width=pct(P.model*b1);mv.textContent=pct(P.model*b1);k.style.width=pct(P.marketP*b2);kv.textContent=pct(P.marketP*b2);
+      count(ev,u,1.6,.9,P.edge,v=>sgn(v*100)+'%');
+      why.forEach((w,j)=>popIn(w,u,2.4+j*.45,40,.45));
+      if(u>P.b-P.a-.4) out(card,u,P.b-P.a-.4);};
+  }
+  if(P.kind==='heat'){
+    const hot=P.v>=0, col=hot?'var(--orange)':'var(--purple)', pos=50+clamp(P.v/6,-1,1)*50;
+    const card=el('div','card',`
+      <div class="who"><div class="av" style="background:${P.color}">${esc(P.num||'')}</div>
+        <div><div class="nm">${esc(P.name)}</div><div class="mt">${esc(P.meta)}</div></div></div>
+      <div class="lab" style="margin-top:26px">Heat Index · last ${P.n} games</div>
+      <div class="hv"><b class="hn" style="color:${col}">0.0</b><span style="color:${col}">${esc(P.level)}</span></div>
+      <div class="gauge"><i style="color:${col};background:${col}"></i></div>
+      <div style="margin-top:20px;font:700 30px 'Exo 2';color:#eedde8">${esc(P.line)}</div>
+      <div class="bars">${P.games.map(x=>`<div><em>${x.p||''}</em><i style="height:${Math.max(6,Math.min(4,x.p)*28)}px;background:${x.p?'linear-gradient(180deg,'+(hot?'#ff9a6a,#ff6a3d':'#cdb6ff,#7a5bd6')+')':'rgba(255,255,255,.12)'}"></i><u>${esc(x.o)}</u></div>`).join('')}</div>
+      ${P.sh?`<div style="margin-top:22px;font:700 30px 'Exo 2';color:var(--mute)">${esc(P.sh)}</div>`:''}
+      <div class="verdict" style="--c:${col}"><b>${esc(P.verdict)}</b>${esc(P.verdictSub)}</div>`,root);
+    css(card,{top:'290px'});
+    const hn=card.querySelector('.hn'),gi=card.querySelector('.gauge i'),bars=[...card.querySelectorAll('.bars i')],vd=card.querySelector('.verdict');
+    s.draw=u=>{const ci=eExpo(seg(u,0,.55));card.style.opacity=clamp(ci*1.5);card.style.transform=`translateY(${(1-ci)*260}px) scale(${lerp(.9,1,ci)})`;
+      const gp=eOut(seg(u,.7,2.0));gi.style.left=lerp(50,pos,gp)+'%';hn.textContent=sgn(P.v*gp);
+      bars.forEach((b,j)=>{const q=eBack(seg(u,1.4+j*.12,1.4+j*.12+.35));b.style.transform=`scaleY(${clamp(q,0,1.2)})`;});
+      popIn(vd,u,P.b-P.a-4.2,60,.55);
+      if(u>P.b-P.a-.4) out(card,u,P.b-P.a-.4);};
+  }
+  if(P.kind==='grades'){
+    const card=el('div','card',`<div class="lab">${esc(P.head)}</div>${P.rows.map(r=>`
+      <div class="grow"><div><div class="g" style="color:var(--${r.g})">${esc(r.name)}</div><div class="rec">${r.w}–${r.l}${r.v?`–${r.v}`:''}</div></div>
+        <div class="track" style="height:54px"><i style="background:var(--${r.g})"></i><b style="line-height:54px;font-size:28px">${r.n} picks</b></div>
+        <div class="u" style="color:${r.u>=0?'var(--pink)':'var(--orange)'}">${sgn(r.u)}u</div></div>`).join('')}
+      <div class="verdict" style="--c:var(--purple);margin-top:40px"><b>${esc(P.noteH)}</b>${esc(P.note)}</div>`,root);
+    css(card,{top:'300px'});
+    const rows=[...card.querySelectorAll('.grow')],fills=[...card.querySelectorAll('.grow .track i')],vd=card.querySelector('.verdict');
+    s.draw=u=>{popIn(card,u,0,120,.6);rows.forEach((r,j)=>{popIn(r,u,.5+j*.45,50,.45);fills[j].style.width=pct(P.rows[j].hit*eOut(seg(u,.8+j*.45,1.8+j*.45)));});
+      popIn(vd,u,2.6,50,.5); if(u>P.b-P.a-.4) out(card,u,P.b-P.a-.4);};
+  }
+  if(P.kind==='totals'){
+    const col=P.u>=0?'var(--pink)':'var(--orange)';
+    const card=el('div','card',`<div class="lab">${esc(P.head)}</div>
+      <div class="big" style="color:${col};margin-top:20px"><span class="tu">0.0</span>u</div>
+      <div style="font:700 34px 'Exo 2';color:#eedde8;margin-top:14px">${esc(P.sub)}</div>
+      <div class="kv">${P.kv.map(([k,v,c])=>`<div><span class="lab">${esc(k)}</span><b style="color:${c||'#fff'}">${esc(v)}</b></div>`).join('')}</div>
+      <div style="margin-top:30px;font:600 26px 'Exo 2';color:var(--mute)">${esc(P.foot)}</div>`,root);
+    css(card,{top:'320px'});const tu=card.querySelector('.tu'),kv=[...card.querySelectorAll('.kv div')];
+    s.draw=u=>{popIn(card,u,0,120,.6);count(tu,u,.4,1.4,P.u,v=>sgn(v));kv.forEach((x,j)=>popIn(x,u,1.4+j*.25,40,.4));if(u>P.b-P.a-.4) out(card,u,P.b-P.a-.4);};
+  }
+  if(P.kind==='miss'){
+    const card=el('div','card',`<div class="lab" style="color:var(--orange)">${esc(P.head)}</div>
+      <div class="who" style="margin-top:28px"><div class="av" style="background:${P.color}">${esc(P.num||'')}</div><div><div class="nm">${esc(P.name)}</div><div class="mt">${esc(P.meta)}</div></div></div>
+      <div class="mk" style="font-size:96px">${esc(P.market)}</div>
+      <div class="vrow"><div class="k">MODEL</div><div class="track"><i class="m" style="background:linear-gradient(90deg,#b8287a,var(--pink))"></i><b class="mv">0%</b></div></div>
+      <div class="verdict" style="--c:var(--orange)"><b>LOST</b>${esc(P.lesson)}</div>`,root);
+    css(card,{top:'300px'});const m=card.querySelector('i.m'),mv=card.querySelector('.mv'),vd=card.querySelector('.verdict');
+    s.draw=u=>{popIn(card,u,0,120,.6);const b=eOut(seg(u,.8,1.7));m.style.width=pct(P.model*b);mv.textContent=pct(P.model*b);popIn(vd,u,1.8,50,.5);if(u>P.b-P.a-.4) out(card,u,P.b-P.a-.4);};
+  }
+});
+
+// ---------------- outro ----------------
+const outro=scene(T.outroAt,T.total+1);
+{const logo=el('img','logo',null,outro.el);logo.src='img/logo.svg';
+ const l1=css(el('div','slam anton',esc(SPEC.outro1||'Every player. Every game.'),outro.el),{top:'700px',fontSize:'96px'});
+ const l2=css(el('div','slam',`<span style="display:inline-flex;align-items:center;gap:14px;padding:18px 40px;border-radius:999px;background:var(--pink);color:#2b0016;font:800 54px 'Exo 2'">evenout.app</span>`,outro.el),{top:'860px'});
+ const l3=css(el('div','slam ox',esc(SPEC.outro3||'Free to start · link in bio'),outro.el),{top:'1000px',font:'700 34px Oxanium',color:'var(--purple)'});
+ const l4=css(el('div','slam',esc(SPEC.disclaimer||'18+ · Model numbers, not betting advice · Play responsibly'),outro.el),{top:'1330px',font:'600 26px "Exo 2"',color:'var(--mute)',padding:'0 60px'});
+ outro.draw=u=>{const ip=eBack(seg(u,0,.6));logo.style.opacity=clamp(ip);logo.style.transform=`scale(${lerp(.4,1,ip)})`;slam(l1,u,.35,1.5);popIn(l2,u,.8,60);
+   l2.style.transform+=` scale(${1+beat(u)*.04})`;popIn(l3,u,1.1,30);l4.style.opacity=eOut(seg(u,1.4,1.9));};}
+
+// ---------------- frame ----------------
+window.render=function(t){
+  for(const s of scenes){const on=t>=s.a&&t<s.b;s.el.style.display=on?'block':'none';if(on)s.draw(t-s.a);}
+  // background drift, beat pulse, camera shake on cuts
+  blobs.forEach((b,i)=>{b.style.transform=`translate(${300+Math.sin(t*.35+i*2)*380+i*120}px,${500+Math.cos(t*.27+i)*520+i*260}px)`;});
+  bg.style.transform=`scale(${1.04+beat(t)*.012})`;
+  const cuts=[T.intro,...parts.map(p=>p.a),T.outroAt];let sx=0,sy=0,fl=0;
+  for(const c of cuts){const d=t-c;if(d>=0&&d<.22){const k=(1-d/.22)*12;sx+=(hash(t*90)-.5)*k;sy+=(hash(t*77+3)-.5)*k;fl=Math.max(fl,(1-d/.22)*.28);}}
+  if(t<.2)fl=Math.max(fl,(1-t/.2)*.5);
+  flash.style.opacity=fl;stage.style.transform=`translate(${sx}px,${sy}px)`;
+  const inBody=t>=T.intro&&t<T.outroAt;
+  topBar.style.opacity=t<T.outroAt?1:0;prog.style.opacity=inBody?1:0;
+  progU.forEach((u,i)=>{const p=parts[i];u.style.width=clamp((t-p.a)/(p.b-p.a))*100+'%';});
+  const lp=eBack(seg(t,.5,1.0));link.style.opacity=t<T.outroAt?clamp(seg(t,.5,.7)):0;link.style.transform=`translateX(${(1-lp)*-300}px) scale(${1+beat(t)*.015})`;
+  stage.style.opacity=1-seg(t,T.total-.4,T.total);
+};
+Promise.all([document.fonts.ready,...['400 20px Anton','800 20px "Exo 2"','700 20px "Exo 2"','600 20px Oxanium','800 20px Oxanium'].map(f=>document.fonts.load(f)),
+  ...['img/icon.png','img/logo.svg'].map(u=>new Promise(r=>{const i=new Image();i.onload=i.onerror=r;i.src=u}))]).then(()=>{render(0);window.READY=true;});
+</script></body></html>

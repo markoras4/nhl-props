@@ -2,6 +2,7 @@
 // No stored secret: the workflow sends GitHub's own short-lived OIDC token, and this function only accepts tokens
 // GitHub signed for the markoras4/nhl-props repository on its main branch.
 // POST ?path=latest.json | 2026-11-09.json | archive/2026-11-05.json | alerts.json, body = the JSON file.
+// GET  ?path=latest.json  returns a stored file (the videos workflow renders with the full numbers; same OIDC check).
 // Deployed with verify_jwt = false (the GitHub token is checked here, not by Supabase).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@5.9.6";
@@ -13,7 +14,7 @@ const JWKS = createRemoteJWKSet(new URL(ISSUER + "/.well-known/jwks"));
 const PATH_OK = /^(latest|latest-demo|alerts|\d{4}-\d{2}-\d{2}(-demo)?|archive\/\d{4}-\d{2}-\d{2})\.json$/;
 
 Deno.serve(async (req) => {
-  if (req.method !== "POST") return Response.json({ error: "POST only" }, { status: 405 });
+  if (req.method !== "POST" && req.method !== "GET") return Response.json({ error: "POST or GET" }, { status: 405 });
   const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
   try {
     const { payload } = await jwtVerify(token, JWKS, { issuer: ISSUER, audience: AUDIENCE });
@@ -23,10 +24,15 @@ Deno.serve(async (req) => {
   }
   const path = new URL(req.url).searchParams.get("path") || "";
   if (!PATH_OK.test(path)) return Response.json({ error: "bad path" }, { status: 400 });
+  const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+  if (req.method === "GET") {
+    const { data, error } = await db.storage.from("pro").download(path);
+    if (error || !data) return Response.json({ error: error?.message || "not found" }, { status: 404 });
+    return new Response(await data.text(), { headers: { "content-type": "application/json" } });
+  }
   const body = await req.text();
   try { JSON.parse(body); } catch (_) { return Response.json({ error: "body is not JSON" }, { status: 400 }); }
 
-  const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
   const { error } = await db.storage.from("pro").upload(path, new Blob([body], { type: "application/json" }), { upsert: true, contentType: "application/json" });
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return Response.json({ ok: true, path, bytes: body.length });

@@ -1,0 +1,133 @@
+name: Daily videos
+
+on:
+  schedule:
+    - cron: "30 15 * * *"   # 16:30 Stockholm (winter) - US morning, before the evening games; after the 13:15 build
+  workflow_dispatch:         # "Run workflow" button in the Actions tab
+    inputs:
+      date:
+        description: "Slate date YYYY-MM-DD (empty = today in New York)"
+        required: false
+        default: ""
+      dry_run:
+        description: "Render only, do not upload (shows what would be posted)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  id-token: write   # GitHub's OIDC token: reads the Pro data from private storage (pro-upload accepts only this repo's main)
+
+concurrency:
+  group: daily-videos
+  cancel-in-progress: false
+
+jobs:
+  videos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Python packages, Chromium and ffmpeg
+        run: |
+          pip install -r requirements.txt
+          pip install numpy scipy pillow playwright requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -1
+
+      - name: Pick the date
+        id: d
+        env:
+          IN_DATE: ${{ inputs.date }}
+        run: |
+          DATE="$IN_DATE"
+          if [ -z "$DATE" ]; then DATE=$(TZ=America/New_York date +%F); fi
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Slate date: $DATE"
+
+      - name: Fetch the built site (the renderer reads origin/site:app/index.html)
+        run: git fetch -q --depth=1 origin site
+
+      - name: Fetch today's Pro data (private storage, never public; graded picks need every player's numbers)
+        run: |
+          mkdir -p output/pro
+          OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pro-upload" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          code=$(curl -sS -o output/pro/latest.json -w "%{http_code}" -H "Authorization: Bearer $OIDC" "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload?path=latest.json")
+          if [ "$code" != "200" ]; then echo "::warning::Pro data not available ($code): videos use the public numbers only"; rm -f output/pro/latest.json; else echo "Pro data: $(wc -c < output/pro/latest.json) bytes"; fi
+
+      - name: Render the videos
+        env:
+          DATE: ${{ steps.d.outputs.date }}
+        run: |
+          if [ ! -f video/series.py ]; then echo "::error::video/series.py does not exist yet - nothing to render"; exit 1; fi
+          python video/series.py --date "$DATE" --all --out video/out
+          if [ ! -f "video/out/$DATE/manifest.json" ]; then echo "::error::The renderer wrote no video/out/$DATE/manifest.json"; exit 1; fi
+          ls -la "video/out/$DATE"
+
+      - name: Keep the videos as a download (Actions run page, 7 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ steps.d.outputs.date }}
+          path: video/out/${{ steps.d.outputs.date }}
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload to YouTube and TikTok
+        if: github.ref == 'refs/heads/main'
+        env:
+          DATE: ${{ steps.d.outputs.date }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_PRIVACY: ${{ vars.YT_PRIVACY }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
+          REPO: ${{ github.repository }}
+        run: |
+          M="video/out/$DATE/manifest.json"
+          if [ "$DRY_RUN" = "true" ]; then python video/upload.py --manifest "$M" --dry-run; exit 0; fi
+          ARGS=""
+          YT=0; TT=0
+          if [ -n "$YT_CLIENT_ID" ] && [ -n "$YT_CLIENT_SECRET" ] && [ -n "$YT_REFRESH_TOKEN" ]; then YT=1; else echo "No YouTube secrets yet - skipping YouTube"; fi
+          if [ -n "$TIKTOK_CLIENT_KEY" ] && [ -n "$TIKTOK_CLIENT_SECRET" ] && [ -n "$TIKTOK_REFRESH_TOKEN" ]; then TT=1; else echo "No TikTok secrets yet - skipping TikTok"; fi
+          if [ "$YT" = 0 ] && [ "$TT" = 0 ]; then exit 0; fi
+          if [ "$YT" = 1 ] && [ "$TT" = 0 ]; then ARGS="--only youtube"; fi
+          if [ "$YT" = 0 ] && [ "$TT" = 1 ]; then ARGS="--only tiktok"; fi
+          # TikTok replaces its refresh token on every sign-in; upload.py writes the new one here (never to the log)
+          export TIKTOK_REFRESH_TOKEN_OUT="$RUNNER_TEMP/tiktok_refresh_token"
+          python video/upload.py --manifest "$M" $ARGS
+          if [ -s "$TIKTOK_REFRESH_TOKEN_OUT" ]; then
+            # TikTok's old refresh token stops working once a new one is issued: store the new one as the secret
+            if [ -n "$GH_SECRETS_PAT" ]; then
+              GH_TOKEN="$GH_SECRETS_PAT" gh secret set TIKTOK_REFRESH_TOKEN --repo "$REPO" < "$TIKTOK_REFRESH_TOKEN_OUT" && echo "TikTok refresh token renewed in the repository secrets"
+            else
+              echo "::warning title=TikTok::TikTok issued a new refresh token but GH_SECRETS_PAT is not set - the next TikTok upload will fail (see video/UPLOAD.md)"
+            fi
+          fi
+          rm -f "$TIKTOK_REFRESH_TOKEN_OUT"
+
+      - name: Save the upload ledger to the repository
+        if: always() && github.ref == 'refs/heads/main' && inputs.dry_run != true
+        run: |
+          [ -f data/video_uploads.json ] || [ -f data/video_picks.json ] || exit 0
+          git config user.name "nhl-props-bot"
+          git config user.email "actions@users.noreply.github.com"
+          for f in data/video_uploads.json data/video_picks.json; do if [ -f "$f" ]; then git add "$f"; fi; done
+          if git diff --cached --quiet; then echo "Ledger unchanged"; exit 0; fi
+          git commit -qm "Video uploads $(date -u +%F)"
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin main && git push -q origin HEAD:main && { echo "Ledger saved"; exit 0; }
+            echo "Push failed (attempt $i), retrying"; sleep $((i * 5))
+          done
+          echo "::error::Could not save data/video_uploads.json - the next run may post these videos again"
+          exit 1
