@@ -9,10 +9,10 @@ Fetching 722 skaters and 74 goalies (careers + game logs) ...
 Fetching 330 recent box scores (hits, blocks) ...
 News: 118 injuries, likely starters for 28 games (+26 backup reports), line combinations for 32/32 teams, game-day lineups for 10 teams (2026-11-15, updated 2026-11-16T03:26:52.218Z)
   shot maps: 330 games, 37692 attempts
-Model built: 47 games, 722 skaters (568 expected to play)
+Model built: 47 games, 722 skaters (567 expected to play)
 Odds: bookmaker prices for 2 games, 67 players
 Odds: sharp-book prices for 2 games, 98 player markets
-  Stoiximan sync: 2 games, 589 player prices (last push 2026-11-16T16:09:15.189832+00:00, hourly); unmatched: Artyom Duda, Ben McCartney, Zac Jones, Ο. Μπέκ, Τζέικ Έβανς
+  Stoiximan sync: 2 games, 590 player prices (last push 2026-11-16T17:10:14.986173+00:00, hourly); unmatched: Artyom Duda, Ben McCartney, Zac Jones, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 317 player prices added
 Public betting: splits for 2 games
   season simulation: 10000 seasons, 1014 games left, top Cup: CAR 37%, COL 13%, MIN 11%
