@@ -13,8 +13,9 @@ they get an impact and a whoosh leading into them (no rising build-up at the sta
     style_track(style, duration, cues=(), seed=None)   -> float32 stereo (n, 2)
     SERIES_STYLES: {series: [style, ...]}
 
-The series engine (bottom of the file) has 15 styles (3 per series); key, tempo, progression,
-drum variant, bass/arp patterns and melody are all derived from `seed`, so every day sounds different.
+The series engine (bottom of the file) has 15 energetic 80s-synthwave styles (3 per series); key, tempo,
+progression, drum groove, bass/arp patterns and melody are all derived from `seed`, so every day sounds different.
+Series tracks have no transition effects at cues: the groove runs straight through scene changes.
 """
 import datetime
 import hashlib
@@ -499,6 +500,31 @@ def _d_chipnoise(r, dec=0.1, hold=4, hp=None):
     return _gate(_pk(x), n - int(0.01 * SR))
 
 
+def _gated(r, x, gate=0.28, amt=0.8, size=1.6):
+    """80s gated reverb: a dense bright room tail that is chopped off after `gate` seconds."""
+    n = len(x) + int((gate + 0.1) * SR)
+    nir = int(size * SR)
+    ir = _hp(r.standard_normal(nir), 300) * np.exp(-np.arange(nir) / SR * (6.9 / size))
+    ir /= np.sqrt(np.sum(ir ** 2)) + 1e-9
+    xx = np.concatenate([x, np.zeros(n - len(x))])
+    wet = _pk(signal.fftconvolve(xx, ir)[:n])
+    t = _tt(n)
+    g = np.where(t < gate, 1.0, np.exp(-(t - gate) / 0.012)) * np.clip(t / 0.01, 0, 1)
+    return _pk(xx + wet * g * amt)
+
+
+def _d_gsnare(r, tone=185, gate=0.3, amt=0.9):
+    return _gated(r, _d_snare(r, tone=tone, nd=0.11, lo=900, hi=9500, ln=0.35), gate, amt)
+
+
+def _d_clank(r):
+    n = int(0.25 * SR)
+    t = _tt(n)
+    x = _bp(_metal(r, n, 3.1) + 0.4 * r.standard_normal(n), 1200, 9000) * np.exp(-t / 0.06)
+    x += np.sin(2 * np.pi * 620 * t) * np.exp(-t / 0.03) * 0.4
+    return _gate(_pk(x), n - int(0.02 * SR))
+
+
 def _d_impact(r, size=1.0):
     n = int(1.8 * SR)
     t = _tt(n)
@@ -506,27 +532,6 @@ def _d_impact(r, size=1.0):
     crash = _hp(r.standard_normal(n), 2500) * np.exp(-t / 0.45) * 0.25
     x = np.tanh(1.3 * (boom + crash))
     return _gate(_pk(_lp(x, 9000)), n - int(0.3 * SR))
-
-
-def _d_whoosh(r, dur=0.45):
-    n = int(dur * SR)
-    x = r.standard_normal(n + 2048)
-    out = np.zeros(n)
-    seg = 512
-    for i in range(0, n, seg):
-        fc = 400 + 7000 * (i / n)
-        y = _bp(x[i: i + 2048 + seg], fc * 0.7, fc * 1.3)[-seg:]
-        out[i:i + seg] = y[: len(out[i:i + seg])]
-    return _pk(out * np.sin(np.pi * np.linspace(0, 1, n)) ** 2)
-
-
-def _d_riser(r, dur=2.0):
-    n = int(dur * SR)
-    t = _tt(n)
-    f = 220 * 2 ** (2.5 * t / dur)
-    tone = np.sin(2 * np.pi * np.cumsum(f) / SR) * 0.25
-    noise = _hp(r.standard_normal(n), 1800) * 0.6
-    return _pk((tone + noise) * (t / dur) ** 2.2)
 
 
 def _vinyl(r, n):
@@ -547,6 +552,11 @@ _KICKS = {
     "cine": dict(f0=95, f1=38, pd=0.080, dec=0.60, click=0.10, drive=1.5, ln=1.0),
     "hybrid": dict(f0=140, f1=42, pd=0.050, dec=0.45, click=0.30, drive=2.0, ln=0.8),
     "chip": dict(f0=220, f1=55, pd=0.020, dec=0.12, click=0.0, drive=3.0, ln=0.3),
+    "80s": dict(f0=170, f1=50, pd=0.030, dec=0.28, click=0.40, drive=2.0),
+    "big": dict(f0=165, f1=46, pd=0.035, dec=0.32, click=0.40, drive=2.2),
+    "funk": dict(f0=160, f1=52, pd=0.025, dec=0.22, click=0.35, drive=1.9),
+    "dark": dict(f0=200, f1=47, pd=0.030, dec=0.30, click=0.55, drive=3.2),
+    "trap80": dict(f0=190, f1=50, pd=0.022, dec=0.22, click=0.45, drive=2.0),
 }
 _SNARES = {
     "lofi": dict(tone=180, nd=0.10, lo=900, hi=5000, lp=4500),
@@ -558,15 +568,25 @@ _PAN = {"h": 0.2, "o": -0.2, "sh": -0.25, "r": 0.15, "sn": -0.1, "tk": 0.3, "w":
 _SEND = {"s": 0.25, "c": 0.25, "sn": 0.2, "r": 0.15, "t1": 0.3, "t2": 0.3, "t3": 0.3, "w": 0.2, "n": 0.1, "k": 0.0}
 
 
+_GATED = {"80s": (185, 0.30), "dark": (170, 0.26), "trap80": (200, 0.24), "funk": (195, 0.22), "big": (165, 0.36)}
+
+
 def _make_drum(r, kit, lane):
     if lane.startswith("k"):
         return _d_kick(r, **_KICKS.get(kit, _KICKS["punch"]))
     if lane == "s":
+        if kit in _GATED:
+            tone, gate = _GATED[kit]
+            return _d_gsnare(r, tone, gate)
         return _d_snare(r, **_SNARES.get(kit, {}))
     if lane == "c":
-        return _d_clap(r)
+        return _gated(r, _d_clap(r), 0.18, 0.5) if kit in _GATED else _d_clap(r)
+    if lane == "cl":
+        return _d_clank(r)
+    if lane in ("t1", "t2", "t3") and kit in _GATED:
+        return _gated(r, _d_tom(r, {"t1": 190, "t2": 140, "t3": 100}[lane], 0.25), 0.32, 0.7)
     if lane == "h":
-        return _d_hat(r, dec=0.032, metal=0.7 if kit in ("trap", "hybrid", "punch") else 0.3, lp=6500 if kit == "lofi" else None)
+        return _d_hat(r, dec=0.032, metal=0.7 if kit in ("trap", "hybrid", "punch", "dark", "trap80") else 0.35, lp=6500 if kit == "lofi" else None)
     if lane == "o":
         return _d_hat(r, dec=0.16, ln=0.45, metal=0.6, lp=7000 if kit == "lofi" else None)
     if lane == "sh":
@@ -783,6 +803,26 @@ def _i_bell(r, m, dur, rel=0.1):
     return _gate(_pk(x), int(max(dur, 0.5) * SR))
 
 
+def _i_distbass(r, m, dur, drive=3.0, lp=1800, dec=0.15, rel=0.03):
+    x = _i_saws(r, m, dur, voices=2, det=0.006, lp=6000, atk=0.002, rel=rel)
+    t = _tt(len(x))
+    x = np.tanh(drive * x) + 0.6 * np.sin(2 * np.pi * _note(m) * t)
+    x = _lp(x, lp) * (0.4 + 0.6 * np.exp(-t / dec))
+    return _gate(_pk(x), int(dur * SR))
+
+
+def _i_slapbass(r, m, dur):
+    x = _i_add(r, m, dur, decay=0.1, bright=2.5, kmax=40, floor=0.18, sub=0.7, fmax=6000, rel=0.03)
+    t = _tt(len(x))
+    x = np.tanh(2.0 * x) + 0.5 * np.sin(2 * np.pi * _note(m) * 2 * t) * np.exp(-t / 0.015)
+    return _gate(_pk(x), int(dur * SR))
+
+
+def _i_powersaw(r, m, dur):
+    x = _i_saws(r, m, dur, voices=4, det=0.009, lp=5000, atk=0.004, dec=0.5, sus=0.6, rel=0.08)
+    return _pk(_lp(np.tanh(4.0 * x), 5500))
+
+
 INSTRUMENTS = {
     "pad": lambda r, m, d: _i_saws(r, m, d, voices=5, det=0.010, lp=1900, atk=0.06, rel=0.45),
     "pad_soft": lambda r, m, d: _i_saws(r, m, d, voices=4, det=0.008, lp=1100, atk=0.25, rel=0.6),
@@ -817,6 +857,14 @@ INSTRUMENTS = {
     "pulsebass": lambda r, m, d: _i_saws(r, m, d, voices=2, det=0.004, lp=650, atk=0.003, dec=0.09, sus=0.1, rel=0.03),
     "cowbell": _i_cowbell,
     "whistle": _i_whistle,
+    "poly": lambda r, m, d: _i_saws(r, m, d, voices=6, det=0.012, lp=2600, atk=0.01, dec=0.8, sus=0.7, rel=0.3),
+    "polybrass": lambda r, m, d: _i_brass(r, m, d, atk=0.04, bmax=12, rel=0.12),
+    "brassstab": lambda r, m, d: _i_brass(r, m, d, atk=0.012, bmax=14, rel=0.06),
+    "lead_saw": lambda r, m, d: _i_saws(r, m, d, voices=3, det=0.005, lp=6000, atk=0.008, vib=0.006, rel=0.12, hp=200),
+    "sawbass_b": lambda r, m, d: _i_sawbass(r, m, d, lp=1500, dec=0.14),
+    "distbass": _i_distbass,
+    "slapbass": _i_slapbass,
+    "powersaw": _i_powersaw,
 }
 
 # ------------------------------------------------------------------ melody rhythm templates (2 bars of 16ths)
@@ -833,221 +881,206 @@ R_BOUNCE = ["x.x.x...x.x.x..." "x.x.x.x.x---....", "x..x..x.x..x..x." "x.x.x.x.x
 PAD1 = ["X---------------"]
 
 
+R_HOOK = ["x-x-x-x-x---x-x-" "x-x-x-x-x-------", "x--x--x-x--x--x-" "x--x--x-x-------",
+          "x-.x-.x-x-x-x---" "x-.x-.x-x-------", "x---x-x-x---x---" "x---x-x-x-x-x---"]
+for _r in R_POP + R_SPARSE + R_DENSE + R_SLOW + R_BOUNCE + R_HOOK:
+    assert len(_r) == 32, _r
+H16 = "xoxoxoxoxoxoxoxo"
+K4 = "X...X...X...X..."
+BB = "....X.......X..."
+
+
 def _L(name, pat, gain, mn=1, mx=9):
     return (name, pat, gain, mn, mx)
 
 
+# All styles are 80s synthwave flavours. Every part plays from bar 1 (hook within ~2 s) and the groove runs straight
+# through scene changes; cues only switch variations (drums / progression / arp / melody answer) on a downbeat.
 STYLES = {
     # ---------------------------------------------------------------- board: energetic, confident
-    "synthdrive": dict(
-        series="board", bpm=(114, 122), mode=["minor"], sev=False, chord_beats=4, kit="punch",
-        progs=[[0, 5, 2, 6], [0, 3, 5, 6], [5, 6, 0, 0], [0, 6, 5, 6]],
-        drums=[[_L("k", "X...X...X...X...", 1), _L("s", "....X.......X...", .7, 2), _L("c", "....X.......X...", .45, 2),
-                _L("h", "..x...x...x...x.", .32), _L("h", "o.g.o.g.o.g.o.g.", .2, 3), _L("o", "..............x.", .2, 3)],
-               [_L("k", "X...X...X...X...", 1), _L("s", "....X.......X...", .7, 2), _L("c", "....X.......X..x", .45, 2),
-                _L("h", "x.x.x.x.x.x.x.x.", .28), _L("o", "..x...x...x...x.", .16, 3)]],
-        parts=[dict(kind="bass", inst="sawbass", pats=["R.R.R.O.R.R.R.O.", "R.RRR.O.R.RRR.OR", "R-R-R-O-R-R-R-O-"], lo=33, gain=.5, gate=.85),
-               dict(kind="chords", inst="pad", pats=PAD1, center=60, gain=.09, send=.35, spread=.6),
+    "outrun": dict(
+        series="board", bpm=(128, 138), mode=["minor"], sev=False, chord_beats=4, kit="80s",
+        progs=[[0, 5, 2, 6], [0, 6, 5, 6], [0, 3, 5, 6], [5, 6, 0, 0]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("c", BB, .35), _L("h", H16, .22), _L("o", "..x...x...x...x.", .14)],
+               [_L("k", K4, 1), _L("s", BB, .85), _L("c", "....X.......X..x", .35), _L("h", "x.x.x.x.x.x.x.x.", .25),
+                _L("o", "..x...x...x...x.", .16)]],
+        parts=[dict(kind="bass", inst="sawbass_b", pats=["RORORORORORORORO", "RRORRRORRRORRROR", "RORORORORORORORF"], lo=33, gain=.5, gate=.8),
+               dict(kind="chords", inst="poly", pats=PAD1, center=60, gain=.08, send=.3, spread=.7),
                dict(kind="arp", inst="pluck", pats=["0121012101210121", "0120120120120120", "0123210123210123"], center=64,
-                    gain=.1, min_e=2, send=.25, bus="lead", alt=True, gate=.8),
-               dict(kind="lead", inst="lead_sq", rhythms=R_POP, lo=67, hi=84, gain=.13, min_e=3, send=.3)],
-        duck=(.7, .12), rev=(1.6, .3), delay=(.75, .35, .3), fill="s", impact=.8, end="hit",
-        desc="driving synthwave: pumping saw bass, wide supersaw pads, echoing 16th plucks, square-lead hook"),
-    "house": dict(
-        series="board", bpm=(121, 126), mode=["dorian", "minor"], sev=True, chord_beats=4, kit="house", swing=.54,
-        progs=[[0, 0, 3, 3], [0, 5, 6, 3], [0, 3, 6, 4], [5, 6, 0, 0]],
-        drums=[[_L("k", "X...X...X...X...", 1), _L("c", "....X.......X...", .6, 2), _L("o", "..X...X...X...X.", .22),
-                _L("sh", "xoxoxoxoxoxoxoxo", .17, 2), _L("r", "...x..x.....x...", .22, 3)],
-               [_L("k", "X...X...X...X...", 1), _L("c", "....X.......X...", .6, 2), _L("o", "..X...X...X...X.", .22),
-                _L("h", "x.xxx.xxx.xxx.xx", .14, 2), _L("c", "...........x....", .22, 3)]],
-        parts=[dict(kind="bass", inst="pluckbass", pats=["..R...R...R...R.", "..R-..R-..R-..O.", "..R..RR...R..RO."], lo=36, gain=.5, gate=.7),
-               dict(kind="chords", inst="organ", pats=["X..X..X...X..X..", "..X..X..X..X..X.", "X..X...X..X..X.."], center=62,
-                    gain=.085, send=.3, spread=.4, gate=.8),
-               dict(kind="chords", inst="pad_soft", pats=PAD1, center=57, gain=.05, min_e=3, send=.4, spread=.8),
-               dict(kind="lead", inst="pluck", rhythms=R_POP, lo=69, hi=86, gain=.1, min_e=3, send=.3)],
-        duck=(.75, .13), rev=(1.4, .25), delay=(.75, .3, .25), fill="c", impact=.8, end="hit",
-        desc="four-on-the-floor house: offbeat open hats, shaker, syncopated organ 7th-chord stabs, rolling offbeat bass"),
-    "electro": dict(
-        series="board", bpm=(124, 130), mode=["major"], sev=False, chord_beats=4, kit="punch",
-        progs=[[0, 4, 5, 3], [5, 3, 0, 4], [0, 5, 3, 4], [3, 4, 5, 5]],
-        drums=[[_L("k", "X...X...X...X...", 1), _L("c", "....X.......X...", .7, 2), _L("s", "....X.......X...", .4, 2),
-                _L("h", "..x...x...x...x.", .3), _L("h", "g.g.g.g.g.g.g.g.", .18, 3), _L("o", "..............X.", .22, 2)],
-               [_L("k", "X...X...X...X.X.", 1), _L("c", "....X.......X...", .7, 2), _L("s", "....X.......X...", .4, 2),
-                _L("h", "x.x.x.x.x.x.x.x.", .26), _L("o", "......X.......X.", .2, 3)]],
-        parts=[dict(kind="bass", inst="sawbass", pats=["R.O.R.O.R.O.R.O.", "ROR.ROR.ROR.ROR.", "R.ORR.ORR.ORR.OR"], lo=33, gain=.48, gate=.7),
-               dict(kind="chords", inst="stab", pats=["..X...X...X...X.", "..X..X..X...X.X."], center=64, gain=.09, send=.3, spread=.5),
-               dict(kind="chords", inst="pad", pats=PAD1, center=60, gain=.05, min_e=2, send=.35, spread=.7),
-               dict(kind="lead", inst="lead_sq50", rhythms=R_POP + R_BOUNCE, lo=69, hi=86, gain=.12, min_e=3, send=.25)],
-        duck=(.8, .12), rev=(1.4, .25), delay=(.5, .3, .25), fill="s", impact=.8, end="hit",
-        desc="bright electro-pop in major: bouncing octave bass, sidechained supersaw offbeat stabs, square-wave hook"),
-    # ---------------------------------------------------------------- hot: dark, tense, half-time / trap
-    "trap": dict(
-        series="hot", bpm=(138, 150), mode=["harm", "minor"], sev=False, chord_beats=4, kit="trap",
+                    gain=.07, send=.2, bus="lead", alt=True, gate=.7),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK, lo=67, hi=84, gain=.12, send=.25)],
+        duck=(.6, .1), rev=(1.4, .22), delay=(.75, .35, .3), fill="tom", impact=.7,
+        desc="fast outrun: 16th-note octave saw bass, gated snare, detuned polysynth chords, echoing arp, saw-lead hook"),
+    "synthpop80": dict(
+        series="board", bpm=(118, 124), mode=["major"], sev=False, chord_beats=4, kit="80s",
+        progs=[[0, 4, 5, 3], [5, 3, 0, 4], [0, 5, 3, 4], [3, 4, 0, 0]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("c", BB, .45), _L("h", "x.x.x.x.x.x.x.x.", .22), _L("o", "..............X.", .18)],
+               [_L("k", "X...X...X...X.X.", 1), _L("s", BB, .85), _L("c", BB, .45), _L("h", H16, .2)]],
+        parts=[dict(kind="bass", inst="sawbass", pats=["R.O.R.O.R.O.R.O.", "R.R.O.R.R.R.O.R.", "ROR.ROR.ROR.ROR."], lo=33, gain=.5, gate=.7),
+               dict(kind="chords", inst="poly", pats=["X..X..X.X..X..X.", "X..X..X...X.X...", "X.X.X..X.X.X..X."], center=62,
+                    gain=.075, send=.3, spread=.6, gate=.8),
+               dict(kind="chords", inst="polybrass", pats=PAD1, center=57, gain=.05, send=.3, spread=.5),
+               dict(kind="arp", inst="bell", pats=["0.1.2.1.0.2.1.3.", "0..2..1.0..3..2."], center=72, gain=.05, send=.3, bus="lead"),
+               dict(kind="lead", inst="lead_sq", rhythms=R_HOOK + R_POP, lo=69, hi=86, gain=.12, send=.25)],
+        duck=(.55, .1), rev=(1.6, .25), delay=(.75, .3, .25), fill="tom", impact=.7,
+        desc="bright major 80s synthpop: big gated snare + claps, polysynth chord stabs, synth-brass pad, DX bells, square hook"),
+    "nightdrive": dict(
+        series="board", bpm=(110, 118), mode=["minor", "dorian"], sev=False, chord_beats=4, kit="80s",
+        progs=[[0, 5, 6, 0], [0, 3, 5, 6], [0, 6, 5, 4], [5, 6, 0, 0]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("c", BB, .3), _L("h", H16, .22)],
+               [_L("k", "X...X...X...X..x", 1), _L("s", BB, .85), _L("h", "x.xxx.xxx.xxx.xx", .18), _L("o", "..x...x...x...x.", .12)]],
+        parts=[dict(kind="bass", inst="sawbass", pats=["R.R.R.R.R.R.R.R.", "RRRRRRRRRRRRRRRR", "R.R.R.O.R.R.R.O."], lo=33, gain=.5, gate=.75),
+               dict(kind="arp", inst="pluck", pats=["0120120120120120", "0123012301230123", "0213021302130213"], center=62,
+                    gain=.09, send=.25, bus="lead", alt=True, gate=.75),
+               dict(kind="chords", inst="poly", pats=PAD1, center=57, gain=.07, send=.35, spread=.7),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK, lo=67, hi=82, gain=.11, send=.3)],
+        duck=(.6, .12), rev=(1.8, .28), delay=(.75, .4, .35), fill="tom", impact=.7,
+        desc="minor night drive: hypnotic 16th pluck arpeggio with long echoes, straight 8th saw bass, wide pads, punchy gated drums"),
+    # ---------------------------------------------------------------- hot: darker, tense, heavier
+    "darksynth": dict(
+        series="hot", bpm=(140, 150), mode=["minor"], sev=False, chord_beats=4, kit="dark",
+        progs=[[0, 0, 5, 5], [0, 5, 3, 4], [0, 0, 3, 5], [0, 6, 5, 0]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .9), _L("c", BB, .3), _L("h", "x.x.x.x.x.x.x.x.", .25), _L("o", "..x...x...x...x.", .15)],
+               [_L("k", "X...X...X...X.X.", 1), _L("s", BB, .9), _L("h", "xxxxxxxxxxxxxxxx", .16), _L("t3", "............x.x.", .35)]],
+        parts=[dict(kind="bass", inst="distbass", pats=["RRRRRRRRRRRRRRRR", "R.RRR.RRR.RRR.RR", "RRORRRORRRORRROR"], lo=33, gain=.5, gate=.7),
+               dict(kind="chords", inst="poly", pats=PAD1, center=55, gain=.06, send=.3, spread=.6),
+               dict(kind="chords", inst="braam", pats=["X" + "-" * 31], center=45, gain=.05, send=.3, spread=.3),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK, lo=64, hi=81, gain=.12, send=.25)],
+        duck=(.5, .1), rev=(1.4, .22), delay=(.75, .3, .25), fill="tom", impact=.9,
+        desc="aggressive darksynth: distorted 16th saw bass, hard kick, crushing gated snare, distorted brass swells, minor saw lead"),
+    "cyberwave": dict(
+        series="hot", bpm=(125, 135), mode=["phrygian", "minor"], sev=False, chord_beats=4, kit="dark",
+        progs=[[0, 0, 5, 0], [0, 5, 3, 0], [0, 3, 5, 4]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("cl", "..x....x..x...x.", .3), _L("h", "x.x.x.x.x.x.x.x.", .2)],
+               [_L("k", "X..X..X.X...X...", 1), _L("s", BB, .85), _L("cl", ".x...x...x.x..x.", .3), _L("h", H16, .2)]],
+        parts=[dict(kind="bass", inst="distbass", pats=["R.RR.RR.R.RR.RRO", "RR.RR.RRRR.RR.RO", "R.R.RRR.R.R.RRR."], lo=33, gain=.5, gate=.7),
+               dict(kind="arp", inst="chip", pats=["0120120120120120", "0213021302130213"], center=60, gain=.06, send=.2, bus="lead"),
+               dict(kind="chords", inst="strings_dark", pats=PAD1, center=55, gain=.06, send=.35, spread=.6),
+               dict(kind="lead", inst="lead_sq", rhythms=R_HOOK, lo=67, hi=82, gain=.11, send=.25)],
+        duck=(.5, .1), rev=(1.2, .2), delay=(.5, .35, .3), fill="cl", impact=.9,
+        desc="gritty cyberpunk synthwave: syncopated distorted bass, metallic industrial clanks, pulse-wave arp, phrygian square lead"),
+    "synthtrap": dict(
+        series="hot", bpm=(140, 150), mode=["harm", "minor"], sev=False, chord_beats=4, kit="trap80",
         progs=[[0, 0, 5, 5], [0, 0, 3, 4], [0, 5, 3, 4], [0, 3, 5, 4]],
-        drums=[[_L("k", "@bass", 1), _L("s", "........X.......", .8), _L("c", "........X.......", .45, 2),
-                _L("h", "@trap", .26), _L("o", "..............x.", .18, 3)],
-               [_L("k", "@bass", 1), _L("s", "........X.......", .8), _L("c", "........X......x", .45, 2),
-                _L("h", "@trap", .26), _L("o", "......x.........", .18, 3)]],
+        drums=[[_L("k", "@bass", 1), _L("s", "........X.......", .9), _L("c", "........X.......", .45),
+                _L("h", "@trap", .26), _L("o", "..............x.", .18)],
+               [_L("k", "@bass", 1), _L("s", "........X.......", .9), _L("c", "........X......x", .45),
+                _L("h", "@trap", .26), _L("o", "......x.........", .18)]],
         parts=[dict(kind="bass", inst="808", pats=["R------R--R-----", "R-----R---R--R--", "R-------R-g-----"], lo=30, gain=.42, gate=1.0),
-               dict(kind="chords", inst="strings_dark", pats=PAD1, center=55, gain=.06, send=.4, spread=.6),
-               dict(kind="arp", inst="bell", pats=["0.2.1.4.....2.1.", "0..2..1..3..2.1.", "0.1.2.4.2.1.0..."], center=72,
-                    gain=.08, min_e=2, send=.4, bus="lead"),
-               dict(kind="lead", inst="pluck_dark", rhythms=R_SPARSE, lo=64, hi=79, gain=.1, min_e=3, send=.35)],
-        duck=(.35, .1), rev=(2.0, .3), delay=(.75, .35, .3), fill="trap", impact=.9, end="hit",
-        desc="half-time trap: gliding 808s locked to the kick, hi-hat rolls, harmonic-minor bell loop, dark string bed"),
-    "phonk": dict(
-        series="hot", bpm=(125, 135), mode=["phrygian"], sev=False, chord_beats=4, kit="trap",
-        progs=[[0, 0, 1, 0], [0, 5, 1, 0], [0, 3, 1, 0]],
-        drums=[[_L("k", "@bass", 1), _L("c", "....X.......X...", .75), _L("h", "x.x.x.x.x.x.x.x.", .28),
-                _L("h", ".o.o.o.o.o.o.o.o", .14, 3), _L("o", "......x.......x.", .16, 2)],
-               [_L("k", "@bass", 1), _L("c", "....X.......X..x", .75), _L("h", "x.x.x.x.x.x.x.x.", .28),
-                _L("h", ".o.o.o.o.o.o.o.o", .14, 3), _L("o", "..............x.", .16, 2)]],
-        parts=[dict(kind="bass", inst="808dist", pats=["R-----R---R--R--", "R-------R-R---R-", "R-----R--R--g---"], lo=30, gain=.4, gate=1.0),
-               dict(kind="lead", inst="cowbell", rhythms=R_DENSE, lo=72, hi=86, gain=.12, min_e=2, send=.15, bus="music", gate=.7),
-               dict(kind="chords", inst="strings_dark", pats=PAD1, center=55, gain=.045, min_e=3, send=.4, spread=.6)],
-        duck=(.3, .1), rev=(1.2, .2), delay=None, fill="trap", impact=.9, end="hit",
-        desc="dark phonk: distorted 808, tuned-cowbell phrygian riff, backbeat claps, driving hats"),
-    "tension": dict(
-        series="hot", bpm=(96, 108), mode=["phrygian", "minor"], sev=False, chord_beats=8, kit="cine",
-        progs=[[0, 5], [0, 3], [0, 5, 3, 0]],
-        drums=[[_L("k", "X.....X.........", 1), _L("s", "........X.......", .75, 2), _L("tk", "x.x.x.x.x.x.x.x.", .25),
-                _L("h", "..x...x...x...x.", .16, 3), _L("t1", "..........x..x.x", .35, 3)],
-               [_L("k", "X.......X.x.....", 1), _L("s", "........X.......", .75, 2), _L("tk", "x.o.x.o.x.o.x.o.", .25),
-                _L("h", "xoxoxoxoxoxoxoxo", .12, 3), _L("t3", "............x.x.", .35, 3)]],
-        parts=[dict(kind="bass", inst="pulsebass", pats=["RRRRRRRRRRRRRRRR", "R.RRR.RRR.RRR.RR", "RRRORRRORRRORRRO"], lo=33, gain=.4, gate=.6),
-               dict(kind="chords", inst="strings", pats=["X" + "-" * 31], center=57, gain=.075, send=.45, spread=.6),
-               dict(kind="lead", inst="bell", rhythms=R_SPARSE, lo=72, hi=88, gain=.07, min_e=3, send=.5)],
-        duck=(.4, .15), rev=(2.4, .35), delay=(.75, .35, .3), fill="tom", impact=1.0, end="hit",
-        desc="tense dark pulse: 16th-note low ostinato, ticking clock, half-time kick/snare, long phrygian strings, eerie bells"),
-    # ---------------------------------------------------------------- report: calm, warm, steady
-    "lofi": dict(
-        series="report", bpm=(78, 88), mode=["major", "dorian"], sev=True, chord_beats=4, kit="lofi", swing=.6, human=.006,
-        progs=[[1, 4, 0, 5], [3, 2, 1, 0], [0, 5, 1, 4], [3, 4, 2, 5]],
-        drums=[[_L("k", "X.....x...X.....", .9), _L("s", "....X.......X...", .6), _L("h", "x.o.x.o.x.o.x.oo", .22),
-                _L("r", "..........g.....", .2, 2)],
-               [_L("k", "X......xX.......", .9), _L("s", "....X.......X..g", .6), _L("h", "x.x.x.x.x.x.x.x.", .2),
-                _L("sh", "..x...x...x...x.", .12, 3)]],
-        parts=[dict(kind="bass", inst="sub", pats=["R------.R---F---", "R-----R-----F---", "R--------R--O---"], lo=36, gain=.5, gate=.9),
-               dict(kind="chords", inst="epiano", pats=["X-------x-------", "X------x--x-----", "X---------x-----"], center=60,
-                    gain=.1, send=.3, spread=.4, strum=.015),
-               dict(kind="lead", inst="epiano", rhythms=R_SPARSE, lo=70, hi=84, gain=.09, min_e=3, send=.3)],
-        duck=(.25, .15), rev=(1.8, .3), delay=(.75, .3, .25), fill="none", impact=.35, end="soft", crackle=True, lp=9000,
-        desc="lo-fi chill hop: swung dusty drums, FM e-piano 7th chords, round sub bass, vinyl crackle"),
-    "acoustic": dict(
-        series="report", bpm=(94, 104), mode=["major"], sev=False, chord_beats=4, kit="acoustic", swing=.53,
-        progs=[[0, 3, 5, 4], [0, 2, 3, 4], [3, 0, 4, 5], [0, 4, 3, 3]],
-        drums=[[_L("k", "X.......X.....x.", .9), _L("c", "....X.......X...", .45, 2), _L("sn", "....X.......X...", .35),
-                _L("sh", "xoxoxoxoxoxoxoxo", .15)],
-               [_L("k", "X.....X.X.......", .9), _L("c", "....X.......X...", .45, 2), _L("sn", "....X.......X...", .35),
-                _L("sh", "xoxoxoxoxoxoxoxo", .15), _L("t2", "..............x.", .28, 3)]],
-        parts=[dict(kind="chords", inst="guitar", pats=["X.x.x-x.X.x.x-x.", "X..xX.x.X..xX.x.", "X.x.X.x.X.xxX.x."], center=57,
-                    gain=.075, send=.25, spread=.5, strum=.012, add_oct=True, gate=1.0),
-               dict(kind="bass", inst="pluckbass", pats=["R.......F...R...", "R.....R.F.......", "R...R...F...O..."], lo=36, gain=.45, gate=.8),
-               dict(kind="chords", inst="pad_soft", pats=PAD1, center=60, gain=.04, min_e=2, send=.4, spread=.8),
-               dict(kind="lead", inst="whistle", rhythms=R_POP, lo=72, hi=86, gain=.075, min_e=3, send=.3)],
-        duck=(.2, .1), rev=(1.6, .25), delay=(.75, .3, .25), fill="sn", impact=.5, end="soft",
-        desc="warm acoustic pop: strummed Karplus-Strong guitar, stomp kick + snaps, shaker, soft whistle melody"),
-    "downtempo": dict(
-        series="report", bpm=(98, 108), mode=["major", "lydian"], sev=True, chord_beats=4, kit="soft",
-        progs=[[0, 3, 5, 4], [3, 4, 2, 5], [0, 5, 3, 3], [0, 2, 3, 4]],
-        drums=[[_L("k", "X...X...X...X...", .85), _L("r", "....x.......x...", .3), _L("sh", "..x...x...x...x.", .18),
-                _L("h", "xoxoxoxoxoxoxoxo", .1, 3)],
-               [_L("k", "X...X...X...X...", .85), _L("c", "....x.......x...", .35, 2), _L("o", "..x...x...x...x.", .12, 2),
-                _L("sh", "xoxoxoxoxoxoxoxo", .14, 3)]],
-        parts=[dict(kind="bass", inst="sub", pats=["R-------R---F---", "R---------R-----", "R-----R-----O---"], lo=36, gain=.5),
-               dict(kind="chords", inst="pad_warm", pats=PAD1, center=62, gain=.08, send=.35, spread=.7),
-               dict(kind="arp", inst="marimba", pats=["0.1.2.1.0.2.1.2.", "0..1..2.3..2..1.", "2.1.0.1.2.3.2.1."], center=67,
-                    gain=.1, min_e=2, send=.3, bus="lead", alt=True),
-               dict(kind="lead", inst="pluck_soft", rhythms=R_SPARSE, lo=72, hi=86, gain=.1, min_e=3, send=.35)],
-        duck=(.6, .18), rev=(2.0, .3), delay=(.75, .3, .25), fill="r", impact=.5, end="soft",
-        desc="warm downtempo: soft four-on-the-floor, pumping warm pads with 7ths, mallet arps, sub bass"),
-    # ---------------------------------------------------------------- preview: cinematic build
-    "epic": dict(
-        series="preview", bpm=(88, 100), mode=["minor", "harm"], sev=False, chord_beats=4, kit="cine", arc="build",
-        progs=[[0, 5, 2, 6], [0, 5, 3, 4], [0, 3, 5, 6], [5, 3, 0, 4]],
-        drums=[[_L("k", "X.......X.......", 1), _L("t1", "X..X..X.X..X..X.", .4, 1), _L("t2", "....x.......x.xx", .4, 2),
-                _L("s", "....X.......X...", .6, 3), _L("t3", "x.x.x.x.x.x.x.x.", .2, 3)],
-               [_L("k", "X.....X.X.......", 1), _L("t1", "X..X..X...X..X..", .4, 2), _L("t2", "......x.....x.x.", .4, 2),
-                _L("s", "....X.......X...", .6, 3), _L("tk", "x.x.x.x.x.x.x.x.", .15)]],
-        parts=[dict(kind="arp", inst="stacc", pats=["0020102000201020", "0101020201010202", "0010201000102010"], center=50,
-                    gain=.12, send=.3, alt=True, gate=.9),
-               dict(kind="chords", inst="strings", pats=PAD1, center=60, gain=.07, send=.45, spread=.7),
-               dict(kind="chords", inst="choir", pats=PAD1, center=67, gain=.06, min_e=3, send=.5, spread=.8),
-               dict(kind="bass", inst="sub", pats=["R---------------"], lo=33, gain=.45, min_e=2),
-               dict(kind="lead", inst="brass", rhythms=R_SLOW, lo=60, hi=76, gain=.14, min_e=3, send=.45)],
-        duck=(.3, .2), rev=(2.6, .35), delay=None, fill="tom", impact=1.0, end="hit", riser=True,
-        desc="cinematic build: staccato string ostinato, taiko-style toms, booms, choir and brass that join section by section"),
-    "hybrid": dict(
-        series="preview", bpm=(118, 126), mode=["phrygian", "minor"], sev=False, chord_beats=8, kit="hybrid", arc="build",
-        progs=[[0, 5], [0, 3], [0, 5, 3, 0]],
-        drums=[[_L("k", "X.......X.......", 1), _L("k", "....X.......X...", .8, 3), _L("c", "....X.......X...", .55, 3),
-                _L("s", "....X.......X...", .45, 3), _L("tk", "x.x.x.x.x.x.x.x.", .22), _L("h", "..x...x...x...x.", .2, 2),
-                _L("t1", "......x.x.....x.", .4, 2)],
-               [_L("k", "X.......X.......", 1), _L("k", "....X.......X...", .8, 3), _L("c", "....X.......X...", .55, 3),
-                _L("s", "....X.......X...", .45, 3), _L("tk", "xoxoxoxoxoxoxoxo", .2), _L("h", "..x...x...x...x.", .2, 2),
-                _L("t3", "..........x.x.x.", .4, 2)]],
-        parts=[dict(kind="bass", inst="pulsebass", pats=["R.R.R.R.R.R.R.R.", "RRR.RRR.RRR.RRR.", "R.RRR.RRR.RRR.RR"], lo=33, gain=.45, gate=.7),
-               dict(kind="chords", inst="strings", pats=PAD1, center=57, gain=.06, send=.45, spread=.7),
-               dict(kind="chords", inst="braam", pats=["X" + "-" * 31], center=45, gain=.06, min_e=2, send=.4, spread=.3),
-               dict(kind="arp", inst="pluck", pats=["0213021302130213", "0123012301230123"], center=69, gain=.09, min_e=3,
-                    send=.3, bus="lead", gate=.8)],
-        duck=(.6, .12), rev=(2.2, .3), delay=(.75, .3, .25), fill="tom", impact=1.0, end="hit", riser=True,
-        desc="hybrid trailer: pulsing 8th bass, ticking clock, distorted brass braams, punchy kick that goes four-on-the-floor"),
-    "anthem": dict(
-        series="preview", bpm=(118, 126), mode=["major"], sev=False, chord_beats=4, kit="punch", arc="build",
-        progs=[[0, 4, 5, 3], [5, 3, 0, 4], [0, 3, 5, 4], [3, 0, 4, 5]],
-        drums=[[_L("k", "X.......X.......", 1, 1, 1), _L("k", "X...X...X...X...", 1, 2), _L("c", "....X.......X...", .75),
-                _L("s", "....X.......X...", .4, 2), _L("t1", "..............xx", .4, 3), _L("h", "..x...x...x...x.", .25, 2),
-                _L("o", "..............X.", .2, 3)],
-               [_L("k", "X.......X.......", 1, 1, 1), _L("k", "X...X...X...X...", 1, 2), _L("c", "....X.......X...", .75),
-                _L("s", "....X.......X...", .4, 2), _L("t2", "X.....x.........", .35, 3), _L("h", "x.x.x.x.x.x.x.x.", .22, 2)]],
-        parts=[dict(kind="bass", inst="sub", pats=["R-------R-------"], lo=36, gain=.45, max_e=1),
-               dict(kind="bass", inst="sawbass", pats=["R.R.R.R.R.R.R.R.", "R.R.R.RRR.R.R.RO"], lo=33, gain=.45, min_e=2, gate=.8),
-               dict(kind="chords", inst="choir", pats=PAD1, center=64, gain=.07, send=.45, spread=.8),
-               dict(kind="chords", inst="pad", pats=PAD1, center=60, gain=.05, min_e=2, send=.35, spread=.6),
-               dict(kind="lead", inst="brass", rhythms=R_SLOW + R_BOUNCE, lo=64, hi=79, gain=.14, min_e=3, send=.4)],
-        duck=(.55, .15), rev=(2.2, .3), delay=None, fill="tom", impact=.9, end="hit", riser=True,
-        desc="stadium anthem in major: big claps, choir pad, kick that opens to four-on-the-floor, heroic brass melody"),
-    # ---------------------------------------------------------------- lab: light, curious
-    "marimba": dict(
-        series="lab", bpm=(100, 112), mode=["major", "lydian"], sev=False, chord_beats=4, kit="soft", swing=.52,
-        progs=[[0, 3, 4, 0], [0, 5, 1, 4], [0, 2, 3, 4], [3, 4, 0, 0]],
-        drums=[[_L("k", "X.......X.x.....", .8), _L("sn", "....X.......X...", .45), _L("sh", "x.x.x.x.x.x.x.x.", .15, 2),
-                _L("w", "......x.......x.", .22, 3)],
-               [_L("k", "X.....X...X.....", .8), _L("sn", "....X.......X...", .45), _L("sh", "xoxoxoxoxoxoxoxo", .13, 2),
-                _L("w", "..x.....x..x....", .2, 3)]],
-        parts=[dict(kind="arp", inst="marimba", pats=["0.1.2.1.0.2.1.3.", "0.2.1.2.0.3.2.1.", "3.2.1.0.1.2.3.2."], center=64,
-                    gain=.12, send=.25, alt=True),
-               dict(kind="bass", inst="pluckbass", pats=["R...F...R...F.O.", "R..R..F.R...F...", "R.R...F.R.R...O."], lo=36, gain=.45, gate=.5),
-               dict(kind="chords", inst="pad_soft", pats=PAD1, center=60, gain=.04, min_e=2, send=.4, spread=.8),
-               dict(kind="lead", inst="bell", rhythms=R_BOUNCE, lo=72, hi=88, gain=.085, min_e=3, send=.3)],
-        duck=(.2, .1), rev=(1.4, .25), delay=(.75, .3, .25), fill="w", impact=.5, end="hit",
-        desc="playful marimba pop: bouncing mallet arps, finger snaps, plucked bass, glockenspiel tune"),
-    "chiptune": dict(
-        series="lab", bpm=(120, 136), mode=["major", "mixo"], sev=False, chord_beats=4, kit="chip",
+               dict(kind="chords", inst="stab", pats=["X.....X...X.....", "X..X......X.....", "X.....X.X......."], center=62,
+                    gain=.08, send=.3, spread=.5, gate=.9),
+               dict(kind="chords", inst="strings_dark", pats=PAD1, center=55, gain=.04, send=.35, spread=.6),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK, lo=67, hi=82, gain=.11, send=.25)],
+        duck=(.35, .1), rev=(1.6, .25), delay=(.75, .35, .3), fill="trap", impact=.9,
+        desc="half-time sports-highlight beat: gliding 808s, trap hat rolls, gated snare, 80s polysynth stabs, saw lead"),
+    # ---------------------------------------------------------------- report: warmer, major, still driving
+    "anthem80": dict(
+        series="report", bpm=(110, 120), mode=["major"], sev=False, chord_beats=4, kit="big",
+        progs=[[0, 4, 5, 3], [0, 5, 3, 4], [3, 4, 0, 0], [5, 3, 0, 4]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .9), _L("c", BB, .35), _L("h", "..x...x...x...x.", .22), _L("t2", "..............x.", .3)],
+               [_L("k", K4, 1), _L("s", BB, .9), _L("c", BB, .35), _L("h", "x.x.x.x.x.x.x.x.", .2), _L("o", "..............X.", .18)]],
+        parts=[dict(kind="bass", inst="sawbass", pats=["R.R.R.R.R.R.R.RO", "R.R.R.R.R.R.R.R.", "RRR.RRR.RRR.RRO."], lo=33, gain=.5, gate=.75),
+               dict(kind="chords", inst="poly", pats=PAD1, center=62, gain=.08, send=.3, spread=.7),
+               dict(kind="chords", inst="polybrass", pats=["X-------x-------"], center=55, gain=.05, send=.3, spread=.4),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK + R_POP, lo=69, hi=86, gain=.12, send=.25)],
+        duck=(.55, .12), rev=(1.8, .25), delay=(.75, .3, .25), fill="tom", impact=.7,
+        desc="uplifting retrowave anthem: huge gated drums, major polysynth + synth-brass chords, steady 8th saw bass, soaring lead"),
+    "funksynth": dict(
+        series="report", bpm=(108, 116), mode=["dorian", "mixo"], sev=True, chord_beats=4, kit="funk", swing=.54,
+        progs=[[0, 3, 0, 3], [0, 0, 3, 4], [0, 6, 3, 0], [1, 4, 0, 0]],
+        drums=[[_L("k", "X..X..X...X..X..", 1), _L("c", BB, .75), _L("s", BB, .4), _L("h", H16, .22), _L("o", "......x.......x.", .14)],
+               [_L("k", "X.....XX..X..X..", 1), _L("c", BB, .75), _L("s", BB, .4), _L("h", "x.xxx.xxx.xxx.xx", .2)]],
+        parts=[dict(kind="bass", inst="slapbass", pats=["R..ROR.RR.O.R.FO", "R.OR..R.ROR..ROF", "R..R.OR.R..RO.RO"], lo=33, gain=.5, gate=.7),
+               dict(kind="chords", inst="stab", pats=["..X..X.X..X...X.", "X..X..X...X..X..", "..X...X.X.X...X."], center=64,
+                    gain=.08, send=.25, spread=.5, gate=.6),
+               dict(kind="chords", inst="epiano", pats=["X-------x-------"], center=60, gain=.05, send=.3, spread=.4),
+               dict(kind="lead", inst="lead_sq50", rhythms=R_HOOK + R_BOUNCE, lo=69, hi=86, gain=.11, send=.25)],
+        duck=(.4, .1), rev=(1.3, .22), delay=(.75, .3, .25), fill="c", impact=.7,
+        desc="80s funk-synth: slap-style synth bass, gated claps, swung 16th hats, short 7th-chord stabs, DX e-piano, square lead"),
+    "sunset": dict(
+        series="report", bpm=(100, 110), mode=["major", "lydian"], sev=True, chord_beats=4, kit="80s",
+        progs=[[0, 3, 5, 4], [3, 4, 2, 5], [0, 5, 3, 4], [0, 2, 3, 4]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("c", BB, .3), _L("sh", H16, .16), _L("o", "..x...x...x...x.", .13)],
+               [_L("k", "X...X...X...X..x", 1), _L("s", BB, .85), _L("h", "x.x.x.x.x.x.x.x.", .2), _L("sh", H16, .14)]],
+        parts=[dict(kind="bass", inst="sawbass", pats=["R.R.R.R.R.R.R.R.", "R.RRR.R.R.RRR.RO", "R.O.R.O.R.O.R.O."], lo=33, gain=.48, gate=.8),
+               dict(kind="chords", inst="poly", pats=PAD1, center=62, gain=.085, send=.35, spread=.8),
+               dict(kind="arp", inst="bell", pats=["0.1.2.3.2.1.0.2.", "0..1..2.3..2..1."], center=72, gain=.05, send=.3, bus="lead"),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK, lo=69, hi=84, gain=.11, send=.3)],
+        duck=(.6, .14), rev=(2.0, .28), delay=(.75, .35, .3), fill="tom", impact=.6,
+        desc="sunset synthwave: chorused major-7th polysynth, DX bell arps, full gated drums, warm saw bass, singing lead"),
+    # ---------------------------------------------------------------- preview: cinematic, big
+    "action80": dict(
+        series="preview", bpm=(118, 128), mode=["minor"], sev=False, chord_beats=4, kit="big",
+        progs=[[0, 5, 6, 0], [0, 5, 3, 4], [0, 6, 5, 6], [0, 3, 6, 5]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .9), _L("c", BB, .3), _L("h", "x.x.x.x.x.x.x.x.", .2), _L("t3", "..........x..x..", .3)],
+               [_L("k", K4, 1), _L("s", BB, .9), _L("t2", "......x.x.......", .3), _L("h", H16, .2)]],
+        parts=[dict(kind="bass", inst="sawbass_b", pats=["RRRRRRRRRRRRRRRR", "RRORRRORRRORRROR"], lo=33, gain=.48, gate=.7),
+               dict(kind="chords", inst="brassstab", pats=["X..X..X.X.......", "X.....X...X.X...", "X..X..X...X..X.."], center=60,
+                    gain=.085, send=.3, spread=.5, gate=.7),
+               dict(kind="chords", inst="poly", pats=PAD1, center=55, gain=.05, send=.35, spread=.7),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK, lo=67, hi=84, gain=.11, send=.3)],
+        duck=(.45, .12), rev=(1.8, .28), delay=(.75, .3, .25), fill="tom", impact=1.0,
+        desc="80s action-movie synthwave: punchy synth-brass stabs, gated toms, driving 16th bass, heroic minor saw lead"),
+    "stadium80": dict(
+        series="preview", bpm=(120, 130), mode=["major", "mixo"], sev=False, chord_beats=4, kit="big",
+        progs=[[0, 4, 5, 3], [0, 6, 3, 0], [0, 3, 4, 0], [5, 3, 0, 4]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .95), _L("c", BB, .4), _L("h", "x.x.x.x.x.x.x.x.", .22), _L("o", "..............X.", .2)],
+               [_L("k", "X...X.X.X...X.X.", 1), _L("s", BB, .95), _L("c", BB, .4), _L("h", "x.x.x.x.x.x.x.x.", .22),
+                _L("t1", "............x.x.", .3)]],
+        parts=[dict(kind="chords", inst="powersaw", pats=["X.X.X.X.X.X.X.X.", "XXX.XXX.XXX.X.X.", "X.X.X.XXX.X.X.XX"], center=50,
+                    power=True, gain=.09, send=.2, spread=.4, gate=.8),
+               dict(kind="bass", inst="sawbass", pats=["R.R.R.R.R.R.R.R."], lo=33, gain=.5, gate=.8),
+               dict(kind="chords", inst="poly", pats=PAD1, center=64, gain=.05, send=.35, spread=.8),
+               dict(kind="lead", inst="lead_saw", rhythms=R_HOOK + R_POP, lo=69, hi=86, gain=.12, send=.25)],
+        duck=(.35, .1), rev=(1.6, .25), delay=(.75, .3, .25), fill="tom", impact=1.0,
+        desc="stadium 80s rock-synth: distorted power-chord synth chugs, massive gated drums, 8th bass, anthem saw lead"),
+    "chase80": dict(
+        series="preview", bpm=(138, 146), mode=["minor"], sev=False, chord_beats=4, kit="80s",
+        progs=[[0, 5, 6, 0], [0, 6, 5, 6], [0, 3, 6, 0]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("c", BB, .3), _L("h", H16, .2), _L("t3", "..............xx", .3)],
+               [_L("k", K4, 1), _L("s", BB, .85), _L("h", H16, .2), _L("t2", "x.x.....x.x.....", .22)]],
+        parts=[dict(kind="bass", inst="sawbass_b", pats=["RRORRRORRRORRROR", "RORORORORORORORO"], lo=33, gain=.5, gate=.75),
+               dict(kind="arp", inst="pluck", pats=["0120120120120120", "0210210210210210"], center=64, gain=.07, send=.2, bus="lead"),
+               dict(kind="chords", inst="poly", pats=PAD1, center=57, gain=.065, send=.3, spread=.7),
+               dict(kind="lead", inst="lead_sq", rhythms=R_HOOK, lo=67, hi=84, gain=.11, send=.25)],
+        duck=(.55, .1), rev=(1.4, .22), delay=(.75, .3, .25), fill="tom", impact=1.0,
+        desc="fast 80s chase scene: galloping octave bass, racing pluck arp, rolling toms, urgent square lead"),
+    # ---------------------------------------------------------------- lab: playful 80s synthpop
+    "popbells": dict(
+        series="lab", bpm=(118, 126), mode=["major"], sev=False, chord_beats=4, kit="80s",
+        progs=[[0, 4, 5, 3], [0, 3, 4, 0], [3, 4, 5, 5], [0, 5, 1, 4]],
+        drums=[[_L("k", K4, 1), _L("s", BB, .8), _L("c", BB, .5), _L("h", "..x...x...x...x.", .22), _L("sh", H16, .14)],
+               [_L("k", "X...X...X...X.X.", 1), _L("s", BB, .8), _L("c", BB, .5), _L("h", "x.x.x.x.x.x.x.x.", .2)]],
+        parts=[dict(kind="arp", inst="bell", pats=["0.1.2.1.0.2.1.3.", "0.2.1.2.0.3.2.1.", "3.2.1.0.1.2.3.2."], center=72,
+                    gain=.07, send=.25, alt=True),
+               dict(kind="chords", inst="epiano", pats=["X..X..X...X.X...", "X...X...X...X..."], center=62, gain=.08, send=.25, spread=.5),
+               dict(kind="bass", inst="sawbass", pats=["R.O.R.O.R.O.R.O.", "R.R.O.R.R.R.O.R."], lo=33, gain=.48, gate=.7),
+               dict(kind="lead", inst="lead_sq", rhythms=R_HOOK + R_BOUNCE, lo=72, hi=88, gain=.1, send=.25)],
+        duck=(.45, .1), rev=(1.5, .25), delay=(.75, .3, .25), fill="tom", impact=.6,
+        desc="playful DX synthpop: sparkling FM bell arps, bouncy e-piano chords, octave bass, claps, cheeky square tune"),
+    "neonbounce": dict(
+        series="lab", bpm=(124, 132), mode=["major", "mixo"], sev=False, chord_beats=4, kit="funk", swing=.53,
+        progs=[[0, 5, 3, 4], [0, 3, 0, 4], [5, 3, 4, 0], [0, 6, 3, 0]],
+        drums=[[_L("k", K4, 1), _L("c", BB, .7), _L("s", BB, .35), _L("h", "x.xxx.xxx.xxx.xx", .18), _L("o", "..x...x...x...x.", .12)],
+               [_L("k", "X..X..X.X...X...", 1), _L("c", BB, .7), _L("s", BB, .35), _L("h", H16, .2)]],
+        parts=[dict(kind="bass", inst="sawbass", pats=["R..R..R.R..R..R.", "R..R..O.R..R..O.", "R.RR..R.R.RR..RO"], lo=33, gain=.5, gate=.6),
+               dict(kind="chords", inst="stab", pats=["..X...X...X...X.", "..X..X..X...X.X."], center=64, gain=.08, send=.25, spread=.5),
+               dict(kind="arp", inst="pluck", pats=["0.2.1.2.0.2.1.2.", "0120..120120..12"], center=69, gain=.06, send=.2, bus="lead"),
+               dict(kind="lead", inst="lead_sq50", rhythms=R_BOUNCE + R_HOOK, lo=72, hi=88, gain=.1, send=.25)],
+        duck=(.6, .1), rev=(1.3, .22), delay=(.5, .3, .25), fill="c", impact=.6,
+        desc="bouncy neon synthpop: syncopated rubber-band bass, offbeat polysynth stabs, claps, skipping pluck arp, hooky square lead"),
+    "arcade80": dict(
+        series="lab", bpm=(130, 140), mode=["major"], sev=False, chord_beats=4, kit="80s",
         progs=[[0, 5, 3, 4], [0, 3, 0, 4], [5, 3, 4, 0], [0, 4, 5, 3]],
-        drums=[[_L("k", "X.......X.X.....", .9), _L("n", "....X.......X...", .6), _L("nh", "x.x.x.x.x.x.x.x.", .18, 2),
-                _L("nh", "..x...x...x...x.", .1, 1, 1)],
-               [_L("k", "X...X...X...X...", .9), _L("n", "....X.......X..X", .55), _L("nh", "xxxxxxxxxxxxxxxx", .12, 2)]],
-        parts=[dict(kind="arp", inst="chip", pats=["0123" * 8, "0213" * 8, "01240124" * 4], center=64, gain=.085, bars=1, send=.15),
-               dict(kind="bass", inst="tri", pats=["R.R.O.R.R.R.O.R.", "R.O.R.O.R.O.R.O.", "R...R.O.R...R.O."], lo=36, gain=.5, gate=.7),
-               dict(kind="lead", inst="chip_lead", rhythms=R_BOUNCE + R_POP, lo=72, hi=88, gain=.1, min_e=3, send=.15)],
-        duck=(.15, .08), rev=(0.8, .12), delay=(.75, .3, .2), fill="n", impact=.5, end="hit",
-        desc="8-bit chiptune: fast pulse-wave arpeggios, triangle bass, noise drums, square lead"),
-    "pizz": dict(
-        series="lab", bpm=(92, 104), mode=["dorian", "minor"], sev=False, chord_beats=4, kit="soft",
-        progs=[[0, 3, 0, 4], [0, 3, 5, 4], [0, 5, 3, 4], [0, 0, 3, 3]],
-        drums=[[_L("w", "x..x..x...x.x...", .22), _L("k", "X.......X.......", .7, 2), _L("sn", "....x.......x...", .4, 2),
-                _L("sh", "..x...x...x...x.", .12, 3)],
-               [_L("w", "x.x...x.x.x.....", .22), _L("k", "X.....X.X.......", .7, 2), _L("sn", "....x.......x...", .4, 2),
-                _L("sh", "xoxoxoxoxoxoxoxo", .1, 3)]],
-        parts=[dict(kind="arp", inst="pizz", pats=["0.2.1.2.3.2.1.2.", "0...2.1.0...2.1.", "0.1.2...3.2.1..."], center=62,
-                    gain=.13, send=.3, alt=True),
-               dict(kind="bass", inst="tuba", pats=["R.......F.......", "R...F...R...F...", "R.....F.R...F..."], lo=36, gain=.45, gate=.5),
-               dict(kind="chords", inst="pad_soft", pats=PAD1, center=60, gain=.035, min_e=2, send=.4, spread=.8),
-               dict(kind="lead", inst="bell", rhythms=R_BOUNCE, lo=74, hi=90, gain=.08, min_e=3, send=.35)],
-        duck=(.1, .1), rev=(1.5, .28), delay=(.75, .3, .25), fill="w", impact=.45, end="hit",
-        desc="curious pizzicato: plucked string arps, staccato tuba bass, woodblock, glockenspiel melody"),
+        drums=[[_L("k", K4, 1), _L("s", BB, .85), _L("c", BB, .35), _L("h", H16, .2)],
+               [_L("k", K4, 1), _L("s", BB, .85), _L("c", "....X.......X..X", .35), _L("h", "x.x.x.x.x.x.x.x.", .22),
+                _L("o", "..x...x...x...x.", .12)]],
+        parts=[dict(kind="arp", inst="chip", pats=["0123" * 8, "0213" * 8, "01240124" * 4], center=64, gain=.05, bars=1, send=.15),
+               dict(kind="bass", inst="sawbass", pats=["RORORORORORORORO", "R.O.R.O.R.O.R.O."], lo=33, gain=.48, gate=.75),
+               dict(kind="chords", inst="poly", pats=PAD1, center=60, gain=.06, send=.3, spread=.7),
+               dict(kind="lead", inst="lead_saw", rhythms=R_BOUNCE + R_HOOK, lo=72, hi=88, gain=.11, send=.25)],
+        duck=(.5, .1), rev=(1.2, .2), delay=(.75, .3, .25), fill="tom", impact=.6,
+        desc="fast arcade synthpop: 32nd-note pulse-wave arpeggios over a gated-drum groove, octave saw bass, bright saw lead"),
 }
 
 SERIES_STYLES = {}
@@ -1216,16 +1249,15 @@ class _Song:
 
     # -------------------------------------------------------------- arrangement
     def _plan(self, cues):
-        d = self.dur
-        cs = sorted({float(c) for c in cues if 0.5 <= float(c) <= d - 2.2})
-        starts = [0.0] + cs
-        last = starts[-1]
+        """One continuous bar grid from 0 s (cues never break the groove). Cues only start a new variation
+        segment on the nearest downbeat (other drum variant / progression / arp pattern / melody answer)."""
+        d, bar = self.dur, self.bar
         lim = d - 1.5
-        if lim <= last + 0.3:
-            t_end = max(last + 0.3, d * 0.6)
+        if lim <= 0.3:
+            t_end = max(0.3, d * 0.6)
         else:
-            ks = int((lim - last) / self.beat + 1e-6)
-            cand = [last + k * self.beat for k in range(1, ks + 1)]
+            ks = int(lim / self.beat + 1e-6)
+            cand = [k * self.beat for k in range(1, ks + 1)]
             t_end = None
             for mult, win in ((4, 1.0), (2, 0.8), (1, 9.0)):
                 ok = [t for k, t in enumerate(cand, 1) if k % mult == 0 and t >= lim - win]
@@ -1235,26 +1267,18 @@ class _Song:
             if t_end is None:
                 t_end = lim
         self.t_end = min(t_end, d)
-        self.cues = cs
+        self.cues = sorted({float(c) for c in cues if 0 < float(c) < d})
+        downs = sorted({round(c / bar) * bar for c in self.cues})
+        starts = [0.0] + [t for t in downs if bar - 1e-6 <= t <= self.t_end - bar + 1e-6]
         self.sections = [(s, e) for s, e in zip(starts, starts[1:] + [self.t_end])]
 
     def energy(self, si, k):
-        ns = len(self.sections)
-        if self.sp.get("arc") == "build":
-            e = 1 + si if ns > 1 else 1 + k // 4
-            return min(3, e + k // 8)
-        if si == 0:
-            e = 2
-        else:
-            e = 3 if (si % 2 == 1 or si == ns - 1) else 2
-        if (k // 8) % 2 == 1:
-            e = 3 if e == 2 else 2
-        return e
+        return 3      # full arrangement everywhere: constant drive, no build-ups or breakdowns
 
     # -------------------------------------------------------------- per bar
     def drums_bar(self, si, k, tb, s1, e, cut_t, mini_t):
         variants = self.sp["drums"]
-        lanes = variants[self.dvar[si % len(variants)]]
+        lanes = variants[self.dvar[0]]      # one drum groove per song (seeded): the beat never changes at a cue
         bass_pat = None
         for pi, p in enumerate(self.sp["parts"]):
             if p["kind"] == "bass" and p.get("min_e", 1) <= e <= p.get("max_e", 9):
@@ -1264,7 +1288,7 @@ class _Song:
             if not mn <= e <= mx:
                 continue
             if pat == "@trap":
-                pat = self.traphats[si % 2]
+                pat = self.traphats[0]
             elif pat == "@bass":
                 pat = "".join("X" if ch not in ".-" else "." for ch in (bass_pat or "X...X...X...X..."))
             bars = _pat_bars(pat)
@@ -1333,7 +1357,11 @@ class _Song:
                 self.put(bus, x, t + self.human(), p["gain"], 0.0, end=end, send=send)
             elif kind == "chords":
                 v = _VEL.get(ch, 0.7) if ch in "Xx" else 1.0
-                notes = list(self.voicing(deg, p["center"]))
+                if p.get("power"):
+                    rt = self.root(deg, p["center"] - 6)
+                    notes = [rt, rt + 7, rt + 12]
+                else:
+                    notes = list(self.voicing(deg, p["center"]))
                 if p.get("add_oct"):
                     notes.append(notes[0] + 12)
                 strum = p.get("strum", 0.0)
@@ -1404,36 +1432,28 @@ class _Song:
                 e = self.energy(si, k)
                 prog = self.progB if e >= 3 else self.progA
                 cut_t = mini_t = None
-                if not last and s1 - tb <= bar + 1e-6 and s1 - s0 > beat * 1.5:
-                    cut_t = s1 - beat
-                elif k % 8 == 7 and tb + bar < s1 - 1e-3 and e >= 2:
-                    mini_t = tb + bar - beat
+                fill_at = tb + bar - beat
+                if (k % 8 == 7 and tb + bar < s1 - 1e-3
+                        and all(abs(c - fill_at) > 2.5 for c in self.cues)):
+                    mini_t = fill_at
                 self.drums_bar(si, k, tb, s1, e, cut_t, mini_t)
                 for pi, p in enumerate(sp["parts"]):
                     self.part_bar(pi, p, si, k, tb, s0, s1, e, prog, cut_t)
-                if cut_t is not None:
-                    self.fill(cut_t, sp.get("fill"))
                 if mini_t is not None:
                     self.fill(mini_t, sp.get("fill"), 0.6)
 
-        # intro hit, cue marks, ending
+        # one crash on the very first downbeat; cues get no effects at all; final hit at the end
         imp = sp.get("impact", 0.8)
         crash = self.drum("cr")
         self.put("fx", crash, 0.0, 0.22, -0.1, send=0.2)
-        self.put("fx", _d_impact(r, 0.6), 0.0, imp * 0.45, send=0.15)
-        for c in self.cues:
-            self.put("fx", _d_impact(r, 1.0), c, imp * 0.75, send=0.2)
-            self.put("fx", crash, c, 0.28, 0.1, send=0.25)
-            self.put("fx", _d_whoosh(r, 0.45), c - 0.43, 0.22, -0.2, send=0.3)
-            if sp.get("riser") and c > 2.5:
-                rl = min(2.5, bar)
-                self.put("fx", _d_riser(r, rl), c - rl, 0.12, 0.15, send=0.3)
         te = self.t_end
         tail = max(0.3, self.dur - te)
         if te < self.dur - 0.2:
             deg0 = self.progA[0]
             chord_inst = next((p["inst"] for p in sp["parts"] if p["kind"] == "chords"), "pad")
-            chord_inst = sp.get("final_inst", chord_inst if chord_inst not in ("guitar", "organ", "stab", "braam") else "pad_warm")
+            if chord_inst in ("guitar", "organ", "stab", "brassstab", "powersaw", "braam"):
+                chord_inst = "poly"
+            chord_inst = sp.get("final_inst", chord_inst)
             for j, m in enumerate(self.voicing(deg0, 62)):
                 self.put("final", self.note(chord_inst, m, tail * 0.8), te, 0.11, (j - 1) * 0.3, send=0.4)
             self.put("final", self.note("sub", self.root(deg0, 36), tail * 0.7), te, 0.4)
@@ -1447,18 +1467,6 @@ class _Song:
         B = self.b
         N = self.N
         t = np.arange(N) / SR
-        # pre-cue "lift": the music thins out (high-pass crossfade) over the bar before each cue
-        ramp = np.zeros(N)
-        for c in self.cues:
-            i0, i1 = int((c - bar) * SR), int(c * SR)
-            i0 = max(0, i0)
-            if i1 > i0:
-                ramp[i0:i1] = np.maximum(ramp[i0:i1], np.linspace(0, 1, i1 - i0) ** 2)
-        if ramp.any():
-            for name, amt in (("music", 0.8), ("lead", 0.6), ("bass", 0.9)):
-                hp = _st(_hp, B[name], 650)
-                rr = (ramp * amt)[:, None]
-                B[name] = B[name] * (1 - rr) + hp * rr
         # sidechain ducking from the kicks
         depth, rel = sp.get("duck", (0.5, 0.12))
         duck = np.ones(N)

@@ -50,21 +50,24 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
 - Music: `music.review_track`, a different original song, no rising build-up at the start (half-time groove, FM electric piano, 808, bell sparkles on
   each winning pick). Template: `review.html`.
 
-# Series music (varied songs)
+# Series music (80s synthwave, varied per day)
 
     import music
     x = music.series_track("hot", duration, cues=[4.0, 12.0], seed="2026-11-16")   # float32 stereo (n, 2) at music.SR
     music.write_wav("music.wav", x)
-    music.style_track("lofi", duration, cues, seed=7)    # force one style
-    music.SERIES_STYLES                                  # {"board": ["synthdrive", "house", "electro"], ...}
+    music.style_track("outrun", duration, cues, seed=7)  # force one style
+    music.SERIES_STYLES                                  # {"board": ["outrun", "synthpop80", "nightdrive"], ...}
 
-- Series: `board` (energetic), `hot` (dark, half-time / trap), `report` (calm, warm), `preview` (cinematic build),
-  `lab` (light, curious); unknown -> `board`. Three styles each, 15 in total (`music.STYLES[name]["desc"]`).
+- Everything is energetic 80s synthwave (110-150 BPM, gated-reverb snare, driving saw bass, polysynth chords, arps,
+  saw/square lead hook from the first bar). Three styles per series (`music.STYLES[name]["desc"]`):
+  board: `outrun`, `synthpop80`, `nightdrive` | hot: `darksynth`, `cyberwave`, `synthtrap` |
+  report: `anthem80`, `funksynth`, `sunset` | preview: `action80`, `stadium80`, `chase80` |
+  lab: `popbells`, `neonbounce`, `arcade80`. Unknown series -> `board`.
 - `seed`: int or string. An ISO date rotates through the series' styles day by day (consecutive days never repeat a
-  style); tempo, key, mode, chord progression, drum variant, bass/arp patterns and melody also come from the seed.
+  style); tempo, key, mode, chord progressions, drum groove, bass/arp patterns and melody also come from the seed.
   Same seed -> identical audio; `None` -> random. `music.pick_style(series, seed)` tells which style will be used.
-- `cues`: section starts; each gets a one-beat drum fill with the kick and bass dropping out, a high-pass "lift" over
-  the bar before, a whoosh, then an impact + crash on the cue, and the next section starts on a downbeat. Energy changes per section
-  (steady styles alternate, preview styles build up). Starts with a hit and the groove at 0 s, ends on a final chord/hit
-  and fades to silence in the last ~1.5 s.
-- All synthesised from scratch (no samples, no known melodies). Peak 0.89; a 60 s track renders in about 2-4 s.
+- `cues`: no transition effects at all (no risers, whooshes, filter sweeps, drop-outs or hits). The groove runs
+  continuously on one bar grid; a cue only switches the chord progression / arp pattern / melody answer on the
+  nearest downbeat. One crash at 0 s, full groove from the first beat; ends on a final chord + hit and fades to
+  silence in the last ~1.5 s.
+- All synthesised from scratch (no samples, no known melodies). Peak 0.89; a 60 s track renders in about 2 s.
