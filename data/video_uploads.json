@@ -2,7 +2,8 @@
  "board-2026-11-16:tiktok": {
   "uploaded_at": "2026-11-16T23:22:00Z",
   "via": "manual (TikTok Studio)",
-  "file": "video/out/2026-11-17/board-2026-11-17.mp4"
+  "file": "video/out/2026-11-17/board-2026-11-17.mp4",
+  "note": "removed by TikTok (Community Guidelines)"
  },
  "board-2026-11-16:youtube": {
   "video_id": "yDnXEaQi8xc",
@@ -14,13 +15,15 @@
  "hot-2026-11-16:tiktok": {
   "uploaded_at": "2026-11-16T23:25:00Z",
   "via": "manual (TikTok Studio)",
-  "file": "video/out/2026-11-17/hot-2026-11-17.mp4"
+  "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
+  "note": "wrong slate (ANA/WSH); delete in the TikTok app"
  },
  "hot-2026-11-16:youtube": {
-  "video_id": "zHLYcZRorl8",
-  "url": "https://youtube.com/shorts/zHLYcZRorl8",
-  "uploaded_at": "2026-11-16T23:19:00Z",
+  "video_id": "fWyjtzTfyTY",
+  "url": "https://youtube.com/shorts/fWyjtzTfyTY",
+  "uploaded_at": "2026-11-16T23:33:00Z",
   "via": "manual (YouTube Studio)",
+  "note": "replaces zHLYcZRorl8 (wrong slate, deleted)",
   "file": "video/out/2026-11-17/hot-2026-11-17.mp4"
  }
 }
