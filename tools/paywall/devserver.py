@@ -48,7 +48,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             if self.pro.resolve() in f.parents and f.exists() and f.suffix == ".json":
                 return self._send(f.read_bytes(), "application/json")
             return self._send(b'{"error":"not found"}', "application/json", 404)
-        if path in ("/app", "/app/", "/app/index.html"):
+        # the app answers every address under /app/ (/app/props, /app/game/<id>, ...), like the rewrite in vercel.json
+        if path in ("/app", "/app/", "/app/index.html") or (path.startswith("/app/") and "." not in path.rsplit("/", 1)[-1]):
             html = (self.site / "app" / "index.html").read_text(encoding="utf-8")
             if not self.real:
                 html = html.replace(CDN, '<script src="/__dev/mock-supabase.js"></script>')

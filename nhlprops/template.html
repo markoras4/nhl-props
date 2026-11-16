@@ -1893,6 +1893,11 @@ const TODAY = localDay(Date.now());
 const isToday = d => d === TODAY;
 const dates = [...new Set(DATA.games.map(g=>g.ld))].sort();
 
+// "/app/" whether the page was opened as /app, /app/ or /app/<page> (Vercel serves the app at /app, no trailing slash)
+const APP_PATH = (m => m ? m[1] + "/" : "")(location.pathname.match(/^(.*?\/app)(?:\/|$)/));
+const ROUTING = !!APP_PATH && location.protocol !== "file:";
+// site files relative to the app folder, whatever page of the app is open
+const appUrl = rel => new URL(rel, location.origin + (APP_PATH || location.pathname.replace(/[^/]*$/, ""))).href;
 const state = {
   tab: "games", game: null, side: null, day: dates[0], open: null, sort: null,
   market: "g", pfilter: "all", pday: dates[0] || "all", q: "", onlyReg: false, psort: "p",
@@ -2044,7 +2049,7 @@ pw_sub_f:"Pro opens every player and every market, best picks live until the loc
   pw_go:"Go Pro", pl_h:"Choose your Pro plan", pl_month:"Monthly", pl_year:"Yearly", pl_pm:"/ month", pl_py:"/ year",
   pl_save:"Save {p}%", pl_btn_m:"Pay monthly", pl_btn_y:"Pay yearly", pl_founder:"Founder price until 30 November, yours for as long as you stay subscribed.",
   pl_note:"Secure payment with Stripe. Pro starts right away. Cancel any time under Account → Manage subscription and keep Pro until the end of the paid period.",
-  pl_terms:"By continuing you accept the <a href=\"../legal#terms\">terms</a>.", pl_wait:"Opening secure checkout…", pl_err:"Couldn't open the payment page. Please try again in a minute.",
+  pl_terms:"By continuing you accept the <a href='/legal.html#terms'>terms</a>.", pl_wait:"Opening secure checkout…", pl_err:"Couldn't open the payment page. Please try again in a minute.",
   pl_already:"You already have Pro.", pl_signin:"Create a free account or log in first, then pay.",
   ac_manage:"Manage subscription", ac_renews:"Renews on {d}", ac_ends:"Pro until {d} (cancelled, won't renew)", ac_pastdue:"Payment failed: update your card to keep Pro.",
   co_ok:"Payment received. Welcome to Pro! Unlocking…", co_slow:"Payment received. Pro unlocks within a minute; refresh the page if it hasn't.", co_cancel:"Payment cancelled. Nothing was charged.",
@@ -2071,7 +2076,7 @@ pw_sub_f:"Pro öppnar varje spelare och varje marknad, bästa spel live fram til
   pw_go:"Skaffa Pro", pl_h:"Välj din Pro-plan", pl_month:"Månadsvis", pl_year:"Årsvis", pl_pm:"/ månad", pl_py:"/ år",
   pl_save:"Spara {p} %", pl_btn_m:"Betala månadsvis", pl_btn_y:"Betala årsvis", pl_founder:"Grundarpris till 30 november, ditt så länge du är prenumerant.",
   pl_note:"Säker betalning med Stripe. Pro startar direkt. Säg upp när du vill under Konto → Hantera prenumeration och behåll Pro till slutet av den betalda perioden.",
-  pl_terms:"Genom att fortsätta godkänner du <a href=\"../legal#terms\">villkoren</a>.", pl_wait:"Öppnar säker betalning…", pl_err:"Betalsidan kunde inte öppnas. Försök igen om en minut.",
+  pl_terms:"Genom att fortsätta godkänner du <a href='/legal.html#terms'>villkoren</a>.", pl_wait:"Öppnar säker betalning…", pl_err:"Betalsidan kunde inte öppnas. Försök igen om en minut.",
   pl_already:"Du har redan Pro.", pl_signin:"Skapa ett gratiskonto eller logga in först, sedan betalar du.",
   ac_manage:"Hantera prenumeration", ac_renews:"Förnyas {d}", ac_ends:"Pro till {d} (uppsagd, förnyas inte)", ac_pastdue:"Betalningen misslyckades: uppdatera kortet för att behålla Pro.",
   co_ok:"Betalningen är klar. Välkommen till Pro! Låser upp…", co_slow:"Betalningen är klar. Pro låses upp inom en minut; ladda om sidan om det inte har hänt.", co_cancel:"Betalningen avbröts. Inget drogs.",
@@ -2292,8 +2297,8 @@ const isReg = p => p.regress.flag || (p.drought.found && p.drought.p<0.15 && p.d
 function header(){
   document.documentElement.lang = LANG;
   $("#meta").innerHTML = ARCH ? t("ar_meta",{d:dayLabel(ARCH.date), n:DATA.games.length}) : t("meta",{n:DATA.games.length, t:DATA.built.replace("T"," ")}) + (DATA.demo ? ` <span class="demo">${t("demo")}</span>` : "")
-    + (DATA.previews && Object.keys(DATA.previews).length ? ` · <a class="pvlink" href="../previews">${t("pv_all")}</a>` : "")
-    + (IS_SHL ? "" : ` · <a class="pvlink" href="../blog">${t("nav_blog")}</a>`);
+    + (DATA.previews && Object.keys(DATA.previews).length ? ` · <a class="pvlink" href="${appUrl("../previews")}">${t("pv_all")}</a>` : "")
+    + (IS_SHL ? "" : ` · <a class="pvlink" href="${appUrl("../blog")}">${t("nav_blog")}</a>`);
   const ICON = {games:'<path d="M4 5h16v14H4z"/><path d="M12 5v14M4 12h4M16 12h4"/>',
     props:'<path d="M5 20V10M12 20V4M19 20v-7"/>', explore:'<path d="M4 4v16h16"/><circle cx="9" cy="14" r="1.6"/><circle cx="13" cy="9" r="1.6"/><circle cx="17" cy="12" r="1.6"/><circle cx="16" cy="6" r="1.6"/>', track:'<path d="M4 18l5-6 4 3 7-9"/><path d="M14 6h6v6"/>',
     how:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>', futures:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"/>', picks:'<path d="M6 4h12v16l-6-4-6 4z"/>'};
@@ -2322,12 +2327,45 @@ function wireHeader(){
   tt.onclick = () => window.scrollTo({top:0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
   const onScroll = () => tt.classList.toggle("show", window.scrollY > 400);
   window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
-  window.onhashchange = () => { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) { state.tab="games"; state.game=m[1]; render(); } else if(!location.hash){ state.game=null; render(); } };
+  window.onhashchange = () => { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) { history.replaceState(null, "", location.pathname + location.search); go({tab:"games", game:m[1]}); } };
 }
+// ------------------------------------------------------------ addresses: every page has its own URL under /app/
+// /app/ games · /app/game/<id> · /app/props · /app/explore · /app/futures · /app/my-picks · /app/track-record
+// (/ledger, /model) · /app/how-it-works. Refresh stays on the page, Back/Forward move between pages, links can be shared.
+// Only when the page is served under /app/ (the SHL page and file:// keep their single address).
+const ROUTES = {props: "props", explore: "explore", futures: "futures", picks: "my-picks", track: "track-record", how: "how-it-works"};
+const routePath = () => {
+  if (state.tab === "games") return state.game ? "game/" + state.game : "";
+  const base = ROUTES[state.tab] || "";
+  return state.tab === "track" && state.trk && state.trk !== "bp" ? base + "/" + state.trk : base;
+};
+function readRoute(){
+  if (!ROUTING) return;
+  const rest = decodeURIComponent(location.pathname.slice(APP_PATH.length)).replace(/\/+$/, "").replace(/^index\.html$/, "");
+  const [a, b] = rest.split("/");
+  const tab = Object.keys(ROUTES).find(k => ROUTES[k] === a);
+  state.open = null;
+  if (a === "game" && b && gameById[b]) { state.tab = "games"; state.game = b; }
+  else if (tab) { state.tab = tab; state.game = null; if (tab === "track") state.trk = ["ledger", "model"].includes(b) ? b : "bp"; }
+  else { state.tab = "games"; state.game = null; }
+}
+let ROUTE_KEY = null, ROUTE_POP = false;
+function syncUrl(){
+  if (!ROUTING) return;
+  const r = routePath(), want = r ? APP_PATH + r : APP_PATH.slice(0, -1), key = state.tab + "|" + (state.game || "");
+  if (location.pathname !== want){
+    // a new page (other tab or game) gets its own history entry; a sub-view (track record section) replaces it
+    const push = !ROUTE_POP && ROUTE_KEY !== null && key !== ROUTE_KEY;
+    history[push ? "pushState" : "replaceState"](null, "", want + location.search);
+  }
+  ROUTE_KEY = key; ROUTE_POP = false;
+  const nm = {props: "nav_props", explore: "nav_explore", futures: "nav_futures", picks: "nav_picks", track: "nav_track", how: "nav_how"}[state.tab];
+  const g = state.tab === "games" && state.game && gameById[state.game];
+  document.title = (g ? `${g.away} @ ${g.home}` : nm ? t(nm) : "") + (g || nm ? " · " : "") + (IS_SHL ? "SHL Props Lab (beta)" : "evenout");
+}
+addEventListener("popstate", () => { if (!ROUTING) return; ROUTE_POP = true; readRoute(); render(); window.scrollTo(0, 0); });
 function go(patch){
   Object.assign(state, patch, {open:null});
-  if (patch.game===null && location.hash) history.replaceState(null,"",location.pathname);
-  if (patch.game) { history.replaceState(null,"","#g"+patch.game); }
   render(); window.scrollTo(0,0);
 }
 
@@ -3377,7 +3415,7 @@ const HIST = new Map(), HIST_LOADING = new Map();
 function loadHist(pid){
   pid = String(pid);
   if (HIST.has(pid)) return Promise.resolve(HIST.get(pid));
-  if (!HIST_LOADING.has(pid)) HIST_LOADING.set(pid, fetch(new URL(`../data/gl/${pid}.json`, location.href)).then(r => r.ok ? r.json() : null).catch(() => null)
+  if (!HIST_LOADING.has(pid)) HIST_LOADING.set(pid, fetch(appUrl(`../data/gl/${pid}.json`)).then(r => r.ok ? r.json() : null).catch(() => null)
     .then(js => { if (js && js.length) HIST.set(pid, js); HIST_LOADING.delete(pid); return js; }));
   return HIST_LOADING.get(pid);
 }
@@ -3521,7 +3559,7 @@ document.addEventListener("click", e => {
 let SHOTS = null, SHOTS_LOADING = null;
 function loadShots(){
   if (SHOTS || SHOTS_LOADING) return SHOTS_LOADING;
-  SHOTS_LOADING = fetch(new URL("../data/shots.json", location.href)).then(r=>r.ok?r.json():{}).catch(()=>({})).then(js=>{ SHOTS = js;
+  SHOTS_LOADING = fetch(appUrl("../data/shots.json")).then(r=>r.ok?r.json():{}).catch(()=>({})).then(js=>{ SHOTS = js;
     document.querySelectorAll(".spbox").forEach(b=>{ const p = P(b.dataset.pid); if (p) b.innerHTML = shotProfile(p); }); return js; });
   return SHOTS_LOADING;
 }
@@ -3822,7 +3860,7 @@ function previewBlock(g){
   state.pvOpen = state.pvOpen || {}; const open = !!state.pvOpen[g.id];
   const ph = P_.photo, list = (h, arr) => arr?.length ? `<div class="pvsec"><h5>${h}</h5><ul>${arr.map(v=>`<li>${v === "\u0000LOCK" ? `${esc(t("pw_bullet"))} ${lockInline(t("pw_bullet"))}` : esc(v)}</li>`).join("")}</ul></div>` : "";
   return `<div class="card pvbox ${open?"open":""}" data-pv="${g.id}">
-    ${ph?.src ? `<div class="pvimg" style="background-image:url('../${esc(ph.src)}');${ph.pos?`background-position:${esc(ph.pos)}`:""}" role="img" aria-label="${esc(ph.alt||"")}"></div>` : ""}
+    ${ph?.src ? `<div class="pvimg" style="background-image:url('${esc(appUrl("../" + ph.src))}');${ph.pos?`background-position:${esc(ph.pos)}`:""}" role="img" aria-label="${esc(ph.alt||"")}"></div>` : ""}
     <div class="pvtxt"><div class="pvk">${esc(x.kicker||t("pv_label"))}</div><h3>${esc(x.title||"")}</h3><p class="pvdeck">${esc(x.deck||"")}</p>
       ${open ? `<div class="pvfull">${list(t("pv_news"), x.news)}${list(t("pv_records"), x.records)}${list(t("pv_betting"), x.betting)}
         ${ph?.author ? `<p class="meta pvcred">${t("pv_photo")}: ${esc(ph.author)}${ph.license?` · ${ph.license_url?`<a href="${esc(ph.license_url)}" rel="noopener" target="_blank">${esc(ph.license)}</a>`:esc(ph.license)}`:""}</p>` : ""}</div>` : ""}
@@ -4288,7 +4326,7 @@ function linesList(){
   else if (S === "toi") rows.sort((a,b) => b.toi - a.toi);
   else rows.sort((a,b) => b.xgp - a.xgp);
   const body = rows.slice(0, 150).map((r, i) => {
-    const tn = r.nx ? `<a class="lltn" href="#g${r.nx.id}" data-llg="${r.nx.id}" data-llt="${r.tm}">${r.nx.home === r.tm ? "vs" : "@"} ${r.nx.home === r.tm ? r.nx.away : r.nx.home} · ${isToday(r.nx.ld) ? t("today") : dayShort(r.nx.ld)}</a>${inLineup(r.tm, r.ids) ? `<div><span class="pill s-confirmed">${t("ll_inlu")}</span></div>` : ""}` : `<span class="meta">–</span>`;
+    const tn = r.nx ? `<a class="lltn" href="${ROUTING ? APP_PATH + "game/" + r.nx.id : "#g" + r.nx.id}" data-llg="${r.nx.id}" data-llt="${r.tm}">${r.nx.home === r.tm ? "vs" : "@"} ${r.nx.home === r.tm ? r.nx.away : r.nx.home} · ${isToday(r.nx.ld) ? t("today") : dayShort(r.nx.ld)}</a>${inLineup(r.tm, r.ids) ? `<div><span class="pill s-confirmed">${t("ll_inlu")}</span></div>` : ""}` : `<span class="meta">–</span>`;
     const dg = r.gf - r.xgf, da = r.ga - r.xga;
     return `<tr><td class="n num meta hide-xs">${i+1}</td><td><div class="llnm">${logo(r.tm,18)}<div><b>${r.names.map(esc).join(" · ")}</b><div class="meta">${r.tm} · ${t("ll_min",{m:fmt(r.toi,0), gp:r.gp})}</div><div class="llxs">${tn}</div></div></div></td>
       <td class="n num">${r.gf} <small class="meta">/ ${fmt(r.xgf,1)}</small><div class="lld ${dg>=0?"pos":"neg"}">${dg>=0?"+":""}${fmt(dg,1)}</div></td>
@@ -4688,7 +4726,7 @@ const rkCatName = c => ["s","h","b","fo","pim"].includes(c) ? t("mg_"+c) : mName
 let BPREC = null, BPREC_LOADING = null;
 function loadRecord(){
   if (BPREC) return Promise.resolve(BPREC);
-  if (!BPREC_LOADING) BPREC_LOADING = fetch(new URL("../data/bestpicks.json", location.href), {cache:"no-cache"}).then(r => r.ok ? r.json() : null)
+  if (!BPREC_LOADING) BPREC_LOADING = fetch(appUrl("../data/bestpicks.json"), {cache:"no-cache"}).then(r => r.ok ? r.json() : null)
     .catch(() => null).then(js => { BPREC = js; BPREC_LOADING = null; return js; });
   return BPREC_LOADING;
 }
@@ -4864,7 +4902,7 @@ document.addEventListener("mousemove", e => {
 let LEDGER = null, LEDGER_LOADING = null;
 function loadLedger(){
   if (LEDGER) return Promise.resolve(LEDGER);
-  if (!LEDGER_LOADING) LEDGER_LOADING = fetch(new URL("../data/ledger.json", location.href), {cache:"no-cache"}).then(r => r.ok ? r.json() : null)
+  if (!LEDGER_LOADING) LEDGER_LOADING = fetch(appUrl("../data/ledger.json"), {cache:"no-cache"}).then(r => r.ok ? r.json() : null)
     .catch(() => null).then(js => { LEDGER = js; LEDGER_LOADING = null; return js; });
   return LEDGER_LOADING;
 }
@@ -5381,6 +5419,7 @@ function howTab(){
 }
 
 function render(){
+  syncUrl();
   header();
   { const pb = $("#pwstate"); if (pb) pb.remove();
     if (PRO_STATE) $("#main").insertAdjacentHTML("beforebegin", `<p id="pwstate" class="pwnote" style="text-align:center">${t(PRO_STATE==="loading"?"pw_loading":"pw_err")}</p>`); }
@@ -6490,14 +6529,17 @@ async function pollScores(){
 wireHeader();
 function startApp(){
   if (!ARCH){ pollScores(); setInterval(pollScores, 60e3); }
-  { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) state.game = m[1]; }
-  if (location.hash === "#record"){ state.tab = "track"; state.trk = "bp"; history.replaceState(null,"",location.pathname); }
-  if (location.hash === "#ledger"){ state.tab = "track"; state.trk = "ledger"; state.lg = {per:"all", fam:"all", side:"all", one:false, hg:"S", hd:null}; history.replaceState(null,"",location.pathname); }
+  readRoute();
+  // older links: #g<id>, #record, #ledger
+  { const m = location.hash.match(/^#g(\d+)$/); if (m && gameById[m[1]]) { state.tab = "games"; state.game = m[1]; } }
+  if (location.hash === "#record"){ state.tab = "track"; state.trk = "bp"; }
+  if (location.hash === "#ledger"){ state.tab = "track"; state.trk = "ledger"; state.lg = {per:"all", fam:"all", side:"all", one:false, hg:"S", hd:null}; }
+  if (/^#(g\d+|record|ledger)$/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
   render();
 }
 if (ARCH_PARAM && (DATA.archive_dates || []).includes(ARCH_PARAM)){
   $("#main").innerHTML = `<p class="meta">${t("sp_loading")}</p>`;
-  fetch(new URL(`../data/archive/${ARCH_PARAM}.json`, location.href)).then(r => r.ok ? r.json() : null)
+  fetch(appUrl(`../data/archive/${ARCH_PARAM}.json`)).then(r => r.ok ? r.json() : null)
     .then(A => { if (A) applyArchive(PRO_ARCH || A); startApp(); }).catch(startApp);
 } else startApp();
 
