@@ -109,8 +109,7 @@ jobs:
           mkdir -p site/brand && cp site-assets/brand/*.svg site/brand/
           cp vercel.json site/vercel.json
           cp site-headers.txt site/_headers
-          printf '/app/* /app/index.html 200
-' > site/_redirects   # Cloudflare Pages: every /app/<page> address opens the app
+          echo '/app/* /app/index.html 200' > site/_redirects   # Cloudflare Pages: every /app/<page> address opens the app
           if [ ! -f site/index.html ]; then echo "<h1>No NHL games today</h1>" > site/index.html; fi
           if [ ! -f site/app/index.html ]; then cp site/index.html site/app/index.html; fi
 
