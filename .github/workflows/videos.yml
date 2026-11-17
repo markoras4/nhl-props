@@ -2,7 +2,7 @@ name: Daily videos
 
 on:
   # GitHub's clock is UTC, Sweden switches between UTC+1 (winter) and UTC+2 (summer). Each slot has one line per
-  # season; the "Pick the date" step keeps only the one that is right today, so videos go out at the same Swedish time.
+  # season; the "Pick the date" step checks the Swedish clock, so videos go out at the same Swedish time all year.
   schedule:
     - cron: "0 9 * * *"     # 10:00 Sweden (winter) - morning slot: videos about games already played (last night, weekly report)
     - cron: "0 8 * * *"     # 10:00 Sweden (summer)
@@ -54,13 +54,13 @@ jobs:
           if [ -z "$DATE" ]; then DATE=$(TZ=America/New_York date +%F); fi
           SLOT="${IN_SLOT:-all}"; RUN=yes
           if [ -n "$CRON" ]; then
-            OFF=$(TZ=Europe/Stockholm date +%z)                       # +0100 winter, +0200 summer
-            case "$CRON" in
-              "0 9 * * *")   SLOT=morning;  [ "$OFF" = "+0100" ] || RUN=no ;;
-              "0 8 * * *")   SLOT=morning;  [ "$OFF" = "+0200" ] || RUN=no ;;
-              "30 14 * * *") SLOT=upcoming; [ "$OFF" = "+0100" ] || RUN=no ;;
-              "30 13 * * *") SLOT=upcoming; [ "$OFF" = "+0200" ] || RUN=no ;;
-            esac
+            # Decide by the Swedish clock, not by which cron line fired: GitHub can start scheduled runs an hour late
+            # (and then reports the other season's line). Morning window 09:50-11:14, upcoming window 15:20-16:44.
+            # A second run in the same window is harmless: the upload ledger never posts a video twice.
+            L=$((10#$(TZ=Europe/Stockholm date +%H%M)))
+            if [ "$L" -ge 950 ] && [ "$L" -lt 1115 ]; then SLOT=morning
+            elif [ "$L" -ge 1520 ] && [ "$L" -lt 1645 ]; then SLOT=upcoming
+            else RUN=no; echo "Outside both posting windows (Sweden $(TZ=Europe/Stockholm date +%H:%M))"; fi
           fi
           if [ "$SLOT" = "slate" ]; then RUN=no; fi                  # slot "slate": only the slate job below runs
           echo "date=$DATE" >> "$GITHUB_OUTPUT"; echo "slot=$SLOT" >> "$GITHUB_OUTPUT"; echo "run=$RUN" >> "$GITHUB_OUTPUT"
@@ -214,11 +214,8 @@ jobs:
           if [ -z "$DATE" ]; then DATE=$(TZ=America/New_York date +%F); fi
           RUN=no
           if [ -n "$CRON" ]; then
-            OFF=$(TZ=Europe/Stockholm date +%z)
-            case "$CRON" in
-              "30 14 * * *") if [ "$OFF" = "+0100" ]; then RUN=yes; fi ;;
-              "30 13 * * *") if [ "$OFF" = "+0200" ]; then RUN=yes; fi ;;
-            esac
+            L=$((10#$(TZ=Europe/Stockholm date +%H%M)))      # same 15:20-16:44 Swedish window as the upcoming slot
+            if [ "$L" -ge 1520 ] && [ "$L" -lt 1645 ]; then RUN=yes; fi
             if [ "$RUN" = yes ] && [ "$DAILY" != "true" ]; then RUN=no; echo "Scheduled slate video is off (repository variable SLATE_DAILY is not 'true')"; fi
           elif [ "$IN_SLATE" = "true" ] || [ "$IN_SLOT" = "slate" ]; then
             RUN=yes
