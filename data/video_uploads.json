@@ -31,5 +31,11 @@
   "via": "manual (YouTube Studio)",
   "note": "replaces zHLYcZRorl8 (wrong slate, deleted)",
   "file": "video/out/2026-11-17/hot-2026-11-17.mp4"
+ },
+ "night-2026-11-17:tiktok": {
+  "uploaded_at": "2026-11-17T12:45:00Z",
+  "via": "manual (TikTok Studio)",
+  "note": "Last night (Nov 16 games)",
+  "file": "video/out/2026-11-17/night-2026-11-17.mp4"
  }
 }
