@@ -1,75 +1,75 @@
 {
- "board-2026-11-16:tiktok": {
-  "file": "video/out/2026-11-17/board-2026-11-17.mp4",
-  "note": "removed by TikTok (Community Guidelines)",
-  "uploaded_at": "2026-11-16T23:22:00Z",
-  "via": "manual (TikTok Studio)"
- },
- "board-2026-11-16:youtube": {
-  "file": "video/out/2026-11-17/board-2026-11-17.mp4",
-  "uploaded_at": "2026-11-16T23:16:00Z",
-  "url": "https://youtube.com/shorts/yDnXEaQi8xc",
-  "via": "manual (YouTube Studio)",
-  "video_id": "yDnXEaQi8xc"
- },
- "board-2026-11-17:youtube": {
-  "file": "video/out/2026-11-17/board-2026-11-17.mp4",
-  "privacy": "public",
-  "uploaded_at": "2026-11-17T14:57:54Z",
-  "url": "https://www.youtube.com/shorts/lb5kUV4YQjg",
-  "video_id": "lb5kUV4YQjg"
- },
- "hot-2026-11-16-van-uta:tiktok": {
-  "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
-  "note": "Boeser/DeBrusk, replaces the ANA/WSH post",
-  "uploaded_at": "2026-11-16T23:40:00Z",
-  "via": "manual (TikTok Studio)"
- },
- "hot-2026-11-16:tiktok": {
-  "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
-  "note": "wrong slate (ANA/WSH); delete in the TikTok app",
-  "uploaded_at": "2026-11-16T23:25:00Z",
-  "via": "manual (TikTok Studio)"
- },
- "hot-2026-11-16:youtube": {
-  "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
-  "note": "replaces zHLYcZRorl8 (wrong slate, deleted)",
-  "uploaded_at": "2026-11-16T23:33:00Z",
-  "url": "https://youtube.com/shorts/fWyjtzTfyTY",
-  "via": "manual (YouTube Studio)",
-  "video_id": "fWyjtzTfyTY"
- },
- "hot-2026-11-17:youtube": {
-  "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
-  "privacy": "public",
-  "uploaded_at": "2026-11-17T14:58:00Z",
-  "url": "https://www.youtube.com/shorts/t7eWIiC-wdY",
-  "video_id": "t7eWIiC-wdY"
- },
- "night-2026-11-17:tiktok": {
-  "file": "video/out/2026-11-17/night-2026-11-17.mp4",
-  "note": "Last night (Nov 16 games)",
-  "uploaded_at": "2026-11-17T12:45:00Z",
-  "via": "manual (TikTok Studio)"
- },
- "night-2026-11-17:youtube": {
-  "file": "video/out/2026-11-17/night-2026-11-17.mp4",
-  "privacy": "public",
-  "uploaded_at": "2026-11-17T13:04:43Z",
-  "url": "https://www.youtube.com/shorts/5zKyTArMdHU",
-  "video_id": "5zKyTArMdHU"
- },
- "slate-2026-11-17:tiktok": {
-  "uploaded_at": "2026-11-17T15:25:00Z",
-  "via": "manual (TikTok Studio)",
-  "note": "new format with Snap Crackle, 720p copy",
-  "file": "video/out/2026-11-17/slate-2026-11-17.mp4"
- },
- "slate-2026-11-17:youtube": {
-  "file": "video/out/2026-11-17/slate-2026-11-17.mp4",
-  "privacy": "public",
-  "uploaded_at": "2026-11-17T14:23:10Z",
-  "url": "https://www.youtube.com/watch?v=B5k0G0TIwdo",
-  "video_id": "B5k0G0TIwdo"
- }
+  "board-2026-11-16:tiktok": {
+    "file": "video/out/2026-11-17/board-2026-11-17.mp4",
+    "note": "removed by TikTok (Community Guidelines)",
+    "uploaded_at": "2026-11-16T23:22:00Z",
+    "via": "manual (TikTok Studio)"
+  },
+  "board-2026-11-16:youtube": {
+    "file": "video/out/2026-11-17/board-2026-11-17.mp4",
+    "uploaded_at": "2026-11-16T23:16:00Z",
+    "url": "https://youtube.com/shorts/yDnXEaQi8xc",
+    "via": "manual (YouTube Studio)",
+    "video_id": "yDnXEaQi8xc"
+  },
+  "board-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/board-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T14:57:54Z",
+    "url": "https://www.youtube.com/shorts/lb5kUV4YQjg",
+    "video_id": "lb5kUV4YQjg"
+  },
+  "hot-2026-11-16-van-uta:tiktok": {
+    "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
+    "note": "Boeser/DeBrusk, replaces the ANA/WSH post",
+    "uploaded_at": "2026-11-16T23:40:00Z",
+    "via": "manual (TikTok Studio)"
+  },
+  "hot-2026-11-16:tiktok": {
+    "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
+    "note": "wrong slate (ANA/WSH); delete in the TikTok app",
+    "uploaded_at": "2026-11-16T23:25:00Z",
+    "via": "manual (TikTok Studio)"
+  },
+  "hot-2026-11-16:youtube": {
+    "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
+    "note": "replaces zHLYcZRorl8 (wrong slate, deleted)",
+    "uploaded_at": "2026-11-16T23:33:00Z",
+    "url": "https://youtube.com/shorts/fWyjtzTfyTY",
+    "via": "manual (YouTube Studio)",
+    "video_id": "fWyjtzTfyTY"
+  },
+  "hot-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T14:58:00Z",
+    "url": "https://www.youtube.com/shorts/t7eWIiC-wdY",
+    "video_id": "t7eWIiC-wdY"
+  },
+  "night-2026-11-17:tiktok": {
+    "file": "video/out/2026-11-17/night-2026-11-17.mp4",
+    "note": "Last night (Nov 16 games)",
+    "uploaded_at": "2026-11-17T12:45:00Z",
+    "via": "manual (TikTok Studio)"
+  },
+  "night-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/night-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T13:04:43Z",
+    "url": "https://www.youtube.com/shorts/5zKyTArMdHU",
+    "video_id": "5zKyTArMdHU"
+  },
+  "slate-2026-11-17:tiktok": {
+    "file": "video/out/2026-11-17/slate-2026-11-17.mp4",
+    "note": "new format with Snap Crackle, 720p copy",
+    "uploaded_at": "2026-11-17T15:25:00Z",
+    "via": "manual (TikTok Studio)"
+  },
+  "slate-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/slate-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T14:23:10Z",
+    "url": "https://www.youtube.com/watch?v=B5k0G0TIwdo",
+    "video_id": "B5k0G0TIwdo"
+  }
 }
