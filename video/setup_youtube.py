@@ -33,6 +33,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--json", help="path to the client_secret_*.json file (default: newest one in Downloads)")
     ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--only", choices=["YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN"],
+                    help="hand over just this one value (e.g. to fix one GitHub secret)")
     a = ap.parse_args()
 
     path = find_json(a.json)
@@ -54,13 +56,17 @@ def main() -> int:
         return 1
 
     print("\nSigned in. Now the three GitHub secrets, one at a time.\n")
-    for i, (name, value) in enumerate((("YT_CLIENT_ID", cid), ("YT_CLIENT_SECRET", csec), ("YT_REFRESH_TOKEN", rt)), 1):
+    items = [(n, v) for n, v in (("YT_CLIENT_ID", cid), ("YT_CLIENT_SECRET", csec), ("YT_REFRESH_TOKEN", rt))
+             if not a.only or n == a.only]
+    for i, (name, value) in enumerate(items, 1):
         if not ay.copy_to_clipboard(value):
             print("Could not use the clipboard on this computer. Run: py video/auth_youtube.py --print")
             return 1
-        print(f"{i}/3  {name} is on your clipboard.")
-        print(f"     In the GitHub tab named {name}: click the Secret box, press Ctrl+V, click 'Add secret'.")
-        input("     Then press Enter here... ")
+        print(f"
+{i}/{len(items)}  {name} is on your clipboard now.")
+        print(f"     In the GitHub tab for {name}: click the big box, press Ctrl+V, click the green button.")
+        while input("     When that is done, type  done  and press Enter: ").strip().lower() != "done":
+            print("     (waiting - type done when the GitHub page has saved it)")
     ay.copy_to_clipboard(" ")
     print("\nAll three are in GitHub. Clipboard cleared.")
     ans = input(f"Delete {path.name} from Downloads now (recommended)? [Y/n] ").strip().lower()
