@@ -1,0 +1,783 @@
+{
+ "date": "2026-11-17",
+ "written": "2026-11-17T08:30+01:00",
+ "previews": [
+  {
+   "id": 2026020333,
+   "slug": "2026-11-17-lak-bos",
+   "photo": {
+    "src": "assets/previews/2026-11-17-lak-bos.webp",
+    "alt": "Charlie McAvoy of the Boston Bruins on the ice before a game",
+    "author": "Puffycoombes",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:McAvoy.jpg",
+    "pos": "center 10%"
+   },
+   "en": {
+    "kicker": "Kings at Bruins",
+    "title": "Slumping Kings open a road trip in Boston, likely without Panarin",
+    "deck": "Los Angeles has lost four straight and starts a five-game road trip at TD Garden, with Artemi Panarin listed day-to-day after missing Saturday's game for a death in his family. Boston has dropped two in a row by a combined 11-4 but is 8-3-0 at home. The market likes the Bruins more than the model does.",
+    "news": [
+     "Panarin missed the 3-2 loss to Calgary on Saturday after his grandfather died. Erik Gustafsson has missed three games and Jakub Dvorak is out until at least Nov. 28.",
+     "Peter Laviolette after the fourth straight loss: the Kings can feel themselves \"sliding a little bit.\"",
+     "Boston lost 5-2 to Montreal and 6-2 to Minnesota. Before that, no opponent had scored more than four goals against the Bruins this season.",
+     "Jeremy Swayman is the projected Bruins starter. The Kings' goalie was not confirmed overnight. James Hagens (back) is out until at least Nov. 21."
+    ],
+    "records": [
+     "Los Angeles is 0-10-1 this season when it scores two goals or fewer, and 3-7-0 in its last 10.",
+     "David Pastrnak ended a four-game goal drought against Minnesota with his team-high ninth goal.",
+     "Boston won the first meeting 4-1 in Los Angeles on Oct. 17. This is the last of the two meetings.",
+     "The last seven meetings averaged 5.4 goals."
+    ],
+    "betting": [
+     "Market: Bruins 1.68, Kings 2.23, about 57–43 without the margin. The model has it 53–47, so it is warmer on the Kings than the price.",
+     "Total: over 5.5 at 1.74 is about 55% after the margin. The model says 53%, close to the market, and the head-to-head history sits right around the line.",
+     "Player chances (model): Pastrnak 1+ point 72% (market about 67%), Kempe goal 35%, McAvoy 1+ point 48% (market about 55%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Kings mot Bruins",
+    "title": "Kings i formsvacka inleder bortaresan i Boston, troligen utan Panarin",
+    "deck": "Los Angeles har förlorat fyra raka och inleder en resa med fem bortamatcher i TD Garden, med Artemi Panarin listad som osäker efter att ha missat lördagens match på grund av ett dödsfall i familjen. Boston har förlorat två i rad med sammanlagt 4–11 men är 8-3-0 hemma. Marknaden tror mer på Bruins än vad modellen gör.",
+    "news": [
+     "Panarin missade 2–3-förlusten mot Calgary i lördags efter att hans farfar gått bort. Erik Gustafsson har missat tre matcher och Jakub Dvorak är borta till minst den 28 november.",
+     "Peter Laviolette efter fjärde raka förlusten: Kings känner att de \"glider lite\".",
+     "Boston förlorade med 2–5 mot Montreal och 2–6 mot Minnesota. Innan dess hade inget lag gjort mer än fyra mål mot Bruins den här säsongen.",
+     "Jeremy Swayman väntas stå för Bruins. Kings målvakt var inte bekräftad under natten. James Hagens (rygg) är borta till minst den 21 november."
+    ],
+    "records": [
+     "Los Angeles är 0-10-1 den här säsongen när laget gör två mål eller färre, och 3-7-0 de senaste tio.",
+     "David Pastrnak bröt en måltorka på fyra matcher mot Minnesota med lagets nionde och högsta målnotering.",
+     "Boston vann första mötet med 4–1 i Los Angeles den 17 oktober. Det här är det sista av två möten.",
+     "De sju senaste mötena hade i snitt 5,4 mål."
+    ],
+    "betting": [
+     "Marknaden: Bruins 1,68, Kings 2,23, ungefär 57–43 utan marginal. Modellen säger 53–47 och är alltså varmare på Kings än priset.",
+     "Totalt: över 5,5 på 1,74 är cirka 55 % utan marginal. Modellen säger 53 %, nära marknaden, och de inbördes mötena ligger precis kring linjen.",
+     "Spelarchanser (modellen): Pastrnak 1+ poäng 72 % (marknaden cirka 67 %), Kempe mål 35 %, McAvoy 1+ poäng 48 % (marknaden cirka 55 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "Field Level Media via 97.1 The Ticket",
+     "url": "https://www.theticket.com/2026/11/16/bruins-aim-to-recover-form-host-struggling-kings/"
+    },
+    {
+     "name": "AP via ABC7",
+     "url": "https://abc7.com/post/kings-bring-4-game-losing-streak-matchup-bruins/20043838/"
+    },
+    {
+     "name": "CBS Sports preview",
+     "url": "https://www.cbssports.com/nhl/gametracker/preview/NHL_20261117_LA@BOS/"
+    }
+   ]
+  },
+  {
+   "id": 2026020335,
+   "slug": "2026-11-17-edm-fla",
+   "photo": {
+    "src": "assets/previews/2026-11-17-edm-fla.webp",
+    "alt": "Leon Draisaitl of the Edmonton Oilers battling for position",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Shore_10_2_(53232139738).jpg",
+    "pos": "center 15%"
+   },
+   "en": {
+    "kicker": "Oilers at Panthers",
+    "title": "McDavid's 22-game point streak meets the Panthers in a Final rematch",
+    "deck": "Edmonton has won five straight and has not lost in regulation on the road this season. Connor McDavid has a point in all 22 games and Leon Draisaitl leads the league with 20 goals. Florida is still waiting on Aleksander Barkov and Brad Marchand, and the model and market both see a near coin flip.",
+    "news": [
+     "McDavid leads the NHL with 53 points (12 goals, 41 assists). His 22-game point streak to open the season is tied for the fifth-longest in NHL history.",
+     "Draisaitl scored his league-leading 20th goal in Sunday's 5-2 win in Philadelphia and has points in nine straight games.",
+     "Barkov has played only two games this season and Marchand has been out since the second game. Florida Hockey Now says both could return as early as Tuesday, but neither is confirmed.",
+     "Jacob Markstrom is expected in the Florida net. Edmonton's starter was not confirmed overnight, and Ryan Nugent-Hopkins is day-to-day."
+    ],
+    "records": [
+     "Matthew Tkachuk reached 700 career points on Sunday and leads Florida with 30 points.",
+     "Sam Reinhart leads the Panthers with 12 goals. Florida is 3-0-1 in its last four.",
+     "Edmonton's power play is converting about 34%, third in the league.",
+     "The last six meetings averaged 7.5 goals. Florida beat Edmonton in the 2024 and 2025 Stanley Cup Finals."
+    ],
+    "betting": [
+     "Market: Panthers 1.83, Oilers 2.02, about 52–48 without the margin. The model has 54–46, a touch more on Florida, so the two mostly agree.",
+     "Total: over 5.5 at 1.64 is about 58%. The model says 56%, and the high-scoring history between these teams fits the over side of the line.",
+     "Player chances (model): McDavid 1+ point 83% (market about 77%), Reinhart goal 41%, Bouchard 1+ point 63%, in line with the market."
+    ]
+   },
+   "sv": {
+    "kicker": "Oilers mot Panthers",
+    "title": "McDavids poängsvit på 22 matcher möter Panthers i en finalrepris",
+    "deck": "Edmonton har vunnit fem raka och har inte förlorat på full tid borta den här säsongen. Connor McDavid har poäng i alla 22 matcherna och Leon Draisaitl leder ligan med 20 mål. Florida väntar fortfarande på Aleksander Barkov och Brad Marchand, och både modellen och marknaden ser en jämn match.",
+    "news": [
+     "McDavid leder NHL med 53 poäng (12 mål, 41 assist). Hans poängsvit på 22 matcher från säsongsstarten är delad femte längst i NHL:s historia.",
+     "Draisaitl gjorde sitt ligaledande 20:e mål i söndagens 5–2-seger i Philadelphia och har poäng i nio raka matcher.",
+     "Barkov har bara spelat två matcher den här säsongen och Marchand har varit borta sedan den andra. Florida Hockey Now skriver att båda kan vara tillbaka redan på tisdag, men inget är bekräftat.",
+     "Jacob Markstrom väntas stå för Florida. Edmontons målvakt var inte bekräftad under natten, och Ryan Nugent-Hopkins är osäker."
+    ],
+    "records": [
+     "Matthew Tkachuk nådde 700 poäng i karriären i söndags och leder Florida med 30 poäng.",
+     "Sam Reinhart leder Panthers med 12 mål. Florida är 3-0-1 de senaste fyra.",
+     "Edmontons powerplay sätter cirka 34 %, trea i ligan.",
+     "De sex senaste mötena hade i snitt 7,5 mål. Florida slog Edmonton i Stanley Cup-finalerna 2024 och 2025."
+    ],
+    "betting": [
+     "Marknaden: Panthers 1,83, Oilers 2,02, ungefär 52–48 utan marginal. Modellen säger 54–46, en aning mer för Florida, så de är i stort sett överens.",
+     "Totalt: över 5,5 på 1,64 är cirka 58 %. Modellen säger 56 %, och de målrika mötena lagen emellan passar översidan av linjen.",
+     "Spelarchanser (modellen): McDavid 1+ poäng 83 % (marknaden cirka 77 %), Reinhart mål 41 %, Bouchard 1+ poäng 63 %, i linje med marknaden."
+    ]
+   },
+   "sources": [
+    {
+     "name": "Field Level Media via 97.1 The Ticket",
+     "url": "https://www.theticket.com/2026/11/16/oilers-look-to-continue-historic-road-streak-at-panthers/"
+    },
+    {
+     "name": "Florida Hockey Now",
+     "url": "https://floridahockeynow.com/florida-panthers-hitting-their-stride-at-a-good-time-with-oilers-up-next/"
+    },
+    {
+     "name": "AP via Yahoo Sports",
+     "url": "https://sports.yahoo.com/articles/oilers-bring-5-game-win-091109854.html"
+    }
+   ]
+  },
+  {
+   "id": 2026020336,
+   "slug": "2026-11-17-cbj-nyi",
+   "photo": {
+    "src": "assets/previews/2026-11-17-cbj-nyi.webp",
+    "alt": "Zach Werenski of the Columbus Blue Jackets defending",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Columbus_Blue_Jackets_at_Seattle_Kraken_-_2024-01-28_-_Brandon_Tanev_and_Zach_Werenski_(53496790100).jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Blue Jackets at Islanders",
+    "title": "Blue Jackets, last in the East, play again without Bowness behind the bench",
+    "deck": "Columbus has lost four straight in regulation and coach Rick Bowness is expected to miss a third game with a health issue. The Islanders come home healthier, with Mathew Barzal back and two big wins on the West trip. The market rates New York a little higher than the model does.",
+    "news": [
+     "Assistant Don Granato has run the Columbus bench for two games. Bowness plans to rejoin the team during the four-game road trip.",
+     "Columbus led Philadelphia 2-0 on Saturday and lost 4-3, the third straight loss in which it outshot the opponent. Zach Werenski: \"We're behind the 8-ball.\"",
+     "Sean Monahan and Conor Garland are among the Columbus players who are out.",
+     "Barzal made his season debut on Saturday after a knee injury. Bo Horvat, Jean-Gabriel Pageau and Logan Stanley are day-to-day. Neither starting goalie was confirmed overnight."
+    ],
+    "records": [
+     "The Islanders beat Los Angeles 5-2 and Anaheim 6-2, their first back-to-back regulation wins since October.",
+     "Matthew Schaefer has 6 goals and 7 assists in his last 10 games.",
+     "Columbus is last in the Eastern Conference with a -15 goal difference. Its last win came on Nov. 5.",
+     "This is the first meeting of the season. The last 11 meetings averaged 5.2 goals."
+    ],
+    "betting": [
+     "Market: Islanders 1.71, Blue Jackets 2.18, about 56–44 without the margin. The model has it 53–47, a bit warmer on Columbus, whose shot share has been better than its results.",
+     "Total: over 5.5 at 1.77 is about 54%. The model says 55%, so the two agree, while the low-scoring head-to-head history leans under.",
+     "Player chances (model): Horvat 1+ point 62%, Schaefer 1+ point 62%, Werenski 1+ point 60%. All three match the market almost exactly."
+    ]
+   },
+   "sv": {
+    "kicker": "Blue Jackets mot Islanders",
+    "title": "Blue Jackets, sist i öst, spelar igen utan Bowness i båset",
+    "deck": "Columbus har förlorat fyra raka på full tid och tränaren Rick Bowness väntas missa en tredje match på grund av hälsoskäl. Islanders kommer hem med en friskare trupp, med Mathew Barzal tillbaka och två stora segrar på västresan. Marknaden värderar New York lite högre än modellen.",
+    "news": [
+     "Assisterande tränaren Don Granato har lett Columbus i två matcher. Bowness planerar att ansluta under resan med fyra bortamatcher.",
+     "Columbus ledde med 2–0 mot Philadelphia i lördags men förlorade med 3–4, tredje raka förlusten där laget sköt mer än motståndaren. Zach Werenski: \"Vi ligger efter.\"",
+     "Sean Monahan och Conor Garland är bland de Columbus-spelare som saknas.",
+     "Barzal gjorde säsongsdebut i lördags efter en knäskada. Bo Horvat, Jean-Gabriel Pageau och Logan Stanley är osäkra. Ingen av målvakterna var bekräftad under natten."
+    ],
+    "records": [
+     "Islanders slog Los Angeles med 5–2 och Anaheim med 6–2, lagets första två raka segrar på full tid sedan oktober.",
+     "Matthew Schaefer har 6 mål och 7 assist på de tio senaste matcherna.",
+     "Columbus är sist i Östra konferensen med målskillnad -15. Senaste segern kom den 5 november.",
+     "Det är säsongens första möte. De elva senaste mötena hade i snitt 5,2 mål."
+    ],
+    "betting": [
+     "Marknaden: Islanders 1,71, Blue Jackets 2,18, ungefär 56–44 utan marginal. Modellen säger 53–47, lite varmare på Columbus, vars skottandel varit bättre än resultaten.",
+     "Totalt: över 5,5 på 1,77 är cirka 54 %. Modellen säger 55 %, så de är överens, medan de målsnåla inbördes mötena talar för under.",
+     "Spelarchanser (modellen): Horvat 1+ poäng 62 %, Schaefer 1+ poäng 62 %, Werenski 1+ poäng 60 %. Alla tre ligger nästan exakt på marknaden."
+    ]
+   },
+   "sources": [
+    {
+     "name": "Field Level Media via Lufkin Daily News",
+     "url": "https://lufkindailynews.com/news_reuters/sports/islanders-regain-health-momentum-ahead-of-blue-jackets-clash/article_c200ccec-d4a8-598a-a65a-359c74fb9db8.html"
+    },
+    {
+     "name": "AP via ABC News",
+     "url": "https://abcnews.com/Sports/wireStory/blue-jackets-bring-losing-streak-game-islanders-138171405"
+    }
+   ]
+  },
+  {
+   "id": 2026020337,
+   "slug": "2026-11-17-buf-phi",
+   "photo": {
+    "src": "assets/previews/2026-11-17-buf-phi.webp",
+    "alt": "Travis Konecny of the Philadelphia Flyers driving to the net",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Philadelphia_Flyers_at_Seattle_Kraken_-_December_29,_2023_-_Jamie_Oleksiak,_Travis_Konecny,_and_Alexander_Wennberg_(53431069532).jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Sabres at Flyers",
+    "title": "Two struggling teams, and a goalie question in Buffalo",
+    "deck": "Buffalo is 0-3-1 in its last four, has been outscored 17-6 and is shooting 5.7% in that stretch. Philadelphia heard \"Fire Tocchet\" chants in Sunday's loss to Edmonton. This is one of the few games where the model leans the other way from the market, slightly toward the Flyers.",
+    "news": [
+     "Ukko-Pekka Luukkonen has not played since allowing five goals in Tampa. Alex Lyon started the last two games, and Lyon, Luukkonen and Colten Ellis all took turns at Monday's practice.",
+     "Jiri Kulich moved back to the top-line center spot at practice. Matt Grzelcyk, Konsta Helenius and Justin Danforth are out.",
+     "The Flyers went 0-for-8 on the power play in a 5-2 loss to Edmonton. Rick Tocchet said he is \"very comfortable\" with the team.",
+     "Philadelphia has rotated Dan Vladar and Joseph Woll. Denver Barkey is day-to-day with an illness."
+    ],
+    "records": [
+     "Buffalo has been shut out twice this season, both times by Dallas. Tage Thompson (12) and Jack Quinn (9) are its only players with more than four goals.",
+     "Matvei Michkov has a four-game point streak and leads the Flyers with 17 points.",
+     "Philadelphia won the first meeting 3-1 on Oct. 21, with two goals from Cole Knuble.",
+     "The last 10 meetings averaged 7.2 goals."
+    ],
+    "betting": [
+     "Market: Sabres 1.85, Flyers 2.00, about 52–48 for Buffalo without the margin. The model has it 52–48 for Philadelphia, a small disagreement in the home team's favour.",
+     "Total: over 5.5 at 1.70 is about 56%. The model says 54%, a little lower, even though past meetings have been high-scoring.",
+     "Player chances (model): Zegras 1+ point 54%, Benson 1+ point 52% (the model sees him as due after a seven-game goal drought), Sanheim 1+ point 39% (market about 35%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Sabres mot Flyers",
+    "title": "Två lag i kris, och en målvaktsfråga i Buffalo",
+    "deck": "Buffalo är 0-3-1 de senaste fyra, har förlorat målskillnaden med 6–17 och skjuter 5,7 % under perioden. I Philadelphia ropade publiken \"Fire Tocchet\" under söndagens förlust mot Edmonton. Det är en av få matcher där modellen lutar åt andra hållet än marknaden, lite mot Flyers.",
+    "news": [
+     "Ukko-Pekka Luukkonen har inte spelat sedan han släppte in fem mål i Tampa. Alex Lyon har startat de två senaste, och Lyon, Luukkonen och Colten Ellis turades om på måndagens träning.",
+     "Jiri Kulich flyttades tillbaka till center i förstakedjan på träningen. Matt Grzelcyk, Konsta Helenius och Justin Danforth är borta.",
+     "Flyers gick 0 av 8 i powerplay i 2–5-förlusten mot Edmonton. Rick Tocchet säger att han känner sig \"väldigt bekväm\" med laget.",
+     "Philadelphia har växlat mellan Dan Vladar och Joseph Woll. Denver Barkey är osäker på grund av sjukdom."
+    ],
+    "records": [
+     "Buffalo har hållits mållöst två gånger den här säsongen, båda gångerna av Dallas. Tage Thompson (12) och Jack Quinn (9) är de enda med fler än fyra mål.",
+     "Matvei Michkov har poäng i fyra raka matcher och leder Flyers med 17 poäng.",
+     "Philadelphia vann första mötet med 3–1 den 21 oktober, med två mål av Cole Knuble.",
+     "De tio senaste mötena hade i snitt 7,2 mål."
+    ],
+    "betting": [
+     "Marknaden: Sabres 1,85, Flyers 2,00, ungefär 52–48 för Buffalo utan marginal. Modellen säger 52–48 för Philadelphia, en liten skillnad till hemmalagets fördel.",
+     "Totalt: över 5,5 på 1,70 är cirka 56 %. Modellen säger 54 %, lite lägre, trots att tidigare möten varit målrika.",
+     "Spelarchanser (modellen): Zegras 1+ poäng 54 %, Benson 1+ poäng 52 % (modellen ser honom som på tur efter sju matcher utan mål), Sanheim 1+ poäng 39 % (marknaden cirka 35 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via ABC News",
+     "url": "https://abcnews.com/Sports/wireStory/buffalo-takes-losing-streak-game-philadelphia-138171408"
+    },
+    {
+     "name": "NHL.com: Sabres practice",
+     "url": "https://www.nhl.com/sabres/news/buffalo-sabres-practice-lines-lineup-jiri-kulich"
+    },
+    {
+     "name": "Philadelphia Inquirer",
+     "url": "https://inquirer.com/flyers/flyers-oilers-score-cole-knuble-noah-cates-leon-draisaitl-20261115.html"
+    }
+   ]
+  },
+  {
+   "id": 2026020341,
+   "slug": "2026-11-17-ott-wpg",
+   "photo": {
+    "src": "assets/previews/2026-11-17-ott-wpg.webp",
+    "alt": "Dylan Samberg of the Winnipeg Jets during a game",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Winnipeg_Jets_at_Seattle_Kraken_-_2024-03-08_-_Dylan_Samberg_(53576516497).jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Senators at Jets",
+    "title": "Scheifele's record-setting Jets put a six-game streak on the line against Ullmark",
+    "deck": "Winnipeg has won six straight and scored 32 goals doing it, twice coming back from 4-0 down. Mark Scheifele just became the franchise's all-time points leader. Ottawa brings a five-game point streak and Linus Ullmark, who has allowed 1.47 goals a game, and both the model and market make the Senators slight favourites.",
+    "news": [
+     "Scheifele had a goal and three assists against Chicago to pass 933 points and become the Jets' all-time leader in points and assists. He was named the NHL's first star of the week.",
+     "Stuart Skinner has won his last five starts but was pulled against Chicago. He and Nico Daws have been sharing the net. Dylan DeMelo is on injured reserve.",
+     "Ullmark earned his 200th career win on Saturday against Pittsburgh and is 9-1-0 with a .939 save percentage.",
+     "Ottawa recalled Tyler Boucher, the 10th pick in 2021, who is expected to make his NHL debut. Nick Cousins is out 7–10 days."
+    ],
+    "records": [
+     "Scheifele has 15 goals and 22 assists in 34 career games against Ottawa. He and Kyle Connor lead Winnipeg with 26 points each.",
+     "Tim Stützle leads the Senators with 11 goals and 25 points. The model flags his finishing as running hot.",
+     "Ottawa is 4-0-1 in its last five and has won four of its last six games in Winnipeg.",
+     "The last six meetings averaged 5.0 goals."
+    ],
+    "betting": [
+     "Market: Senators 1.81, Jets 2.04, about 53–47 without the margin. The model has 54–46 for Ottawa, so they agree.",
+     "Total: over 5.5 at 1.70 is about 56%. The model says 52%, lower than the market, which matches the low-scoring history and Ullmark's form.",
+     "Player chances (model): Scheifele 1+ point 70% (market about 64%), Stützle 1+ point 64%, Sanderson 1+ point 48% (market about 54%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Senators mot Jets",
+    "title": "Rekordmannen Scheifeles Jets sätter sex raka segrar på spel mot Ullmark",
+    "deck": "Winnipeg har vunnit sex raka och gjort 32 mål under sviten, två gånger efter att ha legat under med 0–4. Mark Scheifele har just blivit klubbens främsta poänggörare genom tiderna. Ottawa kommer med poäng i fem raka och Linus Ullmark, som släppt in 1,47 mål per match, och både modellen och marknaden gör Senators till knappa favoriter.",
+    "news": [
+     "Scheifele gjorde ett mål och tre assist mot Chicago och nådde 933 poäng, vilket gör honom till Jets bästa genom tiderna i både poäng och assist. Han utsågs till veckans främste spelare i NHL.",
+     "Stuart Skinner har vunnit sina fem senaste starter men byttes ut mot Chicago. Han och Nico Daws har delat på buren. Dylan DeMelo är skadad.",
+     "Ullmark tog sin 200:e seger i karriären i lördags mot Pittsburgh och är 9-1-0 med 93,9 % räddningar.",
+     "Ottawa har kallat upp Tyler Boucher, tia i draften 2021, som väntas göra NHL-debut. Nick Cousins är borta 7–10 dagar."
+    ],
+    "records": [
+     "Scheifele har 15 mål och 22 assist på 34 matcher mot Ottawa i karriären. Han och Kyle Connor leder Winnipeg med 26 poäng var.",
+     "Tim Stützle leder Senators med 11 mål och 25 poäng. Modellen flaggar att hans avslut går varmt.",
+     "Ottawa är 4-0-1 de senaste fem och har vunnit fyra av de sex senaste matcherna i Winnipeg.",
+     "De sex senaste mötena hade i snitt 5,0 mål."
+    ],
+    "betting": [
+     "Marknaden: Senators 1,81, Jets 2,04, ungefär 53–47 utan marginal. Modellen säger 54–46 för Ottawa, så de är överens.",
+     "Totalt: över 5,5 på 1,70 är cirka 56 %. Modellen säger 52 %, lägre än marknaden, vilket stämmer med de målsnåla mötena och Ullmarks form.",
+     "Spelarchanser (modellen): Scheifele 1+ poäng 70 % (marknaden cirka 64 %), Stützle 1+ poäng 64 %, Sanderson 1+ poäng 48 % (marknaden cirka 54 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via Southern Sports Today",
+     "url": "https://www.southernsportstoday.com/2026/11/16/surging-jets-senators-put-streaks-on-line/"
+    },
+    {
+     "name": "The Hockey Writers: Jets week ahead",
+     "url": "https://thehockeywriters.com/jets-week-ahead-schedule-storylines-six-game-streak-scheifele-milestone-demelo-injury-and-more"
+    },
+    {
+     "name": "Daily Faceoff: Boucher recall",
+     "url": "https://www.dailyfaceoff.com/news/ottawa-senators-recall-tyler-boucher-expected-make-nhl-debut-tuesday-ahl-belleville-news"
+    }
+   ]
+  },
+  {
+   "id": 2026020334,
+   "slug": "2026-11-17-wsh-tbl",
+   "photo": {
+    "src": "assets/previews/2026-11-17-wsh-tbl.webp",
+    "alt": "Alex Ovechkin of the Washington Capitals shooting from one knee",
+    "author": "All-Pro Reels",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Alex_Ovechkin_(51760235349).jpg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Capitals at Lightning",
+    "title": "Ovechkin's drought and Carlson's first game against his old team",
+    "deck": "Alex Ovechkin has gone 13 games without a goal, one short of the longest drought of his career. John Carlson, who reached 800 career points last week, faces Washington for the first time since joining Tampa Bay. The Lightning are 8-1-0 at home, and the market prices them a little higher than the model.",
+    "news": [
+     "Ovechkin's last goal came on Oct. 11 against Seattle. He has one goal in 18 games and is playing the least ice time of his career.",
+     "Carlson had five points against Buffalo on Nov. 11, which took him to 800 career points.",
+     "Brayden Point is on injured reserve but practicing. Anthony Cirelli and Erik Cernak are day-to-day and were back at practice.",
+     "Washington lost twice to New Jersey, 5-2 and 7-4. Rasmus Sandin and Vincent Desharnais travelled but have not been activated."
+    ],
+    "records": [
+     "Tampa Bay won the first meeting 3-1. Nikita Kucherov has 8 goals and 20 assists.",
+     "Pierre-Luc Dubois has scored in four straight games, and Alex Tuch has six goals in his last 10.",
+     "Cole Hutson leads all NHL rookies in scoring.",
+     "83% of Washington's games have gone over 5.5 goals."
+    ],
+    "betting": [
+     "Market: Lightning 1.62, Capitals 2.38, about 60–40 without the margin. The model has it 57–43, slightly warmer on Washington.",
+     "Total: over 5.5 at 1.57 is about 60%. The model says 57%, a bit below the market, though both teams' games have gone over often this season.",
+     "Player chances (model): Guentzel 1+ point 69% (market about 64%), Tuch 1+ point 51% (market about 46%), Carlson 1+ point 47% (market about 53%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Capitals mot Lightning",
+    "title": "Ovechkins måltorka och Carlsons första match mot sitt gamla lag",
+    "deck": "Alex Ovechkin har gått 13 matcher utan mål, en från den längsta torkan i karriären. John Carlson, som nådde 800 poäng i karriären förra veckan, möter Washington för första gången sedan han kom till Tampa Bay. Lightning är 8-1-0 hemma, och marknaden prisar dem lite högre än modellen.",
+    "news": [
+     "Ovechkins senaste mål kom den 11 oktober mot Seattle. Han har ett mål på 18 matcher och spelar mindre än någonsin i karriären.",
+     "Carlson gjorde fem poäng mot Buffalo den 11 november och nådde därmed 800 poäng i karriären.",
+     "Brayden Point är skadad men tränar. Anthony Cirelli och Erik Cernak är osäkra men var tillbaka på träningen.",
+     "Washington förlorade två gånger mot New Jersey, 2–5 och 4–7. Rasmus Sandin och Vincent Desharnais reste med men är inte aktiverade."
+    ],
+    "records": [
+     "Tampa Bay vann första mötet med 3–1. Nikita Kucherov har 8 mål och 20 assist.",
+     "Pierre-Luc Dubois har gjort mål i fyra raka matcher, och Alex Tuch har sex mål på de tio senaste.",
+     "Cole Hutson leder poängligan bland NHL:s rookies.",
+     "83 % av Washingtons matcher har gått över 5,5 mål."
+    ],
+    "betting": [
+     "Marknaden: Lightning 1,62, Capitals 2,38, ungefär 60–40 utan marginal. Modellen säger 57–43, lite varmare på Washington.",
+     "Totalt: över 5,5 på 1,57 är cirka 60 %. Modellen säger 57 %, något under marknaden, även om båda lagens matcher ofta gått över den här säsongen.",
+     "Spelarchanser (modellen): Guentzel 1+ poäng 69 % (marknaden cirka 64 %), Tuch 1+ poäng 51 % (marknaden cirka 46 %), Carlson 1+ poäng 47 % (marknaden cirka 53 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via ABC News",
+     "url": "https://abcnews.com/amp/Sports/wireStory/lightning-host-capitals-eastern-conference-play-138171411"
+    },
+    {
+     "name": "Russian Machine Never Breaks",
+     "url": "https://russianmachineneverbreaks.com/2026/11/16/alex-ovechkin-is-more-cursed-than-cooked-so-we-hired-an-etsy-witch/"
+    },
+    {
+     "name": "Bolts Breakdown: week 7",
+     "url": "https://boltsbreakdown.substack.com/p/tampa-bay-lightning-week-7-recap"
+    }
+   ]
+  },
+  {
+   "id": 2026020338,
+   "slug": "2026-11-17-tor-chi",
+   "photo": {
+    "src": "assets/previews/2026-11-17-tor-chi.webp",
+    "alt": "Auston Matthews of the Toronto Maple Leafs carrying the puck",
+    "author": "All-Pro Reels from District of Columbia, USA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:2022-02-28_Auston_Matthews.jpeg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Maple Leafs at Blackhawks",
+    "title": "Hiller's Leafs try to stop a six-game slide in Chicago",
+    "deck": "Toronto lost all six games of its homestand in regulation, its first such home streak since 1985, and has scored 1.4 goals a game over its last five. Chicago has lost 10 of 12 and blew a 4-0 lead on Saturday. This is where the model and the market disagree most on Tuesday: the model sees a coin flip, the market makes Toronto a clear favourite.",
+    "news": [
+     "Jim Hiller, hired in the summer after Craig Berube was dismissed, said the Leafs \"deserved better\" after the 1-0 loss to Edmonton. Some columns are already calling for a change, but there has been no word from the team.",
+     "Sergei Bobrovsky (.881) is the projected starter. Morgan Rielly (lower body) skated in a regular jersey but is day-to-day. Kirill Marchenko and Colton Sissons are week-to-week.",
+     "Chicago led Winnipeg 4-0 and lost in a shootout. Connor Bedard scored his sixth power-play goal.",
+     "Bedard has publicly backed coach Jeff Blashill. Bowen Byram is out for Chicago."
+    ],
+    "records": [
+     "Toronto was outscored 23-9 on the homestand and is 2-8-0 in its last 10.",
+     "Auston Matthews has 12 goals and 29 points. William Nylander has five goals in his last 10 games.",
+     "Chicago allows 4.1 goals a game, and its shooting plus save percentage (PDO 0.964) is among the league's lowest.",
+     "This is the first meeting of the season. The last six averaged 5.7 goals."
+    ],
+    "betting": [
+     "Market: Maple Leafs 1.65, Blackhawks 2.30, about 58–42 without the margin. The model has it 51–49, much warmer on Chicago than the price.",
+     "Total: over 5.5 at 1.60 is about 59%. The model says 55%, lower than the market, with Toronto scoring so little lately.",
+     "Player chances (model): Bedard 1+ point 69% (market about 66%), Matthews goal 40% (market about 50% with the margin), Matthews 1+ point 67%."
+    ]
+   },
+   "sv": {
+    "kicker": "Maple Leafs mot Blackhawks",
+    "title": "Hillers Leafs försöker bryta sex raka förluster i Chicago",
+    "deck": "Toronto förlorade alla sex matcherna på hemmaserien på full tid, första gången sedan 1985, och har gjort 1,4 mål per match de senaste fem. Chicago har förlorat tio av tolv och tappade en 4–0-ledning i lördags. Här är modellen och marknaden som mest oense på tisdagen: modellen ser en slantsingling, marknaden gör Toronto till klar favorit.",
+    "news": [
+     "Jim Hiller, som anställdes i somras efter att Craig Berube fått gå, sa att Leafs \"förtjänade bättre\" efter 0–1 mot Edmonton. Vissa krönikörer kräver redan en förändring, men klubben har inte sagt något.",
+     "Sergei Bobrovsky (88,1 %) väntas starta. Morgan Rielly (underkropp) tränade i vanlig tröja men är osäker. Kirill Marchenko och Colton Sissons är borta veckor framåt.",
+     "Chicago ledde med 4–0 mot Winnipeg och förlorade på straffar. Connor Bedard gjorde sitt sjätte powerplaymål.",
+     "Bedard har offentligt backat tränaren Jeff Blashill. Bowen Byram är borta för Chicago."
+    ],
+    "records": [
+     "Toronto förlorade målskillnaden med 9–23 på hemmaserien och är 2-8-0 de senaste tio.",
+     "Auston Matthews har 12 mål och 29 poäng. William Nylander har fem mål på de tio senaste.",
+     "Chicago släpper in 4,1 mål per match, och lagets skott- plus räddningsprocent (PDO 0,964) hör till ligans lägsta.",
+     "Det är säsongens första möte. De sex senaste hade i snitt 5,7 mål."
+    ],
+    "betting": [
+     "Marknaden: Maple Leafs 1,65, Blackhawks 2,30, ungefär 58–42 utan marginal. Modellen säger 51–49, mycket varmare på Chicago än priset.",
+     "Totalt: över 5,5 på 1,60 är cirka 59 %. Modellen säger 55 %, lägre än marknaden, när Toronto gjort så få mål på sistone.",
+     "Spelarchanser (modellen): Bedard 1+ poäng 69 % (marknaden cirka 66 %), Matthews mål 40 % (marknaden cirka 50 % med marginal), Matthews 1+ poäng 67 %."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP via Yahoo Sports",
+     "url": "https://sports.yahoo.com/articles/maple-leafs-come-matchup-against-091109012.html"
+    },
+    {
+     "name": "The Hockey News: Hiller",
+     "url": "https://thehockeynews.com/nhl/toronto-maple-leafs/latest-news/jim-hiller-insists-he-sees-lots-of-hope-as-maple-leafs-drop-fifth-straight-at-home-in-regulation-for-the-first-time-in-35-years"
+    },
+    {
+     "name": "The Leafs Nation: injuries",
+     "url": "https://theleafsnation.com/news/toronto-maple-leafs-injury-news-kirill-marchenko-colton-sissons-week-to-week-morgan-rielly-day-to-day-2"
+    }
+   ]
+  },
+  {
+   "id": 2026020339,
+   "slug": "2026-11-17-ana-stl",
+   "photo": {
+    "src": "assets/previews/2026-11-17-ana-stl.webp",
+    "alt": "Robert Thomas of the St. Louis Blues lining up for a faceoff",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:St._Louis_Blues_at_Seattle_Kraken_-_2024-01-26_-_Alexander_Wennberg_and_Robert_Thomas_(53492182776).jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Ducks at Blues",
+    "title": "Gauthier takes a nine-game goal streak into St. Louis",
+    "deck": "Cutter Gauthier has scored in nine straight games, the NHL's longest goal streak in 29 years and two short of Teemu Selanne's franchise record. Anaheim is 7-3-0 on the road, while St. Louis has averaged 1.9 goals a game over its last 10. The model and the market have the Blues as almost the same favourite.",
+    "news": [
+     "Gauthier has 18 goals, 10 of them on the power play, and has 14 goals in November alone, joining Wayne Gretzky and Mario Lemieux in that company.",
+     "Beckett Sennecke had two goals and an assist in Sunday's 6-1 win over Calgary and has 26 points in 21 games. Anaheim had not named a starter overnight.",
+     "Joel Hofer has started four straight for St. Louis and is likely again. Philip Broberg and Aleksanteri Kaskimaki are day-to-day.",
+     "Mason McTavish faces his former team for the first time since moving to St. Louis."
+    ],
+    "records": [
+     "The Blues' penalty kill is 15-for-15 against Anaheim over the last four meetings.",
+     "Robert Thomas has points in seven of his last eight games against the Ducks.",
+     "86% of Anaheim's games have gone over 5.5 goals, against 45% for St. Louis.",
+     "The last nine meetings averaged 6.9 goals."
+    ],
+    "betting": [
+     "Market: Blues 1.70, Ducks 2.20, about 56–44 without the margin. The model has 56–44 as well, so there is no gap on the winner.",
+     "Total: over 5.5 at 1.61 is about 59%. The model says 57%, close to the market, with Anaheim's high-event games against Hofer's .921.",
+     "Player chances (model): Thomas 1+ point 66%, Granlund 1+ point 57%, LaCombe 1+ point 52%. All three are within two points of the market."
+    ]
+   },
+   "sv": {
+    "kicker": "Ducks mot Blues",
+    "title": "Gauthier tar med sig en målsvit på nio matcher till St. Louis",
+    "deck": "Cutter Gauthier har gjort mål i nio raka matcher, NHL:s längsta målsvit på 29 år och två från Teemu Selännes klubbrekord. Anaheim är 7-3-0 borta, medan St. Louis har gjort 1,9 mål per match de senaste tio. Modellen och marknaden har Blues som nästan exakt lika stora favoriter.",
+    "news": [
+     "Gauthier har 18 mål, varav 10 i powerplay, och 14 mål bara i november, vilket placerar honom i sällskap med Wayne Gretzky och Mario Lemieux.",
+     "Beckett Sennecke gjorde två mål och en assist i söndagens 6–1 mot Calgary och har 26 poäng på 21 matcher. Anaheim hade inte utsett någon målvakt under natten.",
+     "Joel Hofer har startat fyra raka för St. Louis och väntas göra det igen. Philip Broberg och Aleksanteri Kaskimaki är osäkra.",
+     "Mason McTavish möter sitt gamla lag för första gången sedan flytten till St. Louis."
+    ],
+    "records": [
+     "Blues boxplay är 15 av 15 mot Anaheim de fyra senaste mötena.",
+     "Robert Thomas har poäng i sju av sina åtta senaste matcher mot Ducks.",
+     "86 % av Anaheims matcher har gått över 5,5 mål, mot 45 % för St. Louis.",
+     "De nio senaste mötena hade i snitt 6,9 mål."
+    ],
+    "betting": [
+     "Marknaden: Blues 1,70, Ducks 2,20, ungefär 56–44 utan marginal. Modellen säger också 56–44, så det finns ingen skillnad om vinnaren.",
+     "Totalt: över 5,5 på 1,61 är cirka 59 %. Modellen säger 57 %, nära marknaden, med Anaheims öppna matcher mot Hofers 92,1 %.",
+     "Spelarchanser (modellen): Thomas 1+ poäng 66 %, Granlund 1+ poäng 57 %, LaCombe 1+ poäng 52 %. Alla tre ligger inom två procentenheter från marknaden."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Blues preview",
+     "url": "https://www.nhl.com/blues/news/preview-blues-vs-ducks-11172026"
+    },
+    {
+     "name": "NHL.com: Ducks beat Flames",
+     "url": "https://www.nhl.com/ducks/news/calgary-flames-anaheim-ducks-game-recap-november-15-2026-x3044"
+    },
+    {
+     "name": "Daily Faceoff: Gauthier",
+     "url": "https://dailyfaceoff.com/news/anaheim-ducks-cutter-gauthier-joins-wayne-gretzky-mario-lemieux-score-14-goals-one-month-100-years-nhl-news"
+    }
+   ]
+  },
+  {
+   "id": 2026020340,
+   "slug": "2026-11-17-nsh-min",
+   "photo": {
+    "src": "assets/previews/2026-11-17-nsh-min.webp",
+    "alt": "Kirill Kaprizov of the Minnesota Wild at the net",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Grubauer_dunn_kaprisov_3rd_1_8_(55032834760).jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Predators at Wild",
+    "title": "The Wild chase a 12th straight game with a point",
+    "deck": "Minnesota has earned a point in 11 straight games (9-0-2), three short of the club record, and allows a league-low 2.18 goals a game. Nashville's seven-game winning streak ended in San Jose on Sunday, but its penalty kill leads the league. The market makes the Wild a much bigger favourite than the model does.",
+    "news": [
+     "Kirill Kaprizov has 20 points and Quinn Hughes 17 during Minnesota's point streak.",
+     "Jesper Wallstedt is 14-2-3 with a .926 save percentage and leads the league in games, minutes and saves. Filip Gustavsson is recovering from hip surgery.",
+     "Brock Faber returned on Saturday from a skull fracture. Olli Maatta will miss at least a week.",
+     "Jonathan Marchessault (lower body), who has missed seven games, may return for Nashville. Juuse Saros played Sunday, and Nashville's starter was not confirmed overnight."
+    ],
+    "records": [
+     "Minnesota has won eight straight road games and has not lost at home in regulation (5-0-2).",
+     "Nashville's penalty kill is at 90% and has killed 29 of 30 over its last 12 games.",
+     "Steven Stamkos leads the Predators with 12 goals. Roman Josi and Filip Forsberg share the team lead with 23 points.",
+     "Minnesota won the season opener between the teams 3-1 on Oct. 1. The last 12 meetings averaged 6.3 goals."
+    ],
+    "betting": [
+     "Market: Wild 1.47, Predators 2.75, about 65–35 without the margin. The model has 58–42, clearly warmer on Nashville than the price.",
+     "Total: over 5.5 at 1.65 is about 57%. The model says 54%, lower than the market, with Wallstedt and Nashville's penalty kill in the game.",
+     "Player chances (model): Kaprizov 1+ point 75%, Hughes 1+ point 72% (market about 68%), Josi 1+ point 55%."
+    ]
+   },
+   "sv": {
+    "kicker": "Predators mot Wild",
+    "title": "Wild jagar poäng i tolfte raka matchen",
+    "deck": "Minnesota har tagit poäng i elva raka matcher (9-0-2), tre från klubbrekordet, och släpper in ligans lägsta 2,18 mål per match. Nashvilles svit på sju raka segrar bröts i San Jose i söndags, men lagets boxplay är ligans bästa. Marknaden gör Wild till betydligt större favoriter än modellen.",
+    "news": [
+     "Kirill Kaprizov har 20 poäng och Quinn Hughes 17 under Minnesotas poängsvit.",
+     "Jesper Wallstedt är 14-2-3 med 92,6 % räddningar och leder ligan i matcher, minuter och räddningar. Filip Gustavsson återhämtar sig efter en höftoperation.",
+     "Brock Faber kom tillbaka i lördags efter en skallfraktur. Olli Maatta är borta minst en vecka.",
+     "Jonathan Marchessault (underkropp), som missat sju matcher, kan göra comeback för Nashville. Juuse Saros spelade i söndags, och Nashvilles målvakt var inte bekräftad under natten."
+    ],
+    "records": [
+     "Minnesota har vunnit åtta raka bortamatcher och har inte förlorat hemma på full tid (5-0-2).",
+     "Nashvilles boxplay ligger på 90 % och har dödat 29 av 30 utvisningar de senaste tolv matcherna.",
+     "Steven Stamkos leder Predators med 12 mål. Roman Josi och Filip Forsberg delar lagets poängledning med 23.",
+     "Minnesota vann säsongspremiären lagen emellan med 3–1 den 1 oktober. De tolv senaste mötena hade i snitt 6,3 mål."
+    ],
+    "betting": [
+     "Marknaden: Wild 1,47, Predators 2,75, ungefär 65–35 utan marginal. Modellen säger 58–42, klart varmare på Nashville än priset.",
+     "Totalt: över 5,5 på 1,65 är cirka 57 %. Modellen säger 54 %, lägre än marknaden, med Wallstedt och Nashvilles boxplay i matchen.",
+     "Spelarchanser (modellen): Kaprizov 1+ poäng 75 %, Hughes 1+ poäng 72 % (marknaden cirka 68 %), Josi 1+ poäng 55 %."
+    ]
+   },
+   "sources": [
+    {
+     "name": "Southern Sports Today",
+     "url": "https://www.southernsportstoday.com/2026/11/17/wild-can-stretch-points-streak-to-12-games-face-tall-task-in-predators/"
+    },
+    {
+     "name": "Predlines",
+     "url": "https://predlines.com/3-takeaways-from-the-predators-streak-ending-loss-to-the-sharks"
+    },
+    {
+     "name": "theScore",
+     "url": "https://www.thescore.com/nhl/event/35321"
+    }
+   ]
+  },
+  {
+   "id": 2026020342,
+   "slug": "2026-11-17-dal-vgk",
+   "photo": {
+    "src": "assets/previews/2026-11-17-dal-vgk.webp",
+    "alt": "Jason Robertson of the Dallas Stars celebrating a goal",
+    "author": "Jenn G",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Mikey_Eyssimont_and_Jason_Robertson.jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Stars at Golden Knights",
+    "title": "Mark Stone needs one point to own the Vegas scoring record",
+    "deck": "Stone tied Jonathan Marchessault's franchise record of 417 points in Sunday's loss to Vancouver, so his next point sets a new mark. Dallas arrives after two one-goal wins and Jamie Benn's 1,000th point, but its defence is thin. These teams meet again on Thursday, and the model and market agree closely on this one.",
+    "news": [
+     "Miro Heiskanen has missed five games and is questionable. Tyler Myers left Sunday's game with an upper-body injury, and Lian Bichsel is on injured reserve.",
+     "Benn reached 1,000 career points on Saturday, the second player in franchise history after Mike Modano.",
+     "Jake Oettinger posted his league-leading fourth shutout against Buffalo. Jason Robertson scored the overtime winner against Florida, his 11th goal.",
+     "Vegas has alternated Carter Hart and Adin Hill. Hart started Sunday, so Hill would be next, but it was not confirmed overnight. Noah Hanifin is out."
+    ],
+    "records": [
+     "Stone reached 417 points with Vegas in 422 games. Marchessault needed 514.",
+     "Dallas allows 2.4 goals a game, third-best in the league, but ranks in the bottom third in scoring.",
+     "Only 30% of Dallas games have gone over 5.5 goals, the lowest rate on Tuesday's slate.",
+     "Vegas has the league's fourth-best power play (28.8%). Mitch Marner has 10 power-play points."
+    ],
+    "betting": [
+     "Market: Golden Knights 1.72, Stars 2.18, about 56–44 without the margin. The model has 55–45, so the two agree.",
+     "Total: over 5.5 at 1.80 is about 53%. The model says 52%, also in line, with Dallas's low-scoring games pulling the other way from Vegas's power play.",
+     "Player chances (model): Eichel 1+ point 63% (market about 66%), Wyatt Johnston goal 32%, Theodore 1+ point 43% (market about 37%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Stars mot Golden Knights",
+    "title": "Mark Stone behöver en poäng för att äga Vegas poängrekord",
+    "deck": "Stone tangerade Jonathan Marchessaults klubbrekord på 417 poäng i söndagens förlust mot Vancouver, så hans nästa poäng blir nytt rekord. Dallas kommer efter två segrar med ett mål och Jamie Benns 1 000:e poäng, men backlinjen är tunn. Lagen möts igen på torsdag, och modellen och marknaden är nästan helt överens.",
+    "news": [
+     "Miro Heiskanen har missat fem matcher och är osäker. Tyler Myers lämnade söndagens match med en överkroppsskada, och Lian Bichsel är skadad.",
+     "Benn nådde 1 000 poäng i karriären i lördags, som andre spelare i klubbens historia efter Mike Modano.",
+     "Jake Oettinger tog sin ligaledande fjärde nolla mot Buffalo. Jason Robertson avgjorde mot Florida på övertid, hans elfte mål.",
+     "Vegas har växlat mellan Carter Hart och Adin Hill. Hart startade i söndags, så Hill står på tur, men det var inte bekräftat under natten. Noah Hanifin är borta."
+    ],
+    "records": [
+     "Stone nådde 417 poäng för Vegas på 422 matcher. Marchessault behövde 514.",
+     "Dallas släpper in 2,4 mål per match, tredje bäst i ligan, men ligger i nedre tredjedelen i gjorda mål.",
+     "Bara 30 % av Dallas matcher har gått över 5,5 mål, lägst av lagen på tisdagen.",
+     "Vegas har ligans fjärde bästa powerplay (28,8 %). Mitch Marner har 10 powerplaypoäng."
+    ],
+    "betting": [
+     "Marknaden: Golden Knights 1,72, Stars 2,18, ungefär 56–44 utan marginal. Modellen säger 55–45, så de är överens.",
+     "Totalt: över 5,5 på 1,80 är cirka 53 %. Modellen säger 52 %, också i linje, där Dallas målsnåla matcher drar åt andra hållet mot Vegas powerplay.",
+     "Spelarchanser (modellen): Eichel 1+ poäng 63 % (marknaden cirka 66 %), Wyatt Johnston mål 32 %, Theodore 1+ poäng 43 % (marknaden cirka 37 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: status report",
+     "url": "https://www.nhl.com/news/nhl-status-report-news-and-notes-november-16-2026"
+    },
+    {
+     "name": "NHL.com: Heika's Take",
+     "url": "https://www.nhl.com/stars/news/heika-s-take-stars-answer-gut-check-sweep-weekend-back-to-back-with-ot-win-over-panthers-111526"
+    },
+    {
+     "name": "Vegas Hockey Knight",
+     "url": "https://vegashockeyknight.com/wins-and-sins-mark-stone-s-milestone-goal-overshadowed-by-embarrassing-loss-to-canucks"
+    }
+   ]
+  },
+  {
+   "id": 2026020343,
+   "slug": "2026-11-17-cgy-sjs",
+   "photo": {
+    "src": "assets/previews/2026-11-17-cgy-sjs.webp",
+    "alt": "A game at SAP Center in San Jose",
+    "author": "Yelderberry",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Ice_hockey_at_SAP_Center_at_San_Jose_2025-01-27_3.jpg",
+    "pos": "center 60%"
+   },
+   "en": {
+    "kicker": "Flames at Sharks",
+    "title": "Celebrini and Smith lead the Sharks into a rematch with Calgary",
+    "deck": "San Jose is 3-0-1 in its last four and ended Nashville's seven-game winning streak on Sunday, with three points each from Macklin Celebrini and Will Smith. Calgary was beaten 6-1 in Anaheim the night after a win in Los Angeles, and has lost Kevin Bahl for the season. The model sees a coin flip, while the market leans to San Jose.",
+    "news": [
+     "Bahl ruptured his Achilles tendon and will not play again this season. Jonathan Huberdeau (hip surgery) did not travel.",
+     "Dustin Wolf won 3-2 in Los Angeles on Saturday. Devin Cooley allowed six goals in Anaheim on Sunday.",
+     "Alex Nedeljkovic made 32 saves against Nashville and is projected to start again. Kiefer Sherwood left Sunday's game with his arm in a sling.",
+     "No.2 overall pick Ivar Stenberg scored on the Sharks' top line on Sunday."
+    ],
+    "records": [
+     "It was Celebrini's 26th career three-point game, tied with Dale Hawerchuk for fifth-most before turning 21.",
+     "San Jose is 6-0-2 when Celebrini and Smith both have three points.",
+     "Calgary has lost four of its last six and is 3-6-1 on the road, but has the league's fifth-best power play (27.1%).",
+     "Calgary won the first meeting 2-1 on Nov. 2. The last 12 meetings averaged 5.4 goals."
+    ],
+    "betting": [
+     "Market: Sharks 1.77, Flames 2.08, about 54–46 without the margin. The model has it 50–50, warmer on Calgary than the price.",
+     "Total: over 5.5 at 1.72 is about 55%. The model says 58%, a little higher, as both defences allow about 3.5 goals a game, though past meetings have been low-scoring.",
+     "Player chances (model): Celebrini 1+ point 76% (market about 72%), Farabee 1+ point 51%, Celebrini goal 43%."
+    ]
+   },
+   "sv": {
+    "kicker": "Flames mot Sharks",
+    "title": "Celebrini och Smith leder Sharks in i returmötet med Calgary",
+    "deck": "San Jose är 3-0-1 de senaste fyra och bröt Nashvilles svit på sju raka segrar i söndags, med tre poäng var av Macklin Celebrini och Will Smith. Calgary föll med 1–6 i Anaheim kvällen efter en seger i Los Angeles och har förlorat Kevin Bahl för säsongen. Modellen ser en slantsingling, medan marknaden lutar åt San Jose.",
+    "news": [
+     "Bahl har slitit av hälsenan och spelar inte mer den här säsongen. Jonathan Huberdeau (höftoperation) reste inte med.",
+     "Dustin Wolf vann med 3–2 i Los Angeles i lördags. Devin Cooley släppte in sex mål i Anaheim i söndags.",
+     "Alex Nedeljkovic gjorde 32 räddningar mot Nashville och väntas starta igen. Kiefer Sherwood lämnade söndagens match med armen i mitella.",
+     "Draftens tvåa Ivar Stenberg gjorde mål i Sharks förstakedja i söndags."
+    ],
+    "records": [
+     "Det var Celebrinis 26:e match med tre poäng i karriären, delat femte flest före 21 års ålder med Dale Hawerchuk.",
+     "San Jose är 6-0-2 när både Celebrini och Smith gör tre poäng.",
+     "Calgary har förlorat fyra av de sex senaste och är 3-6-1 borta, men har ligans femte bästa powerplay (27,1 %).",
+     "Calgary vann första mötet med 2–1 den 2 november. De tolv senaste mötena hade i snitt 5,4 mål."
+    ],
+    "betting": [
+     "Marknaden: Sharks 1,77, Flames 2,08, ungefär 54–46 utan marginal. Modellen säger 50–50, varmare på Calgary än priset.",
+     "Totalt: över 5,5 på 1,72 är cirka 55 %. Modellen säger 58 %, lite högre, eftersom båda lagen släpper in runt 3,5 mål per match, även om tidigare möten varit målsnåla.",
+     "Spelarchanser (modellen): Celebrini 1+ poäng 76 % (marknaden cirka 72 %), Farabee 1+ poäng 51 %, Celebrini mål 43 %."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Sharks beat Predators",
+     "url": "https://www.nhl.com/news/nashville-predators-san-jose-sharks-game-recap-november-15-2026"
+    },
+    {
+     "name": "640 WXSM preview",
+     "url": "https://www.640wxsm.com/2026/11/17/macklin-celebrinis-line-has-sharks-on-rise-ahead-of-flames-matchup/"
+    },
+    {
+     "name": "NHL.com: Flames at Ducks",
+     "url": "https://www.nhl.com/news/calgary-flames-anaheim-ducks-game-recap-november-15-2026"
+    }
+   ]
+  }
+ ]
+}
