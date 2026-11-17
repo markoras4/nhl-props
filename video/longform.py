@@ -91,8 +91,8 @@ def words(x, read: float = 0) -> float:
 
 
 GLANCE = 0.1
-READ_KEYS = {"take", "why", "wsub", "s", "line", "t1", "t2", "sub", "h2hSum", "skSum", "lines", "noH2h"}
-HALF_KEYS = {"title", "lab", "kicker", "h"}            # big headings and row labels: read at a glance
+READ_KEYS = {"take", "why", "wsub", "s", "line", "t1", "t2", "sub", "h2hSum", "skSum", "lines", "noH2h", "vs", "flag"}
+HALF_KEYS = {"title", "lab", "kicker", "h", "names", "chips"}            # big headings and row labels: read at a glance
 SKIP_KEYS = {"kind", "ac", "hc", "c", "color", "tagc", "chap", "sec", "noLeave", "noChrome", "ci", "a", "b", "pa", "fa", "fh",
              "better", "xt", "pick", "num", "last", "l5", "id", "disc", "t3"}
 
@@ -231,7 +231,7 @@ def form_beats(g: dict) -> list:
                 f"**{A if pa_ > ph_ else Hm}** games are the wilder ones.")
         r.append(row("Pace: goals per game, both teams", f"{pa_:.1f}", f"{ph_:.1f}", scale(pa_, 4.5, 7.5), scale(ph_, 4.5, 7.5), None, take))
     if r:
-        beats.append({"sec": "Form & style · 1 of 3", "title": "Who drives the play", "rows": r})
+        beats.append({"sec": "Form & style", "title": "Who drives the play", "rows": r, "_type": "drive"})
     # 2. scoring, defence, luck
     r = []
     ga, gh = TA.get("gf_pg"), TH.get("gf_pg")
@@ -257,7 +257,7 @@ def form_beats(g: dict) -> list:
             take = "No big luck story: both near normal."
         r.append(row("Luck meter (PDO: shooting % + save %)", f"{pa2:.3f}", f"{ph2:.3f}", scale(pa2, .95, 1.05), scale(ph2, .95, 1.05), None, take))
     if r:
-        beats.append({"sec": "Form & style · 2 of 3", "title": "Scoring, defence & luck", "rows": r})
+        beats.append({"sec": "Form & style", "title": "Scoring, defence & luck", "rows": r, "_type": "scoring"})
     # 3. special teams (league ranks), cross-matched: each power play against the other side's penalty kill
     RA, RH = TA.get("rank") or {}, TH.get("rank") or {}
     r = []
@@ -275,10 +275,7 @@ def form_beats(g: dict) -> list:
         r.append(row(f"{A} penalty kill vs {Hm} power play · rank of {n}", ordinal(pk), ordinal(pp), (n + 1 - pk) / n, (n + 1 - pp) / n,
                      "h" if pp < pk else "a", take))
     if r:
-        beats.append({"sec": "Form & style · 3 of 3", "title": "Special teams", "rows": r})
-    k = len(beats)
-    for i, b in enumerate(beats):
-        b["sec"] = f"Form & style · {i + 1} of {k}" if k > 1 else "Form & style"
+        beats.append({"sec": "Special teams", "title": "Power play vs penalty kill", "rows": r, "_type": "special"})
     return beats
 
 
@@ -428,25 +425,32 @@ def h2h_beat(g: dict, day: dt.date) -> dict:
             "stakes": stakes, "skLab": "Playoff chance · win vs lose tonight", "skSum": sk_sum}
 
 
-def keys_beat(g: dict) -> dict:
+def keys_beat(g: dict, variant: int = 0) -> dict:
+    V = lambda *xs: xs[variant % len(xs)]               # wording varies from game to game
     A, Hm = g["away"], g["home"]
     TA, TH = g["teams"][A], g["teams"][Hm]
     cand = []                                    # (magnitude, kind, head, sentence)
     xa, xh = TA.get("xgf_pct5"), TH.get("xgf_pct5")
     if xa and xh:
         lead, lv, oth = (Hm, xh, A) if xh > xa else (A, xa, Hm)
-        cand.append((abs(xh - xa) / .04, "xgf", "Control at 5-on-5", f"**{lead}** own {pc(lv)} of even-strength chances. Can {oth} keep up?"))
+        cand.append((abs(xh - xa) / .04, "xgf", V("Control at 5-on-5", f"{lead} at even strength", "Who owns 5-on-5?"),
+                     V(f"**{lead}** own {pc(lv)} of even-strength chances. Can {oth} keep up?",
+                       f"**{lead}** take {pc(lv)} of the 5-on-5 expected goals. {oth} need to flip that.",
+                       f"At 5-on-5 the chances lean **{lead}** ({pc(lv)}). {oth} must survive those minutes.")))
     ga, gh = g["goalies"].get(A), g["goalies"].get(Hm)
     if ga and gh and ga.get("gsax") is not None and gh.get("gsax") is not None:
         d = gh["gsax"] - ga["gsax"]
         b, w = (gh, ga) if d > 0 else (ga, gh)
-        cand.append((abs(d) / 7, "goalie", "The goalie gap", f"**{b['name']}** is {abs(d):.0f} goals better than {w['name']} vs expected."))
+        cand.append((abs(d) / 7, "goalie", V("The goalie gap", "Edge in net", f"{b['name'].split()[-1]} vs {w['name'].split()[-1]}"),
+                     V(f"**{b['name']}** is {abs(d):.0f} goals better than {w['name']} vs expected.",
+                       f"**{b['name']}** has saved {abs(d):.0f} more goals than {w['name']} relative to the shots faced.",
+                       f"In net, **{b['name'].split()[-1]}** is {abs(d):.0f} goals ahead on goals saved above expected.")))
     RA, RH = TA.get("rank") or {}, TH.get("rank") or {}
     for (t, R, o, Ro) in ((A, RA, Hm, RH), (Hm, RH, A, RA)):
         if R.get("pp") and Ro.get("pk"):
             d = Ro["pk"]["rk"] - R["pp"]["rk"]
             if d > 0:
-                cand.append((d / 14, "pp" + t, f"The {t} power play", f"Ranks **{ordinal(R['pp']['rk'])}** against a penalty kill ranked {ordinal(Ro['pk']['rk'])}. {o} must stay out of the box."))
+                cand.append((d / 14, "pp" + t, V(f"The {t} power play", f"{t} with the extra man", f"{t} PP vs {o} PK"), f"Ranks **{ordinal(R['pp']['rk'])}** against a penalty kill ranked {ordinal(Ro['pk']['rk'])}. {o} must stay out of the box."))
     for t, T in ((A, TA), (Hm, TH)):
         if T.get("pdo") and abs(T["pdo"] - 1) >= .015:
             hi = T["pdo"] > 1
@@ -474,10 +478,253 @@ def keys_beat(g: dict) -> dict:
             break
     if not keys:
         keys = [{"h": "Small margins", "s": "The model sees two very even teams: one bounce could decide it."}]
-    return {"kind": "keys", "sec": "What decides it", "title": "Keys to the game", "keys": keys}
+    sec, title = KEY_TITLES[variant % len(KEY_TITLES)]
+    return {"kind": "keys", "sec": sec, "title": title, "keys": keys}
 
 
-def game_beats(g: dict, i: int, n: int, day: dt.date, n_players: int) -> list:
+KEY_TITLES = [("What decides it", "Keys to the game"), ("How it's won", "Three things to watch"), ("Bottom line", "Where this one tips")]
+
+
+def gamelog(pid: str) -> list:
+    """origin/site:data/gl/<pid>.json: [date, opp, home, g, a, s, toi, ppp, pim, hits, blocks, xg] per game, newest first."""
+    if pid not in _GL:
+        try:
+            _GL[pid] = json.loads(subprocess.run(["git", "show", f"origin/site:data/gl/{pid}.json"], cwd=ROOT, capture_output=True, check=True).stdout)
+        except Exception:  # noqa: BLE001
+            _GL[pid] = []
+    return _GL[pid]
+
+
+_GL: dict = {}
+
+
+def per_game(x, gp, d=2):
+    return f"{x / gp:.{d}f}" if gp else "–"
+
+
+def pos_txt(p):
+    return {"L": "LW", "R": "RW"}.get(p.get("pos") or "", p.get("pos") or "")
+
+
+def profile_beat(g: dict, t: str, p: dict, tag: str, variant: int = 0) -> dict:
+    """One player, full screen: season line, rates, finishing, last 10 games, Heat Index, role, tonight, career vs opponent."""
+    opp = g["home"] if t == g["away"] else g["away"]
+    gp = p["gp"] or 0
+    chips = []
+    L = p.get("line") or {}
+    names = [n.split()[-1] for n in (L.get("names") or [])]
+    if L.get("k", "").startswith("f") and names:
+        chips.append(f"Line {L['k'][1]}: {' – '.join(names)}")
+    elif L.get("k", "").startswith("d") and names:
+        chips.append(f"Pair {L['k'][1]}: {' – '.join(names)}")
+    if L.get("pp"):
+        chips.append(L["pp"].upper().replace("PP", "PP unit "))
+    rates = [["Points / game", per_game(p["p"], gp)], ["Goals / game", per_game(p["g"], gp)], ["Shots / game", per_game(p["s"], gp, 1)],
+             ["Ice time", f"{p['toi_season']:.1f}" if p.get("toi_season") else "–"], ["PP time", f"{p['pp_toi']:.1f}" if p.get("pp_toi") is not None else "–"],
+             ["Faceoffs", pc(p["fo"]) if p.get("fo") else (f"{p['ppp']}" if p.get("ppp") is not None else "–")]]
+    if not p.get("fo"):
+        rates[5][0] = "PP points"
+    fin = []
+    if p.get("sh") is not None and gp >= 5:
+        fin.append(["Shooting %", f"{p['sh'] * 100:.1f}%", f"career {p['sh_career'] * 100:.1f}%" if p.get("sh_career") else ""])
+    reg = p.get("reg") or {}
+    xg = (p.get("xg") or {}).get("xg") if p.get("xg") else reg.get("xg")
+    if xg is not None and gp >= 5:
+        fin.append(["Goals vs xG", f"{p['g']} / {xg:.1f}", "above his chances" if p["g"] - xg >= 2 else "below his chances" if xg - p["g"] >= 2 else "right on his chances"])
+    h = p.get("heat")
+    if h and h.get("n", 0) >= 8:
+        fin.append(["Heat Index", f"{h['v']:+.1f}", heat_level(h["v"]).lower()])
+    bars = [{"o": x["o"], "p": x["p"], "s": x["s"]} for x in reversed(p.get("g10") or [])]
+    # career vs tonight's opponent (game logs)
+    vs = ""
+    gl = [r for r in gamelog(p["id"]) if len(r) >= 6 and r[1] == opp]
+    if len(gl) >= 3:
+        G, A = sum(r[3] for r in gl), sum(r[4] for r in gl)
+        vs = f"Career vs {opp}: **{G + A}** points in {len(gl)} games ({G} G, {A} A)"
+    # the one-line read
+    if h and h.get("n", 0) >= 8 and h["v"] >= 4:
+        take = [f"{h['x']} points in {h['n']} games against {h['e']:.1f} expected: a heater, partly luck.",
+                f"Running {h['v']:+.1f} over what his ice time predicts. Some of it sticks, most of it fades.",
+                f"{h['x']} points in his last {h['n']}: the hottest stretch of his season."][variant % 3]
+    elif h and h.get("n", 0) >= 8 and h["v"] <= -2.5:
+        take = f"Only {h['x']} points in {h['n']} games against {h['e']:.1f} expected. The chances say it turns."
+    elif xg is not None and gp >= 8 and xg - p["g"] >= 2:
+        take = f"{xg:.1f} expected goals, only {p['g']} scored: the finish should come."
+    elif p.get("pt"):
+        take = f"The model gives him **{pc(p['pt'])}** to record a point tonight."
+    else:
+        take = f"{p['p']} points in {gp} games: the {t} attack runs through him."
+    return {"kind": "profile", "sec": "Player profile", "name": p["name"], "num": str(p.get("num") or ""), "color": color(t),
+            "meta": f"{t} · {pos_txt(p)} · vs {opp}" + (f" · age {p['age']}" if p.get("age") else ""), "tag": tag, "chips": chips[:2],
+            "season": [["G", str(p["g"])], ["A", str(p["a"])], ["P", str(p["p"])], ["GP", str(gp)]], "rates": rates,
+            "fin": fin[:3], "bars": bars, "pt": p.get("pt"), "vs": vs, "take": take}
+
+
+def duel_beat(g: dict, pa_: dict, ph_: dict) -> dict:
+    """Best player of each team, side by side."""
+    A, Hm = g["away"], g["home"]
+
+    def m(lab, fa, fh, fmt, lo=0.0, hi=None):
+        va, vh = fa(pa_), fh(ph_)
+        if va is None or vh is None:
+            return None
+        top = hi if hi is not None else max(va, vh, 1e-6) * 1.15
+        sc = lambda v: max(.03, min(1, (v - lo) / (top - lo)))
+        return {"lab": lab, "va": fmt(va), "vh": fmt(vh), "fa": sc(va), "fh": sc(vh), "better": "a" if va > vh else "h" if vh > va else None, "take": ""}
+    gp = lambda p: max(1, p["gp"])
+    rows = [m("Points per game", lambda p: p["p"] / gp(p), lambda p: p["p"] / gp(p), lambda v: f"{v:.2f}"),
+            m("Goals this season", lambda p: p["g"], lambda p: p["g"], lambda v: f"{v:.0f}"),
+            m("Shots on goal per game", lambda p: p["s"] / gp(p), lambda p: p["s"] / gp(p), lambda v: f"{v:.1f}"),
+            m("Ice time per game (min)", lambda p: p.get("toi_season"), lambda p: p.get("toi_season"), lambda v: f"{v:.1f}", lo=8),
+            m("Heat Index (last 10)", lambda p: (p.get("heat") or {}).get("v"), lambda p: (p.get("heat") or {}).get("v"), lambda v: f"{v:+.1f}", lo=-6, hi=8),
+            m("Point chance tonight (model)", lambda p: p.get("pt"), lambda p: p.get("pt"), pc, hi=1.0)]
+    rows = [r for r in rows if r][:6]
+    wins = sum(r["better"] == "a" for r in rows), sum(r["better"] == "h" for r in rows)
+    lead = pa_ if wins[0] > wins[1] else ph_
+    take = (f"**{lead['name'].split()[-1]}** wins {max(wins)} of {len(rows)} categories." if wins[0] != wins[1]
+            else "Dead even: they split the categories.")
+    return {"kind": "duel", "sec": "Player duel", "title": "Head to head: the top guns",
+            "pa": {"name": pa_["name"], "num": str(pa_.get("num") or ""), "color": color(A), "meta": f"{A} · {pos_txt(pa_)} · {pa_['p']} pts"},
+            "ph": {"name": ph_["name"], "num": str(ph_.get("num") or ""), "color": color(Hm), "meta": f"{Hm} · {pos_txt(ph_)} · {ph_['p']} pts"},
+            "rows": rows, "take": take, "away": A, "home": Hm}
+
+
+def teamboard_beat(g: dict) -> dict:
+    """Full team profile table with league ranks."""
+    A, Hm = g["away"], g["home"]
+    TA, TH = g["teams"][A], g["teams"][Hm]
+    n = TA.get("n_teams") or 32
+
+    def r(lab, k, fmt, rk_key=None):
+        va, vh = TA.get(k), TH.get(k)
+        if va is None or vh is None:
+            return None
+        rk = rk_key or k
+        return {"lab": lab, "va": fmt(va), "vh": fmt(vh), "ra": (TA.get("lr") or {}).get(rk), "rh": (TH.get("lr") or {}).get(rk)}
+    rows = [{"lab": "Record", "va": f"{TA.get('w', 0)}–{TA.get('l', 0)}–{TA.get('otl', 0)}", "vh": f"{TH.get('w', 0)}–{TH.get('l', 0)}–{TH.get('otl', 0)}",
+             "ra": None, "rh": None},
+            r("Points %", "pts_pct", lambda v: f"{v * 100:.0f}%"),
+            r("Goals for / game", "gf_pg", lambda v: f"{v:.2f}"),
+            r("Goals against / game", "ga_pg", lambda v: f"{v:.2f}"),
+            r("5-on-5 xGF%", "xgf_pct5", lambda v: f"{v * 100:.1f}%"),
+            r("High-danger shots for / 60", "hd_for", lambda v: f"{v:.2f}", "hdsf60"),
+            r("High-danger shots against / 60", "hd_against", lambda v: f"{v:.2f}", "hdsa60"),
+            r("Power play xG / 60", "pp_xgf60", lambda v: f"{v:.2f}", "pp_xgf60_cur"),
+            r("Penalty kill xGA / 60", "pk_xga60", lambda v: f"{v:.2f}", "pk_xga60_cur"),
+            r("PDO (luck)", "pdo", lambda v: f"{v:.3f}"),
+            r("Faceoff %", "fo_pct", lambda v: f"{v * 100:.1f}%"),
+            r("Penalties / game", "pen_pg", lambda v: f"{v:.1f}"),
+            {"lab": "Last 5", "va": "".join(l5_letters(TA)), "vh": "".join(l5_letters(TH)), "ra": None, "rh": None}]
+    rows = [x for x in rows if x]
+    better = [(x["ra"] or 99) < (x["rh"] or 99) for x in rows if x["ra"] and x["rh"]]
+    ka, kh = sum(better), len(better) - sum(better)
+    lead = A if ka > kh else Hm
+    take = (f"**{lead}** rank higher in {max(ka, kh)} of {ka + kh} categories." if ka != kh else "They split the categories evenly.")
+    return {"kind": "teamboard", "sec": "Team stats", "title": "Side by side", "away": A, "home": Hm, "rows": rows, "n": n, "take": take}
+
+
+def lines_beat(g: dict) -> dict | None:
+    """Top forward lines, the top D pair and PP1 for both teams: 5-on-5 results together vs their chances."""
+    A, Hm = g["away"], g["home"]
+    sides, best = {}, None
+    for t in (A, Hm):
+        T = g["teams"][t]
+        Ls = T.get("lines") or {}
+        rows = []
+        for k in ("f1", "f2", "f3", "d1", "d2"):
+            L = Ls.get(k)
+            if not L or (L.get("toi") or 0) < 15:
+                continue
+            names = [re.sub(r"^Mc(\w)", lambda m_: "Mc" + m_.group(1).upper(), x.strip().title()) for x in (L.get("name") or "").split("-") if x.strip()] or [n.split()[-1] for n in (T.get("groups") or {}).get(k, [])]
+            xf, xa = L.get("xgf") or 0, L.get("xga") or 0
+            row = {"k": ("Line " if k[0] == "f" else "Pair ") + k[1], "names": " – ".join(names), "toi": f"{L['toi']:.0f} min",
+                   "gf": L["gf"], "xgf": f"{xf:.1f}", "ga": L["ga"], "xga": f"{xa:.1f}", "xp": xf / (xf + xa) if xf + xa > 0 else .5,
+                   "sh": f"{L['sf']}–{L['sa']}", "flag": ""}
+            d = L["gf"] - xf
+            if (L.get("toi") or 0) >= 40 and abs(d) >= 1.5:
+                row["flag"] = "Finishing above chances" if d > 0 else "Chances not going in"
+                if not best or abs(d) > abs(best[0]):
+                    best = (d, t, row)
+            rows.append(row)
+            if len(rows) == 4:
+                break
+        pp1 = (T.get("groups") or {}).get("pp1") or []
+        sides[t] = {"rows": rows, "pp1": " – ".join(n.split()[-1] for n in pp1), "ppx": T.get("pp_xgf60")}
+    if not any(s_["rows"] for s_ in sides.values()):
+        return None
+    if best:
+        d, t, row = best
+        take = (f"**{t}**'s {row['k'].lower()} has {row['gf']} goals on {row['xgf']} expected: " +
+                ("hot finishing that tends to cool." if d > 0 else "the goals should start to come."))
+    else:
+        take = "No line is far off its chances: the results match the play."
+    return {"kind": "lines", "sec": "Line stats", "title": "Who plays with whom", "away": A, "home": Hm,
+            "sa": sides[A], "sh": sides[Hm], "take": take}
+
+
+# section pool: every game picks its own mix and order (what stands out in THAT game), no type in more than 2 games
+POOL = ("model", "teamboard", "drive", "scoring", "special", "goalies", "lines", "profile", "duel", "h2h")
+MAX_GAMES_PER_SECTION = 2
+
+
+def section_scores(g: dict) -> dict:
+    A, Hm = g["away"], g["home"]
+    TA, TH = g["teams"][A], g["teams"][Hm]
+    sc = {"model": .7 + max(0, 1 - abs(g["p_home"] - .5) / .12) * .5,
+          "teamboard": .75 + min(.6, abs((TA.get("pts_pct") or .5) - (TH.get("pts_pct") or .5)) * 3)}
+    if TA.get("xgf_pct5") and TH.get("xgf_pct5"):
+        sc["drive"] = .4 + abs(TA["xgf_pct5"] - TH["xgf_pct5"]) / .04
+    sc["scoring"] = .4 + max(abs((TA.get("pdo") or 1) - 1), abs((TH.get("pdo") or 1) - 1)) / .025 * .6 + abs((TA.get("gf_pg") or 0) - (TH.get("gf_pg") or 0)) / 1.0
+    RA, RH = TA.get("rank") or {}, TH.get("rank") or {}
+    if RA.get("pp") and RH.get("pk") and RH.get("pp") and RA.get("pk"):
+        sc["special"] = .3 + max(RH["pk"]["rk"] - RA["pp"]["rk"], RA["pk"]["rk"] - RH["pp"]["rk"], 0) / 14
+    gk = [x for x in g["goalies"].values() if x]
+    if gk:
+        sc["goalies"] = .5 + (abs((gk[0].get("gsax") or 0) - (gk[1].get("gsax") or 0)) / 8 if len(gk) == 2 else 0)
+    lb = lines_beat(g)
+    if lb:
+        devs = [abs(r_["gf"] - float(r_["xgf"])) for s_ in (lb["sa"], lb["sh"]) for r_ in s_["rows"]]
+        sc["lines"] = .55 + max(devs, default=0) / 3
+    pl = [p for t in g["players"] for p in g["players"][t] if p.get("posg") != "G" and (p.get("toi") or 0) >= 12]
+    if pl:
+        hv = max(((p.get("heat") or {}).get("v") or 0 for p in pl), default=0)
+        sc["profile"] = .8 + max(hv, 0) / 5 + max((p.get("pt") or 0 for p in pl), default=0) * .5
+        sc["duel"] = .75 + max((p.get("pt") or 0 for p in pl), default=0) * .4
+    if g.get("h2h") or g.get("stakes"):
+        sc["h2h"] = .35 + max((v.get("swing") or 0 for v in (g.get("stakes") or {}).values()), default=0) / .06 + .05 * len(g.get("h2h") or [])
+    return sc
+
+
+def plan_sections(chosen: list, seed: str, per_game: int = 5) -> list:
+    """[[section, ...] per game]: highest-scoring sections first, each type in at most 2 games, a different opener each
+    game, every game gets a player beat (profile or duel), the model's view in at most 2 games."""
+    import random
+    rnd = random.Random(seed)
+    used = {k: 0 for k in POOL}
+    openers, plans = set(), [None] * len(chosen)
+    order = sorted(range(len(chosen)), key=lambda i: -max(section_scores(chosen[i]).values()))
+    for i in order:
+        # a little seeded variety, and a penalty for what earlier games already showed (so the games differ)
+        sc = {k: v + rnd.random() * .25 - .8 * used[k] for k, v in section_scores(chosen[i]).items()}
+        avail = [k for k in sorted(sc, key=lambda k: -sc[k]) if used[k] < MAX_GAMES_PER_SECTION]
+        pick = avail[:per_game]
+        if not any(k in pick for k in ("profile", "duel")):
+            pl = next((k for k in avail if k in ("profile", "duel")), None)
+            if pl:
+                pick = pick[:-1] + [pl]
+        for k in pick:
+            used[k] += 1
+        pick.sort(key=lambda k: -sc[k])
+        if pick and pick[0] in openers:                  # a different first beat after each matchup card
+            j = next((j for j, k in enumerate(pick) if k not in openers), 0)
+            pick.insert(0, pick.pop(j))
+        if pick:
+            openers.add(pick[0])
+        plans[i] = pick
+    return plans
+
+
+def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
     A, Hm = g["away"], g["home"]
     TA, TH = g["teams"][A], g["teams"][Hm]
     ac, hc = color(A), color(Hm)
@@ -497,23 +744,49 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, n_players: int) -> list:
     why, _ = reason(g)
     beats = [{"kind": "title", "kicker": f"Game {i + 1} of {n} · {why}", "A": side(TA), "H": side(TH), "ac": ac, "hc": hc, "info": info,
               "sec2": "Matchup"}]
-    pa = 1 - g["p_home"]
-    fav = Hm if g["p_home"] >= .5 else A
-    tiles = [["Expected score", f"{g['mu_a']:.1f} – {g['mu_h']:.1f}", f"{A} – {Hm}"],
-             ["Expected goals", f"{g['exp_total']:.1f}", "both teams combined"]]
-    if g.get("p_tie_reg"):
-        tiles.append(["Tied after 60 min", pc(g["p_tie_reg"]), "chance of overtime"])
-    beats.append({"kind": "model", "sec": "The model's view", "title": "Win chance tonight", "away": A, "home": Hm, "pa": pa,
-                  "tiles": tiles, "take": closeness(g["p_home"], fav)})
-    for fb in form_beats(g):
-        beats.append({"kind": "form", "away": A, "home": Hm, **fb})
-    gb = goalie_beat(g)
-    if gb:
-        beats.append(gb)
-    for t, p, tag, tagc in pick_players(g, n_players):
-        beats.append({**player_beat(g, t, p, tag, tagc), "sec": "Players to watch"})
-    beats.append(h2h_beat(g, day))
-    beats.append(keys_beat(g))
+    forms = {b["_type"]: b for b in form_beats(g)}
+    # players: the profile gets the most interesting one, the duel the best of each team (not the profiled player)
+    pl = {t: [p for p in g["players"][t] if p.get("posg") != "G" and (p.get("toi") or 0) >= 12] for t in (A, Hm)}
+    have_pt = any(p.get("pt") for t in pl for p in pl[t])
+    star = (lambda p: p.get("pt") or 0) if have_pt else (lambda p: p["p"] / max(1, p["gp"]))
+    allp = [(t, p) for t in pl for p in pl[t]]
+    prof = None
+    if allp:
+        hot = max(allp, key=lambda x: ((x[1].get("heat") or {}).get("v") or -9))
+        top = max(allp, key=lambda x: star(x[1]))
+        prof = hot + ("Hottest on the ice",) if ((hot[1].get("heat") or {}).get("v") or 0) >= 3 else top + ("Top point chance" if have_pt else "Top scorer",)
+    for k in plan:
+        if k == "model":
+            pa = 1 - g["p_home"]
+            fav = Hm if g["p_home"] >= .5 else A
+            tiles = [["Expected score", f"{g['mu_a']:.1f} – {g['mu_h']:.1f}", f"{A} – {Hm}"],
+                     ["Expected goals", f"{g['exp_total']:.1f}", "both teams combined"]]
+            if g.get("p_tie_reg"):
+                tiles.append(["Tied after 60 min", pc(g["p_tie_reg"]), "chance of overtime"])
+            beats.append({"kind": "model", "sec": "The model's view", "title": "Win chance tonight", "away": A, "home": Hm, "pa": pa,
+                          "tiles": tiles, "take": closeness(g["p_home"], fav)})
+        elif k in forms:
+            beats.append({"kind": "form", "away": A, "home": Hm, **{x: y for x, y in forms[k].items() if x != "_type"}})
+        elif k == "goalies":
+            gb = goalie_beat(g)
+            if gb:
+                beats.append(gb)
+        elif k == "teamboard":
+            beats.append(teamboard_beat(g))
+        elif k == "lines":
+            lb = lines_beat(g)
+            if lb:
+                beats.append(lb)
+        elif k == "profile" and prof:
+            beats.append(profile_beat(g, *prof, variant=i))
+        elif k == "duel":
+            sa_ = [p for p in pl[A] if not prof or p["id"] != prof[1]["id"]]
+            sh_ = [p for p in pl[Hm] if not prof or p["id"] != prof[1]["id"]]
+            if sa_ and sh_:
+                beats.append(duel_beat(g, max(sa_, key=star), max(sh_, key=star)))
+        elif k == "h2h":
+            beats.append(h2h_beat(g, day))
+    beats.append(keys_beat(g, i))
     for b in beats:
         b.setdefault("ac", ac); b.setdefault("hc", hc)
         sec = b.get("sec") or b.get("sec2") or ""
@@ -523,9 +796,10 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, n_players: int) -> list:
 
 
 LEAD = {"cold": 3.4, "slate": 2.8, "picks": 2.2, "title": 2.4, "model": 3.4, "form": 3.0, "goalies": 2.5, "player": 2.5, "h2h": 2.4,
-        "keys": 2.8, "recap": 2.0, "cta": 2.2}
+        "keys": 2.8, "recap": 2.0, "cta": 2.2, "profile": 3.4, "duel": 3.2, "teamboard": 3.0, "lines": 3.0}
 MAXD = {"slate": 16, "cold": 10}
-MIND = {"cold": 11, "slate": 14, "title": 9, "model": 10, "recap": 9, "cta": 7, "player": 12, "goalies": 12}
+MIND = {"cold": 11, "slate": 14, "title": 9, "model": 10, "recap": 9, "cta": 7, "player": 12, "goalies": 12, "profile": 17, "duel": 13,
+        "teamboard": 14, "lines": 14}
 
 
 def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float | None) -> dict | None:
@@ -548,8 +822,10 @@ def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float |
     beats.append({"kind": "picks", "sec": "Our 3 games" if n == 3 else f"Our {n} games", "title": "Why these games", "ci": 1,
                   "games": [{**cg(g), "why": reason(g)[0], "wsub": reason(g)[1], "time": tline(g["start"])} for g in chosen],
                   "chap": "**The slate** · why these games"})
+    plans = plan_sections(chosen, f"{SERIES}|{day.isoformat()}", per_game=5 if n >= 3 else 6)
     for i, g in enumerate(chosen):
-        for b in game_beats(g, i, n, day, n_players):
+        g["_plan"] = plans[i]
+        for b in game_beats(g, i, n, day, plans[i]):
             b["ci"] = 2 + i
             b["_game"] = i
             beats.append(b)
@@ -633,6 +909,34 @@ def captions(spec: dict, day: dt.date) -> dict:
 
 
 # ------------------------------------------------------------------ music
+def file_track(path: str, total: float, xfade: float = 2.0, fade_in: float = 1.0, fade_out: float = 3.0):
+    """A licensed music file (any format ffmpeg reads) looped for the whole video: equal-power crossfade over each loop
+    seam, 1 s fade-in, 3 s fade-out. Loudness is set in the final encode (loudnorm -18 LUFS, background level)."""
+    import numpy as np
+    sr = music.SR
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(sr), "-"],
+                         capture_output=True, check=True).stdout
+    y = np.frombuffer(raw, np.float32).reshape(-1, 2).copy()
+    loud = np.where(np.abs(y).max(axis=1) > 10 ** (-50 / 20))[0]        # trim silence at both ends (clean seam)
+    if len(loud):
+        y = y[loud[0]:loud[-1] + 1]
+    n, k = int(round(total * sr)), int(xfade * sr)
+    if len(y) <= 2 * k:
+        raise SystemExit(f"music file too short to loop: {path}")
+    up = np.sin(np.linspace(0, np.pi / 2, k))[:, None] ** 1
+    down = np.cos(np.linspace(0, np.pi / 2, k))[:, None]
+    out = y.copy()
+    while len(out) < n + k:
+        head = out[-k:] * down + y[:k] * up
+        out = np.concatenate([out[:-k], head, y[k:]])
+    out = out[:n]
+    fi, fo = int(fade_in * sr), int(fade_out * sr)
+    out[:fi] *= np.linspace(0, 1, fi)[:, None]
+    out[-fo:] *= np.linspace(1, 0, fo)[:, None] ** 2
+    pk = np.max(np.abs(out)) + 1e-9
+    return (out / pk * .89).astype(np.float32)
+
+
 def make_music(spec: dict, seed: str) -> "music.np.ndarray":
     import numpy as np
     total = spec["total"]
@@ -673,7 +977,7 @@ def setup_page(spec: dict, work: Path):
     (work / "index.html").write_text((HERE / "longform.html").read_text(encoding="utf-8").replace("/*SPEC*/null", json.dumps(clean)), encoding="utf-8")
 
 
-def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, stills: Path | None = None) -> dict:
+def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, stills: Path | None = None, music_file: str | None = None) -> dict:
     from playwright.sync_api import sync_playwright
     setup_page(spec, work)
     total = spec["total"]
@@ -696,7 +1000,8 @@ def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, st
             return stats
         t0 = time.time()
         wav = work / "music.wav"
-        music.write_wav(str(wav), make_music(spec, seed))
+        music.write_wav(str(wav), file_track(music_file, total) if music_file else make_music(spec, seed))
+        stats["music"] = Path(music_file).name if music_file else "generated"
         stats["music_s"] = round(time.time() - t0, 1)
         print(f"  music: {stats['music_s']}s", flush=True)
         n = int(round(total * FPS))
@@ -742,6 +1047,8 @@ def main():
     ap.add_argument("--games", help="comma list of game ids to feature (default: chosen by storyline)")
     ap.add_argument("--preview", help="'beats' (one still per beat) or comma-separated seconds: stills only")
     ap.add_argument("--max-seconds", type=float, help="cut the video after this many seconds (quick test)")
+    ap.add_argument("--music", help="licensed music file to loop under the whole video instead of the generated track "
+                                    "(never commit one: the repo is public)")
     a = ap.parse_args()
     day = dt.date.fromisoformat(a.date)
     out = Path(a.out) / a.date
@@ -757,6 +1064,8 @@ def main():
         if not spec:
             print(f"No games on {a.date}: no slate video.")
             return
+        for g in spec["_chosen"]:
+            print(f"  {g['away']} @ {g['home']} sections: {' > '.join(['matchup'] + g.get('_plan', []) + ['keys'])}")
         for g in spec["_chosen"]:
             I = g["_int"]
             print(f"  chosen {g['away']} @ {g['home']}: {reason(g)[0]} (score {g['_score']:.2f}; " +
@@ -774,7 +1083,10 @@ def main():
             render_video(spec, work / "r", base, seed=a.date, preview=pts, stills=out / "stills")
             print("stills:", out / "stills")
             return
-        stats = render_video(spec, work / "r", base, seed=a.date)
+        mf = a.music if a.music and Path(a.music).is_file() else None
+        if a.music and not mf:
+            print(f"music file not found ({a.music}): using the generated track")
+        stats = render_video(spec, work / "r", base, seed=a.date, music_file=mf)
     stats["total_s"] = round(time.time() - T0, 1)
     print(f"render: {stats}  -> {stats['frames'] / max(1, stats['frames_s']):.1f} video frames/s, "
           f"{stats['captured'] / max(1, stats['frames_s']):.1f} captures/s")

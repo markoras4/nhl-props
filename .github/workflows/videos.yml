@@ -265,13 +265,32 @@ jobs:
           code=$(curl -sS -o output/pro/latest.json -w "%{http_code}" -H "Authorization: Bearer $OIDC" "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload?path=latest.json")
           if [ "$code" != "200" ]; then echo "::warning::Pro data not available ($code): the slate video uses the public numbers only"; rm -f output/pro/latest.json; else echo "Pro data: $(wc -c < output/pro/latest.json) bytes"; fi
 
+      # TODO(music): upload the licensed track to private storage first (music/<file>, served by pro-upload like
+      # latest.json), then set the repository variable LONGFORM_MUSIC to that file name. Never commit music files:
+      # the repository is public. Without the variable (or when the download fails) the generated music is used.
+      - name: Fetch the licensed music for the slate video (skipped while vars.LONGFORM_MUSIC is empty)
+        if: steps.d.outputs.run == 'yes' && vars.LONGFORM_MUSIC != ''
+        env:
+          MUSIC: ${{ vars.LONGFORM_MUSIC }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/longform-music"
+          OUT="$RUNNER_TEMP/longform-music/$(basename "$MUSIC")"
+          OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pro-upload" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          code=$(curl -sS -G -o "$OUT" -w "%{http_code}" -H "Authorization: Bearer $OIDC" --data-urlencode "path=music/$MUSIC" "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload")
+          if [ "$code" = "200" ] && [ -s "$OUT" ]; then echo "LONGFORM_MUSIC_PATH=$OUT" >> "$GITHUB_ENV"; echo "Music: $(wc -c < "$OUT") bytes"
+          else echo "::warning::Licensed music not available ($code): using the generated music"; rm -f "$OUT"; fi
+
       - name: Render the slate video
         id: r
         if: steps.d.outputs.run == 'yes'
         env:
           DATE: ${{ steps.d.outputs.date }}
+          VAR_MUSIC_PATH: ${{ vars.LONGFORM_MUSIC_PATH }}
         run: |
-          python video/longform.py --date "$DATE" --out video/out
+          MP="${LONGFORM_MUSIC_PATH:-$VAR_MUSIC_PATH}"
+          MUSICARG=()
+          if [ -n "$MP" ] && [ -f "$MP" ]; then MUSICARG=(--music "$MP"); echo "Music file: $(basename "$MP")"; else echo "Music: generated"; fi
+          python video/longform.py --date "$DATE" --out video/out "${MUSICARG[@]}"
           if [ ! -f "video/out/$DATE/slate-$DATE.mp4" ]; then echo "No slate video today"; echo "any=no" >> "$GITHUB_OUTPUT"; exit 0; fi
           echo "any=yes" >> "$GITHUB_OUTPUT"
           ls -la "video/out/$DATE"

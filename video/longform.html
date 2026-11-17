@@ -203,6 +203,75 @@ em{font-style:normal;color:var(--pink)}
 .rcr .xs b{display:block;font:400 52px/1 Anton;color:#fff}
 #cta .logo{position:absolute;left:560px;width:800px;top:260px}
 .glitch{text-shadow:-5px 0 rgba(255,79,168,.85),5px 0 rgba(183,148,255,.85)}
+/* player profile (deep dive) */
+.pf{position:absolute;left:120px;right:120px;top:126px}
+.pf .hd{display:flex;align-items:center;gap:28px}
+.pf .nm{font:800 62px/1 "Exo 2";white-space:nowrap}
+.pf .mt{margin-top:10px;font:700 26px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase}
+.pf .rt{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.pf .rlc{font:700 24px "Exo 2";color:var(--soft);padding:6px 16px;border-radius:12px;background:rgba(255,255,255,.06)}
+.pfg{display:grid;grid-template-columns:520px 1fr 380px;gap:22px;margin-top:22px}
+.pbx{padding:18px 22px;border-radius:24px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.06)}
+.st4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.st4 div,.st6 div,.fin3 div{border-radius:16px;background:rgba(255,255,255,.05);text-align:center;padding:8px 4px}
+.st4 b{display:block;font:400 58px/1 Anton}
+.st4 span,.st6 span{display:block;font:700 16px Oxanium;letter-spacing:2px;color:var(--mute);margin-top:4px;text-transform:uppercase}
+.st6{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.st6 b{display:block;font:400 40px/1 Anton}
+.g10{display:flex;align-items:flex-end;gap:10px;height:230px;margin-top:14px}
+.g10>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.g10 .bb{display:flex;align-items:flex-end;gap:4px;width:100%;justify-content:center;height:180px}
+.g10 i{display:block;width:44%;border-radius:6px 6px 2px 2px;transform-origin:bottom}
+.g10 i.p{background:linear-gradient(180deg,#ff9ac8,var(--pink))}
+.g10 i.s{background:linear-gradient(180deg,#d7c4ff,#7a5bd6);opacity:.8}
+.g10 em{font-style:normal;font:800 20px "Exo 2";color:var(--pink);height:24px}
+.g10 u{text-decoration:none;font:700 16px Oxanium;color:var(--mute);margin-top:6px}
+.fin3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}
+.fin3 b{display:block;font:400 56px/1 Anton}
+.fin3 span{display:block;font:700 18px Oxanium;letter-spacing:2px;color:var(--mute);margin-top:6px;text-transform:uppercase}
+.fin3 small{display:block;font:700 20px "Exo 2";color:var(--soft);margin-top:4px}
+.pfb{display:grid;grid-template-columns:1fr 380px;gap:22px;margin-top:22px}
+.pf .vsb{font:700 30px/1.35 "Exo 2";color:var(--soft);display:block;padding-top:34px}
+.pf .ptk{margin-top:22px;font:700 36px/1.3 "Exo 2";color:#fff}
+/* duel */
+.du{position:absolute;left:120px;right:120px;top:250px}
+.duh{display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.duh .p{display:flex;align-items:center;gap:22px}
+.duh .p.r{flex-direction:row-reverse;text-align:right}
+.duh .nm{font:800 46px/1 "Exo 2";white-space:nowrap}
+.duh .mt{margin-top:8px;font:700 22px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase}
+.du .srow{margin-top:8px}
+.du .srow .slab{font-size:22px}
+.du .tug{margin-top:6px}
+.du .tug .v{font-size:44px}
+.du .tug .bar{height:34px}
+.dtake{position:absolute;left:120px;right:120px;top:926px;text-align:center}
+/* team stats board */
+.tb{position:absolute;left:160px;right:160px;top:272px}
+.tbr{display:grid;grid-template-columns:220px 100px 1fr 100px 220px;align-items:center;height:44px;border-bottom:1px solid rgba(255,255,255,.07)}
+.tbr:nth-child(even){background:rgba(255,255,255,.03)}
+.tbr .va{font:400 36px/1 Anton;text-align:left;padding-left:16px}
+.tbr .vh{font:400 36px/1 Anton;text-align:right;padding-right:16px}
+.tbr .lb{text-align:center;font:700 24px "Exo 2";color:var(--soft)}
+.tbr .rk{justify-self:center;font:800 18px Oxanium;letter-spacing:1px;padding:4px 10px;border-radius:9px;background:rgba(255,255,255,.08);color:var(--mute)}
+.tbr .rk.t{background:rgba(255,79,168,.2);color:#ffc2e0}.tbr .rk.b{background:rgba(255,106,61,.18);color:#ffc2ad}
+.tbr.hd{height:56px;border-bottom:2px solid rgba(255,255,255,.15);background:none}
+.tbr.hd .va,.tbr.hd .vh{font-size:44px}
+.tbtake{position:absolute;left:120px;right:120px;top:916px;text-align:center}
+/* lines */
+.ln{top:272px;width:820px;height:620px;padding:26px 32px}
+.lr{margin-top:14px;padding:14px 18px;border-radius:20px;background:rgba(255,255,255,.05)}
+.lr .k{display:flex;align-items:center;gap:14px}
+.lr .k span{font:800 18px Oxanium;letter-spacing:3px;color:var(--pink);padding:3px 10px;border:2px solid currentColor;border-radius:8px;flex:none}
+.lr .k b{font:400 34px/1 Anton;letter-spacing:.5px;white-space:nowrap;overflow:hidden}
+.lr .sx{display:flex;align-items:center;gap:16px;margin-top:10px;font:700 22px "Exo 2";color:var(--soft)}
+.lr .sx em{color:#fff}
+.lr .xb{flex:0 0 150px;height:22px;border-radius:8px;overflow:hidden;background:rgba(255,106,61,.35);position:relative}
+.lr .xb i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#b8287a,var(--pink))}
+.lr .fl{margin-top:8px;font:800 18px Oxanium;letter-spacing:2px;text-transform:uppercase}
+.ln .pp{margin-top:16px;font:700 22px "Exo 2";color:var(--mute)}
+.ln .pp b{color:var(--soft)}
+.lntake{position:absolute;left:120px;right:120px;top:922px;text-align:center}
 /* thumbnail (1280x720) */
 #thumb{position:absolute;inset:0;display:none;width:1280px;height:720px;overflow:hidden}
 </style></head>
@@ -375,6 +444,53 @@ B.cta=(s,P)=>{const r=s.el;r.id='cta';
   const l4=css(el('div','ctr',esc(P.disc),r),{top:'960px',font:'600 24px "Exo 2"',color:'var(--mute)'});
   return u=>{const ip=eBack(seg(u,0,.6));logo.style.opacity=clamp(ip);logo.style.transform=`scale(${lerp(.5,1,ip)})`;slam(l1,u,.4,1.5);popIn(l2,u,.9,60);popIn(l3,u,1.3,30);fadeIn(l4,u,1.7);};};
 
+const rkChip=(r,n)=>r?`<span class="rk ${r<=8?'t':r>=(n||32)-7?'b':''}">${ordinal(r)}</span>`:'<span></span>';
+function ordinal(n){const v=n%100;return n+(v>=11&&v<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'))}
+const head=(r,P,left='120px')=>css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px;font-size:72px">${esc(P.title)}</div>`,r),{left,top:'120px'});
+B.profile=(s,P)=>{const r=s.el;
+  const ring=P.pt!=null?(()=>{const R=110,C=2*Math.PI*R;return {C,html:`<div class="ring" style="width:260px;height:260px"><svg viewBox="0 0 250 250" style="width:260px;height:260px"><circle cx="125" cy="125" r="${R}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="22"/>
+      <circle class="arc" cx="125" cy="125" r="${R}" fill="none" stroke="url(#pf${s.P.a|0})" stroke-width="22" stroke-linecap="round" stroke-dasharray="0 ${C}"/>
+      <defs><linearGradient id="pf${s.P.a|0}"><stop offset="0" stop-color="#b794ff"/><stop offset="1" stop-color="#ff4fa8"/></linearGradient></defs></svg><div><b class="ptn" style="font-size:76px">0%</b><span>POINT CHANCE</span></div></div>`};})():null;
+  const mx=Math.max(3,...P.bars.map(b=>b.p)), ms=Math.max(4,...P.bars.map(b=>b.s));
+  const pf=el('div','pf',`<div class="hd">${avatar(P.num,P.color,110)}<div style="min-width:0"><div class="nm fit">${esc(P.name)}</div><div class="mt">${esc(P.meta)}</div></div>
+      <div class="rt"><span class="chip" style="color:var(--pink)">${esc(P.tag)}</span>${P.chips.map(c=>`<span class="rlc">${esc(c)}</span>`).join('')}</div></div>
+    <div class="pfg">
+      <div class="pbx"><span class="lab">This season</span><div class="st4">${P.season.map(([k,v])=>`<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div>
+        <div class="st6">${P.rates.map(([k,v])=>`<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div></div>
+      <div class="pbx"><span class="lab">Last ${P.bars.length} games · <span style="color:var(--pink)">points</span> · <span style="color:var(--purple)">shots</span></span>
+        <div class="g10">${P.bars.map(b=>`<div><em>${b.p||''}</em><div class="bb"><i class="p" style="height:${Math.max(4,b.p/mx*170)}px;opacity:${b.p?1:.25}"></i><i class="s" style="height:${Math.max(4,b.s/ms*170)}px"></i></div><u>${esc(b.o)}</u></div>`).join('')}</div></div>
+      <div class="pbx" style="text-align:center">${ring?`<span class="lab">Tonight · model</span>${ring.html}`:`<span class="lab">Ice time per game</span><div style="font:400 120px/1 Anton;margin-top:40px">${esc(P.rates[3][1])}</div><div class="lab" style="margin-top:10px">minutes</div>`}</div>
+    </div>
+    <div class="pfb"><div class="pbx"><span class="lab">Finishing & form</span><div class="fin3">${P.fin.map(([k,v,x])=>`<div><b>${esc(v)}</b><span>${esc(k)}</span><small>${esc(x)}</small></div>`).join('')}</div></div>
+      <div class="pbx vsb">${P.vs?rich(P.vs):`${esc(P.rates[4][0])}: <b style="margin-left:10px;color:#fff">${esc(P.rates[4][1])}</b>`}</div></div>
+    <div class="ptk">${rich(P.take)}</div>`,r);
+  const bx=[...pf.querySelectorAll('.pbx')],bars=[...pf.querySelectorAll('.g10 i')],tl=[...pf.querySelectorAll('.st4 div,.st6 div,.fin3 div')],arc=pf.querySelector('.arc'),ptn=pf.querySelector('.ptn'),tk=pf.querySelector('.ptk'),hd=pf.querySelector('.hd');
+  return u=>{slideX(hd,u,0,-400,.6);bx.forEach((b,j)=>popIn(b,u,.3+j*.15,40,.45));tl.forEach((x,j)=>popIn(x,u,.7+j*.05,20,.3));
+    bars.forEach((b,j)=>{const q=eOut(seg(u,1.0+(j>>1)*.08,1.4+(j>>1)*.08));b.style.transform=`scaleY(${q})`;});
+    if(arc){const q=eOut(seg(u,1.2,2.4));arc.setAttribute('stroke-dasharray',`${ring.C*P.pt*q} ${ring.C}`);ptn.textContent=pct(P.pt*q);}
+    popIn(tk,u,2.6,24,.45);};};
+B.duel=(s,P)=>{const r=s.el;const hd=head(r,P);
+  const side=(X,cl)=>`<div class="p ${cl}">${avatar(X.num,X.color,110)}<div style="min-width:0"><div class="nm">${esc(X.name)}</div><div class="mt">${esc(X.meta)}</div></div></div>`;
+  const du=el('div','du',`<div class="duh">${side(P.pa,'')}${side(P.ph,'r')}</div>`+P.rows.map(R=>`<div class="srow"><div class="slab">${esc(R.lab)}</div>
+     <div class="tug"><div class="v${R.better==='h'?' dim':''}" style="color:var(--A)">${esc(R.va)}</div><div class="bar a"><i></i></div><div class="bar h"><i></i></div><div class="v r${R.better==='a'?' dim':''}" style="color:var(--H)">${esc(R.vh)}</div></div></div>`).join(''),r);
+  const ps=[...du.querySelectorAll('.duh .p')],rows=[...du.querySelectorAll('.srow')];const tk=el('div','dtake take',rich(P.take),r);
+  return u=>{popIn(hd,u,0,40);slideX(ps[0],u,.2,-400,.6);slideX(ps[1],u,.35,400,.6);rows.forEach((R,j)=>{const at=.8+j*.3;popIn(R,u,at,20,.35);
+      const q=eOut(seg(u,at+.2,at+1.0)),is=R.querySelectorAll('.bar i');is[0].style.width=P.rows[j].fa*q*100+'%';is[1].style.width=P.rows[j].fh*q*100+'%';});
+    popIn(tk,u,.8+rows.length*.3+.6,24,.45);};};
+B.teamboard=(s,P)=>{const r=s.el;const hd=head(r,P,'160px');
+  const tb=el('div','tb',`<div class="tbr hd"><span class="va">${tm(P.away,P.ac)}</span><span></span><span class="lb" style="color:var(--mute);font:700 20px Oxanium;letter-spacing:3px">LEAGUE RANK · OF ${P.n}</span><span></span><span class="vh">${tm(P.home,P.hc)}</span></div>`+
+    P.rows.map(R=>`<div class="tbr"><span class="va" style="color:${(R.ra||99)<(R.rh||99)?'#fff':'var(--soft)'}">${esc(R.va)}</span>${rkChip(R.ra,P.n)}<span class="lb">${esc(R.lab)}</span>${rkChip(R.rh,P.n)}<span class="vh" style="color:${(R.rh||99)<(R.ra||99)?'#fff':'var(--soft)'}">${esc(R.vh)}</span></div>`).join(''),r);
+  const rows=[...tb.children];const tk=el('div','tbtake take',rich(P.take),r);
+  return u=>{popIn(hd,u,0,40);rows.forEach((x,j)=>{const p=eOut(seg(u,.3+j*.1,.7+j*.1));x.style.opacity=p;x.style.transform=`translateX(${(1-p)*-60}px)`;});popIn(tk,u,.4+rows.length*.1+.4,24,.45);};};
+B.lines=(s,P)=>{const r=s.el;const hd=head(r,P);
+  const card=(S,T,c,side)=>{const e=el('div','card ln',`<div style="font:400 50px/1 Anton">${tm(T,c)}</div>`+S.rows.map(R=>`<div class="lr"><div class="k"><span>${esc(R.k)}</span><b>${esc(R.names)}</b></div>
+      <div class="sx"><span>${esc(R.toi)}</span><span>Goals <em>${R.gf}</em>–${R.ga}</span><span>xG <em>${esc(R.xgf)}</em>–${esc(R.xga)}</span><div class="xb"><i style="width:0%"></i></div><span>${pct(R.xp)} xGF</span></div>
+      ${R.flag?`<div class="fl" style="color:${/above/.test(R.flag)?'var(--amber)':'var(--purple)'}">${esc(R.flag)}</div>`:''}</div>`).join('')+
+      (S.pp1?`<div class="pp">PP1: <b>${esc(S.pp1)}</b>${S.ppx!=null?` · ${S.ppx.toFixed(1)} xG / 60`:''}</div>`:''),r);css(e,{[side]:'120px'});return e;};
+  const cs=[card(P.sa,P.away,P.ac,'left'),card(P.sh,P.home,P.hc,'right')];const tk=el('div','lntake take',rich(P.take),r);
+  const xp=cs.map(c=>[...c.querySelectorAll('.xb i')]);const rows=cs.map(c=>[...c.querySelectorAll('.lr')]);
+  return u=>{popIn(hd,u,0,40);cs.forEach((c,j)=>{slideX(c,u,.2+j*.25,j?400:-400,.6);rows[j].forEach((x,k)=>popIn(x,u,.8+j*.2+k*.25,20,.35));
+      xp[j].forEach((x,k)=>{const R=(j?P.sh:P.sa).rows[k];x.style.width=R.xp*eOut(seg(u,1.1+j*.2+k*.25,1.9+j*.2+k*.25))*100+'%';});});popIn(tk,u,2.6,24,.45);};};
 const beats=SPEC.beats||[];
 for(const P of beats){const s=scene(P);const f=B[P.kind]?B[P.kind](s,P):(()=>{});const D=P.b-P.a;
   s.draw=u=>{s.el.style.opacity=1;s.el.style.transform='';f(u);if(!P.noLeave&&u>D-.45)leave(s.el,u,D);};}

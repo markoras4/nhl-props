@@ -98,17 +98,23 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
   odds, sportsbooks, picks or grades. Template `longform.html`, data `longform_extract.js` (the built app page, plus the
   Pro patch when there is one: point chances need it, everything else works on the public numbers).
 - Story: cold open (games to watch) -> all games (ET / CET, model win chance, expected goals) -> why these games ->
-  per game: matchup, the model's view, form & style (xGF%, shots, pace, goals for / against, PDO, power play vs penalty
-  kill), goalies (save %, GSAx), 2-3 players to watch (Heat Index, season, point chance, line at 5v5), head-to-head &
-  playoff stakes, keys to the game -> recap -> evenout.app. 3 games when the slate has 6+, chosen by storyline
-  (closest game, hottest player, star power, playoff stakes, goalie gap, division rivals), one reason each.
+  per game: matchup card, then 4-5 sections picked FOR THAT GAME from a pool (model's view, team stats board with league
+  ranks, who drives play, scoring/defence/luck, special teams, goalies, line stats, player profile deep-dive, player
+  duel, head-to-head & stakes) by what stands out (biggest gaps / storylines), then "keys" (wording varies) ->
+  recap -> evenout.app. Rules (`plan_sections`): no section type in more than 2 games, a different first beat after
+  every matchup card, a player beat (profile or duel) in every game; a penalty for sections earlier games showed.
+  3 games when the slate has 6+, chosen by storyline (closest game, hottest player, star power, playoff stakes,
+  goalie gap, division rivals). Career vs tonight's opponent comes from origin/site:data/gl/<player>.json.
 - Timing: each beat lasts its animation plus 0.35 s per word to read (headings and row labels count half, numbers and
   tiles a tenth), never under 4 s. YouTube chapters (description) start at every game.
 - Rendering: every animation in the template goes through `seg()`, which flags the frame as moving; `plan()` returns a
   key per frame and still frames are captured once and repeated (about a quarter of the frames are captured). No CSS
   `filter: blur` in the template: it makes captures several times slower.
-- Music: `music.style_track` per section (intro, each game) from `SERIES_STYLES["slate"]` (nightcruise, moonlight,
-  dreamloop, deephouse; the date picks the first), 1.5 s crossfades at the game cuts, loudness -18 LUFS (background).
+- Music: `--music <file>` loops a licensed track under the whole video (2 s crossfade at each loop seam, 1 s fade-in,
+  3 s fade-out, -18 LUFS in the final encode). Never commit music files (public repo): the workflow downloads it from
+  private storage when the repository variable `LONGFORM_MUSIC` names it (TODO step in the slate job), or uses
+  `vars.LONGFORM_MUSIC_PATH`. Without one: `music.style_track` per section (intro, each game) from
+  `SERIES_STYLES["slate"]` (nightcruise, moonlight, dreamloop, deephouse; the date picks the first), 1.5 s crossfades.
 - Output: `slate-<DATE>.mp4`, `slate-<DATE>-thumb.jpg` (1280x720 custom thumbnail, the manifest's `cover`),
   `slate-<DATE>-spec.json` (what was shown) and the `slate` item in `manifest.json` (`"long": true`, YouTube only).
 - Workflow: job `slate` in `.github/workflows/videos.yml`, after the `videos` job. Scheduled (15:30 Sweden) only when

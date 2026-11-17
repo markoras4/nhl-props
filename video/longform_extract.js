@@ -15,6 +15,11 @@
   const regs = Object.values(DATA.goalies || {}).filter(q => q?.cur?.gp >= 5).sort((a, b) => (b.cur.gsax || 0) - (a.cur.gsax || 0));
   const gRank = {}; regs.forEach((q, i) => { gRank[String(q.id)] = i + 1; });
   const rk = (t, k) => TR[t]?.[k] ? {v: r3(TR[t][k].v), rk: TR[t][k].rk} : null;
+  // league ranks for the team stats board (1 = best), over every team in the page
+  const TEAMS = Object.values(DATA.teams || {});
+  const RANKED = {pts_pct: 1, gf_pg: 1, ga_pg: -1, xgf_pct5: 1, hdsf60: 1, hdsa60: -1, pp_xgf60_cur: 1, pk_xga60_cur: -1, pdo: 1, fo_pct: 1, pen_pg: -1, sf: 1};
+  const lgRank = (t, k) => { const d = DATA.teams?.[t]; if (!d || d[k] == null) return null;
+    const dir = RANKED[k]; return 1 + TEAMS.filter(x => x[k] != null && (dir > 0 ? x[k] > d[k] : x[k] < d[k])).length; };
 
   const team = (t, g) => {
     const d = DATA.teams?.[t] || {}, f = FT[t] || {};
@@ -27,6 +32,10 @@
             gf_pg: r2(d.gf_pg), ga_pg: r2(d.ga_pg), gf_ha: r2(home ? d.gf_home : d.gf_away), ga_ha: r2(home ? d.ga_home : d.ga_away),
             xgf_pct5: r3(d.xgf_pct5), pdo: r3(d.pdo), sh5: r3(d.sh5), sv5: r3(d.sv5), s_gf: d.s_gf, s_xgf: r2(d.s_xgf), s_ga: d.s_ga, s_xga: r2(d.s_xga),
             sf: r2(sf), sa: r2(sa), pp_gf60: r2(d.pp_gf60), pk_ga60: r2(d.pk_ga60), pen_pg: r2(d.pen_pg), fo_pct: r3(d.fo_pct),
+            pp_xgf60: r2(d.pp_xgf60_cur ?? d.xgf_pp), pk_xga60: r2(d.pk_xga60_cur ?? d.xga_pk), hdxgf60: r2(d.hdxgf60), hdxga60: r2(d.hdxga60),
+            lr: Object.fromEntries(Object.keys(RANKED).map(k => [k, lgRank(t, k)])),
+            lines: Object.fromEntries(Object.entries(d.lines5 || {}).filter(([, L]) => L).map(([k, L]) => [k, {gp: L.gp, toi: r2(L.toi), gf: L.gf, xgf: r2(L.xgf), ga: L.ga, xga: r2(L.xga), sf: L.sf, sa: L.sa, name: L.name || "", exact: !!L.exact}])),
+            groups: Object.fromEntries(Object.entries(d.lineup?.groups || {}).map(([k, ids]) => [k, ids.map(i => P(i)?.name).filter(Boolean)])),
             hd_for: r2(d.hdsf60), hd_against: r2(d.hdsa60), tier: d.tier || null,
             rank: {xgf: rk(t, "xgf"), pdo: rk(t, "pdo"), pp: rk(t, "pp"), pk: rk(t, "pk"), att: rk(t, "att"), def: rk(t, "def"), gsax: rk(t, "gsax"), cf: rk(t, "cf")},
             n_teams: nTeams, playoffs: r3(f.playoffs), cup: r3(f.cup), div: f.div_name || null, conf: f.conf || null,
@@ -70,7 +79,12 @@
       out.push({id: pid, name: p.name, num: p.num || "", pos: p.pos, posg: p.posg, toi: r2(p.toi_proj), gp: c.gp || 0, g: c.g || 0, a: c.a || 0, p: c.p || 0, s: c.s || 0,
                 heat: h && h.v != null ? {v: r2(h.v), x: h.x, e: r2(h.e), n: h.n} : null,
                 pt: r3(pt), gl: r3(g1), xg: p.xg_windows?.cur ? {g: p.xg_windows.cur.g, xg: r2(p.xg_windows.cur.xg)} : null,
-                sh: r3(c.sh), sh_true: r3(p.rates?.recent_sh), line: lineOf(p, t),
+                sh: r3(c.sh), sh_true: r3(p.rates?.recent_sh), sh_career: r3(p.rates?.career_sh), line: lineOf(p, t),
+                toi_season: r2(p.toi_season), toi_recent: r2(p.toi_recent), pp_toi: r2(p.x?.pp?.min_pg), ppp: p.x?.pp?.ppp ?? null,
+                fo: p.x?.fo?.pct_cur != null && (p.x.fo.pg || 0) >= 5 ? r3(p.x.fo.pct_cur) : null,
+                reg: p.regress ? {g: p.regress.g, xg: r2(p.regress.xg), exp: r2(p.regress.exp), s: p.regress.s} : null,
+                g10: (p.form?.games || []).slice(0, 10).map(x => ({o: String(x.o || "").replace(/^@/, ""), p: (x.g || 0) + (x.a || 0), g: x.g || 0, s: x.s || 0, t: r2(x.t)})),
+                age: p.age ?? null, career: p.career || null,
                 last: (p.form?.games || []).slice(0, 5).map(x => (x.g || 0) + (x.a || 0))});
     }
     return out;
