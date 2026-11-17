@@ -15,10 +15,14 @@ on:
         required: false
         default: ""
       slot:
-        description: "Which videos"
+        description: "Which videos (slate = only the long-form slate breakdown)"
         type: choice
-        options: [all, morning, upcoming]
+        options: [all, morning, upcoming, slate]
         default: all
+      slate:
+        description: "Also render the long-form 'Tonight's slate' breakdown (YouTube, ~8 min)"
+        type: boolean
+        default: false
       dry_run:
         description: "Render only, do not upload (shows what would be posted)"
         type: boolean
@@ -58,6 +62,7 @@ jobs:
               "30 13 * * *") SLOT=upcoming; [ "$OFF" = "+0200" ] || RUN=no ;;
             esac
           fi
+          if [ "$SLOT" = "slate" ]; then RUN=no; fi                  # slot "slate": only the slate job below runs
           echo "date=$DATE" >> "$GITHUB_OUTPUT"; echo "slot=$SLOT" >> "$GITHUB_OUTPUT"; echo "run=$RUN" >> "$GITHUB_OUTPUT"
           echo "Slate date: $DATE, slot: $SLOT, run: $RUN (Sweden is UTC$(TZ=Europe/Stockholm date +%z))"
 
@@ -181,4 +186,139 @@ jobs:
             echo "Push failed (attempt $i), retrying"; sleep $((i * 5))
           done
           echo "::error::Could not save data/video_uploads.json - the next run may post these videos again"
+          exit 1
+
+  # Long-form "Tonight's slate" breakdown (16:9, ~8 min, YouTube only; video/longform.py). Runs after the short videos
+  # in the upcoming slot (15:30 Sweden), but on the schedule ONLY when the repository variable SLATE_DAILY is 'true'
+  # (Settings > Secrets and variables > Actions > Variables). On demand: "Run workflow" with slate ticked, or slot = slate.
+  slate:
+    # after the short videos: both jobs commit data/video_uploads.json, and the videos job rebases its push
+    needs: videos
+    # don't even start a runner unless asked for: on demand, or the 15:30 slot with SLATE_DAILY switched on
+    if: always() && ((github.event_name == 'workflow_dispatch' && (inputs.slate || inputs.slot == 'slate')) || (github.event_name == 'schedule' && vars.SLATE_DAILY == 'true' && (github.event.schedule == '30 14 * * *' || github.event.schedule == '30 13 * * *')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Decide whether the slate video runs
+        id: d
+        env:
+          IN_DATE: ${{ inputs.date }}
+          IN_SLOT: ${{ inputs.slot }}
+          IN_SLATE: ${{ inputs.slate }}
+          CRON: ${{ github.event.schedule }}
+          DAILY: ${{ vars.SLATE_DAILY }}
+        run: |
+          DATE="$IN_DATE"
+          if [ -z "$DATE" ]; then DATE=$(TZ=America/New_York date +%F); fi
+          RUN=no
+          if [ -n "$CRON" ]; then
+            OFF=$(TZ=Europe/Stockholm date +%z)
+            case "$CRON" in
+              "30 14 * * *") if [ "$OFF" = "+0100" ]; then RUN=yes; fi ;;
+              "30 13 * * *") if [ "$OFF" = "+0200" ]; then RUN=yes; fi ;;
+            esac
+            if [ "$RUN" = yes ] && [ "$DAILY" != "true" ]; then RUN=no; echo "Scheduled slate video is off (repository variable SLATE_DAILY is not 'true')"; fi
+          elif [ "$IN_SLATE" = "true" ] || [ "$IN_SLOT" = "slate" ]; then
+            RUN=yes
+          fi
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"; echo "run=$RUN" >> "$GITHUB_OUTPUT"
+          echo "Slate date: $DATE, run: $RUN"
+
+      - uses: actions/setup-python@v5
+        if: steps.d.outputs.run == 'yes'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Python packages, Chromium and ffmpeg
+        if: steps.d.outputs.run == 'yes'
+        run: |
+          pip install -r requirements.txt
+          pip install numpy scipy pillow playwright requests
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -1
+
+      - name: Fetch the built site (waits for the 13:15 UTC data build on scheduled runs)
+        if: steps.d.outputs.run == 'yes'
+        env:
+          SCHEDULED: ${{ github.event_name == 'schedule' }}
+        run: |
+          git fetch -q --depth=1 origin site
+          if [ "$SCHEDULED" = "true" ]; then
+            need=$(date -u -d "today 13:10" +%s)
+            for i in $(seq 1 30); do
+              have=$(git log -1 --format=%ct origin/site)
+              if [ "$have" -ge "$need" ]; then echo "Site build from $(date -u -d @$have +%H:%M) UTC is fresh"; break; fi
+              echo "Waiting for today's 13:10 UTC data build (latest site is from $(date -u -d @$have '+%F %H:%M') UTC)"; sleep 120
+              git fetch -q --depth=1 origin site
+            done
+          fi
+
+      - name: Fetch today's Pro data (private storage; point chances need it, the video works without)
+        if: steps.d.outputs.run == 'yes'
+        run: |
+          mkdir -p output/pro
+          OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pro-upload" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          code=$(curl -sS -o output/pro/latest.json -w "%{http_code}" -H "Authorization: Bearer $OIDC" "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload?path=latest.json")
+          if [ "$code" != "200" ]; then echo "::warning::Pro data not available ($code): the slate video uses the public numbers only"; rm -f output/pro/latest.json; else echo "Pro data: $(wc -c < output/pro/latest.json) bytes"; fi
+
+      - name: Render the slate video
+        id: r
+        if: steps.d.outputs.run == 'yes'
+        env:
+          DATE: ${{ steps.d.outputs.date }}
+        run: |
+          python video/longform.py --date "$DATE" --out video/out
+          if [ ! -f "video/out/$DATE/slate-$DATE.mp4" ]; then echo "No slate video today"; echo "any=no" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "any=yes" >> "$GITHUB_OUTPUT"
+          ls -la "video/out/$DATE"
+
+      - name: Keep the video as a download (Actions run page, 7 days)
+        if: steps.r.outputs.any == 'yes'
+        uses: actions/upload-artifact@v4
+        with:
+          name: slate-${{ steps.d.outputs.date }}
+          path: |
+            video/out/${{ steps.d.outputs.date }}/slate-*
+            video/out/${{ steps.d.outputs.date }}/manifest.json
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload to YouTube
+        if: github.ref == 'refs/heads/main' && steps.r.outputs.any == 'yes'
+        env:
+          DATE: ${{ steps.d.outputs.date }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_PRIVACY: ${{ vars.YT_PRIVACY }}
+        run: |
+          M="video/out/$DATE/manifest.json"
+          if [ "$DRY_RUN" = "true" ]; then python video/upload.py --manifest "$M" --only youtube --dry-run; exit 0; fi
+          if [ -z "$YT_CLIENT_ID" ] || [ -z "$YT_CLIENT_SECRET" ] || [ -z "$YT_REFRESH_TOKEN" ]; then echo "No YouTube secrets yet - skipping"; exit 0; fi
+          python video/upload.py --manifest "$M" --only youtube
+
+      - name: Save the upload ledger to the repository
+        # Re-apply our entries onto the newest main (a JSON merge) instead of rebasing: never a merge conflict.
+        if: always() && github.ref == 'refs/heads/main' && inputs.dry_run != true && steps.r.outputs.any == 'yes'
+        run: |
+          [ -f data/video_uploads.json ] || exit 0
+          cp data/video_uploads.json "$RUNNER_TEMP/mine.json"
+          git config user.name "nhl-props-bot"
+          git config user.email "actions@users.noreply.github.com"
+          MERGE='import json,sys,pathlib; p=pathlib.Path("data/video_uploads.json"); t=json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}; m=json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")); t.update(m); p.write_text(json.dumps(t, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")'
+          for i in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python -c "$MERGE" "$RUNNER_TEMP/mine.json"
+            git add data/video_uploads.json
+            if git diff --cached --quiet; then echo "Ledger unchanged"; exit 0; fi
+            git commit -qm "Video uploads $(date -u +%F) (slate)"
+            git push -q origin HEAD:main && { echo "Ledger saved"; exit 0; }
+            echo "Push failed (attempt $i), retrying"; sleep $((i * 5))
+          done
+          echo "::error::Could not save data/video_uploads.json - the next run may post the slate video again"
           exit 1

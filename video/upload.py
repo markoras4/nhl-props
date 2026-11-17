@@ -1,4 +1,4 @@
-"""Upload the day's short videos to YouTube (Shorts) and TikTok.
+"""Upload the day's videos to YouTube (Shorts, and the long-form slate breakdown) and TikTok.
 
     py video/upload.py --manifest video/out/2026-11-16/manifest.json
     py video/upload.py --manifest video/out/2026-11-16/manifest.json --only youtube
@@ -214,7 +214,9 @@ class YouTube:
                 f"projects to private; see video/UPLOAD.md")
         if cover and cover.exists():
             self.thumbnail(vid, cover)
-        return {"video_id": vid, "url": f"https://www.youtube.com/shorts/{vid}", "privacy": got or want}
+        # long-form items (the "slate" breakdown, 16:9, minutes long) are regular videos, not Shorts
+        url = f"https://www.youtube.com/watch?v={vid}" if item.get("long") else f"https://www.youtube.com/shorts/{vid}"
+        return {"video_id": vid, "url": url, "privacy": got or want}
 
     def _send(self, uri: str, path: Path, size: int, auth: dict) -> dict:
         """PUT the bytes; on a dropped connection or 5xx ask how much arrived and resume (exponential backoff)."""

@@ -1134,6 +1134,8 @@ for _name, _sp in STYLES.items():
     SERIES_STYLES.setdefault(_sp["series"], []).append(_name)
 # "Last night" (morning recap) borrows light / bouncy styles from the preview and lab sets; other series unchanged
 SERIES_STYLES["night"] = ["bounce", "brightfeel", "dreamloop"]
+# "Tonight's slate" (long-form YouTube breakdown, minutes of background under on-screen text): calm, steady loops
+SERIES_STYLES["slate"] = ["nightcruise", "moonlight", "dreamloop", "deephouse"]
 
 
 _PART_GAIN = {"bass": 1.5, "chords": 6.0, "arp": 6.0, "lead": 2.5}   # mix balance between the part types

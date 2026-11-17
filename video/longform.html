@@ -1,0 +1,418 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- evenout long-form YouTube video (16:9, 1920x1080): "Tonight's slate breakdown". video/longform.py injects SPEC and
+     renders render(t) frame by frame. Every animation goes through seg(), which flags the frame as moving; frames where
+     nothing moves are identical, so longform.py captures them once and repeats the picture (see plan()). Keep it that
+     way: no free-running animation (background drift, beat pulse) or the static-frame shortcut stops working. -->
+<style>
+@font-face{font-family:Anton;src:url(fonts/anton.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:500;src:url(fonts/exo2-500.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:700;src:url(fonts/exo2-700.woff2) format("woff2")}
+@font-face{font-family:"Exo 2";font-weight:800;src:url(fonts/exo2-800.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:600;src:url(fonts/oxanium-600.woff2) format("woff2")}
+@font-face{font-family:Oxanium;font-weight:800;src:url(fonts/oxanium-800.woff2) format("woff2")}
+:root{--bg:#100a12;--panel:#1a111d;--line:#37253b;--text:#f7ebf4;--soft:#eedde8;--mute:#aa93a5;
+  --pink:#ff4fa8;--purple:#b794ff;--amber:#ffb547;--orange:#ff6a3d;--A:#b794ff;--H:#ff4fa8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg)}
+#stage{position:absolute;inset:0;overflow:hidden;color:var(--text);font-family:"Exo 2",sans-serif}
+.scene{position:absolute;inset:0;display:none}
+.anton{font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.5px;line-height:.95}
+#bg{position:absolute;inset:0;background:radial-gradient(1400px 900px at 50% 45%,#1d1222,var(--bg) 72%)}
+/* soft colour glows: radial gradients, not filter:blur (blur makes every animated frame several times slower to capture) */
+.blob{position:absolute;border-radius:50%;opacity:.5}
+#grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,79,168,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(255,79,168,.05) 2px,transparent 2px);background-size:120px 120px;mask-image:radial-gradient(ellipse at 50% 50%,#000 25%,transparent 75%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);pointer-events:none}
+/* chrome */
+#top{position:absolute;left:64px;right:64px;top:38px;height:56px;display:flex;align-items:center;gap:22px;z-index:4}
+#top img{height:46px;display:block}
+#badge{display:inline-flex;align-items:center;gap:12px;padding:8px 22px 8px 16px;border-radius:999px;background:rgba(255,79,168,.14);border:2px solid rgba(255,79,168,.55);font:800 22px Oxanium;letter-spacing:3px;text-transform:uppercase;color:#ffd3ea}
+#badge i{width:12px;height:12px;border-radius:50%;background:var(--pink);box-shadow:0 0 14px var(--pink)}
+#chap{margin-left:auto;font:800 24px Oxanium;letter-spacing:3px;color:var(--soft);text-transform:uppercase;white-space:nowrap}
+#chap em{font-style:normal;color:var(--pink)}
+#date{font:600 24px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase;padding-left:22px;border-left:2px solid var(--line)}
+#dots{position:absolute;left:64px;right:64px;top:106px;height:6px;display:flex;gap:8px;z-index:4}
+#dots i{flex:1;border-radius:3px;background:rgba(255,255,255,.12)}
+#dots i.on{background:linear-gradient(90deg,var(--pink),var(--purple))}
+#dots i.cur{background:var(--pink);box-shadow:0 0 12px var(--pink)}
+#foot{position:absolute;left:64px;bottom:34px;display:flex;align-items:center;gap:14px;font:800 26px "Exo 2";color:#fff;z-index:4;opacity:.9}
+#foot span{font:700 18px Oxanium;letter-spacing:3px;color:var(--purple);text-transform:uppercase}
+/* shared pieces */
+.sec{font:800 30px Oxanium;letter-spacing:6px;text-transform:uppercase;color:var(--pink)}
+.ttl{font:400 84px/1 Anton;text-transform:uppercase;letter-spacing:1px}
+.card{position:absolute;border-radius:32px;background:linear-gradient(160deg,rgba(38,24,42,.95),rgba(16,10,18,.95));border:2px solid rgba(255,255,255,.08);box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);padding:34px 40px;overflow:hidden}
+.card::before{content:"";position:absolute;inset:-2px;border-radius:32px;padding:2px;background:linear-gradient(140deg,rgba(255,79,168,.7),transparent 35%,transparent 65%,rgba(183,148,255,.6));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.lab{font:700 22px Oxanium;letter-spacing:4px;text-transform:uppercase;color:var(--mute)}
+.take{font:700 36px/1.3 "Exo 2";color:var(--soft)}
+em{font-style:normal;color:var(--pink)}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border-radius:999px;font:800 22px Oxanium;letter-spacing:3px;text-transform:uppercase;border:2px solid currentColor}
+.tm{display:inline-flex;align-items:center;gap:14px}
+.tm i{display:inline-block;width:14px;height:.9em;border-radius:5px;background:var(--c)}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Anton;color:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.1),0 16px 40px rgba(0,0,0,.5);flex:none}
+.abs{position:absolute}
+.ctr{position:absolute;left:0;right:0;text-align:center}
+/* cold open */
+.co1{font:400 120px/1 Anton;letter-spacing:2px}
+.co2{font:400 190px/.95 Anton;color:var(--pink);letter-spacing:2px}
+.mchips{display:flex;justify-content:center;gap:28px}
+.mchip{display:flex;align-items:center;gap:18px;padding:18px 34px;border-radius:26px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);font:400 58px/1 Anton;letter-spacing:1px}
+.mchip u{text-decoration:none;color:var(--mute);font-size:40px}
+/* slate grid */
+.sgrid{position:absolute;left:64px;right:64px;top:290px;display:grid;gap:18px}
+.st{position:relative;border-radius:22px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.08);padding:16px 22px 14px}
+.st.pick{border-color:var(--pink);background:rgba(255,79,168,.09);box-shadow:0 0 30px rgba(255,79,168,.25)}
+.st .mt{display:flex;align-items:center;gap:16px;font:400 46px/1 Anton;letter-spacing:1px}
+.st .mt span.at{font-size:30px;color:var(--mute)}
+.st .tt{margin-top:10px;font:700 22px Oxanium;letter-spacing:2px;color:var(--mute)}
+.split{position:relative;height:40px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.06);margin-top:12px;display:flex}
+.split i{display:block;height:100%}
+.split .a{background:linear-gradient(90deg,#6b4fb0,var(--A))}
+.split .h{background:linear-gradient(90deg,var(--H),#b8287a)}
+.split b{position:absolute;top:0;line-height:40px;font:800 24px "Exo 2";color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.split b.l{left:14px}.split b.r{right:14px}
+.st .xt{margin-top:8px;font:700 24px "Exo 2";color:var(--soft)}
+.st .xt b{font:400 32px Anton;color:#fff;letter-spacing:1px}
+.st .tag{position:absolute;right:20px;bottom:16px;padding:5px 14px;border-radius:10px;background:var(--pink);color:#2b0016;font:800 18px Oxanium;letter-spacing:2px}
+/* picks */
+.pk{top:290px;width:560px;height:620px;padding:36px 40px}
+.pk .n{font:400 100px/1 Anton;color:rgba(255,79,168,.35)}
+.pk .mt{font:400 74px/1 Anton;letter-spacing:1px;margin-top:6px}
+.pk .why{margin-top:28px;font:400 46px/1.05 Anton;text-transform:uppercase;color:var(--pink);letter-spacing:.5px}
+.pk .wsub{margin-top:18px;font:700 32px/1.3 "Exo 2";color:var(--soft)}
+.pk .tt{position:absolute;left:40px;right:40px;bottom:36px;font:700 24px Oxanium;letter-spacing:2px;color:var(--mute)}
+/* title card */
+.vs{position:absolute;top:250px;left:0;right:0;display:grid;grid-template-columns:1fr 200px 1fr;align-items:center}
+.side{display:flex;flex-direction:column;align-items:center;text-align:center}
+.side .ab{font:400 200px/1 Anton;letter-spacing:4px}
+.side .nm{font:800 46px "Exo 2";margin-top:6px}
+.side .rec{font:700 30px Oxanium;letter-spacing:3px;color:var(--soft);margin-top:12px}
+.l5{display:flex;gap:10px;margin-top:20px;justify-content:center}
+.l5 i{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font:800 24px Oxanium;font-style:normal}
+.l5 i.W{background:rgba(255,79,168,.85);color:#2b0016}.l5 i.L{background:rgba(255,255,255,.12);color:var(--mute)}.l5 i.O{background:rgba(255,181,71,.8);color:#2a1800}
+.side .strk{margin-top:14px;font:700 26px "Exo 2";color:var(--mute)}
+.vs .mid{font:400 90px/1 Anton;color:var(--mute);text-align:center}
+.tinfo{position:absolute;left:0;right:0;top:810px;display:flex;justify-content:center;gap:22px;flex-wrap:wrap}
+.tinfo div{padding:14px 28px;border-radius:20px;background:rgba(255,255,255,.06);font:700 30px "Exo 2";color:var(--soft)}
+.tinfo div b{color:#fff}
+.tinfo div.warn{background:rgba(255,106,61,.15);color:#ffc2ad;border:2px solid rgba(255,106,61,.5)}
+.whyb{position:absolute;left:0;right:0;top:170px;text-align:center}
+/* model view */
+.wbig{position:absolute;top:300px;left:120px;right:120px;display:flex;justify-content:space-between;align-items:flex-end}
+.wbig .s{display:flex;flex-direction:column}
+.wbig .s.r{align-items:flex-end}
+.wbig b{font:400 170px/.9 Anton}
+.wbig span{font:800 30px Oxanium;letter-spacing:3px;margin-top:8px}
+.wbar{position:absolute;top:545px;left:120px;right:120px;height:70px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,.06);display:flex}
+.wbar i{display:block;height:100%}
+.wbar .mk{position:absolute;left:50%;top:-12px;bottom:-12px;width:4px;background:rgba(255,255,255,.7)}
+.mrow{position:absolute;top:660px;left:120px;right:120px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.mrow>div{padding:22px 28px;border-radius:24px;background:rgba(255,255,255,.05)}
+.mrow b{display:block;font:400 74px/1 Anton;margin-top:8px}
+.mrow .x{font:700 26px "Exo 2";color:var(--soft);margin-top:6px}
+.mtake{position:absolute;top:905px;left:120px;right:120px;text-align:center}
+/* stat comparison rows */
+.cmp{position:absolute;left:120px;right:120px;top:285px}
+.cmph{display:grid;grid-template-columns:1fr 1fr;font:400 54px/1 Anton;letter-spacing:1px}
+.cmph div:last-child{text-align:right}
+.srow{margin-top:22px}
+.srow .slab{text-align:center;font:800 26px Oxanium;letter-spacing:4px;text-transform:uppercase;color:var(--soft)}
+.tug{display:grid;grid-template-columns:150px 1fr 1fr 150px;gap:0;align-items:center;margin-top:10px}
+.tug .v{font:400 58px/1 Anton}
+.tug .v.r{text-align:right}
+.tug .bar{height:52px;background:rgba(255,255,255,.06);position:relative;overflow:hidden}
+.tug .bar.a{border-radius:18px 0 0 18px;margin-right:3px}.tug .bar.h{border-radius:0 18px 18px 0;margin-left:3px}
+.tug .bar i{position:absolute;top:0;bottom:0;display:block}
+.tug .bar.a i{right:0;background:linear-gradient(270deg,var(--A),#6b4fb0);border-radius:18px 0 0 18px}
+.tug .bar.h i{left:0;background:linear-gradient(90deg,var(--H),#b8287a);border-radius:0 18px 18px 0}
+.tug .v.dim{opacity:.55}
+.srow .take{text-align:center;margin-top:10px;font-size:33px}
+/* goalies */
+.gc{top:285px;width:820px;height:560px;padding:30px 38px}
+.gc .hd{display:flex;align-items:center;gap:26px}
+.gc .av{width:120px;height:120px;font-size:60px}
+.gc .nm{font:800 52px/1.05 "Exo 2"}
+.gc .stt{margin-top:10px}
+.gtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.gtiles div{padding:18px 16px;border-radius:22px;background:rgba(255,255,255,.05);text-align:center}
+.gtiles b{display:block;font:400 70px/1 Anton}
+.gtiles span{display:block;margin-top:8px;font:700 20px Oxanium;letter-spacing:3px;color:var(--mute)}
+.gc .ctx{margin-top:24px;font:700 30px/1.3 "Exo 2";color:var(--soft)}
+.gtake{position:absolute;top:885px;left:120px;right:120px;text-align:center}
+/* player */
+.pc{left:120px;right:120px;top:150px;padding:30px 46px 30px}
+.pc .hd{display:flex;align-items:center;gap:30px}
+.pc .av{width:120px;height:120px;font-size:60px}
+.pc .nm{font:800 64px/1 "Exo 2";white-space:nowrap;overflow:hidden}
+.pc .mt{margin-top:12px;font:700 28px Oxanium;letter-spacing:3px;color:var(--mute);text-transform:uppercase}
+.pc .tagp{margin-left:auto;align-self:flex-start}
+.pgrid{display:grid;grid-template-columns:1.25fr 1fr .9fr;gap:26px;margin-top:24px}
+.pbox{padding:20px 26px;border-radius:24px;background:rgba(255,255,255,.05)}
+.hv{display:flex;align-items:baseline;gap:18px;margin-top:10px}
+.hv b{font:400 80px/1 Anton}
+.hv span{font:800 30px Oxanium;letter-spacing:3px;text-transform:uppercase}
+.gauge{margin-top:18px;height:30px;border-radius:15px;background:linear-gradient(90deg,rgba(183,148,255,.4),rgba(255,255,255,.06) 45%,rgba(255,255,255,.06) 55%,rgba(255,106,61,.45));position:relative}
+.gauge::after{content:"";position:absolute;left:50%;top:-8px;bottom:-8px;width:3px;background:rgba(255,255,255,.5)}
+.gauge i{position:absolute;top:-11px;width:52px;height:52px;margin-left:-26px;border-radius:50%;border:5px solid #fff;box-shadow:0 0 24px currentColor}
+.pbox .ctx{margin-top:16px;font:700 27px/1.3 "Exo 2";color:var(--soft)}
+.ptiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.ptiles div{padding:12px 10px;border-radius:18px;background:rgba(255,255,255,.05);text-align:center}
+.ptiles b{display:block;font:400 56px/1 Anton}
+.ptiles span{display:block;font:700 18px Oxanium;letter-spacing:3px;color:var(--mute);margin-top:4px}
+.ring{position:relative;width:240px;height:240px;margin:14px auto 0}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring b{font:400 66px/1 Anton}
+.ring span{font:700 16px Oxanium;letter-spacing:2px;color:var(--mute);margin-top:4px}
+.l5p{display:flex;align-items:flex-end;gap:12px;height:86px;margin-top:12px}
+.l5p div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.l5p i{width:100%;border-radius:8px 8px 3px 3px;transform-origin:bottom}
+.l5p em{font-style:normal;font:800 22px "Exo 2";margin-bottom:4px}
+.pline{margin-top:20px;padding:14px 26px;border-radius:22px;background:rgba(255,255,255,.04);font:700 30px/1.3 "Exo 2";color:var(--soft)}
+.pline b{color:#fff}
+.ptake{margin-top:18px;font:700 34px/1.3 "Exo 2";color:#fff}
+/* h2h + stakes */
+.hh{left:120px;top:280px;width:800px;height:640px;padding:28px 36px}
+.sk{right:120px;top:280px;width:820px;height:640px;padding:28px 36px}
+.h2r{display:grid;grid-template-columns:200px 1fr 50px 1fr;align-items:center;gap:10px;padding:12px 18px;border-radius:18px;background:rgba(255,255,255,.05);margin-top:10px;font:400 40px/1 Anton;letter-spacing:1px}
+.h2r .d{font:700 22px Oxanium;letter-spacing:2px;color:var(--mute)}
+.h2r .x{text-align:center;color:var(--mute)}
+.h2r .r{text-align:right}
+.h2r .w{color:var(--pink)}
+.hsum{margin-top:18px;font:700 30px/1.3 "Exo 2";color:var(--soft)}
+.skr{margin-top:28px}
+.skr .hd{display:flex;align-items:baseline;gap:16px;font:400 50px/1 Anton;letter-spacing:1px}
+.skr .hd span{font:700 24px Oxanium;letter-spacing:2px;color:var(--mute)}
+.skr .hd em{margin-left:auto;font-style:normal;font:400 46px/1 Anton;color:var(--amber)}
+.sktr{position:relative;height:40px;margin-top:14px;border-radius:14px;background:rgba(255,255,255,.07)}
+.sktr i{position:absolute;top:0;bottom:0;border-radius:14px;background:linear-gradient(90deg,rgba(255,106,61,.75),rgba(255,79,168,.9))}
+.sktr u{position:absolute;top:-8px;bottom:-8px;width:4px;background:#fff}
+.skl{display:flex;justify-content:space-between;margin-top:10px;font:700 26px "Exo 2";color:var(--soft)}
+/* keys */
+.keys{position:absolute;left:120px;right:120px;top:295px;display:grid;gap:22px}
+.key{display:grid;grid-template-columns:110px 1fr;gap:28px;align-items:center;padding:24px 34px;border-radius:28px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.07)}
+.key .n{font:400 96px/1 Anton;color:var(--pink);text-align:center}
+.key .h{font:400 50px/1.05 Anton;text-transform:uppercase;letter-spacing:.5px}
+.key .s{margin-top:10px;font:700 32px/1.3 "Exo 2";color:var(--soft)}
+/* recap + cta */
+.rc{position:absolute;left:160px;right:160px;top:300px;display:grid;gap:28px}
+.rcr{display:grid;grid-template-columns:420px 1fr 260px;gap:30px;align-items:center;padding:24px 34px;border-radius:28px;background:rgba(255,255,255,.05)}
+.rcr .mt{font:400 64px/1 Anton;letter-spacing:1px}
+.rcr .split{height:56px;margin-top:0}
+.rcr .split b{line-height:56px;font-size:30px}
+.rcr .xs{font:700 26px "Exo 2";color:var(--soft);text-align:right}
+.rcr .xs b{display:block;font:400 52px/1 Anton;color:#fff}
+#cta .logo{position:absolute;left:560px;width:800px;top:260px}
+.glitch{text-shadow:-5px 0 rgba(255,79,168,.85),5px 0 rgba(183,148,255,.85)}
+/* thumbnail (1280x720) */
+#thumb{position:absolute;inset:0;display:none;width:1280px;height:720px;overflow:hidden}
+</style></head>
+<body><div id="stage"></div>
+<script>
+const SPEC = /*SPEC*/null;
+const stage = document.getElementById('stage');
+let DYN=false;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+// every animation runs through seg(): a value strictly between 0 and 1 means "something moves in this frame"
+const seg=(t,a,b)=>{const x=clamp((t-a)/(b-a));if(x>0&&x<1)DYN=true;return x};
+const lerp=(a,b,x)=>a+(b-a)*x;
+const eOut=x=>1-Math.pow(1-x,3), eExpo=x=>x>=1?1:1-Math.pow(2,-10*x), eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c1=1.7,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const pct=x=>Math.round(x*100)+'%';
+function el(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;(parent||stage).appendChild(e);return e}
+function css(e,o){Object.assign(e.style,o);return e}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+// rich text: **x** -> highlighted
+const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<em>$1</em>');
+const tm=(t,c)=>`<span class="tm" style="--c:${c}"><i></i>${esc(t)}</span>`;
+
+if(SPEC.thumb){/* thumbnail mode: see bottom */}
+// ---------------- background + chrome ----------------
+const bg=el('div',null,null); bg.id='bg';
+[['#ff4fa8',1300,-350,-450],['#b794ff',1200,1050,250],['#ff6a3d',900,500,-500]].forEach(([c,s,x,y])=>css(el('div','blob',null,bg),{width:s+'px',height:s+'px',background:`radial-gradient(circle closest-side,${c}cc,${c}55 45%,transparent)`,left:x+'px',top:y+'px'}));
+el('div',null,null).id='grid';
+const scenes=[];
+const topBar=el('div',null,`<img src="img/logo.svg" alt=""><span id="badge"><i></i>Tonight's slate</span><span id="chap"></span><span id="date">${esc(SPEC.day)}</span>`); topBar.id='top';
+const chap=topBar.querySelector('#chap');
+const dots=el('div',null,(SPEC.chapters||[]).map(()=>'<i></i>').join('')); dots.id='dots'; const dotI=[...dots.children];
+const foot=el('div',null,`evenout.app <span>Every player, every game</span>`); foot.id='foot';
+el('div',null,null).id='vig';
+
+function scene(P){const root=el('div','scene');const s={el:root,a:P.a,b:P.b,P,draw:()=>{}};scenes.push(s);return s}
+function popIn(e,u,at,dy=60,dur=.5){const p=eBack(seg(u,at,at+dur));e.style.opacity=clamp(seg(u,at,at+.2));e.style.transform=`translateY(${(1-p)*dy}px) scale(${lerp(.95,1,p)})`;}
+function fadeIn(e,u,at,dur=.5){e.style.opacity=eOut(seg(u,at,at+dur));}
+function slideX(e,u,at,dx,dur=.6){const p=eExpo(seg(u,at,at+dur));e.style.opacity=clamp(p*1.6);e.style.transform=`translateX(${(1-p)*dx}px)`;}
+function slam(e,u,at,from=1.5){const p=seg(u,at,at+.32),q=eExpo(p);e.style.opacity=p<=0?0:clamp(p*3);e.style.transform=`scale(${lerp(from,1,q)})`;e.style.filter=q<1?`blur(${(1-q)*10}px)`:'none';e.classList.toggle('glitch',p>0&&p<.4);}
+function count(e,u,at,dur,to,fmt){e.textContent=fmt(to*eOut(seg(u,at,at+dur)));}
+function leave(root,u,D){const q=eInOut(seg(u,D-.45,D));root.style.opacity=1-q;root.style.transform=q>0?`translateY(${-q*30}px)`:'';}
+const avatar=(num,c,sz)=>`<div class="av" style="background:${c};width:${sz}px;height:${sz}px;font-size:${Math.round(sz*.5)}px">${esc(num)}</div>`;
+const splitBar=(pa,ph,cls='')=>`<div class="split ${cls}"><i class="a" style="width:${pa*100}%"></i><i class="h" style="width:${ph*100}%"></i><b class="l">${pct(pa)}</b><b class="r">${pct(ph)}</b></div>`;
+
+const B={};   // beat builders: (s,P) -> draw(u)
+B.cold=(s,P)=>{const r=s.el;
+  const l0=css(el('div','ctr sec',esc(P.kicker),r),{top:'200px',fontSize:'34px'});
+  const l1=css(el('div','ctr co1',esc(P.t1),r),{top:'270px'});
+  const l2=css(el('div','ctr co2',esc(P.t2),r),{top:'400px'});
+  const ch=css(el('div','mchips',P.games.map(g=>`<div class="mchip">${tm(g.away,g.ac)}<u>@</u>${tm(g.home,g.hc)}</div>`).join(''),r),{position:'absolute',left:0,right:0,top:'690px'});
+  const ds=css(el('div','ctr',esc(P.sub),r),{top:'850px',font:'800 38px "Exo 2"',color:'var(--soft)'});
+  const cs=[...ch.children];
+  return u=>{fadeIn(l0,u,.1);slam(l1,u,.3,1.6);slam(l2,u,.8,1.8);cs.forEach((c,j)=>popIn(c,u,1.6+j*.25,70,.5));popIn(ds,u,2.6,30,.5);};};
+B.slate=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'64px',top:'136px'});
+  const n=P.games.length, cols=n>9?4:n>4?3:Math.max(2,n), rows=Math.ceil(n/cols);
+  const gr=el('div','sgrid',P.games.map(g=>`<div class="st${g.pick?' pick':''}">${g.pick?`<span class="tag">WATCH</span>`:''}
+     <div class="mt">${tm(g.away,g.ac)}<span class="at">@</span>${tm(g.home,g.hc)}</div>
+     <div class="tt">${esc(g.time)}</div>${splitBar(g.pa,1-g.pa)}
+     <div class="xt">Expected goals <b>${g.xt.toFixed(1)}</b></div></div>`).join(''),r);
+  css(gr,{gridTemplateColumns:`repeat(${cols},1fr)`});
+  if(rows>=3) gr.querySelectorAll('.st').forEach(x=>{x.style.padding='14px 22px 12px'});
+  const tiles=[...gr.children], fills=tiles.map(t=>[...t.querySelectorAll('.split i')]);
+  const lg=css(el('div','abs',`<span style="color:var(--A)">■</span> Away win chance &nbsp; <span style="color:var(--H)">■</span> Home win chance &nbsp;·&nbsp; model numbers`,r),{right:'64px',top:'196px',font:'700 24px "Exo 2"',color:'var(--mute)'});
+  return u=>{popIn(hd,u,0,40);fadeIn(lg,u,.6);tiles.forEach((t,j)=>{popIn(t,u,.3+j*.09,50,.45);const q=eOut(seg(u,.6+j*.09,1.5+j*.09));const g=P.games[j];fills[j][0].style.width=g.pa*q*100+'%';fills[j][1].style.width=(1-g.pa)*q*100+'%';});};};
+B.picks=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'64px',top:'136px'});
+  const W=P.games.length===2?720:560, gap=40, x0=(1920-(P.games.length*W+(P.games.length-1)*gap))/2;
+  const cards=P.games.map((g,j)=>{const c=el('div','card pk',`<div class="n">${j+1}</div><div class="mt">${tm(g.away,g.ac)} <span style="color:var(--mute);font-size:50px">@</span> ${tm(g.home,g.hc)}</div>
+     <div class="why">${esc(g.why)}</div><div class="wsub">${rich(g.wsub)}</div><div class="tt">${esc(g.time)}</div>`,r);css(c,{left:x0+j*(W+gap)+'px',width:W+'px'});return c;});
+  return u=>{popIn(hd,u,0,40);cards.forEach((c,j)=>popIn(c,u,.4+j*.5,90,.6));};};
+B.title=(s,P)=>{const r=s.el;
+  const wb=el('div','whyb',`<span class="chip" style="color:var(--pink)">${esc(P.kicker)}</span>`,r);
+  const side=(T,c)=>`<div class="side"><div class="ab" style="color:#fff;text-shadow:0 0 50px ${c}88">${esc(T.abbr)}</div><div class="nm">${esc(T.name)}</div>
+     <div class="rec">${esc(T.rec)}</div><div class="l5">${T.l5.map(x=>`<i class="${x}">${x}</i>`).join('')}</div><div class="strk">${esc(T.strk)}</div></div>`;
+  const vs=el('div','vs',side(P.A,P.ac)+`<div class="mid">@</div>`+side(P.H,P.hc),r);
+  const sides=[...vs.querySelectorAll('.side')], mid=vs.querySelector('.mid');
+  const inf=el('div','tinfo',P.info.map(([k,v,w])=>`<div class="${w?'warn':''}">${esc(k)} <b>${esc(v)}</b></div>`).join(''),r);
+  const infs=[...inf.children];
+  return u=>{popIn(wb,u,0,30);slideX(sides[0],u,.2,-500,.7);slideX(sides[1],u,.35,500,.7);slam(mid,u,.8,2);
+    sides.forEach((sd,j)=>[...sd.querySelectorAll('.l5 i')].forEach((x,k)=>popIn(x,u,1.2+j*.2+k*.08,20,.3)));infs.forEach((x,j)=>popIn(x,u,1.7+j*.18,30,.4));};};
+B.model=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'120px',top:'136px'});
+  const wb=el('div','wbig',`<div class="s"><b style="color:var(--A)" class="na">0%</b><span>${tm(P.away,P.ac)} WIN</span></div><div class="s r"><b style="color:var(--H)" class="nh">0%</b><span>${tm(P.home,P.hc)} WIN</span></div>`,r);
+  const bar=el('div','wbar',`<i class="a" style="background:linear-gradient(90deg,#6b4fb0,var(--A))"></i><i class="h" style="margin-left:auto;background:linear-gradient(90deg,var(--H),#b8287a)"></i><span class="mk"></span>`,r);
+  const ia=bar.querySelector('.a'),ih=bar.querySelector('.h'),na=wb.querySelector('.na'),nh=wb.querySelector('.nh');
+  const mr=el('div','mrow',P.tiles.map(([k,v,x])=>`<div><span class="lab">${esc(k)}</span><b>${esc(v)}</b><div class="x">${esc(x)}</div></div>`).join(''),r);
+  const ms=[...mr.children];
+  const tk=el('div','mtake take',rich(P.take),r);
+  return u=>{popIn(hd,u,0,40);fadeIn(wb,u,.3);const q=eOut(seg(u,.5,1.9));ia.style.width=P.pa*q*100+'%';ih.style.width=(1-P.pa)*q*100+'%';
+    na.textContent=pct(P.pa*q);nh.textContent=pct((1-P.pa)*q);ms.forEach((m,j)=>popIn(m,u,1.9+j*.3,40,.45));popIn(tk,u,2.9,30,.5);};};
+B.form=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'120px',top:'136px'});
+  const cm=el('div','cmp',`<div class="cmph"><div>${tm(P.away,P.ac)}</div><div>${tm(P.home,P.hc)}</div></div>`+P.rows.map(R=>`<div class="srow"><div class="slab">${esc(R.lab)}</div>
+     <div class="tug"><div class="v${R.better==='h'?' dim':''}" style="color:var(--A)">${esc(R.va)}</div><div class="bar a"><i></i></div><div class="bar h"><i></i></div><div class="v r${R.better==='a'?' dim':''}" style="color:var(--H)">${esc(R.vh)}</div></div>
+     <div class="take">${rich(R.take)}</div></div>`).join(''),r);
+  css(cm,{top:P.rows.length>2?'300px':'330px'});
+  const rows=[...cm.querySelectorAll('.srow')],cmh=cm.querySelector('.cmph');
+  return u=>{popIn(hd,u,0,40);fadeIn(cmh,u,.2);rows.forEach((R,j)=>{const at=.5+j*1.2;popIn(R.querySelector('.slab'),u,at,20,.4);popIn(R.querySelector('.tug'),u,at,20,.4);
+      const q=eOut(seg(u,at+.3,at+1.3)),is=R.querySelectorAll('.bar i');is[0].style.width=P.rows[j].fa*q*100+'%';is[1].style.width=P.rows[j].fh*q*100+'%';
+      popIn(R.querySelector('.take'),u,at+.9,24,.45);});};};
+B.goalies=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'120px',top:'136px'});
+  hd.style.top='120px';
+  const card=(Gk,c,team,side)=>{if(!Gk)return null;const e=el('div','card gc',`<div class="hd">${avatar(Gk.num,c,120)}<div><div class="nm">${esc(Gk.name)}</div>
+      <div class="stt"><span class="chip" style="color:${Gk.confirmed?'var(--pink)':'var(--amber)'}">${esc(team)} · ${esc(Gk.status)}</span></div></div></div>
+      <div class="gtiles">${Gk.tiles.map(([k,v,cl])=>`<div><b style="color:${cl||'#fff'}">${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div>
+      ${Gk.lines.map(x=>`<div class="ctx">${rich(x)}</div>`).join('')}`,r);css(e,{[side]:'120px'});return e;};
+  const cs=[card(P.ga,P.ac,P.away,'left'),card(P.gh,P.hc,P.home,'right')].filter(Boolean);
+  if(cs.length===1) css(cs[0],{left:'550px',right:'auto'});
+  const tk=el('div','gtake take',rich(P.take),r);
+  return u=>{popIn(hd,u,0,40);cs.forEach((c,j)=>{slideX(c,u,.3+j*.3,j?400:-400,.7);[...c.querySelectorAll('.gtiles div')].forEach((x,k)=>popIn(x,u,1.0+j*.3+k*.12,30,.4));
+      [...c.querySelectorAll('.ctx')].forEach((x,k)=>popIn(x,u,1.7+j*.3+k*.2,20,.4));});popIn(tk,u,2.6,30,.5);};};
+B.player=(s,P)=>{const r=s.el;
+  const hot=P.heat&&P.heat.v>=0, hc=P.heat?(hot?'var(--orange)':'var(--purple)'):'#fff';
+  const ring=P.pt!=null?(()=>{const R=100,C=2*Math.PI*R;return {C,html:`<div class="ring"><svg viewBox="0 0 230 230"><circle cx="115" cy="115" r="${R}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="22"/>
+      <circle class="arc" cx="115" cy="115" r="${R}" fill="none" stroke="url(#pg${s.P.a|0})" stroke-width="22" stroke-linecap="round" stroke-dasharray="0 ${C}"/>
+      <defs><linearGradient id="pg${s.P.a|0}"><stop offset="0" stop-color="#b794ff"/><stop offset="1" stop-color="#ff4fa8"/></linearGradient></defs></svg><div><b class="ptn">0%</b><span>POINT CHANCE</span></div></div>`};})():null;
+  const mx=Math.max(2,...(P.last||[]));
+  const card=el('div','card pc',`<div class="hd">${avatar(P.num,P.color,140)}<div style="min-width:0"><div class="nm fit">${esc(P.name)}</div><div class="mt">${esc(P.meta)}</div></div>
+      <span class="chip tagp" style="color:${P.tagc||'var(--pink)'}">${esc(P.tag)}</span></div>
+    <div class="pgrid">
+      <div class="pbox">${P.heat?`<span class="lab">Heat Index · last ${P.heat.n} games</span><div class="hv"><b class="hn" style="color:${hc}">0.0</b><span style="color:${hc}">${esc(P.heat.level)}</span></div>
+        <div class="gauge"><i style="color:${hc};background:${hc}"></i></div><div class="ctx">${rich(P.heat.line)}</div>`:`<span class="lab">Last 5 games · points</span>`}
+        ${P.last&&P.last.length?`${P.heat?'<span class="lab" style="display:block;margin-top:14px;font-size:18px">Last 5 games · points</span>':''}<div class="l5p">${P.last.map(x=>`<div><em>${x||''}</em><i style="height:${Math.max(6,x/mx*80)}px;background:${x?'linear-gradient(180deg,#ff9ac8,#ff4fa8)':'rgba(255,255,255,.14)'}"></i></div>`).join('')}</div>`:''}</div>
+      <div class="pbox"><span class="lab">${esc(P.seasonLab)}</span><div class="ptiles">${P.tiles.map(([k,v])=>`<div><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join('')}</div></div>
+      <div class="pbox">${ring?`<span class="lab">Tonight · model</span>${ring.html}`:`<span class="lab">${esc(P.altLab||'')}</span><div style="font:400 110px/1 Anton;margin-top:30px;text-align:center">${esc(P.alt||'')}</div><div class="ctx" style="text-align:center">${esc(P.altSub||'')}</div>`}</div>
+    </div>
+    ${P.line?`<div class="pline">${rich(P.line)}</div>`:''}
+    <div class="ptake">${rich(P.take)}</div>`,r);
+  const hn=card.querySelector('.hn'),gi=card.querySelector('.gauge i'),boxes=[...card.querySelectorAll('.pbox')],bars=[...card.querySelectorAll('.l5p i')],
+        arc=card.querySelector('.arc'),ptn=card.querySelector('.ptn'),pl=card.querySelector('.pline'),pt=card.querySelector('.ptake'),tiles=[...card.querySelectorAll('.ptiles div')];
+  return u=>{const ci=eExpo(seg(u,0,.6));card.style.opacity=clamp(ci*1.5);card.style.transform=`translateX(${(1-ci)*600}px)`;
+    boxes.forEach((b,j)=>popIn(b,u,.4+j*.2,40,.45));
+    if(hn){const gp=eOut(seg(u,.8,2.0));hn.textContent=(P.heat.v>=0?'+':'−')+Math.abs(P.heat.v*gp).toFixed(1);gi.style.left=lerp(50,50+clamp(P.heat.v/6,-1,1)*50,gp)+'%';}
+    bars.forEach((b,j)=>{const q=eBack(seg(u,1.0+j*.1,1.35+j*.1));b.style.transform=`scaleY(${clamp(q,0,1.2)})`;});
+    tiles.forEach((x,j)=>popIn(x,u,.9+j*.1,20,.35));
+    if(arc){const q=eOut(seg(u,1.0,2.2));arc.setAttribute('stroke-dasharray',`${ring.C*P.pt*q} ${ring.C}`);ptn.textContent=pct(P.pt*q);}
+    if(pl)popIn(pl,u,2.0,24,.45);popIn(pt,u,2.5,24,.45);};};
+B.h2h=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px;font-size:72px">${esc(P.title)}</div>`,r),{left:'120px',top:'120px'});
+  const hh=el('div','card hh',`<span class="lab">${esc(P.h2hLab)}</span>${P.h2h.length?P.h2h.map(x=>`<div class="h2r"><span class="d">${esc(x.d)}</span><span class="${x.aw?'w':''}">${esc(x.a)} ${x.as}</span><span class="x">–</span><span class="r ${x.hw?'w':''}">${x.hs} ${esc(x.h)}</span></div>`).join(''):`<div class="hsum">${esc(P.noH2h||'')}</div>`}
+     ${P.h2hSum?`<div class="hsum">${rich(P.h2hSum)}</div>`:''}`,r);
+  const sk=P.stakes?el('div','card sk',`<span class="lab">${esc(P.skLab)}</span>${P.stakes.map(x=>`<div class="skr"><div class="hd">${tm(x.team,x.c)}<span>NOW ${pct(x.now)}</span><em>${Math.round(x.swing*100)}-PT SWING</em></div>
+       <div class="sktr"><i style="left:${x.lose*100}%;width:0%"></i><u style="left:${x.now*100}%"></u></div><div class="skl"><span>Lose: ${pct(x.lose)}</span><span>Win: ${pct(x.win)}</span></div></div>`).join('')}
+       <div class="hsum">${rich(P.skSum)}</div>`,r):null;
+  if(!sk) css(hh,{left:'560px'});
+  const rows=[...hh.querySelectorAll('.h2r')];
+  return u=>{popIn(hd,u,0,40);popIn(hh,u,.3,60,.55);rows.forEach((x,j)=>popIn(x,u,.7+j*.15,20,.35));
+    if(sk){popIn(sk,u,.6,60,.55);[...sk.querySelectorAll('.skr')].forEach((x,j)=>{popIn(x,u,1.1+j*.3,20,.4);const q=eOut(seg(u,1.5+j*.3,2.4+j*.3)),Xs=P.stakes[j];x.querySelector('.sktr i').style.width=(Xs.win-Xs.lose)*q*100+'%';});
+      popIn(sk.querySelector('.hsum'),u,2.4,20,.4);}
+    const hs=hh.querySelector('.hsum');if(hs)popIn(hs,u,1.6,20,.4);};};
+B.keys=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'120px',top:'136px'});
+  const ks=el('div','keys',P.keys.map((k,j)=>`<div class="key"><div class="n">${j+1}</div><div><div class="h">${esc(k.h)}</div><div class="s">${rich(k.s)}</div></div></div>`).join(''),r);
+  if(P.keys.length<3) ks.style.top='340px';
+  const kk=[...ks.children];
+  return u=>{popIn(hd,u,0,40);kk.forEach((k,j)=>slideX(k,u,.5+j*1.1,-300,.6));};};
+B.recap=(s,P)=>{const r=s.el;
+  const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'160px',top:'120px'});
+  const rc=el('div','rc',P.games.map(g=>`<div class="rcr"><div class="mt">${tm(g.away,g.ac)} <span style="color:var(--mute);font-size:44px">@</span> ${tm(g.home,g.hc)}</div>
+     ${splitBar(g.pa,1-g.pa)}<div class="xs">Expected score<b>${esc(g.score)}</b></div></div>`).join(''),r);
+  const rows=[...rc.children],fills=rows.map(x=>[...x.querySelectorAll('.split i')]);
+  return u=>{popIn(hd,u,0,40);rows.forEach((x,j)=>{popIn(x,u,.4+j*.35,50,.5);const q=eOut(seg(u,.7+j*.35,1.6+j*.35)),g=P.games[j];fills[j][0].style.width=g.pa*q*100+'%';fills[j][1].style.width=(1-g.pa)*q*100+'%';});};};
+B.cta=(s,P)=>{const r=s.el;r.id='cta';
+  const logo=el('img','logo',null,r);logo.src='img/logo.svg';
+  const l1=css(el('div','ctr anton',esc(P.t1),r),{top:'500px',fontSize:'96px'});
+  const l2=css(el('div','ctr',`<span style="display:inline-flex;padding:18px 48px;border-radius:999px;background:var(--pink);color:#2b0016;font:800 60px 'Exo 2'">evenout.app</span>`,r),{top:'640px'});
+  const l3=css(el('div','ctr',esc(P.t3),r),{top:'790px',font:'800 38px Oxanium',letterSpacing:'4px',color:'var(--purple)',textTransform:'uppercase'});
+  const l4=css(el('div','ctr',esc(P.disc),r),{top:'960px',font:'600 24px "Exo 2"',color:'var(--mute)'});
+  return u=>{const ip=eBack(seg(u,0,.6));logo.style.opacity=clamp(ip);logo.style.transform=`scale(${lerp(.5,1,ip)})`;slam(l1,u,.4,1.5);popIn(l2,u,.9,60);popIn(l3,u,1.3,30);fadeIn(l4,u,1.7);};};
+
+const beats=SPEC.beats||[];
+for(const P of beats){const s=scene(P);const f=B[P.kind]?B[P.kind](s,P):(()=>{});const D=P.b-P.a;
+  s.draw=u=>{s.el.style.opacity=1;s.el.style.transform='';f(u);if(!P.noLeave&&u>D-.45)leave(s.el,u,D);};}
+
+function fitAll(){for(const s of scenes){const d=s.el.style.display;s.el.style.display='block';
+  s.el.querySelectorAll('.fit').forEach(e=>{let f=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+1&&f>30){f-=2;e.style.fontSize=f+'px';}});
+  s.el.style.display=d;}}
+
+let curScene=-1;
+window.render=function(t){
+  DYN=false;let vis=[];
+  scenes.forEach((s,i)=>{const on=t>=s.a&&t<s.b;s.el.style.display=on?'block':'none';if(on){s.draw(t-s.a);vis.push(i);}});
+  const P=beats[vis[0]]||{};
+  const chrome=!P.noChrome;
+  topBar.style.opacity=chrome?1:0;dots.style.opacity=chrome&&P.ci!=null?1:0;foot.style.opacity=chrome?.9:0;
+  chap.innerHTML=P.chap?rich(P.chap):'';
+  dotI.forEach((d,i)=>{d.className=i<P.ci?'on':i===P.ci?'cur':'';});
+  stage.style.opacity=1-seg(t,SPEC.total-.6,SPEC.total);
+  return DYN?null:vis.join(',');
+};
+// one call in the page: the static-frame key of every frame (null = something moves: capture it)
+window.plan=function(fps,n){const k=[];for(let f=0;f<n;f++)k.push(render(f/fps));return k;};
+
+// ---------------- thumbnail (1280x720, own layout) ----------------
+window.thumb=function(){
+  stage.innerHTML='';stage.style.opacity=1;stage.style.transform='';document.body.style.width='1280px';document.body.style.height='720px';
+  const T=SPEC.thumbSpec;
+  const b=el('div',null,null);css(b,{position:'absolute',inset:0,background:'radial-gradient(900px 600px at 30% 40%,#2a1430,#100a12 75%)'});
+  [['#ff4fa8',900,-270,-310],['#b794ff',800,750,150]].forEach(([c,s,x,y])=>css(el('div','blob',null,b),{width:s+'px',height:s+'px',background:`radial-gradient(circle closest-side,${c}cc,${c}55 45%,transparent)`,left:x+'px',top:y+'px',opacity:.5}));
+  css(el('img',null,null),{position:'absolute',left:'48px',top:'40px',height:'52px'}).src='img/logo.svg';
+  css(el('div','anton',esc(T.k),null),{position:'absolute',left:'52px',top:'118px',fontSize:'64px',color:'#fff'});
+  css(el('div','anton',T.big.map(esc).join('<br>'),null),{position:'absolute',left:'48px',top:'190px',fontSize:'128px',color:'var(--pink)',lineHeight:'.92'});
+  const ms=el('div',null,T.games.map(g=>`<div style="display:flex;align-items:center;gap:14px;font:400 52px/1 Anton;letter-spacing:1px">${tm(g.away,g.ac)}<span style="color:var(--mute);font-size:36px">@</span>${tm(g.home,g.hc)}</div>`).join(''));
+  css(ms,{position:'absolute',left:'52px',top:'455px',display:'grid',gap:'16px'});
+  const nb=el('div',null,`<div style="font:400 250px/.85 Anton;color:#fff;text-shadow:0 0 60px rgba(255,79,168,.6)">${esc(T.num)}</div><div style="font:800 34px/1.2 Oxanium;letter-spacing:3px;color:var(--amber);text-transform:uppercase;margin-top:18px">${T.numLab.map(esc).join('<br>')}</div>`);
+  css(nb,{position:'absolute',right:'60px',top:'200px',textAlign:'right',width:'540px'});
+  css(el('div',null,esc(T.date)),{position:'absolute',right:'60px',top:'52px',font:'800 34px Oxanium',letterSpacing:'3px',color:'var(--soft)'});
+};
+Promise.all([document.fonts.ready,...['400 20px Anton','800 20px "Exo 2"','700 20px "Exo 2"','600 20px Oxanium','800 20px Oxanium'].map(f=>document.fonts.load(f)),
+  ...['img/logo.svg'].map(u=>new Promise(r=>{const i=new Image();i.onload=i.onerror=r;i.src=u}))]).then(()=>{fitAll();render(0);window.READY=true;});
+</script></body></html>

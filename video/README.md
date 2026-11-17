@@ -86,3 +86,31 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
 - `seed`: int or string. An ISO date rotates through the series' styles day by day (consecutive days never repeat a
   style); tempo, key, mode, chord loop and patterns also come from the seed. Same seed -> identical audio.
 - Preview all styles: `video/out/music-sampler-v3.mp3` (12 s each, in `STYLES` order). 60 s renders in ~1.5 s.
+
+# Tonight's slate breakdown (long-form YouTube, video/longform.py)
+
+    py video/longform.py --date 2026-11-17                       # full render (~8 min video)
+    py video/longform.py --date 2026-11-17 --preview beats       # one still per beat in video/out/<DATE>/stills/ (+ thumbnail)
+    py video/longform.py --date 2026-11-17 --preview 12,48.5     # stills at these seconds
+    py video/longform.py --date 2026-11-17 --games 2026020339,2026020340 --max-seconds 60   # pick the games, short test
+
+- 16:9 1920x1080, 30 fps, music and on-screen text only (no voice), YouTube only. Stats and model numbers only: never
+  odds, sportsbooks, picks or grades. Template `longform.html`, data `longform_extract.js` (the built app page, plus the
+  Pro patch when there is one: point chances need it, everything else works on the public numbers).
+- Story: cold open (games to watch) -> all games (ET / CET, model win chance, expected goals) -> why these games ->
+  per game: matchup, the model's view, form & style (xGF%, shots, pace, goals for / against, PDO, power play vs penalty
+  kill), goalies (save %, GSAx), 2-3 players to watch (Heat Index, season, point chance, line at 5v5), head-to-head &
+  playoff stakes, keys to the game -> recap -> evenout.app. 3 games when the slate has 6+, chosen by storyline
+  (closest game, hottest player, star power, playoff stakes, goalie gap, division rivals), one reason each.
+- Timing: each beat lasts its animation plus 0.35 s per word to read (headings and row labels count half, numbers and
+  tiles a tenth), never under 4 s. YouTube chapters (description) start at every game.
+- Rendering: every animation in the template goes through `seg()`, which flags the frame as moving; `plan()` returns a
+  key per frame and still frames are captured once and repeated (about a quarter of the frames are captured). No CSS
+  `filter: blur` in the template: it makes captures several times slower.
+- Music: `music.style_track` per section (intro, each game) from `SERIES_STYLES["slate"]` (nightcruise, moonlight,
+  dreamloop, deephouse; the date picks the first), 1.5 s crossfades at the game cuts, loudness -18 LUFS (background).
+- Output: `slate-<DATE>.mp4`, `slate-<DATE>-thumb.jpg` (1280x720 custom thumbnail, the manifest's `cover`),
+  `slate-<DATE>-spec.json` (what was shown) and the `slate` item in `manifest.json` (`"long": true`, YouTube only).
+- Workflow: job `slate` in `.github/workflows/videos.yml`, after the `videos` job. Scheduled (15:30 Sweden) only when
+  the repository variable `SLATE_DAILY` is `true`; on demand with "Run workflow" -> slate ticked, or slot = `slate`
+  (only the slate video).
