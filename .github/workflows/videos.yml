@@ -4,7 +4,7 @@ on:
   # GitHub's clock is UTC, Sweden switches between UTC+1 (winter) and UTC+2 (summer). Each slot has one line per
   # season; the "Pick the date" step keeps only the one that is right today, so videos go out at the same Swedish time.
   schedule:
-    - cron: "0 9 * * *"     # 10:00 Sweden (winter) - morning slot: videos about games already played (weekly report)
+    - cron: "0 9 * * *"     # 10:00 Sweden (winter) - morning slot: videos about games already played (last night, weekly report)
     - cron: "0 8 * * *"     # 10:00 Sweden (summer)
     - cron: "30 14 * * *"   # 15:30 Sweden (winter) - upcoming slot: tonight's games (Board, Hot or lucky)
     - cron: "30 13 * * *"   # 15:30 Sweden (summer)

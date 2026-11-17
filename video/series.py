@@ -1,4 +1,4 @@
-"""evenout short videos: three series rendered from the site's own numbers, one MP4 each (9:16, 30 fps, music).
+"""evenout short videos: four series rendered from the site's own numbers, one MP4 each (9:16, 30 fps, music).
 
     py video/series.py --date 2026-11-16 --all                  # what the day's schedule asks for
     py video/series.py --date 2026-11-16 --series board,hot,report
@@ -10,6 +10,10 @@ Series
   hot     Hot or Lucky? (Tue / Thu / Sat): the hottest and coldest regulars by Heat Index, what the run means.
   report  Report Card (Mondays, every week good or bad): last week's Triage results by grade, one per player,
           the rolling 30 days and season, and the pick the model got most wrong.
+  night   Last night (every morning, YouTube + TikTok, stats only): yesterday's final scores, the star of the night,
+          then the strongest few of wall of the night, line of the night, finishing vs xG, where the goals came from and
+          playoff-chance movers. Data: origin/site:data/archive/<yesterday>.json, data/shots.json, data/frozen/<yesterday>.json
+          (playoff chances at lock) and the built page (night_extract.js: numbers after last night). Never odds or picks.
 
 Numbers come from the built app page (default origin/site:app/index.html) with the Pro data merged in (--pro, default
 output/pro/latest.json): the page's own triageRows / heat index, so videos always match the site. Track-record numbers
@@ -61,7 +65,7 @@ def seconds(beats: float, bpm: float) -> float:
 
 
 # ------------------------------------------------------------------ data
-def load_page_data(date: str, html: str, pro: Path | None, work: Path) -> dict:
+def load_page_data(date: str, html: str, pro: Path | None, work: Path, script: str = "series_extract.js", args: dict | None = None) -> dict:
     from playwright.sync_api import sync_playwright
     page = work / "site.html"
     page.write_text(html, encoding="utf-8")
@@ -74,7 +78,8 @@ def load_page_data(date: str, html: str, pro: Path | None, work: Path) -> dict:
         pg.wait_for_function("typeof triageRows === 'function' && typeof DATA !== 'undefined'", timeout=60000)
         if pro and pro.exists():
             pg.evaluate("(X) => { applyPro(X); }", json.loads(pro.read_text(encoding="utf-8")))
-        out = pg.evaluate((HERE / "series_extract.js").read_text(encoding="utf-8"), {"day": date, "testAllowF": bool(__import__("os").environ.get("VIDEO_TEST_ALLOW_F"))})
+        out = pg.evaluate((HERE / script).read_text(encoding="utf-8"),
+                          args if args is not None else {"day": date, "testAllowF": bool(__import__("os").environ.get("VIDEO_TEST_ALLOW_F"))})
         br.close()
     return out
 
@@ -172,7 +177,7 @@ def spec_hot(ext: dict, day: dt.date, bpm: float) -> dict | None:
 
 # Where each series is posted. TikTok removes pick/odds videos as gambling promotion (the Board was taken down on
 # 2026-11-17 for Community Guidelines), so picks stay on YouTube; TikTok gets the stats-only series.
-PLATFORMS = {"board": ("youtube",), "hot": ("youtube", "tiktok"), "report": ("youtube",)}
+PLATFORMS = {"board": ("youtube",), "hot": ("youtube", "tiktok"), "report": ("youtube",), "night": ("youtube", "tiktok")}
 
 VIDEO_PICKS = ROOT / "data" / "video_picks.json"
 
@@ -261,12 +266,347 @@ def spec_report(rows: list, day: dt.date, bpm: float) -> dict | None:
             "_tot": tot, "_g": g, "_start": start.isoformat(), "_end": end.isoformat()}
 
 
+# ------------------------------------------------------------------ last night (stats only)
+# Posted to TikTok too, so nothing here may come from odds, picks, grades, prop lines or prices: box scores, shot
+# locations, season stats, xG, the Heat Index and the season simulation's playoff chances only.
+def git_json(spec: str):
+    try:
+        return json.loads(subprocess.run(["git", "show", spec], cwd=ROOT, capture_output=True, check=True).stdout)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def frozen_file(d: str):
+    """data/frozen/<d>.json (pre-game snapshot incl. the teams' futures at lock): working tree, else origin/main."""
+    f = ROOT / "data" / "frozen" / f"{d}.json"
+    if f.exists():
+        try:
+            return json.loads(f.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            pass
+    return git_json(f"origin/main:data/frozen/{d}.json")
+
+
+def load_night(date: str, html: str, work: Path) -> dict | None:
+    """Last night = the day before the run date (New York). None when there is no archive (no games) for it."""
+    y = (dt.date.fromisoformat(date) - dt.timedelta(days=1)).isoformat()
+    arch = git_json(f"origin/site:data/archive/{y}.json")
+    if not arch or not arch.get("results"):
+        return None
+    pids = sorted({pid for r in arch["results"].values() for pid in (r.get("players") or {})})
+    page = {}
+    try:
+        page = load_page_data(date, html, None, work, script="night_extract.js", args={"pids": pids})
+    except Exception as e:  # noqa: BLE001
+        print("night: site page numbers unavailable, using the archive only:", e)
+    return {"y": y, "arch": arch, "shots": git_json("origin/site:data/shots.json") or {}, "frozen": frozen_file(y) or {},
+            "frozen_today": frozen_file(date) or {}, "page": page or {}}
+
+
+def _min(toi) -> float:
+    try:
+        m, s = str(toi).split(":")
+        return int(m) + int(s) / 60
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
+def _ord(n: int) -> str:
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def _plural(n, word: str) -> str:
+    return f"{n} {word}{'' if n == 1 else 's'}"
+
+
+def spec_night(n: dict | None, day: dt.date, bpm: float) -> dict | None:
+    if not n:
+        return None
+    A, page = n["arch"], n.get("page") or {}
+    y = n["y"]
+    yd = dt.date.fromisoformat(y)
+    fresh = page.get("date") == day.isoformat()       # the site page was built after last night's games
+    PP, PG = page.get("players") or {}, page.get("goalies") or {}
+    games = []
+    for g in sorted(A.get("games") or [], key=lambda g: g.get("start") or ""):
+        r = (A.get("results") or {}).get(str(g["id"]))
+        if r and r.get("hs") is not None and r.get("as") is not None:
+            games.append({**g, "_r": r})
+    if not games:
+        return None
+    info = lambda pid: (A.get("players") or {}).get(pid) or (A.get("goalies") or {}).get(pid) or PP.get(pid) or PG.get(pid) or {}
+    after = lambda pid: PP.get(pid) if fresh and (PP.get(pid) or {}).get("last") == y else None   # the site's numbers incl. last night
+
+    def res(team, g):
+        r = g["_r"]; home = team == g["home"]
+        ts, os_ = (r["hs"], r["as"]) if home else (r["as"], r["hs"])
+        last = r.get("last") or g.get("last_period") or "REG"
+        return f"{'W' if ts > os_ else 'L'} {ts}–{os_} {'vs' if home else '@'} {g['away'] if home else g['home']}" + (f" ({last})" if last in ("OT", "SO") else "")
+
+    rows = []                                           # every skater / goalie line of the night
+    for g in games:
+        for pid, st in (g["_r"].get("players") or {}).items():
+            p = info(pid)
+            if p.get("team") in (g["home"], g["away"]):
+                rows.append((pid, st, p, g))
+    skaters = [x for x in rows if not x[1].get("gk")]
+    goalies = [x for x in rows if x[1].get("gk")]
+    seedf = lambda k: (zlib_crc(f"{y}|{k}") % 1000) / 1000
+
+    # ---- 1. scoreboard
+    tot_goals = sum(g["_r"]["hs"] + g["_r"]["as"] for g in games)
+    n_ot = sum((g["_r"].get("last") or g.get("last_period")) in ("OT", "SO") for g in games)
+    def gl_(st):                                        # "2G 1A", "2G", "3A"
+        return " ".join(f"{st.get(k, 0)}{k.upper()}" for k in ("g", "a") if st.get(k, 0)) or "0 PTS"
+
+    def tops(g):
+        xs = sorted([x for x in skaters if x[3] is g and x[1].get("g", 0) + x[1].get("a", 0) >= 2 or (x[3] is g and x[1].get("g", 0) >= 2)],
+                    key=lambda x: (-(x[1].get("g", 0) + x[1].get("a", 0)), -x[1].get("g", 0)))[:2]
+        return " · ".join(f"{x[2].get('name', '').split(' ', 1)[-1]} {gl_(x[1])}" for x in xs)
+    scores = {"kind": "scores", "head": f"Final scores · {yd.strftime('%b')} {yd.day}",
+              "games": [{"away": g["away"], "home": g["home"], "as": g["_r"]["as"], "hs": g["_r"]["hs"],
+                         "last": g["_r"].get("last") or g.get("last_period") or "REG", "ac": team_color(g["away"]), "hc": team_color(g["home"]), "top": tops(g) if len(games) <= 5 else ""} for g in games],
+              "foot": f"{_plural(tot_goals, 'goal')} in {_plural(len(games), 'game')}" + (f" · {n_ot} went past regulation" if n_ot else ""),
+              "_fact": "Final scores: " + ", ".join(f"{g['away']} {g['_r']['as']}–{g['_r']['hs']} {g['home']}"
+                                                     + (f" ({g['_r'].get('last')})" if g["_r"].get("last") in ("OT", "SO") else "") for g in games)}
+
+    # ---- 2. star of the night
+    star = None
+    if skaters:
+        pid, st, p, g = max(skaters, key=lambda x: (x[1].get("g", 0) + x[1].get("a", 0), x[1].get("g", 0), x[1].get("s", 0)))
+        G, Ast, S = st.get("g", 0), st.get("a", 0), st.get("s", 0)
+        if G + Ast >= 2:
+            pa = after(pid)
+            cur = (pa or {}).get("cur")
+            if not cur and (p.get("windows") or {}).get("cur"):
+                c = p["windows"]["cur"]
+                cur = {"gp": c.get("gp", 0) + 1, "g": c.get("g", 0) + G, "a": c.get("a", 0) + Ast, "p": c.get("p", 0) + G + Ast}
+            season = (f"Season: <em>{cur['g']}</em> goals, <em>{cur['p']}</em> points in {cur['gp']} games" if cur and cur.get("gp") else "")
+            heat = (pa or {}).get("heat")
+            if not heat:                                 # recompute the site's Heat Index with last night added
+                fg, rt = (p.get("form") or {}).get("games") or [], p.get("rates") or {}
+                prev = [x for x in fg if x.get("d", "") < y][:9]
+                if len(prev) >= 7 and rt.get("g60") is not None:
+                    xx = G + Ast + sum(x.get("g", 0) + x.get("a", 0) for x in prev)
+                    ee = (rt["g60"] + rt.get("a60", 0)) * (_min(st.get("toi")) + sum(x.get("t", 0) for x in prev)) / 60
+                    heat = {"v": round(xx - ee, 2), "x": xx, "e": round(ee, 2), "n": len(prev) + 1}
+            hp = None
+            if heat and heat.get("n", 0) >= 8:
+                hp = {"v": heat["v"], "n": heat["n"], "level": heat_level(heat["v"]),
+                      "line": f"{_plural(heat['x'], 'point')} in his last {heat['n']} games vs {heat['e']:.1f} expected for his ice time"}
+            what = "hat trick" if G >= 3 else f"{G + Ast}-point night"
+            star = {"kind": "star", "head": "Star of the night", "name": p.get("name", ""), "num": badge(p.get("num"), p.get("name", "")),
+                    "color": team_color(p["team"]), "meta": f"{p['team']} · {res(p['team'], g)}",
+                    "tiles": [["G", G], ["A", Ast], ["PTS", G + Ast], ["SOG", S], ["TOI", (st.get("toi") or "–").lstrip("0") or "0"]],
+                    "season": season, "heat": hp,
+                    "_head": f"{p.get('name', '')}'s {what}", "_pid": pid,
+                    "_fact": f"Star of the night: {p.get('name', '')} ({p['team']}), {_plural(G, 'goal')}, {_plural(Ast, 'assist')}, {S} shots on goal in {st.get('toi')}"
+                             + (f" ({cur['g']} goals, {cur['p']} points in {cur['gp']} games this season)" if cur and cur.get("gp") else "")}
+
+    opt = []                                            # (interest, part); the best few make the video
+    # ---- 3. wall of the night
+    gl = [x for x in goalies if x[1].get("sa", 0) >= 15 and _min(x[1].get("toi")) >= 40]
+    if gl:
+        def wscore(x):
+            st, g, t = x[1], x[3], x[2]["team"]
+            won = (g["_r"]["hs"] > g["_r"]["as"]) == (t == g["home"])
+            return st.get("sv", 0) + 5 * won + 10 * (st.get("ga", 1) == 0)
+        pid, st, p, g = max(gl, key=wscore)
+        sv, sa, ga = st.get("sv", 0), st.get("sa", 0), st.get("ga", 0)
+        svp = sv / sa if sa else 0
+        if sv >= 30 or (svp >= .94 and sa >= 25) or (ga == 0 and sa >= 20):
+            team = p["team"]; opp = g["away"] if team == g["home"] else g["home"]
+            won = (g["_r"]["hs"] > g["_r"]["as"]) == (team == g["home"])
+            own = sum(x[1].get("s", 0) for x in skaters if x[3] is g and x[2].get("team") == team)
+            shots = (f"{opp} outshot {team} {sa}–{own}" + (f" and still lost" if won else "") if sa > own + 2 else f"Shots: {team} {own}, {opp} {sa}") if own else ""
+            pg_ = PG.get(pid) if fresh else None
+            season = ""
+            if pg_ and pg_.get("rk"):
+                season = (f"Season: <em>{pg_['gsax']:+.1f}</em> goals saved above expected, {_ord(pg_['rk'])} of {pg_['of']} goalies"
+                          f" (5+ games)")
+            elif pg_ and pg_.get("gp") and pg_.get("sv"):
+                season = f"Season: <em>{pg_['sv']:.3f}</em> save % in {pg_['gp']} games".replace(">0.", ">.")
+            elif (p.get("cur") or {}).get("gp"):
+                season = f"Before last night: <em>{p['cur']['gsax']:+.1f}</em> goals saved above expected in {p['cur']['gp']} games"
+            opt.append(((sv - 24) / 10 + (1 if ga == 0 else 0), {
+                "kind": "wall", "head": "Shutout of the night" if ga == 0 else "Wall of the night", "name": p.get("name", ""),
+                "num": badge(p.get("num"), p.get("name", "")), "color": team_color(p["team"]), "meta": f"{p['team']} · {res(p['team'], g)}",
+                "sv": sv, "sa": sa, "svp": round(svp, 4), "sub": f"{sv} saves on {sa} shots" + (" · shutout" if ga == 0 else ""), "season": season, "shots": shots,
+                "_fact": f"Wall of the night: {p.get('name', '')} ({p['team']}), {sv} saves on {sa} shots ({svp:.3f})".replace("(0.", "(.")}))
+
+    # ---- 4. line of the night (pre-game lines, combined points)
+    best = None
+    for g in games:
+        stats = g["_r"].get("players") or {}
+        for t in (g["home"], g["away"]):
+            tm = (A.get("teams") or {}).get(t) or {}
+            groups = ((tm.get("lineup") or {}).get("groups") or {})
+            for k in ("f1", "f2", "f3", "f4"):
+                ids = [str(x) for x in groups.get(k) or []]
+                if len(ids) != 3 or not all(i in stats for i in ids):
+                    continue
+                pts = sum(stats[i].get("g", 0) + stats[i].get("a", 0) for i in ids)
+                scorers = sum(stats[i].get("g", 0) + stats[i].get("a", 0) > 0 for i in ids)
+                if pts >= 4 and scorers >= 2 and (not best or pts > best[0]):
+                    best = (pts, t, k, ids, g, tm)
+    if best:
+        pts, t, k, ids, g, tm = best
+        stats = g["_r"]["players"]
+        mates = [{"name": info(i).get("name", ""), "num": badge(info(i).get("num"), info(i).get("name", "")),
+                  "st": gl_(stats[i])} for i in ids]
+        l5 = ((tm.get("lines5") or {}).get(k) or {})
+        l5p = None
+        if l5.get("gp", 0) >= 3 and l5.get("toi", 0) >= 60 and l5.get("xgf") is not None:
+            d = l5["gf"] - l5["xgf"]
+            verdict = (f"{_plural(l5['gf'], 'goal')} on {l5['xgf']:.1f} expected: finishing above their chances" if d >= 1.5 else
+                       f"{_plural(l5['gf'], 'goal')} on {l5['xgf']:.1f} expected: their chances deserved more" if d <= -1.5 else
+                       "Scoring about what their chances deserve")
+            l5p = {"head": f"Together at 5v5 before last night · {l5['toi']:.0f} min", "gf": l5["gf"], "xgf": float(l5["xgf"]), "verdict": verdict}
+        opt.append((pts / 5 + (.2 if l5p else 0), {
+            "kind": "line", "head": "Line of the night", "meta": f"{t} · {'first second third fourth'.split()[int(k[1]) - 1]} line · {res(t, g)}",
+            "color": team_color(t), "mates": mates, "pts": pts, "bigLab": "combined points", "l5": l5p,
+            "_fact": f"Line of the night: {' - '.join(m['name'] for m in mates)} ({t}), {pts} points combined"}))
+
+    # ---- 5. luck or real: finishing vs expected goals
+    def season_g_xg(pid, p, g_last):
+        pa = after(pid)
+        if pa and pa.get("xg") and pa["xg"].get("xg") is not None:
+            return max(pa["xg"]["g"], (pa.get("cur") or {}).get("g") or 0), pa["xg"]["xg"]   # xG can lag a game behind
+        xw = (p.get("xg_windows") or {}).get("cur")
+        if xw and xw.get("xg") is not None:
+            return xw.get("g", 0) + g_last, xw["xg"]
+        return None
+    luck = []
+    for pid, st, p, g in skaters:
+        if star and pid == star["_pid"]:
+            continue
+        G, S = st.get("g", 0), st.get("s", 0)
+        sg = season_g_xg(pid, p, G)
+        if not sg or not sg[1]:
+            continue
+        sgl, sxg = int(round(sg[0])), float(sg[1])
+        if S >= 6 and G == 0:
+            luck.append(((S - 5) / 3 + seedf("snake" + pid) * .3, pid, st, p, g, "snake", sgl, sxg))
+        if G >= 1 and sgl - sxg >= 3 and sgl >= 1.5 * sxg:
+            luck.append(((sgl - sxg) / 4 + seedf("hot" + pid) * .3, pid, st, p, g, "hot", sgl, sxg))
+    if luck:
+        sc, pid, st, p, g, kind, sgl, sxg = max(luck, key=lambda x: x[0])
+        G, S = st.get("g", 0), st.get("s", 0)
+        nm = p.get("name", "")
+        if kind == "snake":
+            if sgl < sxg - 1:
+                verdict, sub = "Snakebitten", f"{_plural(sgl, 'goal')} on {sxg:.1f} expected this season. Chances like these tend to turn into goals over time."
+            else:
+                verdict, sub = "Just not his night", f"The chances are there: {_plural(sgl, 'goal')} on {sxg:.1f} expected this season."
+            part = {"bigN": str(S), "bigLab": "shots on goal,<br>no goal", "dots": {"n": min(S, 12), "g": 0}, "col": "var(--purple)",
+                    "head": "Unlucky or cold?", "_fact": f"{nm} ({p['team']}): {S} shots on goal, no goal. Season: {sgl} goals on {sxg:.1f} xG"}
+        else:
+            verdict, sub = "Finishing hot", f"{_plural(sgl, 'goal')} on {sxg:.1f} expected this season: {sgl / sxg:.1f}x what his chances suggest. Finishing runs this far above xG usually cool off."
+            part = {"bigN": str(G), "bigLab": f"{'goal' if G == 1 else 'goals'} last night<br>on {_plural(S, 'shot')}", "dots": {"n": min(S, 12), "g": min(G, 12)},
+                    "col": "var(--amber)", "head": "Skill or luck?", "_fact": f"{nm} ({p['team']}) scored again: {sgl} goals this season on {sxg:.1f} xG"}
+        opt.append((sc, {"kind": "luck", "name": nm, "num": badge(p.get("num"), nm), "color": team_color(p["team"]),
+                         "meta": f"{p['team']} · {res(p['team'], g)}", "g": sgl, "xg": round(float(sxg), 2), "seasonHead": "Season so far · goals vs expected (xG)",
+                         "verdict": verdict, "verdictSub": sub, **part}))
+
+    # ---- 6. playoff race: chance before the game (frozen at lock) vs after (site page / today's lock)
+    fz, fzt = n.get("frozen") or {}, n.get("frozen_today") or {}
+    later = {}
+    for v in fzt.values():
+        for t, f in (((v or {}).get("stakes") or {}).get("teams") or {}).items():
+            if f.get("playoffs") is not None:
+                later[t] = f["playoffs"]
+    if fresh:
+        later.update({t: f["playoffs"] for t, f in (page.get("futures") or {}).items() if f.get("playoffs") is not None})
+    moves = []
+    for g in games:
+        st = ((fz.get(str(g["id"])) or {}).get("stakes") or {}).get("teams") or {}
+        for t in (g["home"], g["away"]):
+            b = (st.get(t) or {}).get("playoffs")
+            if b is not None and later.get(t) is not None:
+                moves.append({"team": t, "color": team_color(t), "res": res(t, g), "before": round(b, 4), "after": round(later[t], 4), "d": round(later[t] - b, 4)})
+    moves = [m for m in moves if abs(m["d"]) >= .04]
+    if moves:
+        up = sorted([m for m in moves if m["d"] > 0], key=lambda m: -m["d"])
+        dn = sorted([m for m in moves if m["d"] < 0], key=lambda m: m["d"])
+        pick = (up[:1] + dn[:1])
+        pick += sorted([m for m in moves if m not in pick], key=lambda m: -abs(m["d"]))[:3 - len(pick)]
+        pick.sort(key=lambda m: -m["d"])
+        opt.append((max(abs(m["d"]) for m in pick) / .06, {
+            "kind": "race", "head": "Playoff chances · after last night", "rows": pick,
+            "foot": "From the season simulation: every remaining game played out thousands of times",
+            "_fact": "Playoff chances moved: " + ", ".join(f"{m['team']} {m['before'] * 100:.0f}% → {m['after'] * 100:.0f}%" for m in pick)}))
+
+    # ---- 7. where the goals came from (shots.json, kind G on last night's date)
+    dots, played = [], {t for g in games for t in (g["home"], g["away"])}
+    for pid, v in (n.get("shots") or {}).items():
+        ds = v.get("d") or []
+        if y not in ds:
+            continue
+        i = ds.index(y)
+        t = info(pid).get("team")
+        if t not in played:
+            continue
+        for s in v.get("s") or []:
+            if len(s) > 3 and s[3] == i and s[2] == "G":
+                x, yy = float(s[0]), float(s[1])
+                if x < 0:
+                    x, yy = -x, -yy
+                dots.append({"x": round(min(98.0, max(27.0, x)), 1), "y": round(min(40.0, max(-40.0, yy)), 1), "c": team_color(t), "_d": ((89 - x) ** 2 + yy ** 2) ** .5})
+    if len(dots) >= 4 and len(dots) >= .7 * tot_goals:
+        close = sum(d["_d"] <= 20 for d in dots)
+        far = len(dots) - close
+        lab = "goals from inside 20 feet" if close >= far else "goals from 20+ feet out"
+        k = close if close >= far else far
+        opt.append((len(dots) / 9, {"kind": "goals", "head": "Where last night's goals came from", "dots": [{kk: vv for kk, vv in d.items() if kk != "_d"} for d in dots],
+                                    "bigN": f"{k}/{len(dots)}", "bigLab": lab, "_fact": f"{k} of {len(dots)} mapped goals came {lab[6:]}"}))
+
+    # ---- choose: the scoreboard, the star, then the strongest others (a little day-to-day variety)
+    room = 4 - (1 if star else 0)
+    opt.sort(key=lambda x: -(x[0] + seedf(x[1]["kind"]) * .8))
+    chosen = [o[1] for o in opt[:room]]
+    order = ["wall", "line", "luck", "goals", "race"]
+    chosen.sort(key=lambda x: order.index(x["kind"]))
+    plan = [scores] + ([star] if star else []) + chosen
+    b = 60 / bpm
+    intro, outro = 6 * b, 8 * b
+    t, parts = intro, []
+    for P in plan:
+        d = (12 if len(games) > 7 else 10) * b if P["kind"] == "scores" else 11 * b
+        parts.append({**{k: v for k, v in P.items() if not k.startswith("_")}, "a": t, "b": t + d})
+        t += d
+    facts = [P["_fact"] for P in plan]
+    head = star["_head"] if star else (chosen[0]["_fact"].split(":")[0] if chosen else f"{_plural(len(games), 'game')}, {_plural(tot_goals, 'goal')}")
+    return {"series": "night", "badge": "Last night", "day": short_day(yd), "title1": "Last", "title2": "night",
+            "sub": f"{yd.strftime('%A')} · {_plural(len(games), 'game')} · {_plural(tot_goals, 'goal')}",
+            "chips": [["SCORES", "#ff4fa8"], ["STARS", "#ffb547"], ["STATS", "#b794ff"]],
+            "parts": parts, "timing": {"intro": intro, "outroAt": t, "total": t + outro, "beat": b},
+            "cover": 1 if star else 0,
+            "linkSub": "Every player, every game", "outro1": "Every player. Every game.", "outro3": "Free to start · link in bio",
+            "disclaimer": "Stats from NHL game data · xG and playoff chances are model estimates",
+            "_facts": facts, "_head": head, "_y": yd}
+
+
+def zlib_crc(s: str) -> int:
+    import zlib
+    return zlib.crc32(s.encode())
+
+
 # ------------------------------------------------------------------ captions
 TAGS = ["NHL", "hockey", "NHLstats", "hockeytok", "analytics"]
 
 
 def captions(spec: dict, day: dt.date) -> dict:
     yt = f"https://{SITE}/?ref=yt"
+    if spec["series"] == "night":                       # stats only, also on TikTok: no picks, odds or advice wording
+        yd = spec["_y"]
+        title = f"Last night in the NHL: {spec['_head']}"
+        body = f"The NHL games of {yd.strftime('%A, %b')} {yd.day}, in numbers.\n" + "\n".join(f"• {f}" for f in spec["_facts"])
+        tags = ["NHL", "hockey", "NHLstats", "NHLhighlights", "analytics"]
+        return {
+            "youtube": {"title": title[:100], "tags": tags,
+                        "description": f"{body}\n\nEvery player, every game, free to start: {yt}\n\nStats only.\n\n#" + " #".join(tags)},
+            "tiktok": {"caption": f"{title}\n\n{body}\n\nLink in bio: {SITE}\nStats only.\n#NHL #hockey #NHLstats #hockeytok"},
+        }
     disc = "18+. Model numbers and statistics, not betting advice."
     s = spec["series"]
     if s == "board":
@@ -330,7 +670,7 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
                 print(f"  {spec['series']}: frame {f}/{n} {time.time() - t0:.0f}s", flush=True)
         ff.stdin.close(); ff.wait()
         # cover: the first pick / first player, fully drawn
-        p0 = spec["parts"][0]
+        p0 = spec["parts"][min(spec.get("cover", 0), len(spec["parts"]) - 1)]
         page.evaluate(f"render({min(p0['b'] - 0.6, p0['a'] + 4.5)})")
         page.screenshot(path=f"{out_base}-cover.jpg", type="jpeg", quality=90)
         br.close()
@@ -339,12 +679,12 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
 
 
 # Series about games already played (posted in the morning slot); the rest are about tonight's games.
-PAST_SERIES = {"report"}
+PAST_SERIES = {"report", "night"}
 
 
 def todays_series(day: dt.date) -> list:
     wd = day.weekday()                  # Mon 0
-    s = ["board"]
+    s = ["night", "board"]                # night: last night's games, every morning (empty when there were none)
     if wd == 0:
         s.insert(0, "report")
     if wd in (1, 3, 5):
@@ -355,10 +695,10 @@ def todays_series(day: dt.date) -> list:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=dt.datetime.now(ET).date().isoformat())
-    ap.add_argument("--series", help="comma list: board,hot,report")
-    ap.add_argument("--all", action="store_true", help="the day's schedule (board daily, report Mondays, hot Tue/Thu/Sat)")
+    ap.add_argument("--series", help="comma list: board,hot,report,night")
+    ap.add_argument("--all", action="store_true", help="the day's schedule (night + board daily, report Mondays, hot Tue/Thu/Sat)")
     ap.add_argument("--slot", choices=["morning", "upcoming"],
-                    help="with --all: morning = videos about past games (weekly report), upcoming = tonight's games")
+                    help="with --all: morning = videos about past games (last night, weekly report), upcoming = tonight's games")
     ap.add_argument("--site", help="built app page (default origin/site:app/index.html)")
     ap.add_argument("--pro", default=str(ROOT / "output" / "pro" / "latest.json"), help="Pro data patch (output/pro/latest.json)")
     ap.add_argument("--ledger", default=str(ROOT / "output" / "ledger.json"))
@@ -388,11 +728,16 @@ def main():
             ext = load_page_data(a.date, site_html(a.site), Path(a.pro) if a.pro else None, work)
             print(f"page data: {ext['n_games']} games, {len(ext['board'])} board picks, trap={'yes' if ext.get('trap') else 'no'}, "
                   f"hot {[round(p['v'], 1) for p in ext['hot']]}, cold {[round(p['v'], 1) for p in ext['cold']]}")
+        night = None
+        if "night" in series:
+            night = load_night(a.date, site_html(a.site), work)
+            print(f"night: {night['y']}, {len(night['arch']['results'])} games, page date {night['page'].get('date')}" if night
+                  else f"night: no games archived for the day before {a.date}")
         for s in series:
             styles = getattr(music, "SERIES_STYLES", {}).get(s)
-            bpm = {"board": 120, "hot": 140, "report": 96}.get(s, 120)
+            bpm = {"board": 120, "hot": 140, "report": 96, "night": 104}.get(s, 120)
             spec = (spec_board(ext, day, bpm) if s == "board" else spec_hot(ext, day, bpm) if s == "hot"
-                    else spec_report(ledger_rows(Path(a.ledger)), day, bpm))
+                    else spec_night(night, day, bpm) if s == "night" else spec_report(ledger_rows(Path(a.ledger)), day, bpm))
             if not spec:
                 print(f"{s}: nothing to show today, skipped")
                 continue

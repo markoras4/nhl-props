@@ -50,7 +50,21 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
 - Music: `music.review_track`, a different original song, no rising build-up at the start (half-time groove, FM electric piano, 808, bell sparkles on
   each winning pick). Template: `review.html`.
 
-# Series music (original styles in the vibe of the user's reference tracks)
+# Series videos (video/series.py)
+
+    py video/series.py --date 2026-11-17 --all --slot morning      # night (+ report on Mondays)
+    py video/series.py --date 2026-11-17 --series night --preview 8,14,21
+
+- `board` Tonight's Board (daily, YouTube only), `hot` Hot or lucky? (Tue/Thu/Sat, YouTube + TikTok), `report` Report
+  Card (Mondays, YouTube only), `night` Last night (every morning at 10:00 Sweden, YouTube + TikTok).
+- `night` is stats only (TikTok): never odds, picks, grades, prop lines or prices. Yesterday = `--date` minus one day;
+  data from `origin/site:data/archive/<yesterday>.json` (scores, box scores, pre-game lines), `data/shots.json` (goal
+  locations), `data/frozen/<yesterday>.json` (playoff chances at lock) and the built page via `night_extract.js`
+  (season lines, Heat Index, goalie GSAx and playoff chances after last night). Scenes: final scores, star of the night,
+  then the strongest 3 of wall of the night, line of the night, finishing vs xG, where the goals came from, playoff
+  chance movers (a date-seeded nudge varies the pick). Scenes without a real fact are dropped; no archive = no video.
+
+
 
     import music
     x = music.series_track("hot", duration, cues=[4.0, 12.0], seed="2026-11-16")   # float32 stereo (n, 2) at music.SR
@@ -63,7 +77,7 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
   samples, melodies, hooks or chord sequences). `music.STYLES[name]["ref"]` / `["desc"]` say which and how.
   board (house): `basshouse`, `deserthouse`, `deephouse` | hot (darker): `trespass`, `machine`, `darkdesert` |
   report (hip-hop): `boombap`, `dreamhop`, `moonlight` | preview (bouncy): `bounce`, `funkmachine`, `futurepop` |
-  lab (light): `brightfeel`, `nightcruise`, `dreamloop`. Unknown series -> `board`.
+  lab (light): `brightfeel`, `nightcruise`, `dreamloop`. night reuses `bounce`, `brightfeel`, `dreamloop`. Unknown series -> `board`.
 - Bass-heavy (sub + bass carry most of the energy), dark top end, dense master, loop-based, one short hook per style,
   full groove from the first beat.
 - `cues`: no risers/sweeps/uplifts. Each cue gets a one-beat drum fill (kick/backbeat drop out, bass keeps going) and
