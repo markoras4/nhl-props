@@ -55,20 +55,19 @@ def main() -> int:
     if not rt:
         return 1
 
-    print("\nSigned in. Now the three GitHub secrets, one at a time.\n")
+    print("\nSigned in. Now the GitHub secret(s), one at a time.")
     items = [(n, v) for n, v in (("YT_CLIENT_ID", cid), ("YT_CLIENT_SECRET", csec), ("YT_REFRESH_TOKEN", rt))
              if not a.only or n == a.only]
     for i, (name, value) in enumerate(items, 1):
         if not ay.copy_to_clipboard(value):
             print("Could not use the clipboard on this computer. Run: py video/auth_youtube.py --print")
             return 1
-        print(f"
-{i}/{len(items)}  {name} is on your clipboard now.")
+        print(f"\n{i}/{len(items)}  {name} is on your clipboard now.")
         print(f"     In the GitHub tab for {name}: click the big box, press Ctrl+V, click the green button.")
         while input("     When that is done, type  done  and press Enter: ").strip().lower() != "done":
             print("     (waiting - type done when the GitHub page has saved it)")
     ay.copy_to_clipboard(" ")
-    print("\nAll three are in GitHub. Clipboard cleared.")
+    print("\nAll saved in GitHub. Clipboard cleared.")
     ans = input(f"Delete {path.name} from Downloads now (recommended)? [Y/n] ").strip().lower()
     if ans in ("", "y", "yes"):
         try:
