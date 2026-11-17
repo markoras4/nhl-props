@@ -79,6 +79,36 @@ def copy_to_clipboard(text: str) -> bool:
     return False
 
 
+def sign_in(cid: str, csec: str, port: int = 8765) -> str | None:
+    """Browser sign-in (loopback + PKCE); returns the refresh token or None. Never prints the token."""
+    redirect = f"http://127.0.0.1:{port}/callback"
+    verifier = secrets.token_urlsafe(64)[:96]
+    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip("=")
+    state = secrets.token_urlsafe(24)
+    url = AUTH_URL + "?" + urllib.parse.urlencode({
+        "client_id": cid, "redirect_uri": redirect, "response_type": "code", "scope": SCOPE,
+        "access_type": "offline", "prompt": "consent", "state": state,
+        "code_challenge": challenge, "code_challenge_method": "S256"})
+    print("Opening the Google consent page in your browser. If it does not open, paste this link into it:\n")
+    print(url + "\n")
+    webbrowser.open(url)
+    got = catch_redirect(port)
+    if got.get("state") != state or "code" not in got:
+        print("Sign-in failed or was cancelled:", got.get("error", "no answer within 5 minutes / state mismatch"))
+        return None
+    r = requests.post(TOKEN_URL, data={"client_id": cid, "client_secret": csec, "code": got["code"],
+                                       "code_verifier": verifier, "grant_type": "authorization_code",
+                                       "redirect_uri": redirect}, timeout=60)
+    body = r.json() if r.headers.get("Content-Type", "").startswith("application/json") else {}
+    rt = body.get("refresh_token")
+    if r.status_code != 200 or not rt:
+        print(f"Token exchange failed (HTTP {r.status_code}): {body.get('error')} {body.get('error_description', '')}")
+        return None
+    if SCOPE not in body.get("scope", ""):
+        print("WARNING: the upload permission was not granted (tick the YouTube box on the consent page).")
+    return rt
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--port", type=int, default=8765)
@@ -92,31 +122,9 @@ def main() -> int:
     if not cid or not csec:
         print("Client ID and Client secret are both needed. See video/UPLOAD.md.")
         return 1
-    redirect = f"http://127.0.0.1:{a.port}/callback"
-    verifier = secrets.token_urlsafe(64)[:96]
-    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip("=")
-    state = secrets.token_urlsafe(24)
-    url = AUTH_URL + "?" + urllib.parse.urlencode({
-        "client_id": cid, "redirect_uri": redirect, "response_type": "code", "scope": SCOPE,
-        "access_type": "offline", "prompt": "consent", "state": state,
-        "code_challenge": challenge, "code_challenge_method": "S256"})
-    print("Opening the Google consent page in your browser. If it does not open, paste this link into it:\n")
-    print(url + "\n")
-    webbrowser.open(url)
-    got = catch_redirect(a.port)
-    if got.get("state") != state or "code" not in got:
-        print("Sign-in failed or was cancelled:", got.get("error", "no answer within 5 minutes / state mismatch"))
+    rt = sign_in(cid, csec, a.port)
+    if not rt:
         return 1
-    r = requests.post(TOKEN_URL, data={"client_id": cid, "client_secret": csec, "code": got["code"],
-                                       "code_verifier": verifier, "grant_type": "authorization_code",
-                                       "redirect_uri": redirect}, timeout=60)
-    body = r.json() if r.headers.get("Content-Type", "").startswith("application/json") else {}
-    rt = body.get("refresh_token")
-    if r.status_code != 200 or not rt:
-        print(f"Token exchange failed (HTTP {r.status_code}): {body.get('error')} {body.get('error_description', '')}")
-        return 1
-    if SCOPE not in body.get("scope", ""):
-        print("WARNING: the upload permission was not granted (tick the YouTube box on the consent page).")
     if not a.print and copy_to_clipboard(rt):
         print("\nDone. The refresh token is now on your clipboard (not shown here).\n"
               "Paste it (Ctrl+V) as the value of the GitHub secret YT_REFRESH_TOKEN, then close this tab.")
