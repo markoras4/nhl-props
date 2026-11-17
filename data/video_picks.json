@@ -9,5 +9,43 @@
    "p": 0.661,
    "od": 1.581
   }
+ ],
+ "2026-11-17": [
+  {
+   "g": 2026020335,
+   "pid": 8480803,
+   "n": "Evan Bouchard",
+   "market": "Under 2.5 shots",
+   "grade": "S",
+   "p": 0.621,
+   "od": 1.9
+  },
+  {
+   "g": 2026020341,
+   "pid": 8480145,
+   "n": "Neal Pionk",
+   "market": "Over 1.5 shots",
+   "grade": "S",
+   "p": 0.62,
+   "od": 1.79
+  },
+  {
+   "g": 2026020334,
+   "pid": 8477404,
+   "n": "Jake Guentzel",
+   "market": "Under 3.5 shots",
+   "grade": "S",
+   "p": 0.67,
+   "od": 1.65
+  },
+  {
+   "g": 2026020338,
+   "pid": 8478178,
+   "n": "Darren Raddysh",
+   "market": "Under 2.5 shots",
+   "grade": "S",
+   "p": 0.61,
+   "od": 1.8
+  }
  ]
 }

@@ -12,6 +12,13 @@
     "via": "manual (YouTube Studio)",
     "video_id": "yDnXEaQi8xc"
   },
+  "board-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/board-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T14:57:54Z",
+    "url": "https://www.youtube.com/shorts/lb5kUV4YQjg",
+    "video_id": "lb5kUV4YQjg"
+  },
   "hot-2026-11-16-van-uta:tiktok": {
     "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
     "note": "Boeser/DeBrusk, replaces the ANA/WSH post",
@@ -31,6 +38,13 @@
     "url": "https://youtube.com/shorts/fWyjtzTfyTY",
     "via": "manual (YouTube Studio)",
     "video_id": "fWyjtzTfyTY"
+  },
+  "hot-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/hot-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T14:58:00Z",
+    "url": "https://www.youtube.com/shorts/t7eWIiC-wdY",
+    "video_id": "t7eWIiC-wdY"
   },
   "night-2026-11-17:tiktok": {
     "file": "video/out/2026-11-17/night-2026-11-17.mp4",
