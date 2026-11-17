@@ -17,6 +17,8 @@ Scope: youtube.upload is enough for videos.insert and thumbnails.set
 from __future__ import annotations
 
 import argparse
+import getpass
+import subprocess
 import base64
 import hashlib
 import http.server
@@ -66,14 +68,29 @@ def catch_redirect(port: int, path: str = "/callback", timeout: int = 300) -> di
     return result
 
 
+def copy_to_clipboard(text: str) -> bool:
+    """Put text on the clipboard without printing it (Windows clip, macOS pbcopy, Linux xclip)."""
+    for cmd, enc in ((["clip"], "utf-16le"), (["pbcopy"], "utf-8"), (["xclip", "-selection", "clipboard"], "utf-8")):
+        try:
+            subprocess.run(cmd, input=text.encode(enc), check=True)
+            return True
+        except Exception:  # noqa: BLE001
+            continue
+    return False
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--print", action="store_true", help="print the refresh token instead of copying it to the clipboard")
     a = ap.parse_args()
     cid, csec = os.environ.get("YT_CLIENT_ID", "").strip(), os.environ.get("YT_CLIENT_SECRET", "").strip()
+    if not cid:
+        cid = input("Paste the Client ID (Google Cloud -> Clients -> evenout uploader) and press Enter: ").strip()
+    if not csec:
+        csec = getpass.getpass("Paste the Client secret (stays hidden while you paste) and press Enter: ").strip()
     if not cid or not csec:
-        print("Set YT_CLIENT_ID and YT_CLIENT_SECRET first (from Google Cloud -> Credentials -> your Desktop app "
-              "OAuth client). See video/UPLOAD.md.")
+        print("Client ID and Client secret are both needed. See video/UPLOAD.md.")
         return 1
     redirect = f"http://127.0.0.1:{a.port}/callback"
     verifier = secrets.token_urlsafe(64)[:96]
@@ -100,6 +117,10 @@ def main() -> int:
         return 1
     if SCOPE not in body.get("scope", ""):
         print("WARNING: the upload permission was not granted (tick the YouTube box on the consent page).")
+    if not a.print and copy_to_clipboard(rt):
+        print("\nDone. The refresh token is now on your clipboard (not shown here).\n"
+              "Paste it (Ctrl+V) as the value of the GitHub secret YT_REFRESH_TOKEN, then close this tab.")
+        return 0
     print("\nYour YouTube refresh token (keep it secret):\n")
     print(rt)
     print("\nNext: GitHub -> markoras4/nhl-props -> Settings -> Secrets and variables -> Actions -> New repository "
