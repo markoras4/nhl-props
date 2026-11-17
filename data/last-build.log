@@ -8,6 +8,7 @@ Fetching rosters for 32 teams ...
 Fetching 722 skaters and 74 goalies (careers + game logs) ...
 Fetching 330 recent box scores (hits, blocks) ...
 News: 116 injuries, likely starters for 26 games (+26 backup reports), line combinations for 32/32 teams, game-day lineups for 4 teams (2026-11-16, updated 2026-11-17T00:20:26.53Z)
+  2 requests failed (first: https://www.dailyfaceoff.com/starting-goalies/2026-11-16 -> HTTP 403)
   shot maps: 330 games, 37692 attempts
 Model built: 47 games, 722 skaters (568 expected to play)
 Odds: bookmaker prices for 12 games, 427 players
@@ -28,3 +29,4 @@ Best picks record: 299 graded, 78 won, +0.45 units
 Triage ledger: 163 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 1418 bets +21.4u, L 2975 bets -91.5u, F 2196 bets -57.2u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-16.html
+Note: 2 downloads failed - see data/errors.log
