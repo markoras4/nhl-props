@@ -338,6 +338,10 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
         raise SystemExit("ffmpeg failed")
 
 
+# Series about games already played (posted in the morning slot); the rest are about tonight's games.
+PAST_SERIES = {"report"}
+
+
 def todays_series(day: dt.date) -> list:
     wd = day.weekday()                  # Mon 0
     s = ["board"]
@@ -353,6 +357,8 @@ def main():
     ap.add_argument("--date", default=dt.datetime.now(ET).date().isoformat())
     ap.add_argument("--series", help="comma list: board,hot,report")
     ap.add_argument("--all", action="store_true", help="the day's schedule (board daily, report Mondays, hot Tue/Thu/Sat)")
+    ap.add_argument("--slot", choices=["morning", "upcoming"],
+                    help="with --all: morning = videos about past games (weekly report), upcoming = tonight's games")
     ap.add_argument("--site", help="built app page (default origin/site:app/index.html)")
     ap.add_argument("--pro", default=str(ROOT / "output" / "pro" / "latest.json"), help="Pro data patch (output/pro/latest.json)")
     ap.add_argument("--ledger", default=str(ROOT / "output" / "ledger.json"))
@@ -361,6 +367,11 @@ def main():
     a = ap.parse_args()
     day = dt.date.fromisoformat(a.date)
     series = a.series.split(",") if a.series else todays_series(day) if a.all else ["board"]
+    if a.slot:
+        series = [x for x in series if (x in PAST_SERIES) == (a.slot == "morning")]
+    if not series:
+        print(f"Nothing scheduled for {a.date} in the {a.slot} slot.")
+        return
     out = Path(a.out) / a.date
     out.mkdir(parents=True, exist_ok=True)
     manifest = {"date": a.date, "items": []}

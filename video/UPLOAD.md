@@ -1,7 +1,7 @@
 # Automatic video uploads (YouTube Shorts + TikTok)
 
-Every day at 15:30 UTC GitHub runs **Daily videos** (`.github/workflows/videos.yml`): it renders the day's short
-videos (`video/series.py`), keeps them as a download on the run page for 7 days, then posts them with
+Twice a day (10:00 and 15:30 Swedish time) GitHub runs **Daily videos** (`.github/workflows/videos.yml`): it renders the day's short
+videos (`video/series.py`: 10:00 the weekly report about past games, 15:30 the videos about tonight's games), keeps them as a download on the run page for 7 days, then posts them with
 `video/upload.py`. What was posted is remembered in `data/video_uploads.json`, so a video is never posted twice,
 even if you press "Run workflow" again. A platform without its secrets is simply skipped.
 

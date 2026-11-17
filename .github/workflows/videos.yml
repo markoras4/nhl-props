@@ -1,14 +1,24 @@
 name: Daily videos
 
 on:
+  # GitHub's clock is UTC, Sweden switches between UTC+1 (winter) and UTC+2 (summer). Each slot has one line per
+  # season; the "Pick the date" step keeps only the one that is right today, so videos go out at the same Swedish time.
   schedule:
-    - cron: "30 15 * * *"   # 16:30 Stockholm (winter) - US morning, before the evening games; after the 13:15 build
+    - cron: "0 9 * * *"     # 10:00 Sweden (winter) - morning slot: videos about games already played (weekly report)
+    - cron: "0 8 * * *"     # 10:00 Sweden (summer)
+    - cron: "30 14 * * *"   # 15:30 Sweden (winter) - upcoming slot: tonight's games (Board, Hot or lucky)
+    - cron: "30 13 * * *"   # 15:30 Sweden (summer)
   workflow_dispatch:         # "Run workflow" button in the Actions tab
     inputs:
       date:
         description: "Slate date YYYY-MM-DD (empty = today in New York)"
         required: false
         default: ""
+      slot:
+        description: "Which videos"
+        type: choice
+        options: [all, morning, upcoming]
+        default: all
       dry_run:
         description: "Render only, do not upload (shows what would be posted)"
         type: boolean
@@ -29,12 +39,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Pick the date and the slot
+        id: d
+        env:
+          IN_DATE: ${{ inputs.date }}
+          IN_SLOT: ${{ inputs.slot }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          DATE="$IN_DATE"
+          if [ -z "$DATE" ]; then DATE=$(TZ=America/New_York date +%F); fi
+          SLOT="${IN_SLOT:-all}"; RUN=yes
+          if [ -n "$CRON" ]; then
+            OFF=$(TZ=Europe/Stockholm date +%z)                       # +0100 winter, +0200 summer
+            case "$CRON" in
+              "0 9 * * *")   SLOT=morning;  [ "$OFF" = "+0100" ] || RUN=no ;;
+              "0 8 * * *")   SLOT=morning;  [ "$OFF" = "+0200" ] || RUN=no ;;
+              "30 14 * * *") SLOT=upcoming; [ "$OFF" = "+0100" ] || RUN=no ;;
+              "30 13 * * *") SLOT=upcoming; [ "$OFF" = "+0200" ] || RUN=no ;;
+            esac
+          fi
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"; echo "slot=$SLOT" >> "$GITHUB_OUTPUT"; echo "run=$RUN" >> "$GITHUB_OUTPUT"
+          echo "Slate date: $DATE, slot: $SLOT, run: $RUN (Sweden is UTC$(TZ=Europe/Stockholm date +%z))"
+
       - uses: actions/setup-python@v5
+        if: steps.d.outputs.run == 'yes'
         with:
           python-version: "3.12"
           cache: pip
 
       - name: Install Python packages, Chromium and ffmpeg
+        if: steps.d.outputs.run == 'yes'
         run: |
           pip install -r requirements.txt
           pip install numpy scipy pillow playwright requests
@@ -42,20 +76,29 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -1
 
-      - name: Pick the date
-        id: d
+      - name: Fetch the built site (waits for this slot's data build if it is still running)
+        if: steps.d.outputs.run == 'yes'
         env:
-          IN_DATE: ${{ inputs.date }}
+          SLOT: ${{ steps.d.outputs.slot }}
+          SCHEDULED: ${{ github.event_name == 'schedule' }}
         run: |
-          DATE="$IN_DATE"
-          if [ -z "$DATE" ]; then DATE=$(TZ=America/New_York date +%F); fi
-          echo "date=$DATE" >> "$GITHUB_OUTPUT"
-          echo "Slate date: $DATE"
-
-      - name: Fetch the built site (the renderer reads origin/site:app/index.html)
-        run: git fetch -q --depth=1 origin site
+          git fetch -q --depth=1 origin site
+          # morning slot needs the 08:15 UTC results build, upcoming slot the 13:15 UTC build (Daily build workflow)
+          if [ "$SCHEDULED" = "true" ]; then
+            case "$SLOT" in morning) NEED="08:10";; upcoming) NEED="13:10";; *) NEED="";; esac
+            if [ -n "$NEED" ]; then
+              need=$(date -u -d "today $NEED" +%s)
+              for i in $(seq 1 30); do
+                have=$(git log -1 --format=%ct origin/site)
+                if [ "$have" -ge "$need" ]; then echo "Site build from $(date -u -d @$have +%H:%M) UTC is fresh"; break; fi
+                echo "Waiting for today's $NEED UTC data build (latest site is from $(date -u -d @$have '+%F %H:%M') UTC)"; sleep 120
+                git fetch -q --depth=1 origin site
+              done
+            fi
+          fi
 
       - name: Fetch today's Pro data (private storage, never public; graded picks need every player's numbers)
+        if: steps.d.outputs.run == 'yes'
         run: |
           mkdir -p output/pro
           OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pro-upload" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
@@ -63,15 +106,20 @@ jobs:
           if [ "$code" != "200" ]; then echo "::warning::Pro data not available ($code): videos use the public numbers only"; rm -f output/pro/latest.json; else echo "Pro data: $(wc -c < output/pro/latest.json) bytes"; fi
 
       - name: Render the videos
+        id: r
+        if: steps.d.outputs.run == 'yes'
         env:
           DATE: ${{ steps.d.outputs.date }}
+          SLOT: ${{ steps.d.outputs.slot }}
         run: |
-          if [ ! -f video/series.py ]; then echo "::error::video/series.py does not exist yet - nothing to render"; exit 1; fi
-          python video/series.py --date "$DATE" --all --out video/out
-          if [ ! -f "video/out/$DATE/manifest.json" ]; then echo "::error::The renderer wrote no video/out/$DATE/manifest.json"; exit 1; fi
+          SLOTARG=""; if [ "$SLOT" != "all" ]; then SLOTARG="--slot $SLOT"; fi
+          python video/series.py --date "$DATE" --all $SLOTARG --out video/out
+          if [ ! -f "video/out/$DATE/manifest.json" ]; then echo "Nothing to post in this slot today"; echo "any=no" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "any=yes" >> "$GITHUB_OUTPUT"
           ls -la "video/out/$DATE"
 
       - name: Keep the videos as a download (Actions run page, 7 days)
+        if: steps.r.outputs.any == 'yes'
         uses: actions/upload-artifact@v4
         with:
           name: videos-${{ steps.d.outputs.date }}
@@ -80,7 +128,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload to YouTube and TikTok
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.r.outputs.any == 'yes'
         env:
           DATE: ${{ steps.d.outputs.date }}
           DRY_RUN: ${{ inputs.dry_run }}
