@@ -3,6 +3,8 @@
 // GitHub signed for the markoras4/nhl-props repository on its main branch.
 // POST ?path=latest.json | 2026-11-09.json | archive/2026-11-05.json | alerts.json, body = the JSON file.
 // GET  ?path=latest.json  returns a stored file (the videos workflow renders with the full numbers; same OIDC check).
+// GET  ?path=music/<name>.mp3  returns a licensed music file for the videos (kept private: the repo is public and the
+//      licence does not allow redistributing the file). Music files are uploaded by hand in the Supabase dashboard.
 // Deployed with verify_jwt = false (the GitHub token is checked here, not by Supabase).
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@5.9.6";
@@ -12,6 +14,7 @@ const AUDIENCE = "nhl-props-pro-upload";
 const ISSUER = "https://token.actions.githubusercontent.com";
 const JWKS = createRemoteJWKSet(new URL(ISSUER + "/.well-known/jwks"));
 const PATH_OK = /^(latest|latest-demo|alerts|\d{4}-\d{2}-\d{2}(-demo)?|archive\/\d{4}-\d{2}-\d{2})\.json$/;
+const MUSIC_OK = /^music\/[a-z0-9][a-z0-9_-]{0,60}\.mp3$/;   // read-only
 
 Deno.serve(async (req) => {
   if (req.method !== "POST" && req.method !== "GET") return Response.json({ error: "POST or GET" }, { status: 405 });
@@ -23,8 +26,14 @@ Deno.serve(async (req) => {
     return Response.json({ error: "not allowed: " + (e as Error).message }, { status: 401 });
   }
   const path = new URL(req.url).searchParams.get("path") || "";
-  if (!PATH_OK.test(path)) return Response.json({ error: "bad path" }, { status: 400 });
+  const music = req.method === "GET" && MUSIC_OK.test(path);
+  if (!PATH_OK.test(path) && !music) return Response.json({ error: "bad path" }, { status: 400 });
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+  if (music) {
+    const { data, error } = await db.storage.from("pro").download(path);
+    if (error || !data) return Response.json({ error: error?.message || "not found" }, { status: 404 });
+    return new Response(await data.arrayBuffer(), { headers: { "content-type": "audio/mpeg" } });
+  }
   if (req.method === "GET") {
     const { data, error } = await db.storage.from("pro").download(path);
     if (error || !data) return Response.json({ error: error?.message || "not found" }, { status: 404 });
