@@ -95,7 +95,10 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           M="video/out/$DATE/manifest.json"
-          if [ "$DRY_RUN" = "true" ]; then python video/upload.py --manifest "$M" --dry-run; exit 0; fi
+          if [ "$DRY_RUN" = "true" ]; then
+            if [ -n "$YT_REFRESH_TOKEN" ]; then python video/upload.py --manifest "$M" --check || echo "::warning title=YouTube::YouTube sign-in check failed"; fi
+            python video/upload.py --manifest "$M" --dry-run; exit 0
+          fi
           ARGS=""
           YT=0; TT=0
           if [ -n "$YT_CLIENT_ID" ] && [ -n "$YT_CLIENT_SECRET" ] && [ -n "$YT_REFRESH_TOKEN" ]; then YT=1; else echo "No YouTube secrets yet - skipping YouTube"; fi

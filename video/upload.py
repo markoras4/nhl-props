@@ -525,7 +525,19 @@ def main(argv=None) -> int:
     ap.add_argument("--only", choices=PLATFORMS, help="upload to one platform only")
     ap.add_argument("--dry-run", action="store_true", help="check files and show what would happen; no network")
     ap.add_argument("--ledger", default=str(LEDGER), help=argparse.SUPPRESS)
+    ap.add_argument("--check", action="store_true", help="only test the YouTube sign-in (no upload)")
     a = ap.parse_args(argv)
+    if a.check:
+        if not have_secrets("youtube"):
+            log("YouTube check: secrets missing")
+            return 1
+        try:
+            YouTube().token()
+            log("YouTube check: sign-in OK (the keys work)")
+            return 0
+        except UploadError as e:
+            log(f"YouTube check FAILED: {e}")
+            return 1
     mp = Path(a.manifest)
     if not mp.exists():
         log(f"Manifest not found: {mp}")
