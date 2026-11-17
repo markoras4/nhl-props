@@ -44,5 +44,12 @@
     "uploaded_at": "2026-11-17T13:04:43Z",
     "url": "https://www.youtube.com/shorts/5zKyTArMdHU",
     "video_id": "5zKyTArMdHU"
+  },
+  "slate-2026-11-17:youtube": {
+    "file": "video/out/2026-11-17/slate-2026-11-17.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-17T14:23:10Z",
+    "url": "https://www.youtube.com/watch?v=B5k0G0TIwdo",
+    "video_id": "B5k0G0TIwdo"
   }
 }
