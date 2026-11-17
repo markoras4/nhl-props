@@ -5,24 +5,24 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 722 skaters and 74 goalies (careers + game logs) ...
+Fetching 723 skaters and 74 goalies (careers + game logs) ...
 Fetching 332 recent box scores (hits, blocks) ...
 News: 115 injuries, likely starters for 26 games (+28 backup reports), line combinations for 32/32 teams, game-day lineups for 4 teams (2026-11-16, updated 2026-11-17T02:16:34.863Z)
   shot maps: 332 games, 37928 attempts
-Model built: 52 games, 722 skaters (569 expected to play)
+Model built: 52 games, 723 skaters (569 expected to play)
 Odds: bookmaker prices for 11 games, 393 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  Stoiximan sync: 4 games, 1 player prices (last push 2026-11-17T02:17:27.826573+00:00, close)
-  manual odds: 1 player prices added
+  Stoiximan sync: 11 games, 3365 player prices (last push 2026-11-17T11:00:03.341812+00:00, hourly); unmatched: Tyler Boucher, William Stromgren
+  manual odds: 1991 player prices added
 Public betting: splits for 11 games
   season simulation: 10000 seasons, 1012 games left, top Cup: CAR 36%, COL 13%, MIN 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 28
-Player projections: 722 skaters
+Player projections: 723 skaters
 Goalie projections: 74 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
-  history: MoneyPuck xG for 2026: 10,057 player-games
-  history: game-by-game files for 720 players (3 seasons)
+  history: MoneyPuck xG for 2026: 10,087 player-games
+  history: game-by-game files for 721 players (3 seasons)
   archive: 7 past dates published (2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14, 2026-11-15, 2026-11-16)
 Best picks record: 303 graded, 79 won, +0.40 units
 Triage ledger: 168 graded blocks bets: time to review whether blocks join the headline Solid record
