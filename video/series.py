@@ -116,7 +116,7 @@ def spec_board(ext: dict, day: dt.date, bpm: float) -> dict | None:
     parts, t = [], intro
     for p in picks + ([ext["trap"]] if use_trap else []):
         trap = p is ext.get("trap")
-        parts.append({"kind": "pick", "a": t, "b": t + per, "name": p["name"], "num": badge(p["num"], p["name"]), "color": team_color(p["team"]),
+        parts.append({"kind": "pick", "a": t, "b": t + per, "gid": str(p["game"]), "name": p["name"], "num": badge(p["num"], p["name"]), "color": team_color(p["team"]),
                       "meta": p["meta"], "market": p["market"], "marketP": p["market_p"], "grade": p["grade"],
                       "gradeTxt": GRADE[p["grade"]], "model": p["model"], "edge": p["edge"],
                       "trap": "Looks like value... but" if trap else None, "why": p["why"][:3]})
@@ -163,7 +163,7 @@ def spec_hot(ext: dict, day: dt.date, bpm: float) -> dict | None:
         nxt = p.get("next") or {}
         if nxt.get("pt"):
             sub += f" Next: {nxt['meta']}, {round(nxt['pt'] * 100)}% for a point."
-        parts.append({"kind": "heat", "a": t, "b": t + per, "name": p["name"], "num": badge(p["num"], p["name"]), "color": team_color(p["team"]),
+        parts.append({"kind": "heat", "a": t, "b": t + per, "gid": str((p.get("next") or {}).get("game") or ""), "name": p["name"], "num": badge(p["num"], p["name"]), "color": team_color(p["team"]),
                       "meta": f"{p['team']} · {p.get('pos') or ''}".strip(" ·"), "v": v, "n": p["n"], "level": heat_level(v),
                       "line": f"{p['x']} point{'' if p['x'] == 1 else 's'} in his last {p['n']} games vs {p['e']:.1f} expected for his ice time",
                       "games": p["games"][-10:], "sh": sh, "verdict": verdict, "verdictSub": sub})
@@ -395,7 +395,7 @@ def spec_night(n: dict | None, day: dt.date, bpm: float) -> dict | None:
                 hp = {"v": heat["v"], "n": heat["n"], "level": heat_level(heat["v"]),
                       "line": f"{_plural(heat['x'], 'point')} in his last {heat['n']} games vs {heat['e']:.1f} expected for his ice time"}
             what = "hat trick" if G >= 3 else f"{G + Ast}-point night"
-            star = {"kind": "star", "head": "Star of the night", "name": p.get("name", ""), "num": badge(p.get("num"), p.get("name", "")),
+            star = {"kind": "star", "gid": str(g["id"]), "head": "Star of the night", "name": p.get("name", ""), "num": badge(p.get("num"), p.get("name", "")),
                     "color": team_color(p["team"]), "meta": f"{p['team']} · {res(p['team'], g)}",
                     "tiles": [["G", G], ["A", Ast], ["PTS", G + Ast], ["SOG", S], ["TOI", (st.get("toi") or "–").lstrip("0") or "0"]],
                     "season": season, "heat": hp,
@@ -429,7 +429,7 @@ def spec_night(n: dict | None, day: dt.date, bpm: float) -> dict | None:
             elif (p.get("cur") or {}).get("gp"):
                 season = f"Before last night: <em>{p['cur']['gsax']:+.1f}</em> goals saved above expected in {p['cur']['gp']} games"
             opt.append(((sv - 24) / 10 + (1 if ga == 0 else 0), {
-                "kind": "wall", "head": "Shutout of the night" if ga == 0 else "Wall of the night", "name": p.get("name", ""),
+                "kind": "wall", "gid": str(g["id"]), "head": "Shutout of the night" if ga == 0 else "Wall of the night", "name": p.get("name", ""),
                 "num": badge(p.get("num"), p.get("name", "")), "color": team_color(p["team"]), "meta": f"{p['team']} · {res(p['team'], g)}",
                 "sv": sv, "sa": sa, "svp": round(svp, 4), "sub": f"{sv} saves on {sa} shots" + (" · shutout" if ga == 0 else ""), "season": season, "shots": shots,
                 "_fact": f"Wall of the night: {p.get('name', '')} ({p['team']}), {sv} saves on {sa} shots ({svp:.3f})".replace("(0.", "(.")}))
@@ -463,7 +463,7 @@ def spec_night(n: dict | None, day: dt.date, bpm: float) -> dict | None:
                        "Scoring about what their chances deserve")
             l5p = {"head": f"Together at 5v5 before last night · {l5['toi']:.0f} min", "gf": l5["gf"], "xgf": float(l5["xgf"]), "verdict": verdict}
         opt.append((pts / 5 + (.2 if l5p else 0), {
-            "kind": "line", "head": "Line of the night", "meta": f"{t} · {'first second third fourth'.split()[int(k[1]) - 1]} line · {res(t, g)}",
+            "kind": "line", "gid": str(g["id"]), "head": "Line of the night", "meta": f"{t} · {'first second third fourth'.split()[int(k[1]) - 1]} line · {res(t, g)}",
             "color": team_color(t), "mates": mates, "pts": pts, "bigLab": "combined points", "l5": l5p,
             "_fact": f"Line of the night: {' - '.join(m['name'] for m in mates)} ({t}), {pts} points combined"}))
 
@@ -504,7 +504,7 @@ def spec_night(n: dict | None, day: dt.date, bpm: float) -> dict | None:
             verdict, sub = "Finishing hot", f"{_plural(sgl, 'goal')} on {sxg:.1f} expected this season: {sgl / sxg:.1f}x what his chances suggest. Finishing runs this far above xG usually cool off."
             part = {"bigN": str(G), "bigLab": f"{'goal' if G == 1 else 'goals'} last night<br>on {_plural(S, 'shot')}", "dots": {"n": min(S, 12), "g": min(G, 12)},
                     "col": "var(--amber)", "head": "Skill or luck?", "_fact": f"{nm} ({p['team']}) scored again: {sgl} goals this season on {sxg:.1f} xG"}
-        opt.append((sc, {"kind": "luck", "name": nm, "num": badge(p.get("num"), nm), "color": team_color(p["team"]),
+        opt.append((sc, {"kind": "luck", "gid": str(g["id"]), "name": nm, "num": badge(p.get("num"), nm), "color": team_color(p["team"]),
                          "meta": f"{p['team']} · {res(p['team'], g)}", "g": sgl, "xg": round(float(sxg), 2), "seasonHead": "Season so far · goals vs expected (xG)",
                          "verdict": verdict, "verdictSub": sub, **part}))
 
@@ -583,7 +583,8 @@ def spec_night(n: dict | None, day: dt.date, bpm: float) -> dict | None:
             "cover": 1 if star else 0,
             "linkSub": "Every player, every game", "outro1": "Every player. Every game.", "outro3": "Free to start · link in bio",
             "disclaimer": "Stats from NHL game data · xG and playoff chances are model estimates",
-            "_facts": facts, "_head": head, "_y": yd}
+            "_facts": facts, "_head": head, "_y": yd, "_star": {"pid": star["_pid"], "gid": star["gid"], "name": star["name"]} if star else None,
+            "_luck": next(({"name": P["name"]} for P in chosen if P["kind"] in ("luck", "wall")), None)}
 
 
 def zlib_crc(s: str) -> int:
@@ -591,11 +592,97 @@ def zlib_crc(s: str) -> int:
     return zlib.crc32(s.encode())
 
 
+# ------------------------------------------------------------------ real images: preview photos + app clips
+STAT_OF = {"Goal": "g", "2+ goals": "g", "First goal": "g", "Assist": "a", "2+ assists": "a"}
+
+
+def clip_target(spec: dict) -> dict | None:
+    """Whose page the "see it on evenout" clip shows: the video's headline player (board: first pick, hot: hottest
+    player, night: star of the night), else the Players explorer with the headline name typed in."""
+    s = spec["series"]
+    if s == "board" and spec.get("_picks"):
+        p = spec["_picks"][0]
+        m = p["market"]
+        stat = "s" if "shots" in m.lower() else STAT_OF.get(m, "p")
+        return {"pid": p["id"], "stat": stat, "game": p["game"], "name": p["name"],
+                "cap": f"{p['name']}'s last 10 games"}
+    if s == "hot" and spec.get("_players"):
+        p = spec["_players"][0]
+        return {"pid": p["id"], "stat": "p", "game": (p.get("next") or {}).get("game"), "name": p["name"],
+                "cap": f"{p['name']}'s Heat Index & last 10 games"}
+    if s == "night":
+        if spec.get("_star"):
+            x = spec["_star"]
+            return {"pid": x["pid"], "stat": "p", "game": None, "name": x["name"], "cap": f"{x['name']}'s last 10 games"}
+        if spec.get("_luck"):
+            return {"explore": spec["_luck"]["name"].split()[-1], "name": spec["_luck"]["name"], "cap": "Goals vs expected goals, every player"}
+    return None
+
+
+def add_media(spec: dict, day: dt.date, sw: Path, get_clips) -> None:
+    """Preview photos behind the cards (where the game has one) and one app clip before the outro."""
+    import preview_photos as PH
+    s = spec["series"]
+    pdate = (spec["_y"].isoformat() if s == "night" else day.isoformat())
+    photos = PH.game_photos(pdate) if s != "report" else {}
+    used = []
+    for P in spec["parts"]:
+        ph = photos.get(str(P.get("gid") or ""))
+        if not ph:
+            continue
+        P["photo"] = "img/" + Path(PH.hero(ph, sw / "img" / f"ph-{ph['slug']}.jpg", (968, 420), dark=.62, edge=.7)).name
+        P["bg"] = "img/" + Path(PH.backdrop(ph, sw / "img" / f"bg-{ph['slug']}.jpg", (1080, 1920))).name
+        used.append(ph)
+    spec["_photos"] = used
+    tgt = clip_target(spec)
+    if not tgt:
+        return
+    clip = None
+    try:
+        C = get_clips()
+        if tgt.get("explore"):
+            clip = C.explorer(tgt["explore"], kind="phone", name="app", caption=tgt["cap"], dur=4.5) if C else None
+        else:
+            clip = C.player(tgt["pid"], stat=tgt["stat"], kind="phone", name="app", caption=tgt["cap"], prefer_game=tgt.get("game"), dur=4.5) if C else None
+    except Exception as e:  # noqa: BLE001
+        print(f"  app clip failed ({e}): video without it")
+    if not clip:
+        return
+    T = spec["timing"]
+    lead, tail = .6, .7
+    d = lead + clip["dur"] + tail
+    a = T["outroAt"]
+    bg = next((P.get("bg") for P in spec["parts"] if P.get("bg") and str(P.get("gid")) == str(clip.get("game"))), None) or \
+        next((P.get("bg") for P in spec["parts"] if P.get("bg")), None)
+    spec["parts"].append({"kind": "app", "a": a, "b": a + d, "lead": lead, "src": f"img/{clip['dir']}/", "n": clip["n"],
+                          "w": clip["w"], "h": clip["h"], "cap": clip["caption"], "url": clip["url"].replace("https://", ""), "bg": bg})
+    T["outroAt"] = a + d
+    T["total"] += d
+    spec["_clip"] = clip
+
+
+def _clips_in(c, d: Path):
+    c.work = Path(d)                                    # frames go next to the video's page (img/app/...)
+    return c
+
+
 # ------------------------------------------------------------------ captions
 TAGS = ["NHL", "hockey", "NHLstats", "hockeytok", "analytics"]
 
 
 def captions(spec: dict, day: dt.date) -> dict:
+    """Titles, descriptions and captions; photo credits (no credits on screen) go at the end of each."""
+    import preview_photos as PH
+    cap = _captions(spec, day)
+    cr = PH.credit_lines(spec.get("_photos") or [])
+    if cr["long"]:
+        cap["youtube"]["description"] += "\n\n" + cr["long"]
+    if cr["short"] and "tiktok" in cap:
+        cap["tiktok"]["caption"] += "\n" + cr["short"]
+    return cap
+
+
+def _captions(spec: dict, day: dt.date) -> dict:
     yt = f"https://{SITE}/?ref=yt"
     if spec["series"] == "night":                       # stats only, also on TikTok: no picks, odds or advice wording
         yd = spec["_y"]
@@ -630,6 +717,10 @@ def captions(spec: dict, day: dt.date) -> dict:
 
 
 # ------------------------------------------------------------------ render
+# render(t), then wait until a changed app-clip frame (an <img>) is decoded, so every capture shows the right frame
+RENDER = "async t => { render(t); const p = window.PEND; window.PEND = null; if (p) await p; }"
+
+
 def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None) -> None:
     from playwright.sync_api import sync_playwright
     (work / "img").mkdir(parents=True, exist_ok=True)
@@ -647,7 +738,7 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
         page.wait_for_function("window.READY === true", timeout=60000)
         if preview:
             for t in preview:
-                page.evaluate(f"render({t})")
+                page.evaluate(RENDER, t)
                 page.screenshot(path=f"{out_base}-t{t:05.2f}.jpg", type="jpeg", quality=88)
             br.close()
             return
@@ -663,7 +754,7 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
         cdp = page.context.new_cdp_session(page)
         n = int(round(total * FPS)); t0 = time.time()
         for f in range(n):
-            page.evaluate(f"render({f / FPS})")
+            page.evaluate(RENDER, f / FPS)
             r = cdp.send("Page.captureScreenshot", {"format": "jpeg", "quality": 92, "optimizeForSpeed": True})
             ff.stdin.write(base64.b64decode(r["data"]))
             if f % 150 == 0:
@@ -671,7 +762,7 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
         ff.stdin.close(); ff.wait()
         # cover: the first pick / first player, fully drawn
         p0 = spec["parts"][min(spec.get("cover", 0), len(spec["parts"]) - 1)]
-        page.evaluate(f"render({min(p0['b'] - 0.6, p0['a'] + 4.5)})")
+        page.evaluate(RENDER, min(p0['b'] - 0.6, p0['a'] + 4.5))
         page.screenshot(path=f"{out_base}-cover.jpg", type="jpeg", quality=90)
         br.close()
     if ff.returncode:
@@ -721,6 +812,17 @@ def main():
             manifest = json.loads(mpath.read_text(encoding="utf-8"))
         except Exception:  # noqa: BLE001
             pass
+    clips = {}
+
+    def get_clips():
+        if "c" not in clips:
+            try:
+                from appclips import AppClips
+                clips["c"] = AppClips(work / "appsite")
+            except Exception as e:  # noqa: BLE001
+                print("app clips unavailable:", e)
+                clips["c"] = None
+        return clips["c"]
     with tempfile.TemporaryDirectory() as td:
         work = Path(td)
         ext = None
@@ -733,6 +835,7 @@ def main():
             night = load_night(a.date, site_html(a.site), work)
             print(f"night: {night['y']}, {len(night['arch']['results'])} games, page date {night['page'].get('date')}" if night
                   else f"night: no games archived for the day before {a.date}")
+        jobs = []                                       # first every spec + its media (one browser for the app clips) ...
         for s in series:
             styles = getattr(music, "SERIES_STYLES", {}).get(s)
             bpm = {"board": 120, "hot": 140, "report": 96, "night": 104}.get(s, 120)
@@ -741,11 +844,20 @@ def main():
             if not spec:
                 print(f"{s}: nothing to show today, skipped")
                 continue
-            base = out / f"{s}-{a.date}"
             sw = work / s
-            sw.mkdir()
+            (sw / "img").mkdir(parents=True)
+            t0 = time.time()
+            add_media(spec, day, sw, lambda: get_clips() and _clips_in(clips["c"], sw / "img"))
+            print(f"{s}: {len(spec.get('_photos') or [])} photo(s), app clip {'yes' if spec.get('_clip') else 'no'} ({time.time() - t0:.0f}s)")
+            jobs.append((s, spec, sw, styles))
+        if clips.get("c"):
+            clips["c"].close()
+        for s, spec, sw, styles in jobs:                # ... then the renders (Playwright can't nest two sessions)
+            base = out / f"{s}-{a.date}"
             print(f"{s}: {spec['timing']['total']:.1f}s, {len(spec['parts'])} scenes" + (f", music styles {styles}" if styles else ""))
+            t0 = time.time()
             render_video(spec, sw, base, seed=a.date, preview=[float(x) for x in a.preview.split(",")] if a.preview else None)
+            print(f"{s}: rendered in {time.time() - t0:.0f}s")
             if a.preview:
                 continue
             if s == "board":

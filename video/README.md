@@ -120,3 +120,29 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
 - Workflow: job `slate` in `.github/workflows/videos.yml`, after the `videos` job. Scheduled (15:30 Sweden) only when
   the repository variable `SLATE_DAILY` is `true`; on demand with "Run workflow" -> slate ticked, or slot = `slate`
   (only the slate video).
+
+# Real images: app clips and preview photos (video/appclips.py, video/preview_photos.py)
+
+- App clips ("On evenout: ..."): short recordings of the real app, the signed-out free view of the built page on
+  origin/site, served to headless Chromium straight from git objects (no network: fonts from `video/fonts`, auth / CDN /
+  live scores blocked). Every frame is recorded deterministically (scroll, finger / cursor overlay and the page's own
+  animations are set to the clip time, then a screenshot), saved at display size and shown frame by frame by the
+  templates (`render(t)` sets the `<img>`, the render loop waits for its decode: `RENDER` in series.py / longform.py).
+  - Pages: a player's game page -> "Last 10 games" (Heat Index + game log) and the "Game by game" chart, a tap on the
+    Heat Index, then a tap switching the chart to his stat. These boxes are free for every player. Players explorer
+    (goals vs expected goals) with a name typed into the search box.
+  - Odds-free: the odds-format picker, the hit-rate strip (ends in a Pro market chip), prop-line buttons and Pro lock
+    boxes are hidden; a guard removes any sentence about odds / markets / books / bets still in the page (logged as
+    `hid [...]`). Same rules for every series, so clips are safe for TikTok.
+  - Shorts: one 4.5 s clip in a phone (390x844 CSS px at 2x, shown 560x1212) before the outro: board -> first pick's
+    player, hot -> hottest player, night -> star of the night (no star: the explorer with the headline name). Report: none.
+  - Slate video: one clip per game right after the player profile / duel (desktop layout 1024x659 CSS px, shown
+    1296x834 in a browser window, left column says what it is), plus the Players explorer before the recap.
+    A clip that can't be recorded is dropped and the timeline rebuilt.
+- Preview photos: the game previews' Wikimedia Commons photos (site-assets/previews, credits in data/previews/<date>.json
+  and credits.json), cropped to fit (focal point from the preview), never stretched, darkened, soft blurred edges,
+  brand gradient on top. Slate video: full-bleed behind each matchup card + a band on the "why these games" cards.
+  Shorts: a band at the top of the card and a soft backdrop on scenes whose game has a photo (board / hot: tonight's
+  previews, night: last night's). No photo -> the cards look as before.
+- Photo credits are never on screen: author, licence and source link go in the YouTube description and a short
+  "Photos: Name (CC BY-SA 4.0) via Wikimedia Commons, edited" line ends the TikTok caption (`preview_photos.credit_lines`).

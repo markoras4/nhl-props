@@ -130,6 +130,23 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
 .big2{display:flex;align-items:center;gap:24px;margin-top:22px}
 .big2 b{font:400 150px/0.85 Anton}
 .big2 span{font:800 36px/1.15 Oxanium;letter-spacing:3px;text-transform:uppercase;color:#eedde8}
+/* preview photo (darkened, soft edges, baked in by preview_photos.py): a band behind the card head + a soft backdrop */
+.card{isolation:isolate}
+.card>.ph{position:absolute;left:0;right:0;top:0;height:420px;z-index:-1;background-size:cover;background-position:center;opacity:.9;
+  -webkit-mask-image:linear-gradient(180deg,#000 35%,transparent);mask-image:linear-gradient(180deg,#000 35%,transparent)}
+.card>.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(26,14,30,.9) 10%,rgba(26,14,30,.35) 60%,rgba(255,79,168,.18))}
+.sbg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.55}
+.sbg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,10,18,.55),rgba(16,10,18,.2) 40%,rgba(16,10,18,.85)),linear-gradient(90deg,rgba(255,79,168,.18),transparent 50%,rgba(183,148,255,.18))}
+/* "on evenout" app clip in a phone */
+.appcap{position:absolute;left:56px;right:56px;top:252px;display:flex;align-items:center;justify-content:center;gap:14px;font:800 30px "Exo 2";color:#fff;white-space:nowrap}
+.appcap span{font:800 24px Oxanium;letter-spacing:3px;color:#2b0016;background:var(--pink);padding:6px 14px;border-radius:10px;text-transform:uppercase}
+.phone{position:absolute;left:244px;top:320px;width:592px;padding:16px;border-radius:78px;background:linear-gradient(145deg,#3a2c3e,#120c14 40%,#2a1f2d);
+  box-shadow:0 0 0 2px rgba(255,255,255,.12),0 50px 120px rgba(0,0,0,.7),0 0 90px rgba(255,79,168,.25);transform-origin:50% 100%}
+.phone .scr{position:relative;width:560px;height:1212px;border-radius:62px;overflow:hidden;background:#100a12}
+.phone .scr img{display:block;width:560px;height:1212px}
+
+.phone .btn{position:absolute;right:-5px;top:300px;width:5px;height:120px;border-radius:3px;background:#2a1f2d}
+.appurl{position:absolute;left:0;right:0;top:1552px;text-align:center;font:700 24px Oxanium;letter-spacing:2px;color:var(--mute)}
 /* outro */
 #outro .logo{position:absolute;left:140px;width:800px;top:430px}
 .slam{position:absolute;left:0;right:0;text-align:center}
@@ -252,6 +269,17 @@ parts.forEach((P,i)=>{
     css(card,{top:'300px'});const m=card.querySelector('i.m'),mv=card.querySelector('.mv'),vd=card.querySelector('.verdict');
     s.draw=u=>{popIn(card,u,0,120,.6);const b=eOut(seg(u,.8,1.7));m.style.width=pct(P.model*b);mv.textContent=pct(P.model*b);popIn(vd,u,1.8,50,.5);if(u>P.b-P.a-.4) out(card,u,P.b-P.a-.4);};
   }
+  if(P.kind==='app'){
+    if(P.bg){const b=el('div','sbg',null,root);b.style.backgroundImage=`url(${P.bg})`;}
+    const cap=el('div','appcap',`<span>On evenout</span>${esc(P.cap)}`,root);
+    const ph=el('div','phone',`<div class="scr"><img alt=""></div><i class="btn"></i>`,root);
+    const img=ph.querySelector('img');let cur=-1;
+    const show=k=>{if(k===cur)return;cur=k;img.src=`${P.src}${String(k).padStart(3,'0')}.jpg`;window.PEND=img.decode().catch(()=>{});};
+    s.draw=u=>{const D=P.b-P.a;popIn(cap,u,0,40,.45);
+      const q=eExpo(seg(u,0,.6));ph.style.opacity=clamp(q*1.5);ph.style.transform=`translateY(${(1-q)*500}px) rotate(${(1-q)*-6}deg) scale(${lerp(.9,1,q)+seg(u,.6,D)*.03})`;
+      show(Math.max(0,Math.min(P.n-1,Math.floor((u-P.lead)*30+1e-6))));
+      if(u>D-.4){out(ph,u,D-.4);out(cap,u,D-.4);}};
+  }
   // ---------- last night (stats only) ----------
   const D=P.b-P.a, leave=()=>{};
   const whoH=(x)=>`<div class="who"><div class="av" style="background:${x.color}">${esc(x.num||'')}</div><div style="min-width:0;flex:1"><div class="nm fit">${esc(x.name)}</div><div class="mt">${esc(x.meta)}</div></div></div>`;
@@ -366,6 +394,8 @@ parts.forEach((P,i)=>{
     s.draw=u=>{popIn(card,u,0,120,.55);gd.forEach((g,j)=>{const q=eBack(seg(u,.6+j*step,.95+j*step));g.style.opacity=clamp(q*2);g.style.transform=`scale(${clamp(q,0,1.4)})`;});
       a20.style.opacity=eOut(seg(u,.6+gd.length*step,1+gd.length*step));popIn(bg2,u,.8+gd.length*step,40,.45);if(u>D-.4) out(card,u,D-.4);};
   }
+  if(P.photo){const c=root.querySelector('.card');if(c){const e=document.createElement('div');e.className='ph';e.style.backgroundImage=`url(${P.photo})`;c.prepend(e);}}
+  if(P.bg&&P.kind!=='app'){const b=document.createElement('div');b.className='sbg';b.style.backgroundImage=`url(${P.bg})`;root.prepend(b);}
 });
 
 // shrink long names to fit their box (needs layout, so scenes are shown briefly while measuring)
@@ -396,9 +426,10 @@ window.render=function(t){
   const inBody=t>=T.intro&&t<T.outroAt;
   topBar.style.opacity=t<T.outroAt?1:0;prog.style.opacity=inBody?1:0;
   progU.forEach((u,i)=>{const p=parts[i];u.style.width=clamp((t-p.a)/(p.b-p.a))*100+'%';});
-  const lp=eBack(seg(t,.5,1.0));link.style.opacity=t<T.outroAt?clamp(seg(t,.5,.7)):0;link.style.transform=`translateX(${(1-lp)*-300}px) scale(${1+beat(t)*.015})`;
+  const inApp=parts.some(p=>p.kind==='app'&&t>=p.a&&t<p.b);
+  const lp=eBack(seg(t,.5,1.0));link.style.opacity=t<T.outroAt&&!inApp?clamp(seg(t,.5,.7)):0;link.style.transform=`translateX(${(1-lp)*-300}px) scale(${1+beat(t)*.015})`;
   stage.style.opacity=1-seg(t,T.total-.4,T.total);
 };
 Promise.all([document.fonts.ready,...['400 20px Anton','800 20px "Exo 2"','700 20px "Exo 2"','600 20px Oxanium','800 20px Oxanium'].map(f=>document.fonts.load(f)),
-  ...['img/icon.png','img/logo.svg'].map(u=>new Promise(r=>{const i=new Image();i.onload=i.onerror=r;i.src=u}))]).then(()=>{fitAll();render(0);window.READY=true;});
+  ...['img/icon.png','img/logo.svg',...parts.flatMap(p=>[p.photo,p.bg]).filter(Boolean)].map(u=>new Promise(r=>{const i=new Image();(window.KEEP=window.KEEP||[]).push(i);i.onload=()=>i.decode().then(r,r);i.onerror=r;i.src=u}))]).then(()=>{fitAll();render(0);window.READY=true;});
 </script></body></html>

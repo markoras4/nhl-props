@@ -94,7 +94,7 @@ GLANCE = 0.1
 READ_KEYS = {"take", "why", "wsub", "s", "line", "t1", "t2", "sub", "h2hSum", "skSum", "lines", "noH2h", "vs", "flag"}
 HALF_KEYS = {"title", "lab", "kicker", "h", "names", "chips"}            # big headings and row labels: read at a glance
 SKIP_KEYS = {"kind", "ac", "hc", "c", "color", "tagc", "chap", "sec", "noLeave", "noChrome", "ci", "a", "b", "pa", "fa", "fh",
-             "better", "xt", "pick", "num", "last", "l5", "id", "disc", "t3"}
+             "better", "xt", "pick", "num", "last", "l5", "id", "disc", "t3", "_req", "photo", "src", "n", "w", "h", "url", "lead", "dur"}
 
 
 # ------------------------------------------------------------------ game choice
@@ -779,11 +779,16 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
                 beats.append(lb)
         elif k == "profile" and prof:
             beats.append(profile_beat(g, *prof, variant=i))
+            if not any(b["kind"] == "app" for b in beats):
+                beats.append(app_beat(g, prof[1], i))
         elif k == "duel":
             sa_ = [p for p in pl[A] if not prof or p["id"] != prof[1]["id"]]
             sh_ = [p for p in pl[Hm] if not prof or p["id"] != prof[1]["id"]]
             if sa_ and sh_:
-                beats.append(duel_beat(g, max(sa_, key=star), max(sh_, key=star)))
+                da, dh = max(sa_, key=star), max(sh_, key=star)
+                beats.append(duel_beat(g, da, dh))
+                if not any(b["kind"] == "app" for b in beats):
+                    beats.append(app_beat(g, max((da, dh), key=star), i))
         elif k == "h2h":
             beats.append(h2h_beat(g, day))
     beats.append(keys_beat(g, i))
@@ -795,11 +800,21 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
     return beats
 
 
+def app_beat(g: dict, p: dict, variant: int = 0) -> dict:
+    """"See it on evenout": the player's page on the real app (appclips.py records it; dropped when it can't)."""
+    last = p["name"].split()[-1]
+    take = ["His game log, Heat Index and game-by-game chart: free on evenout.app, for every player.",
+            "Every game he played, his Heat Index and the chart behind it: on evenout.app.",
+            "Last 10 games, Heat Index, shot by shot: all of it on his evenout page."][variant % 3]
+    return {"kind": "app", "sec": "On evenout", "title": f"{last}'s last 10 games", "take": take,
+            "_req": {"type": "player", "pid": str(p["id"]), "stat": "p", "game": str(g["id"]), "name": p["name"]}}
+
+
 LEAD = {"cold": 3.4, "slate": 2.8, "picks": 2.2, "title": 2.4, "model": 3.4, "form": 3.0, "goalies": 2.5, "player": 2.5, "h2h": 2.4,
-        "keys": 2.8, "recap": 2.0, "cta": 2.2, "profile": 3.4, "duel": 3.2, "teamboard": 3.0, "lines": 3.0}
-MAXD = {"slate": 16, "cold": 10}
+        "keys": 2.8, "recap": 2.0, "cta": 2.2, "profile": 3.4, "duel": 3.2, "teamboard": 3.0, "lines": 3.0, "app": 5.4}
+MAXD = {"slate": 16, "cold": 10, "app": 10}
 MIND = {"cold": 11, "slate": 14, "title": 9, "model": 10, "recap": 9, "cta": 7, "player": 12, "goalies": 12, "profile": 17, "duel": 13,
-        "teamboard": 14, "lines": 14}
+        "teamboard": 14, "lines": 14, "app": 8}
 
 
 def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float | None) -> dict | None:
@@ -829,10 +844,32 @@ def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float |
             b["ci"] = 2 + i
             b["_game"] = i
             beats.append(b)
+    hot = max((g["_int"]["_hottest"] for g in chosen if g["_int"]["_hottest"]), key=lambda p: p["heat"]["v"], default=None)
+    beats.append({"kind": "app", "sec": "On evenout", "title": "Every player, two stats at a time", "ci": 2 + n, "chap": "**evenout** · Players explorer",
+                  "take": "The Players explorer: goals against expected goals for the whole league. Type a name to find anyone.",
+                  "_req": {"type": "explore", "q": (hot["name"].split()[-1] if hot else chosen[0]["players"][chosen[0]["home"]][0]["name"].split()[-1]) if chosen else ""}})
     beats.append({"kind": "recap", "sec": "Recap", "title": "The model's call tonight", "ci": 2 + n, "chap": "**Recap**",
                   "games": [{**cg(g), "pa": 1 - g["p_home"], "score": f"{g['mu_a']:.1f} – {g['mu_h']:.1f}"} for g in chosen]})
     beats.append({"kind": "cta", "t1": "Every player. Every game.", "t3": "Free to start · link in the description",
                   "disc": "Stats from NHL game data · win chances, xG and playoff chances are model estimates", "noChrome": True, "ci": 2 + n})
+    spec = {"_beats": beats, "_chosen": chosen, "_games": games, "_n": n, "_max": max_seconds}
+    timeline(spec)
+    # thumbnail: the closest game's chance, or the hottest player
+    close = min(chosen, key=lambda g: abs(g["p_home"] - .5))
+    fav_p = max(close["p_home"], 1 - close["p_home"])
+    thumb = {"k": "NHL tonight", "big": [f"{n} games", "to watch"] if n > 1 else ["Game", "breakdown"], "date": day.strftime("%b %d").upper().replace(" 0", " "),
+             "games": [cg(g) for g in chosen], "num": pc(fav_p),
+             "numLab": [f"{close['away']} @ {close['home']}", "a coin flip" if fav_p < .55 else f"model: {close['home'] if close['p_home'] >= .5 else close['away']} win"]}
+    hot = max((g["_int"]["_hottest"] for g in chosen if g["_int"]["_hottest"]), key=lambda p: p["heat"]["v"], default=None)
+    if hot and hot["heat"]["v"] >= 5 and fav_p >= .55:
+        thumb.update({"num": f"{hot['heat']['v']:+.1f}", "numLab": [hot["name"], "Heat Index"]})
+    spec.update({"series": SERIES, "day": day.strftime("%a · %b ").upper() + str(day.day), "thumbSpec": thumb})
+    return spec
+
+
+def timeline(spec: dict) -> None:
+    """Beat times (a, b), total and YouTube chapters from spec["_beats"]; again after beats are dropped."""
+    beats, chosen, games, n, max_seconds = spec["_beats"], spec["_chosen"], spec["_games"], spec["_n"], spec["_max"]
     # timing: animations first, then >= 0.35 s per readable word, never under 4 s
     t = 0.0
     for b in beats:
@@ -855,17 +892,58 @@ def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float |
             chapters.append({"t": b["a"], "label": f"{g['away']} @ {g['home']}: {short_name(g['teams'][g['away']].get('name', ''))} vs {short_name(g['teams'][g['home']].get('name', ''))}"})
         if b["kind"] == "recap":
             chapters.append({"t": b["a"], "label": "Recap: the model's call"})
-    # thumbnail: the closest game's chance, or the hottest player
-    close = min(chosen, key=lambda g: abs(g["p_home"] - .5))
-    fav_p = max(close["p_home"], 1 - close["p_home"])
-    thumb = {"k": "NHL tonight", "big": [f"{n} games", "to watch"] if n > 1 else ["Game", "breakdown"], "date": day.strftime("%b %d").upper().replace(" 0", " "),
-             "games": [cg(g) for g in chosen], "num": pc(fav_p),
-             "numLab": [f"{close['away']} @ {close['home']}", "a coin flip" if fav_p < .55 else f"model: {close['home'] if close['p_home'] >= .5 else close['away']} win"]}
-    hot = max((g["_int"]["_hottest"] for g in chosen if g["_int"]["_hottest"]), key=lambda p: p["heat"]["v"], default=None)
-    if hot and hot["heat"]["v"] >= 5 and fav_p >= .55:
-        thumb.update({"num": f"{hot['heat']['v']:+.1f}", "numLab": [hot["name"], "Heat Index"]})
-    return {"series": SERIES, "day": day.strftime("%a · %b ").upper() + str(day.day), "beats": [{k: v for k, v in b.items() if not k.startswith("_")} for b in beats],
-            "chapters": chapters, "total": total, "thumbSpec": thumb, "_chosen": chosen, "_games": games}
+    spec["_shown"] = beats
+    spec.update({"beats": [{k: v for k, v in b.items() if not k.startswith("_")} for b in beats], "chapters": chapters, "total": total})
+
+
+# ------------------------------------------------------------------ real images
+def add_media(spec: dict, day: dt.date, img: Path) -> None:
+    """Preview photos (matchup cards, "why these games" cards) and the app clips (player pages, Players explorer).
+    App beats whose clip can't be recorded are dropped and the timeline is rebuilt."""
+    import preview_photos as PH
+    img.mkdir(parents=True, exist_ok=True)
+    photos = PH.game_photos(day.isoformat())
+    used = []
+    for b in spec["_beats"]:
+        if b["kind"] == "title":
+            ph = photos.get(str(spec["_chosen"][b["_game"]]["id"]))
+            if ph:
+                b["photo"] = "img/" + Path(PH.hero(ph, img / f"hero-{ph['slug']}.jpg", (1920, 1080), dark=.34, edge=.62)).name
+                used.append(ph)
+        if b["kind"] == "picks":
+            for x, g in zip(b["games"], spec["_chosen"]):
+                ph = photos.get(str(g["id"]))
+                if ph:
+                    x["photo"] = "img/" + Path(PH.hero(ph, img / f"card-{ph['slug']}.jpg", (720, 300), dark=.7, edge=.8)).name
+                    used.append(ph)
+    spec["_photos"] = used
+    reqs = [b for b in spec["_beats"] if b.get("_req")]
+    t0 = time.time()
+    C = None
+    try:
+        from appclips import AppClips
+        C = AppClips(img) if reqs else None
+        for i, b in enumerate(reqs):
+            r, clip = b["_req"], None
+            try:
+                if r["type"] == "player":
+                    clip = C.player(r["pid"], stat=r.get("stat", "p"), kind="desktop", name=f"app{i}", prefer_game=r.get("game"), dur=4.5)
+                else:
+                    clip = C.explorer(r["q"], kind="desktop", name=f"app{i}", dur=5.0)
+            except Exception as e:  # noqa: BLE001
+                print(f"  app clip {i} failed: {e}")
+            if clip:
+                b.update({"src": f"img/{clip['dir']}/", "n": clip["n"], "w": clip["w"], "h": clip["h"], "lead": .6, "dur": clip["dur"],
+                          "url": clip["url"].replace("https://", "")})
+                b.pop("_req")
+    except Exception as e:  # noqa: BLE001
+        print(f"  app clips unavailable: {e}")
+    finally:
+        if C:
+            C.close()
+    spec["_beats"] = [b for b in spec["_beats"] if not b.get("_req")]
+    print(f"  media: {len(used)} photo(s), {sum(1 for b in spec['_beats'] if b['kind'] == 'app')} app clip(s) in {time.time() - t0:.0f}s")
+    timeline(spec)
 
 
 # ------------------------------------------------------------------ captions
@@ -888,13 +966,16 @@ def captions(spec: dict, day: dt.date) -> dict:
         lines.append(f"• {names(g)} ({tline(g['start'])}): model win chance {g['away']} {pc(pa)}, {g['home']} {pc(g['p_home'])}; "
                      f"expected score {g['mu_a']:.1f}–{g['mu_h']:.1f}. {reason(g)[0]}.")
     chap = "\n".join(f"{ts(c['t'])} {c['label']}" for c in spec["chapters"])
+    import preview_photos as PH
+    credits = PH.credit_lines(spec.get("_photos") or [])["long"]          # photo credits: description only, not on screen
 
     def body(lines):
         return (f"Tonight's NHL slate ({day.strftime('%A')}, {md}): {len(spec['_games'])} games, and the {len(ch)} we'd watch, broken down with the "
                 f"model's numbers: win chance, expected score, 5-on-5 xG share, PDO, special teams, goalies (save %, goals saved above expected), "
                 f"the hottest players by Heat Index, head-to-head and playoff stakes.\n\n" + "\n".join(lines) +
                 f"\n\nChapters\n{chap}\n\nEvery player, every game, free to start: https://{SITE}/?ref=yt\n\n"
-                "Stats from NHL game data; win chances, xG and playoff chances are model estimates. Analysis only.\n\n#NHL #hockey #NHLstats")
+                "Stats from NHL game data; win chances, xG and playoff chances are model estimates. Analysis only." +
+                (f"\n\n{credits}" if credits else "") + "\n\n#NHL #hockey #NHLstats")
     desc = body(lines)
     while len(desc.encode("utf-8")) > 4900 and lines:    # YouTube: 5000 bytes; drop game lines, never the chapters
         lines = lines[:-1]
@@ -977,6 +1058,10 @@ def setup_page(spec: dict, work: Path):
     (work / "index.html").write_text((HERE / "longform.html").read_text(encoding="utf-8").replace("/*SPEC*/null", json.dumps(clean)), encoding="utf-8")
 
 
+# render(t), then wait until a changed app-clip frame (an <img>) is decoded, so every capture shows the right frame
+RENDER = "async t => { render(t); const p = window.PEND; window.PEND = null; if (p) await p; }"
+
+
 def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, stills: Path | None = None, music_file: str | None = None) -> dict:
     from playwright.sync_api import sync_playwright
     setup_page(spec, work)
@@ -991,7 +1076,7 @@ def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, st
         if preview:
             stills.mkdir(parents=True, exist_ok=True)
             for t in preview:
-                page.evaluate(f"render({t})")
+                page.evaluate(RENDER, t)
                 page.screenshot(path=str(stills / f"slate-t{t:06.2f}.jpg"), type="jpeg", quality=88)
             page.set_viewport_size({"width": 1280, "height": 720})
             page.evaluate("thumb()")
@@ -1019,7 +1104,7 @@ def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, st
         for f in range(n):
             k = keys[f]
             if k is None or k != prev_key or prev_jpg is None:
-                page.evaluate(f"render({f / FPS})")
+                page.evaluate(RENDER, f / FPS)
                 r = cdp.send("Page.captureScreenshot", {"format": "jpeg", "quality": 90, "optimizeForSpeed": True})
                 prev_jpg = base64.b64decode(r["data"]); shots += 1
             prev_key = k
@@ -1070,6 +1155,7 @@ def main():
             I = g["_int"]
             print(f"  chosen {g['away']} @ {g['home']}: {reason(g)[0]} (score {g['_score']:.2f}; " +
                   ", ".join(f"{k} {I[k]:.2f}" for k in WEIGHT) + ")")
+        add_media(spec, day, work / "r" / "img")
         for c in spec["chapters"]:
             print(f"  {ts(c['t'])} {c['label']}")
         print(f"  {len(spec['beats'])} beats, {spec['total']:.1f}s ({ts(spec['total'])})")

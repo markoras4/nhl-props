@@ -272,6 +272,26 @@ em{font-style:normal;color:var(--pink)}
 .ln .pp{margin-top:16px;font:700 22px "Exo 2";color:var(--mute)}
 .ln .pp b{color:var(--soft)}
 .lntake{position:absolute;left:120px;right:120px;top:922px;text-align:center}
+/* preview photos (darkened, soft edges baked in by preview_photos.py; no CSS blur) */
+.tph{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:50% 45%}
+.tph::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 75% 65% at 50% 45%,rgba(16,10,18,.5),rgba(16,10,18,.85)),
+  linear-gradient(90deg,color-mix(in srgb,var(--ca) 30%,transparent),transparent 38%,transparent 62%,color-mix(in srgb,var(--ch) 30%,transparent)),
+  linear-gradient(180deg,rgba(16,10,18,.65),transparent 25%,transparent 70%,rgba(16,10,18,.9))}
+.pk{isolation:isolate}
+.pk .pph{position:absolute;left:0;right:0;top:0;height:300px;z-index:-1;background-size:cover;background-position:center;
+  -webkit-mask-image:linear-gradient(180deg,#000 30%,transparent);mask-image:linear-gradient(180deg,#000 30%,transparent)}
+.pk .pph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,14,30,.55),rgba(26,14,30,.2) 50%,transparent)}
+/* "on evenout": the real app in a browser window */
+.apl{position:absolute;left:64px;top:300px;width:450px}
+.apl .ttl{font-size:68px;margin-top:10px}
+.apl .take{margin-top:26px;font-size:32px}
+.apl .url{margin-top:30px;display:inline-block;padding:10px 18px;border-radius:12px;background:rgba(255,255,255,.06);font:700 20px Oxanium;letter-spacing:1px;color:var(--mute)}
+.brw{position:absolute;left:560px;top:150px;width:1300px;border-radius:18px;overflow:hidden;background:#1d1520;border:2px solid rgba(255,255,255,.12);
+  box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 80px rgba(255,79,168,.18)}
+.brw .bar{height:44px;display:flex;align-items:center;gap:10px;padding:0 18px;background:#241a28;border-bottom:1px solid rgba(255,255,255,.08)}
+.brw .bar i{width:13px;height:13px;border-radius:50%;background:#ff5f57}.brw .bar i:nth-child(2){background:#febc2e}.brw .bar i:nth-child(3){background:#28c840}
+.brw .bar span{margin-left:22px;flex:1;max-width:640px;height:28px;border-radius:14px;background:rgba(0,0,0,.35);font:600 16px/28px "Exo 2";color:var(--soft);padding:0 16px}
+.brw img{display:block;width:1296px;height:834px}
 /* thumbnail (1280x720) */
 #thumb{position:absolute;inset:0;display:none;width:1280px;height:720px;overflow:hidden}
 </style></head>
@@ -341,9 +361,11 @@ B.picks=(s,P)=>{const r=s.el;
   const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'64px',top:'136px'});
   const W=P.games.length===2?720:560, gap=40, x0=(1920-(P.games.length*W+(P.games.length-1)*gap))/2;
   const cards=P.games.map((g,j)=>{const c=el('div','card pk',`<div class="n">${j+1}</div><div class="mt">${tm(g.away,g.ac)} <span style="color:var(--mute);font-size:50px">@</span> ${tm(g.home,g.hc)}</div>
-     <div class="why">${esc(g.why)}</div><div class="wsub">${rich(g.wsub)}</div><div class="tt">${esc(g.time)}</div>`,r);css(c,{left:x0+j*(W+gap)+'px',width:W+'px'});return c;});
+     <div class="why">${esc(g.why)}</div><div class="wsub">${rich(g.wsub)}</div><div class="tt">${esc(g.time)}</div>`,r);
+    if(g.photo){const e=document.createElement('div');e.className='pph';e.style.backgroundImage=`url(${g.photo})`;c.prepend(e);}css(c,{left:x0+j*(W+gap)+'px',width:W+'px'});return c;});
   return u=>{popIn(hd,u,0,40);cards.forEach((c,j)=>popIn(c,u,.4+j*.5,90,.6));};};
 B.title=(s,P)=>{const r=s.el;
+  const ph=P.photo?css(el('div','tph',null,r),{backgroundImage:`url(${P.photo})`,'--ca':P.ac,'--ch':P.hc}):null;
   const wb=el('div','whyb',`<span class="chip" style="color:var(--pink)">${esc(P.kicker)}</span>`,r);
   const side=(T,c)=>`<div class="side"><div class="ab" style="color:#fff;text-shadow:0 0 50px ${c}88">${esc(T.abbr)}</div><div class="nm">${esc(T.name)}</div>
      <div class="rec">${esc(T.rec)}</div><div class="l5">${T.l5.map(x=>`<i class="${x}">${x}</i>`).join('')}</div><div class="strk">${esc(T.strk)}</div></div>`;
@@ -351,7 +373,8 @@ B.title=(s,P)=>{const r=s.el;
   const sides=[...vs.querySelectorAll('.side')], mid=vs.querySelector('.mid');
   const inf=el('div','tinfo',P.info.map(([k,v,w])=>`<div class="${w?'warn':''}">${esc(k)} <b>${esc(v)}</b></div>`).join(''),r);
   const infs=[...inf.children];
-  return u=>{popIn(wb,u,0,30);slideX(sides[0],u,.2,-500,.7);slideX(sides[1],u,.35,500,.7);slam(mid,u,.8,2);
+  return u=>{if(ph){const q=eOut(seg(u,0,2.4));ph.style.opacity=eOut(seg(u,0,.6));ph.style.transform=`scale(${lerp(1.07,1,q)})`;}
+    popIn(wb,u,0,30);slideX(sides[0],u,.2,-500,.7);slideX(sides[1],u,.35,500,.7);slam(mid,u,.8,2);
     sides.forEach((sd,j)=>[...sd.querySelectorAll('.l5 i')].forEach((x,k)=>popIn(x,u,1.2+j*.2+k*.08,20,.3)));infs.forEach((x,j)=>popIn(x,u,1.7+j*.18,30,.4));};};
 B.model=(s,P)=>{const r=s.el;
   const hd=css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px">${esc(P.title)}</div>`,r),{left:'120px',top:'136px'});
@@ -444,6 +467,15 @@ B.cta=(s,P)=>{const r=s.el;r.id='cta';
   const l4=css(el('div','ctr',esc(P.disc),r),{top:'960px',font:'600 24px "Exo 2"',color:'var(--mute)'});
   return u=>{const ip=eBack(seg(u,0,.6));logo.style.opacity=clamp(ip);logo.style.transform=`scale(${lerp(.5,1,ip)})`;slam(l1,u,.4,1.5);popIn(l2,u,.9,60);popIn(l3,u,1.3,30);fadeIn(l4,u,1.7);};};
 
+B.app=(s,P)=>{const r=s.el;
+  const L=el('div','apl',`<div class="sec">${esc(P.sec)}</div><div class="ttl">${esc(P.title)}</div><div class="take">${rich(P.take)}</div><div class="url">${esc(P.url||'evenout.app')}</div>`,r);
+  const parts=[...L.children];
+  const bw=el('div','brw',`<div class="bar"><i></i><i></i><i></i><span>${esc(P.url||'evenout.app')}</span></div><img alt="">`,r);
+  const img=bw.querySelector('img');let cur=-1;
+  const show=k=>{if(k===cur)return;cur=k;img.src=`${P.src}${String(k).padStart(3,'0')}.jpg`;window.PEND=img.decode().catch(()=>{});};
+  return u=>{parts.forEach((x,j)=>popIn(x,u,.1+j*.25,30,.45));slideX(bw,u,0,600,.6);
+    const q=seg(u,P.lead,P.lead+P.dur);   // flags every clip frame as moving (static-frame skipping stays exact)
+    show(Math.max(0,Math.min(P.n-1,Math.floor((u-P.lead)*30+1e-6))));};};
 const rkChip=(r,n)=>r?`<span class="rk ${r<=8?'t':r>=(n||32)-7?'b':''}">${ordinal(r)}</span>`:'<span></span>';
 function ordinal(n){const v=n%100;return n+(v>=11&&v<=13?'th':({1:'st',2:'nd',3:'rd'}[n%10]||'th'))}
 const head=(r,P,left='120px')=>css(el('div','abs',`<div class="sec">${esc(P.sec)}</div><div class="ttl" style="margin-top:6px;font-size:72px">${esc(P.title)}</div>`,r),{left,top:'120px'});
@@ -530,5 +562,5 @@ window.thumb=function(){
   css(el('div',null,esc(T.date)),{position:'absolute',right:'60px',top:'52px',font:'800 34px Oxanium',letterSpacing:'3px',color:'var(--soft)'});
 };
 Promise.all([document.fonts.ready,...['400 20px Anton','800 20px "Exo 2"','700 20px "Exo 2"','600 20px Oxanium','800 20px Oxanium'].map(f=>document.fonts.load(f)),
-  ...['img/logo.svg'].map(u=>new Promise(r=>{const i=new Image();i.onload=i.onerror=r;i.src=u}))]).then(()=>{fitAll();render(0);window.READY=true;});
+  ...['img/logo.svg',...beats.flatMap(b=>[b.photo,...(b.games||[]).map(g=>g.photo)]).filter(Boolean)].map(u=>new Promise(r=>{const i=new Image();(window.KEEP=window.KEEP||[]).push(i);i.onload=()=>i.decode().then(r,r);i.onerror=r;i.src=u}))]).then(()=>{fitAll();render(0);window.READY=true;});
 </script></body></html>
