@@ -1,13 +1,5 @@
 {
-  "2026-11-17-lak-bos": ["David Pastrnak", "Charlie McAvoy", "Jeremy Swayman", "Adrian Kempe", "TD Garden Bruins game"],
-  "2026-11-17-edm-fla": ["Connor McDavid", "Leon Draisaitl", "Sam Reinhart", "Matthew Tkachuk", "Edmonton Oilers Florida Panthers"],
-  "2026-11-17-cbj-nyi": ["Bo Horvat", "Ilya Sorokin", "Zach Werenski", "Adam Fantilli", "New York Islanders UBS Arena"],
-  "2026-11-17-buf-phi": ["Travis Konecny", "Tage Thompson", "Rasmus Dahlin", "Philadelphia Flyers game", "Buffalo Sabres game"],
-  "2026-11-17-ott-wpg": ["Mark Scheifele", "Kyle Connor", "Tim Stutzle", "Brady Tkachuk", "Winnipeg Jets game"],
-  "2026-11-17-wsh-tbl": ["Nikita Kucherov", "Alex Ovechkin", "Andrei Vasilevskiy", "Jake Guentzel", "Tampa Bay Lightning game"],
-  "2026-11-17-tor-chi": ["Connor Bedard", "Auston Matthews", "William Nylander", "United Center Blackhawks game", "Toronto Maple Leafs game"],
-  "2026-11-17-ana-stl": ["Robert Thomas Blues", "Jordan Kyrou", "Leo Carlsson", "Cutter Gauthier", "St. Louis Blues game"],
-  "2026-11-17-nsh-min": ["Kirill Kaprizov", "Quinn Hughes", "Roman Josi", "Filip Forsberg", "Minnesota Wild game"],
-  "2026-11-17-dal-vgk": ["Jack Eichel", "Mark Stone", "Jason Robertson", "Jake Oettinger", "Vegas Golden Knights T-Mobile Arena"],
-  "2026-11-17-cgy-sjs": ["Macklin Celebrini", "Will Smith Sharks", "Nazem Kadri", "Calgary Flames game", "San Jose Sharks SAP Center"]
+  "2026-11-18-bos-det": ["Lucas Raymond Red Wings", "Moritz Seider", "Alex DeBrincat", "Brad Marchand Bruins Red Wings", "Little Caesars Arena Red Wings game", "Boston Bruins Detroit Red Wings"],
+  "2026-11-18-mtl-njd": ["Jack Hughes Devils", "Jesper Bratt", "Nico Hischier", "Cole Caufield", "Prudential Center Devils game", "Montreal Canadiens New Jersey Devils"],
+  "2026-11-18-col-uta": ["Clayton Keller", "Logan Cooley", "Martin Necas Avalanche", "Artturi Lehkonen", "Colorado Avalanche game", "Utah Hockey Club Delta Center"]
 }
