@@ -1,0 +1,219 @@
+{
+ "date": "2026-11-18",
+ "written": "2026-11-18T08:00+01:00",
+ "previews": [
+  {
+   "id": 2026020344,
+   "slug": "2026-11-18-bos-det",
+   "photo": {
+    "src": "assets/previews/2026-11-18-bos-det.webp",
+    "alt": "David Pastrnak of the Boston Bruins on the ice",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Larsson_pastrnak_2_23_(52709286609).jpg",
+    "pos": "center 20%"
+   },
+   "en": {
+    "kicker": "Bruins at Red Wings",
+    "title": "Skidding Bruins hit Detroit on a back-to-back as Tarasov stays hot",
+    "deck": "Boston has lost three straight for the first time this season, scoring four goals in those games, and plays the second half of a back-to-back. Detroit snapped a five-game slide behind a Daniil Tarasov shutout in Tampa and is still without Dylan Larkin. The market has Detroit as a slight favourite, and the model leans a bit further that way.",
+    "news": [
+     "The Bruins were shut out 3-0 by the Kings at home on Tuesday with Michael DiPietro in goal. They have trailed first in three straight games and have been outscored 14-4 in the skid.",
+     "Jeremy Swayman (.906, 2.60 GAA) is the likely Boston starter after DiPietro played Tuesday. Rookie James Hagens is out with a back injury.",
+     "Detroit suspended Dylan Larkin without pay on Oct. 29 after he said he would no longer play for the team; he stays out until a trade. Defenceman Simon Edvinsson is still unsigned and must sign by Dec. 1 to play this season.",
+     "Tarasov made 31 saves in a 2-0 win at Tampa on Saturday, his second shutout in nine appearances for Detroit. He has a .931 save percentage, while John Gibson has lost his last four starts."
+    ],
+    "records": [
+     "Detroit's win in Tampa ended the Lightning's 8-0 home start and Detroit's own five-game losing streak.",
+     "The Red Wings rank 27th in goals per game and have scored 1.8 a game over their last five.",
+     "David Pastrnak leads Boston with 26 points (9 goals, 17 assists) in 21 games.",
+     "Charlie McAvoy is two assists from 300 in his career but has gone 14 games without a goal."
+    ],
+    "betting": [
+     "Market: Red Wings 1.83, Bruins 2.02, about 52–48 without the margin. The model has Detroit at 56%, a little warmer on the home side than the price, partly because Boston is on a back-to-back.",
+     "Total: over 5.5 at 1.65 is about 57% after the margin. The model says 56%, so they agree. The last six meetings averaged 5.2 goals, a touch under the line.",
+     "Player chances (model): Pastrnak 1+ point 68% (market about 70%), McAvoy 1+ point 44% (market about 52%), Seider 1+ point 51% (market about 53%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Bruins mot Red Wings",
+    "title": "Bruins i svacka möter Detroit dagen efter – och Tarasov är het",
+    "deck": "Boston har förlorat tre raka för första gången den här säsongen, med bara fyra gjorda mål, och spelar andra matchen på två dagar. Detroit bröt en svit på fem förluster tack vare en hållning av Daniil Tarasov i Tampa och saknar fortfarande Dylan Larkin. Marknaden har Detroit som knapp favorit, och modellen lutar lite mer åt samma håll.",
+    "news": [
+     "Bruins föll med 0–3 hemma mot Kings i tisdags med Michael DiPietro i mål. De har släppt in första målet tre matcher i rad och förlorat med sammanlagt 4–14 under svackan.",
+     "Jeremy Swayman (,906, 2,60 insläppta per match) väntas stå för Boston eftersom DiPietro spelade i tisdags. Rookien James Hagens är borta med en ryggskada.",
+     "Detroit stängde av Dylan Larkin utan lön den 29 oktober efter att han sagt att han inte längre tänker spela för klubben. Han står utanför tills han tradas. Backen Simon Edvinsson saknar fortfarande kontrakt och måste skriva på senast 1 december för att få spela i år.",
+     "Tarasov gjorde 31 räddningar när Detroit vann med 2–0 i Tampa i lördags, hans andra hållning på nio matcher i klubben. Han har en räddningsprocent på ,931, medan John Gibson har förlorat sina fyra senaste starter."
+    ],
+    "records": [
+     "Segern i Tampa bröt Lightnings 8–0-inledning hemma och Detroits egen förlustsvit på fem matcher.",
+     "Red Wings ligger 27:a i ligan i gjorda mål per match och har gjort 1,8 mål per match de senaste fem.",
+     "David Pastrnak leder Boston med 26 poäng (9 mål, 17 assist) på 21 matcher.",
+     "Charlie McAvoy har två assist kvar till 300 i karriären men har gått 14 matcher utan mål."
+    ],
+    "betting": [
+     "Marknaden: Red Wings 1,83, Bruins 2,02, ungefär 52–48 utan marginal. Modellen ger Detroit 56 %, lite mer för hemmalaget än priset, delvis för att Boston spelar dagen efter en match.",
+     "Totalt: över 5,5 på 1,65 motsvarar cirka 57 % efter marginalen. Modellen säger 56 %, så de är överens. De sex senaste mötena hade i snitt 5,2 mål, strax under linjen.",
+     "Spelarchanser (modellen): Pastrnak 1+ poäng 68 % (marknaden cirka 70 %), McAvoy 1+ poäng 44 % (marknaden cirka 52 %), Seider 1+ poäng 51 % (marknaden cirka 53 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "SI: Bruins blanked by Kings",
+     "url": "https://www.si.com/nhl/bruins/onsi/news/bruins-blanked-by-kings-in-third-consecutive-defeat"
+    },
+    {
+     "name": "NHL.com: Red Wings beat Lightning",
+     "url": "https://nhl.com/news/detroit-red-wings-tampa-bay-lightning-game-recap-november-14-2026"
+    },
+    {
+     "name": "NHL.com: Larkin suspended",
+     "url": "https://www.nhl.com/news/dylan-larkin-will-no-longer-play-for-detroit-red-wings"
+    }
+   ]
+  },
+  {
+   "id": 2026020345,
+   "slug": "2026-11-18-mtl-njd",
+   "photo": {
+    "src": "assets/previews/2026-11-18-mtl-njd.webp",
+    "alt": "A New Jersey Devils player and a Montreal Canadiens player skating in a game between the teams",
+    "author": "Lisa Gansky from New York, NY, USA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Canadiens_vs_Devils_(16000093757).jpg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Canadiens at Devils",
+    "title": "Hellebuyck's unbeaten Devils chase an eighth straight home win",
+    "deck": "New Jersey is 13-3-0 since a 2-3 start, has won seven in a row at home and is 7-0-0 with Connor Hellebuyck in net. Montreal saw a 12-game point streak end and has scored once in each of its last two games, with key players hurt. The market makes the Devils clear favourites; the model is a little less sure.",
+    "news": [
+     "Hellebuyck, acquired from Winnipeg on Oct. 23, is 7-0-0 with a 2.25 GAA for New Jersey. He made 41 saves in a 7-4 win in Washington on Saturday.",
+     "Rookie Jacob Fowler (9-2-2) is expected in goal for Montreal. He has allowed 18 goals over his last six starts.",
+     "Canadiens: alternate captains Josh Anderson (three to four weeks) and Mike Matheson (two to three weeks) are out, joining Chris Kreider, Ivan Demidov and Sam Montembeault on injured reserve.",
+     "Devils: Anthony Mantha (about a month after surgery) and Johnathan Kovacevic (four to six weeks) are out. Brett Pesce is back after an illness."
+    ],
+    "records": [
+     "The Devils have outscored opponents 32-15 during their seven-game home winning streak.",
+     "Jesper Bratt has an eight-game point streak (2 goals, 8 assists) and 23 points in 23 career games against Montreal.",
+     "Montreal's power play is 0-for-12 over four games and second-to-last in the league at 12.5%.",
+     "New Jersey is 6-0-1 against Montreal since its last regulation loss to the Canadiens in January 2024."
+    ],
+    "betting": [
+     "Market: Devils 1.58, Canadiens 2.43, about 61–39 without the margin. The model has it 58–42, so it gives Montreal a bit more than the price does.",
+     "Total: over 5.5 at 1.65 is about 57%. The model says 54%, slightly lower. On the other side, 71% of Devils games have gone over 5.5 this season, and the head-to-head history averages 6.1 goals.",
+     "Player chances (model): Jack Hughes 1+ point 72% (market about 72%) and goal 40%, Suzuki 1+ point 60% (market about 61%), Lane Hutson 1+ point 54% (market about 53%)."
+    ]
+   },
+   "sv": {
+    "kicker": "Canadiens mot Devils",
+    "title": "Obesegrade Hellebuyck och Devils jagar åttonde raka hemmasegern",
+    "deck": "New Jersey har gått 13-3-0 sedan inledningen på 2-3, vunnit sju raka hemma och är 7-0-0 med Connor Hellebuyck i mål. Montreal såg en poängsvit på 12 matcher ta slut och har bara gjort ett mål i var och en av de två senaste matcherna, med flera nyckelspelare skadade. Marknaden gör Devils till klar favorit; modellen är lite mindre säker.",
+    "news": [
+     "Hellebuyck, som kom från Winnipeg den 23 oktober, är 7-0-0 med 2,25 insläppta mål per match för New Jersey. Han gjorde 41 räddningar när Devils vann med 7–4 i Washington i lördags.",
+     "Rookien Jacob Fowler (9-2-2) väntas stå för Montreal. Han har släppt in 18 mål på sina sex senaste starter.",
+     "Canadiens: assisterande lagkaptenerna Josh Anderson (tre till fyra veckor) och Mike Matheson (två till tre veckor) är borta, liksom Chris Kreider, Ivan Demidov och Sam Montembeault som står på skadelistan.",
+     "Devils: Anthony Mantha (ungefär en månad efter en operation) och Johnathan Kovacevic (fyra till sex veckor) saknas. Brett Pesce är tillbaka efter sjukdom."
+    ],
+    "records": [
+     "Devils har vunnit med sammanlagt 32–15 under sin svit på sju raka hemmasegrar.",
+     "Jesper Bratt har gjort poäng i åtta raka matcher (2 mål, 8 assist) och har 23 poäng på 23 matcher mot Montreal i karriären.",
+     "Montreals powerplay har 0 av 12 de senaste fyra matcherna och är näst sämst i ligan med 12,5 %.",
+     "New Jersey har gått 6-0-1 mot Montreal sedan den senaste förlusten mot Canadiens efter full tid i januari 2024."
+    ],
+    "betting": [
+     "Marknaden: Devils 1,58, Canadiens 2,43, ungefär 61–39 utan marginal. Modellen säger 58–42 och ger alltså Montreal lite mer än priset.",
+     "Totalt: över 5,5 på 1,65 motsvarar cirka 57 %. Modellen säger 54 %, något lägre. Å andra sidan har 71 % av Devils matcher gått över 5,5 den här säsongen, och de inbördes mötena har i snitt 6,1 mål.",
+     "Spelarchanser (modellen): Jack Hughes 1+ poäng 72 % (marknaden cirka 72 %) och mål 40 %, Suzuki 1+ poäng 60 % (marknaden cirka 61 %), Lane Hutson 1+ poäng 54 % (marknaden cirka 53 %)."
+    ]
+   },
+   "sources": [
+    {
+     "name": "AP: Devils go for 8th straight home win",
+     "url": "https://www.joxfm.com/2026/11/17/devils-go-for-8th-straight-win-at-home-while-habs-search-for-offense/"
+    },
+    {
+     "name": "Devils.com: game preview",
+     "url": "https://www.nhl.com/devils/news/preview-2026020345"
+    },
+    {
+     "name": "NHL.com: Anderson, Matheson out multiple weeks",
+     "url": "https://www.nhl.com/canadiens/news/anderson-matheson-out-multiple-weeks"
+    }
+   ]
+  },
+  {
+   "id": 2026020346,
+   "slug": "2026-11-18-col-uta",
+   "photo": {
+    "src": "assets/previews/2026-11-18-col-uta.webp",
+    "alt": "Artturi Lehkonen of the Colorado Avalanche diving for the puck along the boards",
+    "author": "Jenn G from Seattle, WA",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "page": "https://commons.wikimedia.org/wiki/File:Colorado_Avalanche_at_Seattle_Kraken_-_2023-04-24_-_Round_1_Game_4_-_Cale_Makar,_Oliver_Bjorkstrand,_Daniel_Sprong_and_Artturi_Lehkonen_(52847020869).jpg",
+    "pos": "center 25%"
+   },
+   "en": {
+    "kicker": "Avalanche at Mammoth",
+    "title": "Avalanche without MacKinnon and Makar meet a Mammoth team on a six-game skid",
+    "deck": "Colorado plays its second game without Nathan MacKinnon and Cale Makar, both hurt against Ottawa last week. Utah has lost six straight (0-3-3) and goalie Karel Vejmelka is struggling. It is their first meeting this season, with the Winter Classic in Salt Lake City still to come, and both the market and the model see a coin flip.",
+    "news": [
+     "MacKinnon is out about a month and Makar about two weeks with lower-body injuries. Josh Manson (ankle) is also out, and Colorado claimed defenceman Mike Reilly off waivers.",
+     "Mackenzie Blackwood is 7-1-1 over his last nine starts. Scott Wedgewood left practice on Sunday with an illness.",
+     "Utah's Vejmelka is 1-6-2 with an .853 save percentage over his last nine starts. John Marino, Nate Schmidt, Dylan Guenther and Nick Schmaltz are out.",
+     "Logan Cooley returned on Monday after missing three games. He scored 10 goals in seven games from Oct. 22 to Nov. 5, with two hat tricks."
+    ],
+    "records": [
+     "Utah started 10-6-0 and is now 10-9-3; it lost 3-2 to last-place Vancouver on Monday.",
+     "Vincent Trocheck is one assist from 400 in his career, and Clayton Keller is three away.",
+     "Utah's power play is third in the league at 33.8%, but its penalty kill is 28th at 69.3%.",
+     "Artturi Lehkonen leads Colorado with 15 goals and has scored in three straight games; the teams meet again outdoors at Rice-Eccles Stadium on Dec. 31."
+    ],
+    "betting": [
+     "Market: Mammoth 1.87, Avalanche 1.97, about 51–49 without the margin. The model has it 50–50, a hair warmer on Colorado.",
+     "Total: over 5.5 at 1.60 is about 59%. The model says 57%, close to the market, though the last six meetings averaged only 4.5 goals.",
+     "Player chances (model): Keller 1+ point 64% (market about 69%), Necas 1+ point 63% (market about 67%), Sergachev 1+ point 49% (market about 57%). The model is below the market on all of these."
+    ]
+   },
+   "sv": {
+    "kicker": "Avalanche mot Mammoth",
+    "title": "Avalanche utan MacKinnon och Makar möter Mammoth mitt i en förlustsvit",
+    "deck": "Colorado spelar sin andra match utan Nathan MacKinnon och Cale Makar, som båda skadades mot Ottawa förra veckan. Utah har förlorat sex raka (0-3-3) och målvakten Karel Vejmelka går tungt. Det är säsongens första möte, med Winter Classic i Salt Lake City längre fram, och både marknaden och modellen ser en slantsingling.",
+    "news": [
+     "MacKinnon är borta ungefär en månad och Makar ungefär två veckor med skador i nedre delen av kroppen. Josh Manson (fotled) saknas också, och Colorado har plockat backen Mike Reilly från waivers.",
+     "Mackenzie Blackwood har gått 7-1-1 på sina nio senaste starter. Scott Wedgewood lämnade söndagens träning sjuk.",
+     "Utahs Vejmelka har 1-6-2 och en räddningsprocent på ,853 på sina nio senaste starter. John Marino, Nate Schmidt, Dylan Guenther och Nick Schmaltz är borta.",
+     "Logan Cooley kom tillbaka i måndags efter tre missade matcher. Han gjorde 10 mål på sju matcher mellan 22 oktober och 5 november, med två hattrick."
+    ],
+    "records": [
+     "Utah inledde med 10-6-0 och står nu på 10-9-3; i måndags blev det 2–3 mot tabelljumbon Vancouver.",
+     "Vincent Trocheck har en assist kvar till 400 i karriären, och Clayton Keller har tre kvar.",
+     "Utahs powerplay är trea i ligan med 33,8 %, men boxplayen är 28:e med 69,3 %.",
+     "Artturi Lehkonen leder Colorado med 15 mål och har gjort mål i tre raka matcher; lagen möts igen utomhus på Rice-Eccles Stadium den 31 december."
+    ],
+    "betting": [
+     "Marknaden: Mammoth 1,87, Avalanche 1,97, ungefär 51–49 utan marginal. Modellen säger 50–50, en aning mer för Colorado.",
+     "Totalt: över 5,5 på 1,60 motsvarar cirka 59 %. Modellen säger 57 %, nära marknaden, men de sex senaste mötena hade i snitt bara 4,5 mål.",
+     "Spelarchanser (modellen): Keller 1+ poäng 64 % (marknaden cirka 69 %), Necas 1+ poäng 63 % (marknaden cirka 67 %), Sergachev 1+ poäng 49 % (marknaden cirka 57 %). Modellen ligger under marknaden på alla tre."
+    ]
+   },
+   "sources": [
+    {
+     "name": "NHL.com: Mammoth look to end skid vs. Avalanche",
+     "url": "https://www.nhl.com/news/utah-mammoth-look-to-end-skid-vs-avalanche-ahead-of-winter-classic"
+    },
+    {
+     "name": "NHL.com: MacKinnon, Makar injury update",
+     "url": "https://www.nhl.com/news/nathan-mackinnon-cale-makar-injury-update-colorado-avalanche-november-14-2026"
+    },
+    {
+     "name": "Yahoo Sports: Battered Mammoth, depleted Avalanche",
+     "url": "https://sports.yahoo.com/articles/battered-mammoth-depleted-avalanche-meet-211714628.html"
+    }
+   ]
+  }
+ ]
+}
