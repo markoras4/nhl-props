@@ -5,19 +5,19 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 724 skaters and 73 goalies (careers + game logs) ...
+Fetching 725 skaters and 73 goalies (careers + game logs) ...
 Fetching 343 recent box scores (hits, blocks) ...
 News: 112 injuries, likely starters for 27 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-18, updated 2026-11-18T19:57:51.997Z)
   shot maps: 343 games, 39165 attempts
-Model built: 42 games, 724 skaters (569 expected to play)
+Model built: 42 games, 725 skaters (569 expected to play)
 Odds: bookmaker prices for 15 games, 533 players
 Odds: sharp-book prices for 3 games, 171 player markets
-  Stoiximan sync: 8 games, 914 player prices (last push 2026-11-18T23:18:53.876089+00:00, pre); unmatched: Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
+  Stoiximan sync: 8 games, 914 player prices (last push 2026-11-18T23:34:54.2941+00:00, pre); unmatched: Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 472 player prices added
 Public betting: splits for 13 games
   season simulation: 10000 seasons, 1001 games left, top Cup: CAR 36%, COL 12%, MIN 12%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
-Player projections: 724 skaters
+Player projections: 725 skaters
 Goalie projections: 73 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
