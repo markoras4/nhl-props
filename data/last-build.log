@@ -12,8 +12,8 @@ News: 110 injuries, likely starters for 15 games (+28 backup reports), line comb
 Model built: 52 games, 724 skaters (563 expected to play)
 Odds: bookmaker prices for 5 games, 180 players
 Odds: sharp-book prices for 2 games, 113 player markets
-  Stoiximan sync: 13 games, 3350 player prices (last push 2026-11-18T02:24:29.791438+00:00, pre); unmatched: Tyler Boucher, William Stromgren
-  manual odds: 3061 player prices added
+  Stoiximan sync: 13 games, 3350 player prices (last push 2026-11-18T02:40:29.852428+00:00, pre); unmatched: Tyler Boucher, William Stromgren
+  manual odds: 3059 player prices added
 Public betting: splits for 5 games
   season simulation: 10000 seasons, 1012 games left, top Cup: CAR 36%, COL 13%, MIN 11%
 Futures odds: Cup 32, conference 32, division 0, playoffs 14, points 14
@@ -24,7 +24,7 @@ Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 10,087 player-games
   history: game-by-game files for 722 players (3 seasons)
   archive: 7 past dates published (2026-11-10, 2026-11-11, 2026-11-12, 2026-11-13, 2026-11-14, 2026-11-15, 2026-11-16)
-Best picks record: 303 graded, 79 won, +0.40 units
-Triage ledger: 168 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 1448 bets +25.8u, L 3007 bets -83.1u, F 2221 bets -58.5u
+Best picks record: 312 graded, 81 won, -4.22 units
+Triage ledger: 175 graded blocks bets: time to review whether blocks join the headline Solid record
+Triage ledger: S 1518 bets +10.0u, L 3099 bets -106.2u, F 2291 bets -62.0u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-17.html
