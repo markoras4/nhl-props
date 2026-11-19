@@ -1,14 +1,5 @@
 {
-  "2026-11-19-lak-tor": ["Auston Matthews Maple Leafs", "William Nylander", "Scotiabank Arena Maple Leafs game", "Adrian Kempe Kings", "Anthony Stolarz"],
-  "2026-11-19-phi-ott": ["Tim Stutzle Senators", "Brady Tkachuk Senators", "Canadian Tire Centre Senators", "Travis Konecny Flyers", "Matvei Michkov"],
-  "2026-11-19-stl-pit": ["Sidney Crosby Penguins", "Evgeni Malkin", "PPG Paints Arena Penguins", "Robert Thomas Blues", "Jordan Kyrou"],
-  "2026-11-19-buf-wsh": ["Alex Ovechkin Capitals", "Capital One Arena Capitals game", "Tage Thompson Sabres", "Rasmus Dahlin", "Dylan Strome Capitals"],
-  "2026-11-19-mtl-car": ["Sebastian Aho Hurricanes", "Carolina Hurricanes PNC Arena", "Nick Suzuki Canadiens", "Cole Caufield", "Lane Hutson"],
-  "2026-11-19-nyi-wpg": ["Kyle Connor Jets", "Connor Hellebuyck", "Winnipeg Jets Canada Life Centre", "Mathew Barzal Islanders", "Bo Horvat Islanders"],
-  "2026-11-19-edm-tbl": ["Connor McDavid Oilers", "Leon Draisaitl", "Nikita Kucherov Lightning", "Andrei Vasilevskiy", "Amalie Arena Lightning"],
-  "2026-11-19-cbj-chi": ["Connor Bedard Blackhawks", "United Center Blackhawks game", "Zach Werenski Blue Jackets", "Patrick Kane", "Adam Fantilli"],
-  "2026-11-19-min-cgy": ["Kirill Kaprizov Wild", "Quinn Hughes", "Scotiabank Saddledome Flames", "Nazem Kadri Flames", "Matt Boldy"],
-  "2026-11-19-ana-col": ["Nathan MacKinnon Avalanche", "Cale Makar", "Ball Arena Avalanche game", "Leo Carlsson Ducks", "Cutter Gauthier"],
-  "2026-11-19-van-sea": ["Seattle Kraken Canucks", "Elias Pettersson Canucks", "Climate Pledge Arena Kraken", "Jared McCann", "Matty Beniers"],
-  "2026-11-19-dal-vgk": ["Jack Eichel Golden Knights", "T-Mobile Arena Golden Knights", "Mikko Rantanen Stars", "Jason Robertson Stars", "Mitch Marner Golden Knights"]
+  "2026-11-19-dal-vgk": ["Vegas Golden Knights T-Mobile Arena game", "Golden Knights hockey Las Vegas", "Dallas Stars American Airlines Center game", "Wyatt Johnston", "Miro Heiskanen", "Mark Stone Golden Knights"],
+  "2026-11-19-nyi-wpg": ["New York Islanders UBS Arena", "Ilya Sorokin", "Mark Scheifele", "Josh Morrissey Jets", "Islanders hockey game"],
+  "2026-11-19-cbj-chi": ["Chicago Blackhawks United Center hockey game", "Frank Nazar", "Blackhawks hockey 2025", "Columbus Blue Jackets Nationwide Arena game", "Kirill Marchenko"]
 }
