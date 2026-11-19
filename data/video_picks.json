@@ -58,5 +58,43 @@
    "p": 0.62,
    "od": 1.79
   }
+ ],
+ "2026-11-19": [
+  {
+   "g": 2026020353,
+   "pid": 8481568,
+   "n": "Alex Vlasic",
+   "market": "Assist",
+   "grade": "S",
+   "p": 0.247,
+   "od": 5
+  },
+  {
+   "g": 2026020352,
+   "pid": 8480817,
+   "n": "K'Andre Miller",
+   "market": "Point",
+   "grade": "S",
+   "p": 0.398,
+   "od": 2.85
+  },
+  {
+   "g": 2026020349,
+   "pid": 8480803,
+   "n": "Evan Bouchard",
+   "market": "Under 2.5 shots",
+   "grade": "S",
+   "p": 0.614,
+   "od": 1.8
+  },
+  {
+   "g": 2026020351,
+   "pid": 8479345,
+   "n": "Jakob Chychrun",
+   "market": "Over 2.5 shots",
+   "grade": "S",
+   "p": 0.559,
+   "od": 1.97
+  }
  ]
 }
