@@ -10,12 +10,13 @@ Fetching 358 recent box scores (hits, blocks) ...
 News: 113 injuries, likely starters for 26 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 20 teams (2026-11-19, updated 2026-11-19T20:26:56.546Z)
   shot maps: 358 games, 40896 attempts
 Model built: 41 games, 727 skaters (567 expected to play)
-Odds: bookmaker prices for 14 games, 0 players
+Odds: bookmaker prices for 14 games, 35 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  Stoiximan sync: 0 games, 0 player prices (last push 2026-11-19T22:28:10.15509+00:00, pre)
+  Stoiximan sync: 1 games, 30 player prices (last push 2026-11-20T12:41:05.582224+00:00, hourly)
+  manual odds: 30 player prices added
 Public betting: splits for 14 games
   season simulation: 10000 seasons, 986 games left, top Cup: CAR 35%, MIN 13%, COL 11%
-Futures odds: Cup 32, conference 32, division 16, playoffs 8, points 8
+Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 8
 Player projections: 727 skaters
 Goalie projections: 73 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
