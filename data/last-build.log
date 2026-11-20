@@ -10,9 +10,9 @@ Fetching 358 recent box scores (hits, blocks) ...
 News: 116 injuries, likely starters for 26 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 20 teams (2026-11-19, updated 2026-11-19T20:26:56.546Z)
   shot maps: 358 games, 40896 attempts
 Model built: 41 games, 726 skaters (567 expected to play)
-Odds: bookmaker prices for 14 games, 495 players
+Odds: bookmaker prices for 14 games, 494 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  Stoiximan sync: 3 games, 64 player prices (last push 2026-11-20T17:40:13.010065+00:00, manual)
+  Stoiximan sync: 4 games, 64 player prices (last push 2026-11-20T18:41:18.461912+00:00, hourly)
   manual odds: 64 player prices added
 Public betting: splits for 14 games
   season simulation: 10000 seasons, 986 games left, top Cup: CAR 34%, MIN 14%, COL 11%
