@@ -1,5 +1,16 @@
 {
-  "2026-11-19-dal-vgk": ["Vegas Golden Knights T-Mobile Arena game", "Golden Knights hockey Las Vegas", "Dallas Stars American Airlines Center game", "Wyatt Johnston", "Miro Heiskanen", "Mark Stone Golden Knights"],
-  "2026-11-19-nyi-wpg": ["New York Islanders UBS Arena", "Ilya Sorokin", "Mark Scheifele", "Josh Morrissey Jets", "Islanders hockey game"],
-  "2026-11-19-cbj-chi": ["Chicago Blackhawks United Center hockey game", "Frank Nazar", "Blackhawks hockey 2025", "Columbus Blue Jackets Nationwide Arena game", "Kirill Marchenko"]
+  "2026-11-21-edm-car": ["Connor McDavid", "Leon Draisaitl", "Sebastian Aho Hurricanes", "Carolina Hurricanes PNC Arena game", "Andrei Svechnikov"],
+  "2026-11-21-chi-cgy": ["Calgary Flames Scotiabank Saddledome game", "Patrick Kane Blackhawks", "Frank Nazar", "Mikael Backlund", "Chicago Blackhawks United Center game"],
+  "2026-11-21-buf-fla": ["Sam Reinhart", "Matthew Tkachuk Panthers", "Florida Panthers hockey game", "Tage Thompson", "Rasmus Dahlin"],
+  "2026-11-21-pit-nsh": ["Sidney Crosby", "Filip Forsberg", "Roman Josi", "Bridgestone Arena Predators game", "Steven Stamkos Predators"],
+  "2026-11-21-wsh-bos": ["David Pastrnak", "Boston Bruins TD Garden game", "Jeremy Swayman", "Washington Capitals Capital One Arena game", "Tom Wilson Capitals"],
+  "2026-11-21-cbj-tor": ["Auston Matthews", "William Nylander", "Zach Werenski", "Toronto Maple Leafs game", "Adam Fantilli"],
+  "2026-11-21-phi-mtl": ["Nick Suzuki", "Cole Caufield", "Montreal Canadiens Bell Centre game", "Travis Konecny", "Philadelphia Flyers game"],
+  "2026-11-21-lak-ott": ["Tim Stutzle", "Brady Tkachuk Senators", "Ottawa Senators game", "Adrian Kempe", "Los Angeles Kings game"],
+  "2026-11-21-nyi-det": ["Detroit Red Wings Little Caesars Arena", "Lucas Raymond", "Moritz Seider", "Mathew Barzal", "New York Islanders game"],
+  "2026-11-21-njd-stl": ["Jack Hughes Devils", "Jesper Bratt", "Robert Thomas Blues", "St. Louis Blues Enterprise Center", "New Jersey Devils game"],
+  "2026-11-21-vgk-wpg": ["Jack Eichel", "Kyle Connor", "Mark Scheifele", "Winnipeg Jets Canada Life Centre", "Vegas Golden Knights game"],
+  "2026-11-21-ana-uta": ["Utah Hockey Club Delta Center", "Clayton Keller", "Cutter Gauthier", "Logan Cooley", "Anaheim Ducks game"],
+  "2026-11-21-min-van": ["Kirill Kaprizov", "Quinn Hughes", "Vancouver Canucks Rogers Arena", "Matt Boldy", "Brock Boeser"],
+  "2026-11-21-sea-sjs": ["Macklin Celebrini", "San Jose Sharks SAP Center", "Seattle Kraken", "Matty Beniers", "William Eklund Sharks"]
 }
