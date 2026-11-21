@@ -6,22 +6,24 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 730 skaters and 74 goalies (careers + game logs) ...
-Fetching 358 recent box scores (hits, blocks) ...
-News: 111 injuries, likely starters for 17 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 28 teams (2026-11-21, updated 2026-11-21T20:03:50.882Z)
-  shot maps: 358 games, 40896 attempts
-Model built: 55 games, 730 skaters (567 expected to play)
+Fetching 359 recent box scores (hits, blocks) ...
+News: 112 injuries, likely starters for 17 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 28 teams (2026-11-21, updated 2026-11-21T20:03:50.882Z)
+Shot maps: downloading play-by-play for 1 new games ...
+  shot maps: 359 games, 41003 attempts
+Model built: 55 games, 730 skaters (566 expected to play)
 Odds: bookmaker prices for 17 games, 424 players
 Odds: sharp-book prices for 12 games, 701 player markets
   Stoiximan sync: 17 games, 2640 player prices (last push 2026-11-21T21:33:19.122179+00:00, pre); unmatched: Max Sasson, Owen Sillinger, Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 1251 player prices added
 Public betting: splits for 13 games
-  season simulation: 10000 seasons, 986 games left, top Cup: CAR 34%, MIN 14%, COL 11%
+  season simulation: 10000 seasons, 985 games left, top Cup: CAR 36%, MIN 13%, COL 11%
 Futures odds: Cup 32, conference 32, division 16, playoffs 30, points 30
 Player projections: 730 skaters
 Goalie projections: 74 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 10,875 player-games
+  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 727 players (3 seasons)
   archive: 6 past dates published (2026-11-14, 2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19)
 Best picks record: 356 graded, 86 won, -19.02 units
