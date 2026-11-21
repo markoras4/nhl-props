@@ -20,7 +20,8 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
 .ox{font-family:Oxanium,sans-serif;letter-spacing:3px;text-transform:uppercase}
 /* background: moving colour blobs, a faint rink-like grid, grain, vignette */
 #bg{position:absolute;inset:-200px;background:radial-gradient(1200px 900px at 50% 40%,#1d1222,var(--bg) 70%)}
-.blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.55;mix-blend-mode:screen}
+/* soft blobs drawn as radial gradients: the look of a 120px blur, without blurring every frame (half the capture time) */
+.blob{position:absolute;border-radius:50%;opacity:.55;mix-blend-mode:screen;margin:-240px 0 0 -240px}
 #grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,79,168,.06) 2px,transparent 2px),linear-gradient(90deg,rgba(255,79,168,.06) 2px,transparent 2px);background-size:120px 120px;mask-image:radial-gradient(ellipse at 50% 55%,#000 30%,transparent 75%)}
 #vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%);pointer-events:none}
 #flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
@@ -146,6 +147,13 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
 .phone .scr img{display:block;width:560px;height:1212px}
 
 .phone .btn{position:absolute;right:-5px;top:300px;width:5px;height:120px;border-radius:3px;background:#2a1f2d}
+.card.mini{left:48px;right:auto;top:660px;width:440px;padding:30px 30px 32px;transform-origin:0 0}
+.mini .who{padding-right:0;gap:20px;flex-direction:column;align-items:flex-start}
+.mini .av{width:110px;height:110px;font-size:56px}
+.mini .who .nm{font-size:50px;line-height:1.02}
+.mini .who .mt{font-size:22px;letter-spacing:2px}
+.mbig{margin-top:26px;font:400 96px/0.95 Anton;color:var(--pink);text-transform:uppercase}
+.mini .lab{margin-top:10px}
 .appurl{position:absolute;left:0;right:0;top:1552px;text-align:center;font:700 24px Oxanium;letter-spacing:2px;color:var(--mute)}
 /* outro */
 #outro .logo{position:absolute;left:140px;width:800px;top:430px}
@@ -168,7 +176,7 @@ const beat=t=>Math.exp(-((t%T.beat)/T.beat)*6);
 
 // ---------------- background + chrome ----------------
 const bg=el('div',null,null); bg.id='bg';
-const blobs=[['#ff4fa8',900],['#b794ff',800],['#ff6a3d',600]].map(([c,s])=>css(el('div','blob',null,bg),{width:s+'px',height:s+'px',background:c}));
+const blobs=[['#ff4fa8',900],['#b794ff',800],['#ff6a3d',600]].map(([c,s])=>css(el('div','blob',null,bg),{width:s+480+'px',height:s+480+'px',background:`radial-gradient(circle closest-side,${c},${c} ${Math.round((s/2-130)/(s/2+240)*100)}%,${c}99 ${Math.round((s/2)/(s/2+240)*100)}%,${c}33 ${Math.round((s/2+120)/(s/2+240)*100)}%,${c}00)`}));
 el('div',null,null).id='grid';
 const scenes=[]; // {el,a,b,draw(u)}
 const topBar=el('div',null,`<span id="badge"><i></i>${esc(SPEC.badge)}</span><span id="date">${esc(SPEC.day)}</span>`); topBar.id='top';
@@ -275,8 +283,16 @@ parts.forEach((P,i)=>{
     const ph=el('div','phone',`<div class="scr"><img alt=""></div><i class="btn"></i>`,root);
     const img=ph.querySelector('img');let cur=-1;
     const show=k=>{if(k===cur)return;cur=k;img.src=`${P.src}${String(k).padStart(3,'0')}.jpg`;window.PEND=img.decode().catch(()=>{});};
+    // split beat: the card we just showed, small on the left, the phone with the real page slides in on the right;
+    // after ~2 s the card leaves and the phone moves to the middle
+    const M=P.split, mini=M?el('div','card mini',`<div class="who"><div class="av" style="background:${M.color}">${esc(M.num||'')}</div><div style="min-width:0"><div class="nm">${esc(M.name)}</div><div class="mt">${esc(M.meta)}</div></div></div>
+      <div class="mbig">${esc(M.big)}</div><div class="lab">${esc(M.lab)}</div>`,root):null;
     s.draw=u=>{const D=P.b-P.a;popIn(cap,u,0,40,.45);
-      const q=eExpo(seg(u,0,.6));ph.style.opacity=clamp(q*1.5);ph.style.transform=`translateY(${(1-q)*500}px) rotate(${(1-q)*-6}deg) scale(${lerp(.9,1,q)+seg(u,.6,D)*.03})`;
+      if(M){const q=eExpo(seg(u,0,.55)),m=eInOut(seg(u,2.0,2.6));
+        mini.style.opacity=clamp(1-m*1.2);mini.style.transform=`translate(${(1-q)*40-m*520}px,${(1-q)*-300}px) scale(${lerp(1.9,1,q)})`;
+        ph.style.opacity=clamp(q*1.5);ph.style.transformOrigin='0 0';
+        ph.style.transform=`translate(${lerp(276,0,m)+(1-q)*700}px,${lerp(60,0,m)}px) scale(${lerp(.72,1,m)})`;}
+      else{const q=eExpo(seg(u,0,.6));ph.style.opacity=clamp(q*1.5);ph.style.transform=`translateY(${(1-q)*500}px) rotate(${(1-q)*-6}deg) scale(${lerp(.9,1,q)+seg(u,.6,D)*.03})`;}
       show(Math.max(0,Math.min(P.n-1,Math.floor((u-P.lead)*30+1e-6))));
       if(u>D-.4){out(ph,u,D-.4);out(cap,u,D-.4);}};
   }

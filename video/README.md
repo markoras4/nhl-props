@@ -128,17 +128,37 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
   live scores blocked). Every frame is recorded deterministically (scroll, finger / cursor overlay and the page's own
   animations are set to the clip time, then a screenshot), saved at display size and shown frame by frame by the
   templates (`render(t)` sets the `<img>`, the render loop waits for its decode: `RENDER` in series.py / longform.py).
-  - Pages: a player's game page -> "Last 10 games" (Heat Index + game log) and the "Game by game" chart, a tap on the
-    Heat Index, then a tap switching the chart to his stat. These boxes are free for every player. Players explorer
-    (goals vs expected goals) with a name typed into the search box.
-  - Odds-free: the odds-format picker, the hit-rate strip (ends in a Pro market chip), prop-line buttons and Pro lock
-    boxes are hidden; a guard removes any sentence about odds / markets / books / bets still in the page (logged as
+  - Pages (all free in the signed-out view), each 4-5 s with a scripted scroll and a tap / cursor on what the video talks about:
+    - `player`: a player's game page -> "Last 10 games" (Heat Index + game log) and the "Game by game" chart, a tap on the
+      Heat Index, then a tap switching the chart to his stat.
+    - `explorer`: Players explorer (goals vs expected goals) with a name typed into the search box.
+    - `game`: a game page, lean (hero with projected goals, the section tabs, one section; everything about prices hidden):
+      a tap on Matchup / Lines, a scroll to the section, a highlight: `teams` (Team ranks, one row lit, e.g. xGF% or PDO),
+      `goalies` (both goalie cards, the better one lit), `lines` (tonight's lines, the line the video talks about lit).
+    - `futures`: Season & playoffs (simulation): a tap on the teams' division / conference filter (or the Playoffs column),
+      then both teams' rows lit. Fair prices, the Pro note and the legend are hidden.
+    - `slate`: tonight's games list (projected goals, win chances; the over/under and price columns hidden): a tap on
+      the day, a scroll, the featured games lit.
+    - Not used: Track record (profit / units) and Props (prices).
+  - Odds-free: the odds-format picker, the hit-rate strip (ends in a Pro market chip), prop-line buttons, Pro lock
+    boxes, the games list's over/under + price columns, futures fair prices, the locked line projections and the footer
+    are hidden; a guard removes any sentence about odds / markets / books / bets still in the page (logged as
     `hid [...]`). Same rules for every series, so clips are safe for TikTok.
-  - Shorts: one 4.5 s clip in a phone (390x844 CSS px at 2x, shown 560x1212) before the outro: board -> first pick's
-    player, hot -> hottest player, night -> star of the night (no star: the explorer with the headline name). Report: none.
-  - Slate video: one clip per game right after the player profile / duel (desktop layout 1024x659 CSS px, shown
-    1296x834 in a browser window, left column says what it is), plus the Players explorer before the recap.
-    A clip that can't be recorded is dropped and the timeline rebuilt.
+  - Shorts (`series.clip_plan`): 2-3 clips in a phone (390x844 CSS px at 2x, shown 560x1212), about a quarter of the
+    runtime. Right after the headline card the same player on the app, as a split beat (the card small on the left,
+    the phone on the right, after 2 s the phone takes the middle): board -> first pick, hot -> hottest player, night ->
+    star of the night. Then a page that fits the story: night -> the explorer after the "luck" card and Futures after a
+    playoff race (else the explorer / his team's playoff chances); hot -> the explorer with the other player; board ->
+    alternating by day the pick's game page (team ranks) or both teams' playoff chances, before the outro. Report: none.
+  - Slate video: about 15-20 % of the runtime, each clip tied to its section: tonight's games list after the slate grid
+    (`full`: the browser large, caption below), per game the player page after the profile / duel (browser or, every
+    other game, a phone) and 1-2 section clips (2 in every other game; page types earlier games didn't show first):
+    team stats -> team ranks and line stats -> tonight's lines (`side`: our board shrinks to the left, the app on the
+    right), goalies -> goalie cards, head-to-head & stakes -> Futures (phone), plus the Players explorer before the
+    recap. Desktop layout 1024x659 CSS px, shown 1296x834 in a browser window.
+  - A clip that can't be recorded (page / section / selector missing) is dropped and the timeline rebuilt.
+  - Shorts background blobs are radial gradients (look of the old 120 px blur, about half the capture time per frame),
+    which pays for the extra clip frames.
 - Preview photos: the game previews' Wikimedia Commons photos (site-assets/previews, credits in data/previews/<date>.json
   and credits.json), cropped to fit (focal point from the preview), never stretched, darkened, soft blurred edges,
   brand gradient on top. Slate video: full-bleed behind each matchup card + a band on the "why these games" cards.

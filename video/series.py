@@ -596,31 +596,104 @@ def zlib_crc(s: str) -> int:
 STAT_OF = {"Goal": "g", "2+ goals": "g", "First goal": "g", "Assist": "a", "2+ assists": "a"}
 
 
-def clip_target(spec: dict) -> dict | None:
-    """Whose page the "see it on evenout" clip shows: the video's headline player (board: first pick, hot: hottest
-    player, night: star of the night), else the Players explorer with the headline name typed in."""
-    s = spec["series"]
+def _mini(P: dict, big: str, lab: str) -> dict:
+    """The headline card in small, for the split beat (card left, the real page on the phone right)."""
+    return {"name": P["name"], "num": P.get("num", ""), "color": P.get("color", "#ff4fa8"), "meta": P.get("meta", ""), "big": big, "lab": lab}
+
+
+def clip_plan(spec: dict, day: dt.date) -> list:
+    """The "on evenout" moments of a Short (2-3, about a quarter of the runtime), each tied to what is on screen:
+    right after the headline card the same player on the real app (split beat), later a page that fits the story
+    (Explorer, Futures playoff chances, the game page's team ranks), the last one just before the outro.
+    [{"after": index of the part it follows (None = before the outro), "req": what to record, "cap": caption,
+      "split": mini card or None}]. Every page is odds-free (appclips.py), the same rules for every series."""
+    s, parts, out = spec["series"], spec["parts"], []
     if s == "board" and spec.get("_picks"):
         p = spec["_picks"][0]
         m = p["market"]
         stat = "s" if "shots" in m.lower() else STAT_OF.get(m, "p")
-        return {"pid": p["id"], "stat": stat, "game": p["game"], "name": p["name"],
-                "cap": f"{p['name']}'s last 10 games"}
-    if s == "hot" and spec.get("_players"):
-        p = spec["_players"][0]
-        return {"pid": p["id"], "stat": "p", "game": (p.get("next") or {}).get("game"), "name": p["name"],
-                "cap": f"{p['name']}'s Heat Index & last 10 games"}
-    if s == "night":
-        if spec.get("_star"):
-            x = spec["_star"]
-            return {"pid": x["pid"], "stat": "p", "game": None, "name": x["name"], "cap": f"{x['name']}'s last 10 games"}
-        if spec.get("_luck"):
-            return {"explore": spec["_luck"]["name"].split()[-1], "name": spec["_luck"]["name"], "cap": "Goals vs expected goals, every player"}
+        i0 = next((i for i, P in enumerate(parts) if P["kind"] == "pick"), 0)
+        out.append({"after": i0, "req": {"type": "player", "pid": p["id"], "stat": stat, "game": p["game"]},
+                    "cap": f"{p['name']}'s last 10 games", "split": _mini(parts[i0], p["market"], parts[i0].get("gradeTxt", ""))})
+        if sum(P["kind"] == "pick" for P in parts) < 2:
+            pass                                         # one pick: the clips would run back to back, one is enough
+        elif day.toordinal() % 2:
+            out.append({"after": None, "req": {"type": "futures", "game": p["game"]}, "cap": "Playoff chances, both teams"})
+        else:
+            out.append({"after": None, "req": {"type": "game", "view": "teams", "game": p["game"], "focus": "^xGF%"}, "cap": "His game tonight: team ranks"})
+    elif s == "hot" and spec.get("_players"):
+        ps = spec["_players"]
+        i0 = next(i for i, P in enumerate(parts) if P["kind"] == "heat")
+        P0 = parts[i0]
+        out.append({"after": i0, "req": {"type": "player", "pid": ps[0]["id"], "stat": "p", "game": (ps[0].get("next") or {}).get("game")},
+                    "cap": f"{ps[0]['name']}'s Heat Index & last 10", "split": _mini(P0, f"{P0['v']:+.1f}", "Heat Index")})
+        out.append({"after": None, "req": {"type": "explore", "q": ps[-1]["name"].split()[-1]}, "cap": "Goals vs expected goals, every player"})
+    elif s == "night":
+        star = next((i for i, P in enumerate(parts) if P["kind"] == "star"), None)
+        if star is not None and spec.get("_star"):
+            P = parts[star]
+            pts = next((v for k, v in P.get("tiles", []) if k == "PTS"), "")
+            out.append({"after": star, "req": {"type": "player", "pid": spec["_star"]["pid"], "stat": "p", "game": None},
+                        "cap": f"{spec['_star']['name']}'s last 10 games", "split": _mini(P, str(pts), "points last night")})
+        luck = next((i for i, P in enumerate(parts) if P["kind"] == "luck"), None)
+        if luck is not None:
+            out.append({"after": luck, "req": {"type": "explore", "q": parts[luck]["name"].split()[-1]}, "cap": "Goals vs expected goals, every player"})
+        race = next((P for P in parts if P["kind"] == "race"), None)
+        if race:
+            out.append({"after": None, "req": {"type": "futures", "teams": [r["team"] for r in race["rows"]][:2]}, "cap": "Playoff chances after last night"})
+        elif luck is None and spec.get("_luck"):
+            out.append({"after": None, "req": {"type": "explore", "q": spec["_luck"]["name"].split()[-1]}, "cap": "Goals vs expected goals, every player"})
+        elif star is not None:
+            out.append({"after": None, "req": {"type": "futures", "team": parts[star]["meta"].split(" · ")[0]},
+                        "cap": f"{parts[star]['meta'].split(' · ')[0]} in the playoff race"})
+    return out[:3]
+
+
+CLIP_DUR, CLIP_LEAD, CLIP_TAIL = 4.0, .45, .45
+
+
+def record_clip(C, req: dict, name: str, cap: str) -> dict | None:
+    t = req["type"]
+    if t == "player":
+        return C.player(req["pid"], stat=req.get("stat", "p"), kind="phone", name=name, caption=cap, prefer_game=req.get("game"), dur=CLIP_DUR)
+    if t == "explore":
+        return C.explorer(req["q"], kind="phone", name=name, caption=cap, dur=CLIP_DUR + .2)
+    if t == "game":
+        return C.game(req["game"], req["view"], kind="phone", name=name, caption=cap, focus=req.get("focus"), dur=CLIP_DUR + .2)
+    if t == "futures":
+        teams = req.get("teams")
+        if not teams:
+            g = C.game_info(gid=req["game"]) if req.get("game") else C.game_info(team=req["team"]) if req.get("team") else None
+            teams = [g["away"], g["home"]] if g else ([req["team"]] if req.get("team") else [])
+        return C.futures(teams, kind="phone", name=name, caption=cap, dur=CLIP_DUR + .2) if teams else None
     return None
 
 
+def insert_app(spec: dict, after, clip: dict, split=None) -> float:
+    """Put an app clip after part `after` (None: before the outro); every later scene moves back."""
+    T, parts = spec["timing"], spec["parts"]
+    a = T["outroAt"] if after is None else parts[after]["b"]
+    d = CLIP_LEAD + clip["dur"] + CLIP_TAIL
+    for P in parts:
+        if P["a"] >= a - 1e-6:
+            P["a"] += d
+            P["b"] += d
+    gid = clip.get("game")
+    bg = next((P.get("bg") for P in parts if P.get("bg") and gid and str(P.get("gid")) == str(gid)), None) or \
+        (parts[after].get("bg") if after is not None else None) or next((P.get("bg") for P in parts if P.get("bg")), None)
+    part = {"kind": "app", "a": a, "b": a + d, "lead": CLIP_LEAD, "src": f"img/{clip['dir']}/", "n": clip["n"], "w": clip["w"], "h": clip["h"],
+            "cap": clip["caption"], "url": clip["url"].replace("https://", ""), "bg": bg}
+    if split:
+        part["split"] = split
+    parts.insert(len(parts) if after is None else after + 1, part)
+    T["outroAt"] += d
+    T["total"] += d
+    return d
+
+
 def add_media(spec: dict, day: dt.date, sw: Path, get_clips) -> None:
-    """Preview photos behind the cards (where the game has one) and one app clip before the outro."""
+    """Preview photos behind the cards (where the game has one) and 2-3 app clips (clip_plan). A clip that can't be
+    recorded is left out and the timeline closes up."""
     import preview_photos as PH
     s = spec["series"]
     pdate = (spec["_y"].isoformat() if s == "night" else day.isoformat())
@@ -634,31 +707,28 @@ def add_media(spec: dict, day: dt.date, sw: Path, get_clips) -> None:
         P["bg"] = "img/" + Path(PH.backdrop(ph, sw / "img" / f"bg-{ph['slug']}.jpg", (1080, 1920))).name
         used.append(ph)
     spec["_photos"] = used
-    tgt = clip_target(spec)
-    if not tgt:
+    plan = clip_plan(spec, day)
+    if not plan:
         return
-    clip = None
+    got = []                                            # (moment, clip): all recorded first, then inserted
+    C = None
     try:
         C = get_clips()
-        if tgt.get("explore"):
-            clip = C.explorer(tgt["explore"], kind="phone", name="app", caption=tgt["cap"], dur=4.5) if C else None
-        else:
-            clip = C.player(tgt["pid"], stat=tgt["stat"], kind="phone", name="app", caption=tgt["cap"], prefer_game=tgt.get("game"), dur=4.5) if C else None
     except Exception as e:  # noqa: BLE001
-        print(f"  app clip failed ({e}): video without it")
-    if not clip:
-        return
-    T = spec["timing"]
-    lead, tail = .6, .7
-    d = lead + clip["dur"] + tail
-    a = T["outroAt"]
-    bg = next((P.get("bg") for P in spec["parts"] if P.get("bg") and str(P.get("gid")) == str(clip.get("game"))), None) or \
-        next((P.get("bg") for P in spec["parts"] if P.get("bg")), None)
-    spec["parts"].append({"kind": "app", "a": a, "b": a + d, "lead": lead, "src": f"img/{clip['dir']}/", "n": clip["n"],
-                          "w": clip["w"], "h": clip["h"], "cap": clip["caption"], "url": clip["url"].replace("https://", ""), "bg": bg})
-    T["outroAt"] = a + d
-    T["total"] += d
-    spec["_clip"] = clip
+        print(f"  app clips unavailable ({e})")
+    for i, m in enumerate(plan):
+        clip = None
+        try:
+            clip = record_clip(C, m["req"], f"app{i}", m["cap"]) if C else None
+        except Exception as e:  # noqa: BLE001
+            print(f"  app clip {i} failed ({e}): video without it")
+        if clip:
+            got.append((m, clip))
+    # from the back, so the part indices in the plan stay valid
+    for m, clip in sorted(got, key=lambda x: -(10 ** 6 if x[0]["after"] is None else x[0]["after"])):
+        insert_app(spec, m["after"], clip, m.get("split"))
+    spec["_clips"] = [c for _, c in got]
+    spec["_clip"] = got[0][1] if got else None
 
 
 def _clips_in(c, d: Path):
@@ -848,7 +918,12 @@ def main():
             (sw / "img").mkdir(parents=True)
             t0 = time.time()
             add_media(spec, day, sw, lambda: get_clips() and _clips_in(clips["c"], sw / "img"))
-            print(f"{s}: {len(spec.get('_photos') or [])} photo(s), app clip {'yes' if spec.get('_clip') else 'no'} ({time.time() - t0:.0f}s)")
+            T_ = spec["timing"]; app_s = sum(P["b"] - P["a"] for P in spec["parts"] if P["kind"] == "app")
+            print(f"{s}: {len(spec.get('_photos') or [])} photo(s), {len(spec.get('_clips') or [])} app clip(s), {app_s:.1f}s of {T_['total']:.1f}s "
+                  f"({app_s / T_['total'] * 100:.0f}%) ({time.time() - t0:.0f}s)")
+            for P in spec["parts"]:
+                if P["kind"] == "app":
+                    print(f"    app {P['a']:5.1f}-{P['b']:5.1f}s{' split' if P.get('split') else ''}: {P['cap']}")
             jobs.append((s, spec, sw, styles))
         if clips.get("c"):
             clips["c"].close()

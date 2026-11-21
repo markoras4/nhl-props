@@ -94,7 +94,8 @@ GLANCE = 0.1
 READ_KEYS = {"take", "why", "wsub", "s", "line", "t1", "t2", "sub", "h2hSum", "skSum", "lines", "noH2h", "vs", "flag"}
 HALF_KEYS = {"title", "lab", "kicker", "h", "names", "chips"}            # big headings and row labels: read at a glance
 SKIP_KEYS = {"kind", "ac", "hc", "c", "color", "tagc", "chap", "sec", "noLeave", "noChrome", "ci", "a", "b", "pa", "fa", "fh",
-             "better", "xt", "pick", "num", "last", "l5", "id", "disc", "t3", "_req", "photo", "src", "n", "w", "h", "url", "lead", "dur"}
+             "better", "xt", "pick", "num", "last", "l5", "id", "disc", "t3", "_req", "photo", "src", "n", "w", "h", "url", "lead", "dur",
+             "_from", "_focus", "mini", "lay", "what"}
 
 
 # ------------------------------------------------------------------ game choice
@@ -644,7 +645,7 @@ def lines_beat(g: dict) -> dict | None:
             if (L.get("toi") or 0) >= 40 and abs(d) >= 1.5:
                 row["flag"] = "Finishing above chances" if d > 0 else "Chances not going in"
                 if not best or abs(d) > abs(best[0]):
-                    best = (d, t, row)
+                    best = (d, t, row, k)
             rows.append(row)
             if len(rows) == 4:
                 break
@@ -653,13 +654,13 @@ def lines_beat(g: dict) -> dict | None:
     if not any(s_["rows"] for s_ in sides.values()):
         return None
     if best:
-        d, t, row = best
+        d, t, row, _k = best
         take = (f"**{t}**'s {row['k'].lower()} has {row['gf']} goals on {row['xgf']} expected: " +
                 ("hot finishing that tends to cool." if d > 0 else "the goals should start to come."))
     else:
         take = "No line is far off its chances: the results match the play."
     return {"kind": "lines", "sec": "Line stats", "title": "Who plays with whom", "away": A, "home": Hm,
-            "sa": sides[A], "sh": sides[Hm], "take": take}
+            "sa": sides[A], "sh": sides[Hm], "take": take, "_focus": [best[1], best[3]] if best else None}
 
 
 # section pool: every game picks its own mix and order (what stands out in THAT game), no type in more than 2 games
@@ -724,7 +725,7 @@ def plan_sections(chosen: list, seed: str, per_game: int = 5) -> list:
     return plans
 
 
-def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
+def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list, used: dict | None = None) -> list:
     A, Hm = g["away"], g["home"]
     TA, TH = g["teams"][A], g["teams"][Hm]
     ac, hc = color(A), color(Hm)
@@ -755,6 +756,18 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
         hot = max(allp, key=lambda x: ((x[1].get("heat") or {}).get("v") or -9))
         top = max(allp, key=lambda x: star(x[1]))
         prof = hot + ("Hottest on the ice",) if ((hot[1].get("heat") or {}).get("v") or 0) >= 3 else top + ("Top point chance" if have_pt else "Top scorer",)
+    # app clips tied to this game's sections (the player clip comes on top): 2 in every other game, else 1, the page
+    # types earlier games didn't show first (used: across games)
+    used = {} if used is None else used
+    elig = [k for k in plan if k in CLIP_VIEW]
+    elig.sort(key=lambda k: (used.get(CLIP_VIEW[k], 0), plan.index(k)))
+    clip_secs = set(elig[:2 if i % 2 == 0 else 1])
+    for k in clip_secs:
+        used[CLIP_VIEW[k]] = used.get(CLIP_VIEW[k], 0) + 1
+
+    def sec_clip(b, k):
+        if b and k in clip_secs:
+            beats.append(b)
     for k in plan:
         if k == "model":
             pa = 1 - g["p_home"]
@@ -771,15 +784,19 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
             gb = goalie_beat(g)
             if gb:
                 beats.append(gb)
+                sec_clip(app_game(g, gb, "goalies"), k)
         elif k == "teamboard":
-            beats.append(teamboard_beat(g))
+            tb = teamboard_beat(g)
+            beats.append(tb)
+            sec_clip(app_game(g, tb, "teams"), k)
         elif k == "lines":
             lb = lines_beat(g)
             if lb:
                 beats.append(lb)
+                sec_clip(app_game(g, lb, "lines"), k)
         elif k == "profile" and prof:
             beats.append(profile_beat(g, *prof, variant=i))
-            if not any(b["kind"] == "app" for b in beats):
+            if not any(b["kind"] == "app" and b["_req"]["type"] == "player" for b in beats):
                 beats.append(app_beat(g, prof[1], i))
         elif k == "duel":
             sa_ = [p for p in pl[A] if not prof or p["id"] != prof[1]["id"]]
@@ -787,10 +804,12 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
             if sa_ and sh_:
                 da, dh = max(sa_, key=star), max(sh_, key=star)
                 beats.append(duel_beat(g, da, dh))
-                if not any(b["kind"] == "app" for b in beats):
+                if not any(b["kind"] == "app" and b["_req"]["type"] == "player" for b in beats):
                     beats.append(app_beat(g, max((da, dh), key=star), i))
         elif k == "h2h":
-            beats.append(h2h_beat(g, day))
+            hb = h2h_beat(g, day)
+            beats.append(hb)
+            sec_clip(app_futures(g, hb), k)
     beats.append(keys_beat(g, i))
     for b in beats:
         b.setdefault("ac", ac); b.setdefault("hc", hc)
@@ -801,20 +820,66 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list) -> list:
 
 
 def app_beat(g: dict, p: dict, variant: int = 0) -> dict:
-    """"See it on evenout": the player's page on the real app (appclips.py records it; dropped when it can't)."""
+    """"See it on evenout": the player's page on the real app (appclips.py records it; dropped when it can't).
+    Every other game on a phone instead of the browser window."""
     last = p["name"].split()[-1]
     take = ["His game log, Heat Index and game-by-game chart: free on evenout.app, for every player.",
             "Every game he played, his Heat Index and the chart behind it: on evenout.app.",
             "Last 10 games, Heat Index, shot by shot: all of it on his evenout page."][variant % 3]
-    return {"kind": "app", "sec": "On evenout", "title": f"{last}'s last 10 games", "take": take,
-            "_req": {"type": "player", "pid": str(p["id"]), "stat": "p", "game": str(g["id"]), "name": p["name"]}}
+    lay = "phone" if variant % 2 else "classic"
+    return {"kind": "app", "sec": "On evenout", "title": f"{last}'s last 10 games", "take": take, "lay": lay,
+            "_req": {"type": "player", "pid": str(p["id"]), "stat": "p", "game": str(g["id"]), "name": p["name"],
+                     "kind": "phone" if lay == "phone" else "desktop"}}
+
+
+CLIP_VIEW = {"goalies": "goalies", "teamboard": "teams", "lines": "lines", "h2h": "futures"}
+
+
+# the stat each team-ranks clip lights up: the row the board's story is about
+def _rank_focus(g: dict) -> tuple[str, str]:
+    TA, TH = g["teams"][g["away"]], g["teams"][g["home"]]
+    if abs((TA.get("pdo") or 1) - (TH.get("pdo") or 1)) >= .03:
+        return "^PDO", "PDO, the luck meter"
+    if TA.get("xgf_pct5") and TH.get("xgf_pct5") and abs(TA["xgf_pct5"] - TH["xgf_pct5"]) >= .04:
+        return "^xGF%", "5-on-5 share of expected goals"
+    return "^Goaltending", "goaltending, goals saved above expected"
+
+
+def app_game(g: dict, src: dict, view: str) -> dict | None:
+    """The real game page for the section just shown: team ranks (team stats board), tonight's lines (line stats) or
+    the goalie cards (goalie matchup). Team ranks and lines sit next to our board (side by side)."""
+    A, Hm = g["away"], g["home"]
+    if view == "teams":
+        focus, what = _rank_focus(g)
+        return {"kind": "app", "sec": "On evenout", "title": "Team ranks, both teams", "lay": "side", "_from": src,
+                "take": f"Every team stat with its league rank on the {A} @ {Hm} game page. Here: {what}.",
+                "_req": {"type": "game", "game": str(g["id"]), "view": "teams", "focus": focus}}
+    if view == "lines":
+        f = src.get("_focus")
+        return {"kind": "app", "sec": "On evenout", "title": "Tonight's lines", "lay": "side", "_from": src,
+                "take": "Who plays with whom tonight, and how each line does at 5-on-5: the Lines tab of every game.",
+                "_req": {"type": "game", "game": str(g["id"]), "view": "lines", "focus": f}}
+    if view == "goalies":
+        ga, gh = g["goalies"].get(A), g["goalies"].get(Hm)
+        best = Hm if (gh or {}).get("gsax") is not None and (ga or {}).get("gsax") is not None and gh["gsax"] > ga["gsax"] else A
+        return {"kind": "app", "sec": "On evenout", "title": "Both goalies", "lay": "classic",
+                "take": "Save %, goals saved above expected and the record against tonight's opponent: the Matchup tab.",
+                "_req": {"type": "game", "game": str(g["id"]), "view": "goalies", "focus": best}}
+    return None
+
+
+def app_futures(g: dict, src: dict) -> dict:
+    """The season simulation's playoff chances for both teams (Futures), after the head-to-head / stakes beat."""
+    return {"kind": "app", "sec": "On evenout", "title": "Playoff chances", "lay": "phone",
+            "take": f"{g['away']} and {g['home']} in the season simulation: 10,000 seasons played out, every team's playoff chance.",
+            "_req": {"type": "futures", "teams": [g["away"], g["home"]], "kind": "phone"}}
 
 
 LEAD = {"cold": 3.4, "slate": 2.8, "picks": 2.2, "title": 2.4, "model": 3.4, "form": 3.0, "goalies": 2.5, "player": 2.5, "h2h": 2.4,
         "keys": 2.8, "recap": 2.0, "cta": 2.2, "profile": 3.4, "duel": 3.2, "teamboard": 3.0, "lines": 3.0, "app": 5.4}
-MAXD = {"slate": 16, "cold": 10, "app": 10}
+MAXD = {"slate": 16, "cold": 10, "app": 8}
 MIND = {"cold": 11, "slate": 14, "title": 9, "model": 10, "recap": 9, "cta": 7, "player": 12, "goalies": 12, "profile": 17, "duel": 13,
-        "teamboard": 14, "lines": 14, "app": 8}
+        "teamboard": 14, "lines": 14, "app": 7}
 
 
 def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float | None) -> dict | None:
@@ -834,13 +899,17 @@ def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float |
     beats.append({"kind": "slate", "sec": "Tonight's slate", "title": f"All {len(games)} games", "ci": 1,
                   "games": [{**cg(g), "time": tline(g["start"]), "pa": 1 - g["p_home"], "xt": g["exp_total"], "pick": g["id"] in ids} for g in games],
                   "chap": "**The slate** · start times & win chances"})
+    beats.append({"kind": "app", "sec": "On evenout", "title": f"Tonight's {len(games)} games", "ci": 1, "lay": "full",
+                  "chap": "**evenout** · tonight's games", "take": "Every game tonight with projected goals and win chances.",
+                  "_req": {"type": "slate", "date": day.isoformat(), "gids": [str(g["id"]) for g in sorted(chosen, key=lambda g: g["start"])]}})
     beats.append({"kind": "picks", "sec": "Our 3 games" if n == 3 else f"Our {n} games", "title": "Why these games", "ci": 1,
                   "games": [{**cg(g), "why": reason(g)[0], "wsub": reason(g)[1], "time": tline(g["start"])} for g in chosen],
                   "chap": "**The slate** · why these games"})
     plans = plan_sections(chosen, f"{SERIES}|{day.isoformat()}", per_game=5 if n >= 3 else 6)
+    used = {}
     for i, g in enumerate(chosen):
         g["_plan"] = plans[i]
-        for b in game_beats(g, i, n, day, plans[i]):
+        for b in game_beats(g, i, n, day, plans[i], used):
             b["ci"] = 2 + i
             b["_game"] = i
             beats.append(b)
@@ -925,16 +994,25 @@ def add_media(spec: dict, day: dt.date, img: Path) -> None:
         C = AppClips(img) if reqs else None
         for i, b in enumerate(reqs):
             r, clip = b["_req"], None
+            kind = r.get("kind", "desktop")
             try:
                 if r["type"] == "player":
-                    clip = C.player(r["pid"], stat=r.get("stat", "p"), kind="desktop", name=f"app{i}", prefer_game=r.get("game"), dur=4.5)
+                    clip = C.player(r["pid"], stat=r.get("stat", "p"), kind=kind, name=f"app{i}", prefer_game=r.get("game"), dur=4.5)
+                elif r["type"] == "game":
+                    clip = C.game(r["game"], r["view"], kind=kind, name=f"app{i}", focus=r.get("focus"), dur=4.5)
+                elif r["type"] == "futures":
+                    clip = C.futures(r["teams"], kind=kind, name=f"app{i}", dur=4.5)
+                elif r["type"] == "slate":
+                    clip = C.slate(r["date"], r["gids"], kind=kind, name=f"app{i}", dur=5.0)
                 else:
-                    clip = C.explorer(r["q"], kind="desktop", name=f"app{i}", dur=5.0)
+                    clip = C.explorer(r["q"], kind=kind, name=f"app{i}", dur=5.0)
             except Exception as e:  # noqa: BLE001
                 print(f"  app clip {i} failed: {e}")
             if clip:
                 b.update({"src": f"img/{clip['dir']}/", "n": clip["n"], "w": clip["w"], "h": clip["h"], "lead": .6, "dur": clip["dur"],
-                          "url": clip["url"].replace("https://", "")})
+                          "url": clip["url"].replace("https://", ""), "what": clip.get("what", "")})
+                if b.get("_from"):                       # side by side: our board for this section, small, next to the app
+                    b["mini"] = {k: v for k, v in b["_from"].items() if not k.startswith("_") and k not in ("a", "b", "chap", "ci")}
                 b.pop("_req")
     except Exception as e:  # noqa: BLE001
         print(f"  app clips unavailable: {e}")
@@ -944,6 +1022,11 @@ def add_media(spec: dict, day: dt.date, img: Path) -> None:
     spec["_beats"] = [b for b in spec["_beats"] if not b.get("_req")]
     print(f"  media: {len(used)} photo(s), {sum(1 for b in spec['_beats'] if b['kind'] == 'app')} app clip(s) in {time.time() - t0:.0f}s")
     timeline(spec)
+    app = [b for b in spec["beats"] if b["kind"] == "app"]
+    app_s = sum(b["b"] - b["a"] for b in app)
+    print(f"  app moments: {app_s:.0f}s of {spec['total']:.0f}s ({app_s / max(1, spec['total']) * 100:.0f}%)")
+    for b in app:
+        print(f"    {ts(b['a'])} {b['b'] - b['a']:.1f}s [{b.get('lay', 'classic')}] {b['title']}: {b.get('what', '')}")
 
 
 # ------------------------------------------------------------------ captions
