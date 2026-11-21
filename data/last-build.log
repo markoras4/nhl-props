@@ -7,13 +7,12 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 730 skaters and 74 goalies (careers + game logs) ...
 Fetching 358 recent box scores (hits, blocks) ...
-News: 111 injuries, likely starters for 18 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 28 teams (2026-11-21, updated 2026-11-21T20:03:50.882Z)
-  2 requests failed (first: https://www.dailyfaceoff.com/starting-goalies/2026-11-21 -> HTTP 403)
+News: 111 injuries, likely starters for 17 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 28 teams (2026-11-21, updated 2026-11-21T20:03:50.882Z)
   shot maps: 358 games, 40896 attempts
 Model built: 55 games, 730 skaters (567 expected to play)
 Odds: bookmaker prices for 17 games, 424 players
 Odds: sharp-book prices for 12 games, 701 player markets
-  Stoiximan sync: 17 games, 2640 player prices (last push 2026-11-21T21:01:15.10681+00:00, pre); unmatched: Max Sasson, Owen Sillinger, Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
+  Stoiximan sync: 17 games, 2640 player prices (last push 2026-11-21T21:17:10.766652+00:00, pre); unmatched: Max Sasson, Owen Sillinger, Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 1251 player prices added
 Public betting: splits for 13 games
   season simulation: 10000 seasons, 986 games left, top Cup: CAR 34%, MIN 14%, COL 11%
@@ -29,4 +28,3 @@ Best picks record: 356 graded, 86 won, -19.02 units
 Triage ledger: 205 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 1757 bets -1.7u, L 3566 bets -143.1u, F 2684 bets -166.0u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-21.html
-Note: 2 downloads failed - see data/errors.log
