@@ -1,30 +1,30 @@
-Season 2026-2027. Fetching schedule from 2026-11-20 ...
-  41 upcoming games over 5 days
+Season 2026-2027. Fetching schedule from 2026-11-21 ...
+  56 upcoming games over 6 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 726 skaters and 73 goalies (careers + game logs) ...
+Fetching 729 skaters and 73 goalies (careers + game logs) ...
 Fetching 358 recent box scores (hits, blocks) ...
-News: 115 injuries, likely starters for 26 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-20, updated 2026-11-20T20:56:59.057Z)
+News: 114 injuries, likely starters for 26 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 6 teams (2026-11-21, updated 2026-11-21T05:07:44.915Z)
   shot maps: 358 games, 40896 attempts
-Model built: 41 games, 726 skaters (566 expected to play)
-Odds: bookmaker prices for 14 games, 495 players
+Model built: 56 games, 729 skaters (570 expected to play)
+Odds: bookmaker prices for 14 games, 499 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  Stoiximan sync: 10 games, 966 player prices (last push 2026-11-21T01:48:22.522381+00:00, hourly); unmatched: Avery Hayes, Κ. Μπράουν, Κανένας σκόρερ, Ο. Μπέκ, Τζέικ Έβανς
-  manual odds: 464 player prices added
+  Stoiximan sync: 10 games, 970 player prices (last push 2026-11-21T01:48:22.522381+00:00, hourly); unmatched: Κ. Μπράουν, Κανένας σκόρερ, Ο. Μπέκ, Τζέικ Έβανς
+  manual odds: 467 player prices added
 Public betting: splits for 14 games
   season simulation: 10000 seasons, 986 games left, top Cup: CAR 34%, MIN 14%, COL 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
-Player projections: 726 skaters
+Player projections: 729 skaters
 Goalie projections: 73 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 10,875 player-games
-  history: game-by-game files for 724 players (3 seasons)
-  archive: 7 past dates published (2026-11-13, 2026-11-14, 2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19)
+  history: game-by-game files for 726 players (3 seasons)
+  archive: 6 past dates published (2026-11-14, 2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19)
 Best picks record: 354 graded, 86 won, -17.02 units
 Triage ledger: 201 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 1746 bets +0.4u, L 3532 bets -140.3u, F 2670 bets -160.1u
-Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-20.html
+Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-21.html
