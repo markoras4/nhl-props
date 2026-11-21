@@ -1,0 +1,116 @@
+{
+ "2026-11-21-ana-uta": [
+  [
+   "2026-11-21-ana-uta_0.jpg",
+   "File:McBain, Vejmelka, and Sergachev - December 2024.jpg",
+   "CC BY-SA 2.0",
+   4252,
+   "2024-12-30"
+  ],
+  [
+   "2026-11-21-ana-uta_1.jpg",
+   "File:Mammoth home.jpg",
+   "CC BY-SA 3.0",
+   3472,
+   "2010-10-16"
+  ],
+  [
+   "2026-11-21-ana-uta_2.jpg",
+   "File:Columbian mammoth petroglyphs.jpg",
+   "Public domain",
+   2468,
+   "13,000 - 1"
+  ],
+  [
+   "2026-11-21-ana-uta_3.jpg",
+   "File:Honda Center 2026.jpg",
+   "CC BY 4.0",
+   3871,
+   "2026-04-26"
+  ],
+  [
+   "2026-11-21-ana-uta_4.jpg",
+   "File:Blackhawks vs Ducks, Honda Center, 11-03-2024 (10).jpg",
+   "CC BY-SA 4.0",
+   4000,
+   "2024-11-03"
+  ],
+  [
+   "2026-11-21-ana-uta_5.jpg",
+   "File:Blackhawks vs Ducks, Honda Center, 11-03-2024 (3).jpg",
+   "CC BY-SA 4.0",
+   4000,
+   "2024-11-03"
+  ],
+  [
+   "2026-11-21-ana-uta_6.jpg",
+   "File:Blackhawks vs Ducks, Honda Center, 11-03-2024 (9).jpg",
+   "CC BY-SA 4.0",
+   3957,
+   "2024-11-03"
+  ],
+  [
+   "2026-11-21-ana-uta_7.jpg",
+   "File:Gourde terry during March 26, 2024 Anaheim Ducks at Seattle Kraken game (53615356519).jpg",
+   "CC BY-SA 2.0",
+   4912,
+   "2024-03-26"
+  ],
+  [
+   "2026-11-21-ana-uta_8.jpg",
+   "File:Troy Terry in 2023 (1).jpg",
+   "CC BY-SA 2.0",
+   4245,
+   "2023-03-07"
+  ],
+  [
+   "2026-11-21-ana-uta_9.jpg",
+   "File:Troy Terry and Vince Dunn.jpg",
+   "CC BY-SA 2.0",
+   3835,
+   "2023-03-07"
+  ],
+  [
+   "2026-11-21-ana-uta_10.jpg",
+   "File:Weninger watching Ian Brady dive to prevent a shot.jpg",
+   "CC BY 2.0",
+   4851,
+   "2017-03-04"
+  ],
+  [
+   "2026-11-21-ana-uta_11.jpg",
+   "File:Brandon Tanev and Mikhail Sergachev 2024-12-30.jpg",
+   "CC BY-SA 2.0",
+   3522,
+   "2024-12-30"
+  ],
+  [
+   "2026-11-21-ana-uta_12.jpg",
+   "File:Montreal Bench, Montreal Canadiens 3, Ottawa Senators 4, Centre Bell, Montreal, Quebec (29954266662).jpg",
+   "CC BY-SA 2.0",
+   4000,
+   "2016-09-29"
+  ],
+  [
+   "2026-11-21-ana-uta_13.jpg",
+   "File:Montreal Canadiens 3, Ottawa Senators 4, Centre Bell, Montreal, Quebec (30033616506).jpg",
+   "CC BY-SA 2.0",
+   3125,
+   "2016-09-29"
+  ],
+  [
+   "2026-11-21-ana-uta_14.jpg",
+   "File:NHL-Utah-STL-DesMoines2024.jpg",
+   "CC BY-SA 4.0",
+   4032,
+   "2024-09-22"
+  ],
+  [
+   "2026-11-21-ana-uta_15.jpg",
+   "File:Microraptor models.png",
+   "CC BY 2.5",
+   2725,
+   "2014"
+  ]
+ ]
+}
