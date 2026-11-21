@@ -148,5 +148,12 @@
     "uploaded_at": "2026-11-19T14:51:30Z",
     "url": "https://www.youtube.com/watch?v=mb6duGKvvy0",
     "video_id": "mb6duGKvvy0"
+  },
+  "slate-2026-11-21:youtube": {
+    "file": "video/out/2026-11-21/slate-2026-11-21.mp4",
+    "privacy": "public",
+    "uploaded_at": "2026-11-21T14:40:30Z",
+    "url": "https://www.youtube.com/watch?v=oG3s3dswX3Q",
+    "video_id": "oG3s3dswX3Q"
   }
 }
