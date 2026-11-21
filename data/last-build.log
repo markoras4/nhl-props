@@ -7,14 +7,15 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 729 skaters and 73 goalies (careers + game logs) ...
 Fetching 358 recent box scores (hits, blocks) ...
-News: 110 injuries, likely starters for 22 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 14 teams (2026-11-21, updated 2026-11-21T17:34:52.579Z)
+News: 110 injuries, likely starters for 21 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 14 teams (2026-11-21, updated 2026-11-21T17:34:52.579Z)
   shot maps: 358 games, 40896 attempts
 Model built: 56 games, 729 skaters (569 expected to play)
-Odds: bookmaker prices for 14 games, 499 players
-Odds: sharp-book prices for 14 games, 814 player markets
+Odds: bookmaker prices for 13 games, 462 players
+Odds: sharp-book prices for 13 games, 758 player markets
   Stoiximan sync: 16 games, 2890 player prices (last push 2026-11-21T17:48:07.176726+00:00, close); unmatched: Owen Sillinger, Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
-  manual odds: 1261 player prices added
-Public betting: splits for 14 games
+  manual odds: 1406 player prices added
+Public betting: splits for 13 games
+Public betting: saved 1 locked splits (133 this season)
   season simulation: 10000 seasons, 986 games left, top Cup: CAR 34%, MIN 14%, COL 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 32
 Player projections: 729 skaters
