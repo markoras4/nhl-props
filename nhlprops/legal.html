@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Terms, Disclaimer &amp; Privacy · evenout</title>
-<meta name="description" content="Terms of use, disclaimer and privacy policy for evenout.">
+<title>Terms, Privacy &amp; Contact · evenout</title>
+<meta name="description" content="Terms of use, disclaimer, privacy policy and contact details for evenout.">
 <meta name="theme-color" content="#0a0e13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,15 +142,27 @@ h2[id],h3[id]{scroll-margin-top:140px}
 <footer><div class="wrap"><span id="rg"></span><span>© <span id="yr"></span> evenout</span></div></footer>
 
 <script>
-// Set this to the contact address before launch; the contact lines stay hidden while it is empty.
-const CONTACT = "";
+// The support address; every contact line on this page uses it.
+const CONTACT = "support@evenout.app";
 const UPDATED = "2026-11-16";
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
 const mail = () => CONTACT ? `<a href="mailto:${CONTACT}">${CONTACT}</a>` : "";
 const C = {
 en:{
-  title:"Terms, disclaimer & privacy", upd:"Last updated {d}",
-  tabs:[["terms","Terms of use"],["disclaimer","Disclaimer"],["privacy","Privacy"]],
+  title:"Terms, privacy & contact", upd:"Last updated {d}",
+  tabs:[["terms","Terms of use"],["disclaimer","Disclaimer"],["privacy","Privacy"],["contact","Contact"]],
+  contact:()=>`
+  <h2>Contact</h2>
+  <p>Questions, feedback or a problem? Email us and a person will answer, in English or Swedish, usually within a few working days.</p>
+  <div class="box"><p><b>Email:</b> ${mail()}</p></div>
+  <h3>What to write about</h3>
+  <ul>
+    <li><b>Your account or Pro subscription:</b> sign-in problems, billing, cancelling or a refund. Write from the email address you use on evenout.</li>
+    <li><b>Your data:</b> to see, download, correct or delete it. We delete accounts within 30 days (see the <a href="#privacy">privacy policy</a>).</li>
+    <li><b>Something looks wrong:</b> a number, a lineup or a bug. Tell us which page, game or player, and a screenshot helps.</li>
+    <li><b>Commercial licence or press:</b> say who you are and how you want to use evenout (see section 6 of the <a href="#terms">terms</a>).</li>
+  </ul>
+  <p>Never send us your password or card details; we will never ask for them.</p>`,
   rg:`18+ · Gambling can be addictive. Need help? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>`,
   terms:()=>`
   <h2>Terms of use</h2>
@@ -255,8 +267,20 @@ en:{
   <p>You can ask to see, correct, download or delete your data, or object to how we use it${CONTACT?` by writing to ${mail()}`:""}. You can also complain to the Swedish Authority for Privacy Protection (<a href="https://www.imy.se" rel="noopener">IMY</a>).</p>`
 },
 sv:{
-  title:"Villkor, ansvarsfriskrivning & integritet", upd:"Senast uppdaterad {d}",
-  tabs:[["terms","Användarvillkor"],["disclaimer","Ansvarsfriskrivning"],["privacy","Integritet"]],
+  title:"Villkor, integritet & kontakt", upd:"Senast uppdaterad {d}",
+  tabs:[["terms","Användarvillkor"],["disclaimer","Ansvarsfriskrivning"],["privacy","Integritet"],["contact","Kontakt"]],
+  contact:()=>`
+  <h2>Kontakt</h2>
+  <p>Frågor, synpunkter eller problem? Mejla oss så svarar en person, på svenska eller engelska, oftast inom några arbetsdagar.</p>
+  <div class="box"><p><b>E-post:</b> ${mail()}</p></div>
+  <h3>Vad du kan skriva om</h3>
+  <ul>
+    <li><b>Ditt konto eller Pro-prenumeration:</b> inloggning, betalning, uppsägning eller återbetalning. Skriv från e-postadressen du använder på evenout.</li>
+    <li><b>Dina uppgifter:</b> för att se, ladda ner, rätta eller radera dem. Vi raderar konton inom 30 dagar (se <a href="#privacy">integritetspolicyn</a>).</li>
+    <li><b>Något ser fel ut:</b> en siffra, en uppställning eller en bugg. Berätta vilken sida, match eller spelare, gärna med en skärmbild.</li>
+    <li><b>Kommersiell licens eller press:</b> berätta vem du är och hur du vill använda evenout (se punkt 6 i <a href="#terms">villkoren</a>).</li>
+  </ul>
+  <p>Skicka aldrig ditt lösenord eller dina kortuppgifter; vi ber aldrig om dem.</p>`,
   rg:`18+ · Spel kan vara beroendeframkallande. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>`,
   terms:()=>`
   <h2>Användarvillkor</h2>
@@ -380,6 +404,7 @@ function render(){
 function spy(){
   let cur = "terms";
   document.querySelectorAll("main section").forEach(s => { if (s.getBoundingClientRect().top < 160) cur = s.id; });
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) { const l = document.querySelector("main section:last-of-type"); if (l) cur = l.id; }   // the short last tab (Contact) never reaches the top
   document.querySelectorAll("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.id===cur));
 }
 addEventListener("scroll", spy, {passive:true});

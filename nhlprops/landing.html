@@ -609,7 +609,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(28px + env(safe-area
 <footer>
   <div class="wrap fgrid2">
     <div class="rg"><span class="age">18+</span><span data-t="rg" data-html></span></div>
-    <div class="fl"><button class="iconbtn show-m themebtn" type="button" aria-label="Theme"></button><a href="legal.html#terms" data-t="terms"></a><a href="legal.html#disclaimer" data-t="disclaimer"></a><a href="legal.html#privacy" data-t="privacy"></a><a href="#faq">FAQ</a><span>Stats: MoneyPuck.com</span><span>© <span id="yr"></span> evenout</span></div>
+    <div class="fl"><button class="iconbtn show-m themebtn" type="button" aria-label="Theme"></button><a href="legal.html#terms" data-t="terms"></a><a href="legal.html#disclaimer" data-t="disclaimer"></a><a href="legal.html#privacy" data-t="privacy"></a><a href="legal.html#contact" data-t="contact"></a><a href="#faq">FAQ</a><span>Stats: MoneyPuck.com</span><span>© <span id="yr"></span> evenout</span></div>
   </div>
 </footer>
 
@@ -673,7 +673,7 @@ const I18N = {
   st3h:"A chance you can compare", st3p:"Every number is a probability you can hold up against the odds. You decide.",
   final_h:"Tonight's numbers are ready.", final_p:"Free to start. No card needed.",
   rg:`Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Take a break from gambling: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (US). evenout is an analysis tool and does not take bets.`,
-  terms:"Terms", privacy:"Privacy", disclaimer:"Disclaimer",
+  terms:"Terms", privacy:"Privacy", disclaimer:"Disclaimer", contact:"Contact",
   also_h:"Also inside", also:["Playoff & Cup odds","Compare players","7-day archive","Game recaps","Shot maps","Streaks & milestones","Linemates","Line & pair rankings","Goalie saves & shutouts","First goalscorer","Game previews","Odds alerts","Watchlist","Parlay check","Public betting","Closing-odds tracking","Track record","Players & teams explorer","Triage grades","Triage track record","Goalie watch","Power-play point chance","Season projections","Milestone chances","Chart or list view","Award odds","Goalie projections"],
   lic_eye:"For media, creators & businesses",
   lic_h:"Using our numbers in your content or business?",
@@ -719,6 +719,7 @@ const I18N = {
    ["Can I use the numbers in my video, podcast or article?", "<p>Sharing a single pick or screenshot with credit, the way any fan would, is free. If the content earns money or is published regularly, for example a monetised YouTube channel, a podcast, a newsletter, a paid tips group, TV or a news site, you need a licence. <a href=\"#licence\">See licences</a>.</p>"],
    ["How do I credit evenout?", "<p>Write <b>“Source: evenout”</b> with a link to the site, visible next to the numbers: on screen, in the caption or in the show notes. Charts on the site carry a small credit in the corner; please don't crop or hide it.</p>"],
    ["What do you store about me?","<p>Your email, your saved picks, the players you follow and your settings. No advertising or tracking cookies. Read the <a href=\"legal.html#privacy\">privacy policy</a>.</p>"],
+   ["How do I contact you?","<p>Email <a href=\"mailto:support@evenout.app\">support@evenout.app</a>. A person answers, usually within a few working days. More on the <a href=\"legal.html#contact\">contact page</a>.</p>"],
    ["I'm worried about my gambling.","<p>Talk to someone. In Sweden, call <a href=\"https://www.stodlinjen.se\" rel=\"noopener\">Stödlinjen</a> on 020-81 91 00 (free and anonymous) or exclude yourself from all licensed gambling at <a href=\"https://www.spelpaus.se\" rel=\"noopener\">Spelpaus.se</a>. Elsewhere: <a href=\"https://www.begambleaware.org\" rel=\"noopener\">BeGambleAware</a> (UK), <a href=\"https://www.ncpgambling.org\" rel=\"noopener\">1-800-GAMBLER</a> (US).</p>"]
   ]
  },
@@ -762,7 +763,7 @@ const I18N = {
   st3h:"En chans du kan jämföra", st3p:"Varje siffra är en sannolikhet du kan ställa mot oddsen. Du bestämmer.",
   final_h:"Kvällens siffror är klara.", final_p:"Gratis att börja. Inget kort behövs.",
   rg:`Spel kan vara beroendeframkallande. Spela ansvarsfullt. Behöver du hjälp? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · Stäng av dig från spel: <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Utanför Sverige: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a> (UK), <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a> (USA). evenout är ett analysverktyg och tar inte emot spel.`,
-  terms:"Villkor", privacy:"Integritet", disclaimer:"Ansvarsfriskrivning",
+  terms:"Villkor", privacy:"Integritet", disclaimer:"Ansvarsfriskrivning", contact:"Kontakt",
   also_h:"Även i appen", also:["Slutspels- & cupchanser","Jämför spelare","7 dagars arkiv","Matchsammanfattningar","Skottkartor","Sviter & milstolpar","Kedjekamrater","Ranking av kedjor & backpar","Räddningar & nollor","Första målskytt","Förhandstittar","Oddsaviseringar","Bevakning","Kombokoll","Spelfördelning","Stängningsodds-koll","Facit","Spelar- & lagutforskaren","Triagebetyg","Triagefacit","Målvaktsbevakning","Chans till PP-poäng","Säsongsprognoser","Chanser till milstolpar","Diagram eller lista","Prisodds","Målvaktsprognoser"],
   lic_eye:"För media, kreatörer och företag",
   lic_h:"Vill du använda våra siffror i ditt innehåll eller företag?",
@@ -808,6 +809,7 @@ const I18N = {
    ["Får jag använda siffrorna i min video, podd eller artikel?", "<p>Att dela ett enstaka spel eller en skärmbild med källa, som vilken fan som helst, är gratis. Om innehållet drar in pengar eller publiceras regelbundet, till exempel en YouTube-kanal med intäkter, en podd, ett nyhetsbrev, en betald tipsgrupp, tv eller en nyhetssajt, behövs en licens. <a href=\"#licence\">Se licenser</a>.</p>"],
    ["Hur anger jag evenout som källa?", "<p>Skriv <b>”Källa: evenout”</b> med en länk till sajten, synligt bredvid siffrorna: i bild, i bildtexten eller i avsnittsbeskrivningen. Diagrammen på sajten har en liten källangivelse i hörnet; beskär eller dölj den inte.</p>"],
    ["Vad sparar ni om mig?","<p>Din e-post, dina sparade spel, spelarna du följer och dina inställningar. Inga reklam- eller spårningskakor. Läs <a href=\"legal.html#privacy\">integritetspolicyn</a>.</p>"],
+   ["Hur kontaktar jag er?","<p>Mejla <a href=\"mailto:support@evenout.app\">support@evenout.app</a>. En person svarar, oftast inom några arbetsdagar. Mer på <a href=\"legal.html#contact\">kontaktsidan</a>.</p>"],
    ["Jag är orolig för mitt spelande.","<p>Prata med någon. Ring <a href=\"https://www.stodlinjen.se\" rel=\"noopener\">Stödlinjen</a> på 020-81 91 00 (gratis och anonymt) eller stäng av dig från allt licensierat spel på <a href=\"https://www.spelpaus.se\" rel=\"noopener\">Spelpaus.se</a>. Utanför Sverige: <a href=\"https://www.begambleaware.org\" rel=\"noopener\">BeGambleAware</a> (UK), <a href=\"https://www.ncpgambling.org\" rel=\"noopener\">1-800-GAMBLER</a> (USA).</p>"]
   ]
  }
