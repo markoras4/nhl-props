@@ -1,0 +1,18 @@
+{
+ "slug": "chasing-losses",
+ "section": "betting",
+ "title": "Double or Nothing: What Chasing Would Have Done to Our Worst Week",
+ "deck": "Our best picks lost 33.91 units in seven days. A bettor who doubled up after every losing night would have lost 310. Why chasing losses feels like a plan, and why it isn't one.",
+ "date": "2026-11-22",
+ "date_label": "November 22, 2026",
+ "read_min": 6,
+ "hero": {
+  "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Chicago_Blackhawks_%40_Madison_Square_Garden_%2815925804871%29.jpg/1920px-Chicago_Blackhawks_%40_Madison_Square_Garden_%2815925804871%29.jpg",
+  "alt": "An NHL game between the Rangers and the Chicago Blackhawks at Madison Square Garden",
+  "credit": "Rangers vs Blackhawks, Madison Square Garden · Schen Photography · CC BY 2.0"
+ },
+ "credits": [
+  "Hero: <a href=\"https://commons.wikimedia.org/wiki/File:Chicago_Blackhawks_@_Madison_Square_Garden_(15925804871).jpg\" rel=\"noopener\">Chicago Blackhawks @ Madison Square Garden</a> by Schen Photography, CC BY 2.0",
+  "Numbers: evenout track record, data/bestpicks.json on the site branch as built November 22, 2026, covering October 25 to November 21 (382 graded picks on the All tab, four voids left out), one unit per pick at the price at the lock. Staking replays: the same picks, prices and results with the stake doubled (or raised by half) after each losing night and reset after a winning night. Simulations: 40,000 replays of those 382 picks and prices, each pick winning as often as its price implies, run for this article. Charts: evenout."
+ ]
+}
