@@ -7,24 +7,21 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 729 skaters and 73 goalies (careers + game logs) ...
 Fetching 373 recent box scores (hits, blocks) ...
-News: 115 injuries, likely starters for 24 games (+24 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-22, updated 2026-11-22T21:39:28.781Z)
-Shot maps: downloading play-by-play for 1 new games ...
+News: 115 injuries, likely starters for 24 games (+24 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-22, updated 2026-11-22T22:32:52.443Z)
   shot maps: 373 games, 42620 attempts
 Model built: 54 games, 729 skaters (568 expected to play)
-Odds: bookmaker prices for 11 games, 142 players
+Odds: bookmaker prices for 10 games, 141 players
 Odds: sharp-book prices for 3 games, 151 player markets
   Stoiximan sync: 6 games, 1327 player prices (last push 2026-11-22T20:33:46.190465+00:00, manual); unmatched: Dillon Boucher, Max Sasson
-  manual odds: 743 player prices added
-Public betting: splits for 9 games
-Public betting: saved 1 locked splits (146 this season)
+  manual odds: 888 player prices added
+Public betting: splits for 10 games
   season simulation: 10000 seasons, 971 games left, top Cup: CAR 38%, MIN 13%, COL 11%
-Futures odds: Cup 32, conference 32, division 16, playoffs 30, points 29
+Futures odds: Cup 32, conference 32, division 16, playoffs 27, points 26
 Player projections: 729 skaters
 Goalie projections: 73 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 11,290 player-games
-  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 725 players (3 seasons)
   archive: 6 past dates published (2026-11-15, 2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-21)
 Best picks record: 384 graded, 95 won, -16.96 units
