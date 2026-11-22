@@ -1,5 +1,5 @@
 Season 2026-2027. Fetching schedule from 2026-11-21 ...
-  54 upcoming games over 6 days
+  52 upcoming games over 6 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -9,11 +9,11 @@ Fetching 730 skaters and 74 goalies (careers + game logs) ...
 Fetching 362 recent box scores (hits, blocks) ...
 News: 114 injuries, likely starters for 13 games (+38 backup reports), line combinations for 32/32 teams, game-day lineups for 29 teams (2026-11-21, updated 2026-11-21T22:59:29.636Z)
   shot maps: 362 games, 41350 attempts
-Model built: 54 games, 730 skaters (565 expected to play)
+Model built: 52 games, 730 skaters (565 expected to play)
 Odds: bookmaker prices for 7 games, 247 players
 Odds: sharp-book prices for 2 games, 109 player markets
-  Stoiximan sync: 16 games, 2467 player prices (last push 2026-11-22T02:03:56.297188+00:00, pre); unmatched: Max Sasson, Owen Sillinger, Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
-  manual odds: 2200 player prices added
+  Stoiximan sync: 14 games, 2051 player prices (last push 2026-11-22T02:15:20.885952+00:00, manual); unmatched: Max Sasson, Owen Sillinger, Κ. Μπράουν, Ο. Μπέκ, Τζέικ Έβανς
+  manual odds: 1784 player prices added
 Public betting: splits for 6 games
   season simulation: 10000 seasons, 982 games left, top Cup: CAR 36%, MIN 13%, COL 11%
 Futures odds: Cup 32, conference 32, division 0, playoffs 11, points 9
