@@ -8,12 +8,13 @@ Fetching rosters for 32 teams ...
 Fetching 732 skaters and 73 goalies (careers + game logs) ...
 Fetching 372 recent box scores (hits, blocks) ...
 News: 115 injuries, likely starters for 26 games (+24 backup reports), line combinations for 32/32 teams, game-day lineups for 2 teams (2026-11-22, updated 2026-11-22T13:43:41.153Z)
+  2 requests failed (first: https://www.dailyfaceoff.com/starting-goalies/2026-11-22 -> HTTP 403)
   shot maps: 372 games, 42493 attempts
 Model built: 55 games, 732 skaters (573 expected to play)
 Odds: bookmaker prices for 5 games, 176 players
-Odds: sharp-book prices for 5 games, 73 player markets
+Odds: sharp-book prices for 5 games, 254 player markets
   Stoiximan sync: 5 games, 1609 player prices (last push 2026-11-22T14:23:29.447748+00:00, hourly); unmatched: Max Sasson
-  manual odds: 934 player prices added
+  manual odds: 927 player prices added
 Public betting: splits for 5 games
   season simulation: 10000 seasons, 972 games left, top Cup: CAR 37%, MIN 12%, COL 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 23
@@ -28,3 +29,4 @@ Best picks record: 382 graded, 94 won, -23.46 units
 Triage ledger: 217 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 1862 bets -22.0u, L 3860 bets -169.1u, F 2865 bets -167.3u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-22.html
+Note: 2 downloads failed - see data/errors.log
