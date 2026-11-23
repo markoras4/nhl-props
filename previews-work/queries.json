@@ -1,7 +1,9 @@
 {
-  "2026-11-22-car-nyr": ["Sebastian Aho Carolina Hurricanes", "Andrei Svechnikov", "Mika Zibanejad Rangers", "Adam Fox New York Rangers", "Madison Square Garden hockey Rangers", "Carolina Hurricanes Rangers"],
-  "2026-11-22-buf-tbl": ["Nikita Kucherov", "Jake Guentzel Lightning", "Andrei Vasilevskiy", "Tage Thompson Sabres", "Rasmus Dahlin", "Amalie Arena Tampa Bay Lightning"],
-  "2026-11-22-edm-stl": ["Robert Thomas St. Louis Blues", "Jordan Binnington Blues", "Enterprise Center St. Louis Blues", "Leon Draisaitl", "Evan Bouchard Oilers", "Colton Parayko"],
-  "2026-11-22-pit-dal": ["Jason Robertson Dallas Stars", "Mikko Rantanen Stars", "Jake Oettinger", "Sidney Crosby Penguins", "Wyatt Johnston Dallas", "American Airlines Center Dallas Stars"],
-  "2026-11-22-chi-van": ["Brock Boeser Canucks", "Quinn Hughes Vancouver Canucks", "Rogers Arena Vancouver Canucks", "Frank Nazar Blackhawks", "Patrick Kane Blackhawks", "Chicago Blackhawks Canucks"]
+  "2026-11-23-cbj-njd": ["Jack Hughes New Jersey Devils", "Nico Hischier", "Timo Meier Devils", "Zach Werenski Blue Jackets", "Prudential Center Devils hockey", "Jesper Bratt"],
+  "2026-11-23-lak-mtl": ["Nick Suzuki Canadiens", "Lane Hutson", "Bell Centre Montreal Canadiens", "Cole Caufield", "Quinton Byfield Kings", "Adrian Kempe"],
+  "2026-11-23-cgy-ott": ["Tim Stützle", "Brady Tkachuk Senators", "Linus Ullmark Senators", "Canadian Tire Centre Senators game", "Nazem Kadri Flames", "Calgary Flames Ottawa Senators"],
+  "2026-11-23-tor-nyi": ["Auston Matthews", "William Nylander", "Ilya Sorokin", "Bo Horvat Islanders", "UBS Arena Islanders", "Mathew Barzal"],
+  "2026-11-23-uta-wpg": ["Kyle Connor Jets", "Mark Scheifele", "Canada Life Centre Winnipeg Jets", "Clayton Keller", "Logan Cooley Utah", "Josh Morrissey"],
+  "2026-11-23-ana-sea": ["Cutter Gauthier Ducks", "Leo Carlsson Ducks", "Matty Beniers Kraken", "Climate Pledge Arena Kraken", "Anaheim Ducks at Seattle Kraken", "Troy Terry"],
+  "2026-11-23-min-sjs": ["Kirill Kaprizov", "Macklin Celebrini", "SAP Center San Jose Sharks", "Matt Boldy Wild", "Joel Eriksson Ek", "William Eklund Sharks"]
 }
