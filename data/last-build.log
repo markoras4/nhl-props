@@ -5,24 +5,24 @@ Fetching MoneyPuck season summaries ...
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
-Fetching 729 skaters and 73 goalies (careers + game logs) ...
+Fetching 730 skaters and 73 goalies (careers + game logs) ...
 Fetching 377 recent box scores (hits, blocks) ...
 News: 115 injuries, likely starters for 22 games (+16 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-22, updated 2026-11-22T22:32:52.443Z)
   shot maps: 377 games, 43073 attempts
-Model built: 52 games, 729 skaters (569 expected to play)
+Model built: 52 games, 730 skaters (570 expected to play)
 Odds: bookmaker prices for 7 games, 248 players
 Odds: sharp-book prices for 0 games, 0 player markets
   Stoiximan sync: 7 games, 2141 player prices (last push 2026-11-23T09:05:47.816561+00:00, hourly); unmatched: Brett Berard, David Reinbacher, Steven Lorentz, Κ. Μπράουν, Κανένας σκόρερ, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 1272 player prices added
 Public betting: splits for 7 games
-  season simulation: 10000 seasons, 967 games left, top Cup: CAR 39%, MIN 13%, COL 12%
+  season simulation: 10000 seasons, 967 games left, top Cup: CAR 38%, MIN 13%, COL 12%
 Futures odds: Cup 32, conference 32, division 0, playoffs 21, points 20
-Player projections: 729 skaters
+Player projections: 730 skaters
 Goalie projections: 73 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Dylan Larkin, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 11,415 player-games
-  history: game-by-game files for 725 players (3 seasons)
+  history: game-by-game files for 726 players (3 seasons)
   archive: 6 past dates published (2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-21, 2026-11-22)
 Best picks record: 392 graded, 96 won, -23.39 units
 Triage ledger: 219 graded blocks bets: time to review whether blocks join the headline Solid record
