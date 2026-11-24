@@ -1,0 +1,63 @@
+{
+ "date": "2026-11-24",
+ "written": "2026-11-24T07:44+01:00",
+ "previews": [
+  {
+   "id": 2026020385,
+   "slug": "2026-11-24-vgk-edm",
+   "photo": {"src": "assets/previews/2026-11-24-vgk-edm.webp", "alt": "A full Rogers Place before an Oilers game in Edmonton",
+             "author": "IQRemix from Canada", "license": "CC BY-SA 2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+             "page": "https://commons.wikimedia.org/wiki/File:Edmonton_Oilers_2017_Playoff_Scene_(34311884396).jpg",
+             "pos": "center 55%"},
+   "en": {
+    "kicker": "Golden Knights at Oilers",
+    "title": "Oilers come home from their worst skid of the season to meet Vegas",
+    "deck": "Edmonton is 0-2-1 in its last three, its longest winless run of the season, after blowing a 4-1 lead in St. Louis on Sunday. Vegas arrives off a shootout win in Winnipeg and has needed overtime in four of its last five games. It is the only game on the NHL schedule tonight, and the model makes the Golden Knights slight favourites.",
+    "news": [
+     "Ryan Nugent-Hopkins has been cleared and is expected back after missing four games. Zach Hyman left Saturday's 7-4 loss in Carolina with a migraine that affected his vision and sat out Sunday; his status is unclear.",
+     "Coach Mike Babcock admitted after the Carolina game that he probably should have split up Connor McDavid and Leon Draisaitl. Devon Levi is the likely starter in the Edmonton net.",
+     "Vegas won 5-4 in a shootout in Winnipeg on Saturday, with Ivan Barbashev scoring the deciding attempt. Carter Hart is the model's slight favourite to start for the Golden Knights.",
+     "It's the first of four meetings this season. Edmonton won three of four last season and is 13-5-1 in the last 19."
+    ],
+    "records": [
+     "McDavid has 58 points in 26 games and a point in all 12 home games this season. His 23-game point streak ended against Tampa Bay on Nov. 19.",
+     "Draisaitl's goal on Sunday was the 1,100th point of his career.",
+     "Mark Stone recently became Vegas' all-time points leader, passing Jonathan Marchessault. Mitch Marner needs one assist for 600 in his career.",
+     "Vegas is 9-0-1 when it scores first. Jack Eichel has a point in four straight games, all assists."
+    ],
+    "betting": [
+     "Market: Oilers 1.91, Golden Knights 1.93, a pure 50–50 without the margin. The model has Vegas 53–47, so it leans a little toward the visitors.",
+     "Total: over 5.5 is priced at 1.60 (about 59%) and over 6.5 at 1.94 (about 49%). The model says 54% and 44%, a touch lower, even though both teams have gone over 5.5 in more than 60% of their games and the last 11 meetings averaged 6.0 goals.",
+     "Player chances (model vs market): McDavid 1+ point 82% vs 79%, Eichel 1+ point 66% vs 65%, Shea Theodore 1+ point 42% vs 36%. The model also flags Evan Bouchard's finishing as running hot."
+    ]
+   },
+   "sv": {
+    "kicker": "Golden Knights mot Oilers",
+    "title": "Oilers kommer hem från säsongens sämsta svit för att möta Vegas",
+    "deck": "Edmonton har 0-2-1 de senaste tre matcherna, säsongens längsta svit utan seger, efter att ha tappat en 4–1-ledning i St. Louis i söndags. Vegas kommer från en straffseger i Winnipeg och har behövt förlängning i fyra av de senaste fem matcherna. Det är kvällens enda NHL-match, och modellen gör Golden Knights till små favoriter.",
+    "news": [
+     "Ryan Nugent-Hopkins är klar att spela och väntas tillbaka efter fyra missade matcher. Zach Hyman lämnade lördagens 4–7-förlust i Carolina med migrän som påverkade synen och stod över i söndags. Det är oklart om han spelar.",
+     "Tränaren Mike Babcock medgav efter Carolina-matchen att han nog borde ha splittrat Connor McDavid och Leon Draisaitl. Devon Levi väntas stå i Edmontons mål.",
+     "Vegas vann med 5–4 efter straffar i Winnipeg i lördags, där Ivan Barbashev satte den avgörande straffen. Carter Hart är modellens knappa favorit att starta för Golden Knights.",
+     "Det är första mötet av fyra den här säsongen. Edmonton vann tre av fyra förra säsongen och har 13-5-1 i de senaste 19."
+    ],
+    "records": [
+     "McDavid har 58 poäng på 26 matcher och har gjort poäng i alla 12 hemmamatcher den här säsongen. Hans poängsvit på 23 matcher bröts mot Tampa Bay den 19 november.",
+     "Draisaitls mål i söndags var hans 1 100:e poäng i karriären.",
+     "Mark Stone gick nyligen om Jonathan Marchessault som Vegas bästa poänggörare genom tiderna. Mitch Marner behöver en assist för att nå 600 i karriären.",
+     "Vegas har 9-0-1 när laget gör första målet. Jack Eichel har gjort poäng i fyra raka matcher, alla på assists."
+    ],
+    "betting": [
+     "Marknaden: Oilers 1,91, Golden Knights 1,93, alltså rakt 50–50 utan marginal. Modellen ger Vegas 53–47 och lutar alltså lite åt bortalaget.",
+     "Totalt: över 5,5 mål ligger på 1,60 (cirka 59 %) och över 6,5 på 1,94 (cirka 49 %). Modellen säger 54 % och 44 %, något lägre, trots att båda lagen gått över 5,5 i mer än 60 % av matcherna och de senaste 11 mötena gav i snitt 6,0 mål.",
+     "Spelarchanser (modell mot marknad): McDavid minst 1 poäng 82 % mot 79 %, Eichel minst 1 poäng 66 % mot 65 %, Shea Theodore minst 1 poäng 42 % mot 36 %. Modellen flaggar också att Evan Bouchards avslut går ovanligt varmt."
+    ]
+   },
+   "sources": [
+    "https://www.nhl.com/oilers/news/preview-oilers-vs-golden-knights-11-24-26",
+    "https://www.yardbarker.com/nhl/articles/oilers_injuries_good_and_bad_as_nugent_hopkins_and_hyman_updates_are_revealed/s1_16454_44602253",
+    "https://www.cbssports.com/fantasy/hockey/news/oilers-ryan-nugent-hopkins-likely-to-return-tuesday/"
+   ]
+  }
+ ]
+}
