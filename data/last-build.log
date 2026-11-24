@@ -6,25 +6,27 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 731 skaters and 72 goalies (careers + game logs) ...
-Fetching 377 recent box scores (hits, blocks) ...
+Fetching 378 recent box scores (hits, blocks) ...
 News: 113 injuries, likely starters for 16 games (+16 backup reports), line combinations for 32/32 teams, game-day lineups for 14 teams (2026-11-23, updated 2026-11-23T21:00:02.034Z)
-  shot maps: 377 games, 43073 attempts
+Shot maps: downloading play-by-play for 1 new games ...
+  shot maps: 378 games, 43175 attempts
 Model built: 52 games, 731 skaters (569 expected to play)
 Odds: bookmaker prices for 3 games, 108 players
 Odds: sharp-book prices for 2 games, 102 player markets
-  Stoiximan sync: 8 games, 2187 player prices (last push 2026-11-24T02:16:46.867997+00:00, pre); unmatched: Brett Berard, David Reinbacher, Kirby Dach, Steven Lorentz, Κ. Μπράουν, Κανένας σκόρερ, Ο. Μπέκ, Τζέικ Έβανς
+  Stoiximan sync: 8 games, 2187 player prices (last push 2026-11-24T02:27:48.603772+00:00, close); unmatched: Brett Berard, David Reinbacher, Kirby Dach, Steven Lorentz, Κ. Μπράουν, Κανένας σκόρερ, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 1883 player prices added
 Public betting: splits for 3 games
-  season simulation: 10000 seasons, 967 games left, top Cup: CAR 38%, MIN 13%, COL 12%
+  season simulation: 10000 seasons, 966 games left, top Cup: CAR 39%, MIN 13%, COL 12%
 Futures odds: Cup 32, conference 32, division 0, playoffs 22, points 22
 Player projections: 731 skaters
 Goalie projections: 72 goalies
   awards: no player match for Bradley Nadeau, Connor Ingram, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 11,448 player-games
+  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 726 players (3 seasons)
   archive: 6 past dates published (2026-11-16, 2026-11-17, 2026-11-18, 2026-11-19, 2026-11-21, 2026-11-22)
-Best picks record: 392 graded, 96 won, -23.39 units
+Best picks record: 394 graded, 98 won, -21.69 units
 Triage ledger: 219 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 1925 bets -27.6u, L 3981 bets -194.1u, F 2949 bets -204.4u
+Triage ledger: S 1938 bets -26.1u, L 4006 bets -198.4u, F 2966 bets -204.9u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-23.html
