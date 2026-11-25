@@ -10,10 +10,10 @@ Fetching 385 recent box scores (hits, blocks) ...
 News: 122 injuries, likely starters for 42 games (+58 backup reports), line combinations for 32/32 teams, game-day lineups for 2 teams (2026-11-24, updated 2026-11-24T18:32:16.263Z)
   shot maps: 385 games, 43939 attempts
 Model built: 59 games, 731 skaters (565 expected to play)
-Odds: bookmaker prices for 14 games, 496 players
-Odds: sharp-book prices for 11 games, 16 player markets
-  Stoiximan sync: 14 games, 3223 player prices (last push 2026-11-25T13:03:13.292811+00:00, hourly); unmatched: Adam Beckman, Alex Gagne, Danil Zhilkin, Dillon Boucher, Jansen Harkins, Sheldon Dries, Steven Lorentz, Κ. Μπράουν
-  manual odds: 1570 player prices added
+Odds: bookmaker prices for 14 games, 498 players
+Odds: sharp-book prices for 14 games, 415 player markets
+  Stoiximan sync: 14 games, 3223 player prices (last push 2026-11-25T14:04:15.23751+00:00, hourly); unmatched: Adam Beckman, Alex Gagne, Danil Zhilkin, Dillon Boucher, Jansen Harkins, Sheldon Dries, Steven Lorentz, Κ. Μπράουν
+  manual odds: 1563 player prices added
 Public betting: splits for 14 games
   season simulation: 10000 seasons, 959 games left, top Cup: CAR 38%, MIN 14%, COL 11%
 Futures odds: Cup 32, conference 32, division 32, playoffs 32, points 30
