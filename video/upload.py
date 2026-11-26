@@ -367,11 +367,17 @@ class TikTok:
         if "evenout" not in caption.lower():
             caption = (caption + " evenout.app").strip()
         caption = caption[:2200]
+        limit = creator.get("max_video_post_duration_sec")
+        if limit and item.get("duration") and float(item["duration"]) > float(limit):
+            raise UploadError(f"video is {float(item['duration']):.0f} s but this account may post at most {limit} s")
         chunk, count = tt_chunks(size)
         post_info = {"title": caption, "privacy_level": privacy,
                      "disable_comment": bool(creator.get("comment_disabled")),
                      "disable_duet": bool(creator.get("duet_disabled")),
-                     "disable_stitch": bool(creator.get("stitch_disabled"))}
+                     "disable_stitch": bool(creator.get("stitch_disabled")),
+                     # commercial content disclosure: evenout promotes its own product -> "Your brand"
+                     # (TikTok labels it "Promotional content"); never a paid partnership
+                     "brand_organic_toggle": True, "brand_content_toggle": False}
         if item.get("cover_timestamp_ms") is not None:
             post_info["video_cover_timestamp_ms"] = int(item["cover_timestamp_ms"])
         data = self._post(TT_INIT_URL, {"post_info": post_info, "source_info": {
@@ -498,6 +504,11 @@ def run(manifest_path: Path, only: str | None = None, dry_run: bool = False, led
                 clients[platform] = YouTube() if platform == "youtube" else TikTok()
             res = clients[platform].upload(item, path, cover)
         except UploadError as e:
+            if "unaudited_client" in str(e):
+                disabled[platform] = "TikTok has not approved the app yet (unaudited apps may only post to private accounts)"
+                log(f"- {key}: skipped ({disabled[platform]})")
+                report["skipped"].append(key)
+                continue
             log(f"  {platform}: FAILED - {e}")
             report["failed"].append(key)
             if "sign-in failed" in str(e):

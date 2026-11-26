@@ -1069,7 +1069,12 @@ def captions(spec: dict, day: dt.date) -> dict:
             nm = g["teams"][t].get("name")
             if nm and nm not in tags:
                 tags.append(nm)
-    return {"youtube": {"title": title[:100], "description": desc, "tags": tags}}
+    tt_title = f"NHL tonight ({md}): " + ", ".join(mus) + " broken down"
+    tt_cr = PH.credit_lines(spec.get("_photos") or [])["short"]
+    tt = (f"{tt_title}\n\nTeam form, lines, goalies and what's at stake, game by game.\n\n"
+          f"Every player, every game: evenout.app (link in bio)\nStats only." +
+          (f"\n{tt_cr}" if tt_cr else "") + "\n#NHL #hockey #NHLstats #hockeytok")
+    return {"youtube": {"title": title[:100], "description": desc, "tags": tags}, "tiktok": {"caption": tt}}
 
 
 # ------------------------------------------------------------------ music
@@ -1271,6 +1276,9 @@ def main():
     manifest["items"] = [i for i in manifest.get("items", []) if i.get("series") != SERIES]
     manifest["items"].append({"id": f"{SERIES}-{a.date}", "series": SERIES, "platform": "youtube", "long": True,
                               "file": rel(f"{base}.mp4"), "cover": rel(f"{base}-thumb.jpg"), **cap["youtube"]})
+    # TikTok: same video, own caption; upload.py checks the length against the account's limit
+    manifest["items"].append({"id": f"{SERIES}-{a.date}", "series": SERIES, "platform": "tiktok", "long": True,
+                              "file": rel(f"{base}.mp4"), "duration": round(spec["total"], 1), **cap["tiktok"]})
     mpath.write_text(json.dumps(manifest, indent=1, ensure_ascii=False), encoding="utf-8")
     print("video:", f"{base}.mp4")
     print("manifest:", mpath)

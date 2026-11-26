@@ -36,16 +36,9 @@ TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/"
 SCOPES = "user.info.basic,video.publish"
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--port", type=int, default=8765)
-    a = ap.parse_args()
-    key, sec = os.environ.get("TIKTOK_CLIENT_KEY", "").strip(), os.environ.get("TIKTOK_CLIENT_SECRET", "").strip()
-    if not key or not sec:
-        print("Set TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET first (developers.tiktok.com -> your app). "
-              "See video/UPLOAD.md.")
-        return 1
-    redirect = f"http://localhost:{a.port}/callback/"
+def sign_in(key: str, sec: str, port: int = 8765) -> str | None:
+    """Open TikTok's consent page, catch the redirect, return the refresh token (never printed)."""
+    redirect = f"http://localhost:{port}/callback/"
     alphabet = string.ascii_letters + string.digits + "-._~"
     verifier = "".join(secrets.choice(alphabet) for _ in range(64))
     challenge = hashlib.sha256(verifier.encode()).hexdigest()  # TikTok desktop wants hex, not base64url
@@ -54,14 +47,14 @@ def main() -> int:
         "client_key": key, "scope": SCOPES, "response_type": "code", "redirect_uri": redirect, "state": state,
         "code_challenge": challenge, "code_challenge_method": "S256"})
     print(f"Redirect URI used: {redirect}  (must be registered in the TikTok app exactly like this)")
-    print("Opening the TikTok consent page in your browser. If it does not open, paste this link into it:\n")
-    print(url + "\n")
+    print("Opening the TikTok consent page in your browser. Sign in with the evenout TikTok account and allow.")
+    print("If it does not open, paste this link into the browser:\n\n" + url + "\n")
     webbrowser.open(url)
-    got = catch_redirect(a.port, "/callback/")
+    got = catch_redirect(port, "/callback/")
     if got.get("state") != state or "code" not in got:
         print("Sign-in failed or was cancelled:", got.get("error_description") or got.get("error")
               or "no answer within 5 minutes / state mismatch")
-        return 1
+        return None
     r = requests.post(TOKEN_URL, headers={"Content-Type": "application/x-www-form-urlencoded"}, data={
         "client_key": key, "client_secret": sec, "code": got["code"],  # parse_qs already URL-decoded it
         "grant_type": "authorization_code", "redirect_uri": redirect, "code_verifier": verifier}, timeout=60)
@@ -72,14 +65,26 @@ def main() -> int:
     rt = body.get("refresh_token")
     if r.status_code != 200 or not rt:
         print(f"Token exchange failed (HTTP {r.status_code}): {body.get('error')} {body.get('error_description', '')}")
-        return 1
+        return None
     if "video.publish" not in body.get("scope", ""):
         print("WARNING: video.publish was not granted - check the app has the Content Posting API with Direct Post on.")
+    return rt
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--port", type=int, default=8765)
+    a = ap.parse_args()
+    key, sec = os.environ.get("TIKTOK_CLIENT_KEY", "").strip(), os.environ.get("TIKTOK_CLIENT_SECRET", "").strip()
+    if not key or not sec:
+        print("Set TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET first, or use the easier  py video/setup_tiktok.py")
+        return 1
+    rt = sign_in(key, sec, a.port)
+    if not rt:
+        return 1
     print("\nYour TikTok refresh token (keep it secret; valid 180 days, and TikTok replaces it on every use):\n")
     print(rt)
-    print("\nNext: GitHub -> markoras4/nhl-props -> Settings -> Secrets and variables -> Actions -> New repository "
-          "secret\n  Name: TIKTOK_REFRESH_TOKEN   Value: the line above\n"
-          "Also add TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET there if you have not yet. Then close this window.")
+    print("\nPut it in the GitHub secret TIKTOK_REFRESH_TOKEN. Then close this window.")
     return 0
 
 

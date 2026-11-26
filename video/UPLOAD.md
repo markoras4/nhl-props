@@ -61,16 +61,20 @@ straight into GitHub's secret store.
    (with the slash at the end).
 5. Submit the app for review (TikTok must approve the app before anyone can sign in to it; this can take a few days).
    Copy the **Client key** and **Client secret** from the app page.
-6. On your computer:
+6. Open three GitHub "New repository secret" pages (`TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`,
+   `TIKTOK_REFRESH_TOKEN`), then on your computer:
 
    ```powershell
-   $env:TIKTOK_CLIENT_KEY = "paste client key"
-   $env:TIKTOK_CLIENT_SECRET = "paste client secret"
-   py video/auth_tiktok.py
+   py video/setup_tiktok.py
    ```
 
-   Sign in with the TikTok account the videos should go to and allow. Copy the printed refresh token.
-7. GitHub secrets: `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REFRESH_TOKEN`.
+   Paste the Client key and secret when asked (hidden), sign in with the evenout TikTok account and allow. The script
+   then puts each value on the clipboard in turn; paste it into its GitHub page and type `done`. Nothing is printed.
+
+**What gets posted:** Last night (daily), Hot or lucky (Tue/Thu/Sat) and the long slate video, each marked as
+**Your brand** (`brand_organic_toggle`, TikTok shows "Promotional content"). Board and Report never go to TikTok
+(picks/odds count as gambling content there). Until the app is audited, the run skips TikTok quietly
+("TikTok has not approved the app yet") instead of failing every day.
 
 **Limits to know**
 - **Private until audited.** Until TikTok audits the app, every post is private (`SELF_ONLY`, only you can see it),

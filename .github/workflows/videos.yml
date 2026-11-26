@@ -303,7 +303,7 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
-      - name: Upload to YouTube
+      - name: Upload to YouTube and TikTok
         if: github.ref == 'refs/heads/main' && steps.r.outputs.any == 'yes'
         env:
           DATE: ${{ steps.d.outputs.date }}
@@ -312,11 +312,32 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           YT_PRIVACY: ${{ vars.YT_PRIVACY }}
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          GH_SECRETS_PAT: ${{ secrets.GH_SECRETS_PAT }}
+          REPO: ${{ github.repository }}
         run: |
           M="video/out/$DATE/manifest.json"
-          if [ "$DRY_RUN" = "true" ]; then python video/upload.py --manifest "$M" --only youtube --dry-run; exit 0; fi
-          if [ -z "$YT_CLIENT_ID" ] || [ -z "$YT_CLIENT_SECRET" ] || [ -z "$YT_REFRESH_TOKEN" ]; then echo "No YouTube secrets yet - skipping"; exit 0; fi
-          python video/upload.py --manifest "$M" --only youtube
+          if [ "$DRY_RUN" = "true" ]; then python video/upload.py --manifest "$M" --dry-run; exit 0; fi
+          ARGS=""
+          YT=0; TT=0
+          if [ -n "$YT_CLIENT_ID" ] && [ -n "$YT_CLIENT_SECRET" ] && [ -n "$YT_REFRESH_TOKEN" ]; then YT=1; else echo "No YouTube secrets yet - skipping YouTube"; fi
+          if [ -n "$TIKTOK_CLIENT_KEY" ] && [ -n "$TIKTOK_CLIENT_SECRET" ] && [ -n "$TIKTOK_REFRESH_TOKEN" ]; then TT=1; else echo "No TikTok secrets yet - skipping TikTok"; fi
+          if [ "$YT" = 0 ] && [ "$TT" = 0 ]; then exit 0; fi
+          if [ "$YT" = 1 ] && [ "$TT" = 0 ]; then ARGS="--only youtube"; fi
+          if [ "$YT" = 0 ] && [ "$TT" = 1 ]; then ARGS="--only tiktok"; fi
+          export TIKTOK_REFRESH_TOKEN_OUT="$RUNNER_TEMP/tiktok_refresh_token"
+          python video/upload.py --manifest "$M" $ARGS
+          if [ -s "$TIKTOK_REFRESH_TOKEN_OUT" ]; then
+            # TikTok's old refresh token stops working once a new one is issued: store the new one as the secret
+            if [ -n "$GH_SECRETS_PAT" ]; then
+              GH_TOKEN="$GH_SECRETS_PAT" gh secret set TIKTOK_REFRESH_TOKEN --repo "$REPO" < "$TIKTOK_REFRESH_TOKEN_OUT" && echo "TikTok refresh token renewed in the repository secrets"
+            else
+              echo "::warning title=TikTok::TikTok issued a new refresh token but GH_SECRETS_PAT is not set - the next TikTok upload will fail (see video/UPLOAD.md)"
+            fi
+          fi
+          rm -f "$TIKTOK_REFRESH_TOKEN_OUT"
 
       - name: Save the upload ledger to the repository
         # Re-apply our entries onto the newest main (a JSON merge) instead of rebasing: never a merge conflict.
