@@ -105,6 +105,7 @@ jobs:
           if [ -d output/archive ]; then mkdir -p site/data/archive && cp output/archive/*.json site/data/archive/ 2>/dev/null || true; fi
           cp site-assets/sw.js site/sw.js 2>/dev/null || true
           cp site-assets/manifest.webmanifest site/manifest.webmanifest 2>/dev/null || true
+          cp site-assets/tiktok*.txt site/ 2>/dev/null || true   # TikTok developer URL verification
           mkdir -p site/icons && cp site-assets/icons/*.png site/icons/ 2>/dev/null || true
           mkdir -p site/brand && cp site-assets/brand/*.svg site/brand/
           cp vercel.json site/vercel.json
