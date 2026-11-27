@@ -26,7 +26,7 @@ How it works
 - Outro: the site's other features (shots, hits & blocks, lines & PP units, goalies, public %, playoff & Cup odds,
   streaks, slip) with the model's Stanley Cup favourite, then the brand, URL, follow and an 18+ / not-advice line.
 - Text stays between y=150 and y=1480 so platform buttons and captions don't cover it. Photo credits are on screen.
-- Music is synthesised in `music.py` (no samples, no copyright claims); loudness -14 LUFS.
+- Music: every video uses the licensed song (Snap Crackle) via `--music` or env `VIDEO_MUSIC_PATH`; the workflow fetches it from private storage (never commit it: public repo). Fallback when it is missing: the synthesised music in `music.py`. Loudness -14 LUFS.
 - Fonts (Anton, Exo 2, Oxanium) are SIL Open Font License, see `fonts/`.
 - Needs Python with Playwright (Chromium), Pillow, numpy, scipy, and ffmpeg. About 10 minutes on 2 CPUs.
 

@@ -110,6 +110,18 @@ jobs:
           code=$(curl -sS -o output/pro/latest.json -w "%{http_code}" -H "Authorization: Bearer $OIDC" "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload?path=latest.json")
           if [ "$code" != "200" ]; then echo "::warning::Pro data not available ($code): videos use the public numbers only"; rm -f output/pro/latest.json; else echo "Pro data: $(wc -c < output/pro/latest.json) bytes"; fi
 
+      - name: Fetch the licensed music (Snap Crackle, private storage; every video uses it)
+        if: steps.d.outputs.run == 'yes' && vars.LONGFORM_MUSIC != ''
+        env:
+          MUSIC: ${{ vars.LONGFORM_MUSIC }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/video-music"
+          OUT="$RUNNER_TEMP/video-music/$(basename "$MUSIC")"
+          OIDC=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=nhl-props-pro-upload" | python -c "import sys,json;print(json.load(sys.stdin)['value'])")
+          code=$(curl -sS -G -o "$OUT" -w "%{http_code}" -H "Authorization: Bearer $OIDC" --data-urlencode "path=music/$MUSIC" "https://evxnevqxykbfocqfqxid.supabase.co/functions/v1/pro-upload")
+          if [ "$code" = "200" ] && [ -s "$OUT" ]; then echo "VIDEO_MUSIC_PATH=$OUT" >> "$GITHUB_ENV"; echo "Music: $(wc -c < "$OUT") bytes"
+          else echo "::warning::Licensed music not available ($code): using the generated music"; rm -f "$OUT"; fi
+
       - name: Render the videos
         id: r
         if: steps.d.outputs.run == 'yes'

@@ -761,7 +761,7 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list, used: dict | N
     used = {} if used is None else used
     elig = [k for k in plan if k in CLIP_VIEW]
     elig.sort(key=lambda k: (used.get(CLIP_VIEW[k], 0), plan.index(k)))
-    clip_secs = set(elig[:2 if i % 2 == 0 else 1])
+    clip_secs = set(elig)                     # every section with a matching page gets its clip
     for k in clip_secs:
         used[CLIP_VIEW[k]] = used.get(CLIP_VIEW[k], 0) + 1
 
@@ -804,8 +804,7 @@ def game_beats(g: dict, i: int, n: int, day: dt.date, plan: list, used: dict | N
             if sa_ and sh_:
                 da, dh = max(sa_, key=star), max(sh_, key=star)
                 beats.append(duel_beat(g, da, dh))
-                if not any(b["kind"] == "app" and b["_req"]["type"] == "player" for b in beats):
-                    beats.append(app_beat(g, max((da, dh), key=star), i))
+                beats.append(app_beat(g, max((da, dh), key=star), i + 1))   # a second player page, the duel's best
         elif k == "h2h":
             hb = h2h_beat(g, day)
             beats.append(hb)
@@ -877,9 +876,9 @@ def app_futures(g: dict, src: dict) -> dict:
 
 LEAD = {"cold": 3.4, "slate": 2.8, "picks": 2.2, "title": 2.4, "model": 3.4, "form": 3.0, "goalies": 2.5, "player": 2.5, "h2h": 2.4,
         "keys": 2.8, "recap": 2.0, "cta": 2.2, "profile": 3.4, "duel": 3.2, "teamboard": 3.0, "lines": 3.0, "app": 5.4}
-MAXD = {"slate": 16, "cold": 10, "app": 8}
+MAXD = {"slate": 16, "cold": 10, "app": 11}
 MIND = {"cold": 11, "slate": 14, "title": 9, "model": 10, "recap": 9, "cta": 7, "player": 12, "goalies": 12, "profile": 17, "duel": 13,
-        "teamboard": 14, "lines": 14, "app": 7}
+        "teamboard": 14, "lines": 14, "app": 9}
 
 
 def build_spec(ext: dict, day: dt.date, force: list | None, max_seconds: float | None) -> dict | None:
@@ -997,15 +996,15 @@ def add_media(spec: dict, day: dt.date, img: Path) -> None:
             kind = r.get("kind", "desktop")
             try:
                 if r["type"] == "player":
-                    clip = C.player(r["pid"], stat=r.get("stat", "p"), kind=kind, name=f"app{i}", prefer_game=r.get("game"), dur=4.5)
+                    clip = C.player(r["pid"], stat=r.get("stat", "p"), kind=kind, name=f"app{i}", prefer_game=r.get("game"), dur=6.5)
                 elif r["type"] == "game":
-                    clip = C.game(r["game"], r["view"], kind=kind, name=f"app{i}", focus=r.get("focus"), dur=4.5)
+                    clip = C.game(r["game"], r["view"], kind=kind, name=f"app{i}", focus=r.get("focus"), dur=6.5)
                 elif r["type"] == "futures":
-                    clip = C.futures(r["teams"], kind=kind, name=f"app{i}", dur=4.5)
+                    clip = C.futures(r["teams"], kind=kind, name=f"app{i}", dur=6.5)
                 elif r["type"] == "slate":
-                    clip = C.slate(r["date"], r["gids"], kind=kind, name=f"app{i}", dur=5.0)
+                    clip = C.slate(r["date"], r["gids"], kind=kind, name=f"app{i}", dur=7.0)
                 else:
-                    clip = C.explorer(r["q"], kind=kind, name=f"app{i}", dur=5.0)
+                    clip = C.explorer(r["q"], kind=kind, name=f"app{i}", dur=7.0)
             except Exception as e:  # noqa: BLE001
                 print(f"  app clip {i} failed: {e}")
             if clip:
@@ -1078,34 +1077,6 @@ def captions(spec: dict, day: dt.date) -> dict:
 
 
 # ------------------------------------------------------------------ music
-def file_track(path: str, total: float, xfade: float = 2.0, fade_in: float = 1.0, fade_out: float = 3.0):
-    """A licensed music file (any format ffmpeg reads) looped for the whole video: equal-power crossfade over each loop
-    seam, 1 s fade-in, 3 s fade-out. Loudness is set in the final encode (loudnorm -18 LUFS, background level)."""
-    import numpy as np
-    sr = music.SR
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(sr), "-"],
-                         capture_output=True, check=True).stdout
-    y = np.frombuffer(raw, np.float32).reshape(-1, 2).copy()
-    loud = np.where(np.abs(y).max(axis=1) > 10 ** (-50 / 20))[0]        # trim silence at both ends (clean seam)
-    if len(loud):
-        y = y[loud[0]:loud[-1] + 1]
-    n, k = int(round(total * sr)), int(xfade * sr)
-    if len(y) <= 2 * k:
-        raise SystemExit(f"music file too short to loop: {path}")
-    up = np.sin(np.linspace(0, np.pi / 2, k))[:, None] ** 1
-    down = np.cos(np.linspace(0, np.pi / 2, k))[:, None]
-    out = y.copy()
-    while len(out) < n + k:
-        head = out[-k:] * down + y[:k] * up
-        out = np.concatenate([out[:-k], head, y[k:]])
-    out = out[:n]
-    fi, fo = int(fade_in * sr), int(fade_out * sr)
-    out[:fi] *= np.linspace(0, 1, fi)[:, None]
-    out[-fo:] *= np.linspace(1, 0, fo)[:, None] ** 2
-    pk = np.max(np.abs(out)) + 1e-9
-    return (out / pk * .89).astype(np.float32)
-
-
 def make_music(spec: dict, seed: str) -> "music.np.ndarray":
     import numpy as np
     total = spec["total"]
@@ -1173,7 +1144,7 @@ def render_video(spec: dict, work: Path, base: Path, seed: str, preview=None, st
             return stats
         t0 = time.time()
         wav = work / "music.wav"
-        music.write_wav(str(wav), file_track(music_file, total) if music_file else make_music(spec, seed))
+        music.write_wav(str(wav), music.file_track(music_file, total) if music_file else make_music(spec, seed))
         stats["music"] = Path(music_file).name if music_file else "generated"
         stats["music_s"] = round(time.time() - t0, 1)
         print(f"  music: {stats['music_s']}s", flush=True)

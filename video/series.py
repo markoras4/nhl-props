@@ -29,6 +29,7 @@ import argparse
 import base64
 import datetime as dt
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -627,9 +628,21 @@ def clip_plan(spec: dict, day: dt.date) -> list:
         P0 = parts[i0]
         out.append({"after": i0, "req": {"type": "player", "pid": ps[0]["id"], "stat": "p", "game": (ps[0].get("next") or {}).get("game")},
                     "cap": f"{ps[0]['name']}'s Heat Index & last 10", "split": _mini(P0, f"{P0['v']:+.1f}", "Heat Index")})
+        if len(ps) > 1:
+            i1 = next((i for i, P in enumerate(parts) if P["kind"] == "heat" and i > i0), None)
+            if i1 is not None:
+                out.append({"after": i1, "req": {"type": "player", "pid": ps[1]["id"], "stat": "p", "game": (ps[1].get("next") or {}).get("game")},
+                            "cap": f"{ps[1]['name']} on evenout"})
+        g0 = (ps[0].get("next") or {}).get("game")
+        if g0:
+            out.append({"after": None, "req": {"type": "game", "view": "teams", "game": g0, "focus": "^PDO"}, "cap": "His next game: team ranks"})
         out.append({"after": None, "req": {"type": "explore", "q": ps[-1]["name"].split()[-1]}, "cap": "Goals vs expected goals, every player"})
     elif s == "night":
         star = next((i for i, P in enumerate(parts) if P["kind"] == "star"), None)
+        # listed first: same spot as his page, inserted first, so it ends up right AFTER his page
+        if star is not None and spec.get("_star"):
+            out.append({"after": star, "req": {"type": "explore", "q": spec["_star"]["name"].split()[-1]},
+                        "cap": f"{spec['_star']['name'].split()[-1]} among every player"})
         if star is not None and spec.get("_star"):
             P = parts[star]
             pts = next((v for k, v in P.get("tiles", []) if k == "PTS"), "")
@@ -641,15 +654,19 @@ def clip_plan(spec: dict, day: dt.date) -> list:
         race = next((P for P in parts if P["kind"] == "race"), None)
         if race:
             out.append({"after": None, "req": {"type": "futures", "teams": [r["team"] for r in race["rows"]][:2]}, "cap": "Playoff chances after last night"})
+        if race and luck is None and spec.get("_luck"):
+            out.append({"after": None, "req": {"type": "explore", "q": spec["_luck"]["name"].split()[-1]}, "cap": "Goals vs expected goals, every player"})
+        elif race:
+            pass
         elif luck is None and spec.get("_luck"):
             out.append({"after": None, "req": {"type": "explore", "q": spec["_luck"]["name"].split()[-1]}, "cap": "Goals vs expected goals, every player"})
         elif star is not None:
             out.append({"after": None, "req": {"type": "futures", "team": parts[star]["meta"].split(" · ")[0]},
                         "cap": f"{parts[star]['meta'].split(' · ')[0]} in the playoff race"})
-    return out[:3]
+    return out[:5]
 
 
-CLIP_DUR, CLIP_LEAD, CLIP_TAIL = 4.0, .45, .45
+CLIP_DUR, CLIP_LEAD, CLIP_TAIL = 5.0, .45, .45
 
 
 def record_clip(C, req: dict, name: str, cap: str) -> dict | None:
@@ -692,7 +709,7 @@ def insert_app(spec: dict, after, clip: dict, split=None) -> float:
 
 
 def add_media(spec: dict, day: dt.date, sw: Path, get_clips) -> None:
-    """Preview photos behind the cards (where the game has one) and 2-3 app clips (clip_plan). A clip that can't be
+    """Preview photos behind the cards (where the game has one) and 3-5 app clips (clip_plan). A clip that can't be
     recorded is left out and the timeline closes up."""
     import preview_photos as PH
     s = spec["series"]
@@ -791,7 +808,7 @@ def _captions(spec: dict, day: dt.date) -> dict:
 RENDER = "async t => { render(t); const p = window.PEND; window.PEND = null; if (p) await p; }"
 
 
-def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None) -> None:
+def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None, music_file: str | None = None) -> None:
     from playwright.sync_api import sync_playwright
     (work / "img").mkdir(parents=True, exist_ok=True)
     shutil.copytree(HERE / "fonts", work / "fonts", dirs_exist_ok=True)
@@ -814,7 +831,8 @@ def render_video(spec: dict, work: Path, out_base: Path, seed: str, preview=None
             return
         cues = [p["a"] for p in spec["parts"]] + [spec["timing"]["outroAt"]]
         wav = work / "music.wav"
-        song = music.series_track(spec["series"], total, cues=cues, seed=seed) if hasattr(music, "series_track") else music.track(total, cues=cues)
+        song = (music.file_track(music_file, total) if music_file      # the licensed song (Snap Crackle), looped
+                else music.series_track(spec["series"], total, cues=cues, seed=seed))
         music.write_wav(str(wav), song)
         cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "image2pipe", "-framerate", str(FPS), "-c:v", "mjpeg", "-i", "-",
                "-i", str(wav), "-map", "0:v", "-map", "1:a", "-vf", "noise=alls=3:allf=t", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
@@ -864,9 +882,13 @@ def main():
     ap.add_argument("--pro", default=str(ROOT / "output" / "pro" / "latest.json"), help="Pro data patch (output/pro/latest.json)")
     ap.add_argument("--ledger", default=str(ROOT / "output" / "ledger.json"))
     ap.add_argument("--out", default=str(ROOT / "video" / "out"))
+    ap.add_argument("--music", default=os.environ.get("VIDEO_MUSIC_PATH"),
+                    help="licensed music file under every video (default: env VIDEO_MUSIC_PATH; else generated music)")
     ap.add_argument("--preview", help="comma-separated times: still frames only")
     a = ap.parse_args()
     day = dt.date.fromisoformat(a.date)
+    mf = a.music if a.music and Path(a.music).is_file() else None
+    print("music:", Path(mf).name if mf else ("file not found, generated" if a.music else "generated"))
     series = a.series.split(",") if a.series else todays_series(day) if a.all else ["board"]
     if a.slot:
         series = [x for x in series if (x in PAST_SERIES) == (a.slot == "morning")]
@@ -931,7 +953,7 @@ def main():
             base = out / f"{s}-{a.date}"
             print(f"{s}: {spec['timing']['total']:.1f}s, {len(spec['parts'])} scenes" + (f", music styles {styles}" if styles else ""))
             t0 = time.time()
-            render_video(spec, sw, base, seed=a.date, preview=[float(x) for x in a.preview.split(",")] if a.preview else None)
+            render_video(spec, sw, base, seed=a.date, music_file=mf, preview=[float(x) for x in a.preview.split(",")] if a.preview else None)
             print(f"{s}: rendered in {time.time() - t0:.0f}s")
             if a.preview:
                 continue

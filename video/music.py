@@ -20,6 +20,7 @@ drum fill and an A/B part change, never a riser or sweep.
 """
 import datetime
 import hashlib
+import subprocess
 import secrets
 import zlib
 
@@ -1633,3 +1634,32 @@ def write_wav(path, x):
 if __name__ == "__main__":
     import sys
     write_wav(sys.argv[1] if len(sys.argv) > 1 else "test.wav", track(20, cues=[4, 12]))
+
+
+# ------------------------------------------------------------------ licensed music file (Snap Crackle), looped
+def file_track(path: str, total: float, xfade: float = 2.0, fade_in: float = 1.0, fade_out: float = 3.0):
+    """A licensed music file (any format ffmpeg reads) looped for the whole video: equal-power crossfade over each loop
+    seam, 1 s fade-in, 3 s fade-out. Loudness is set in the final encode (loudnorm -18 LUFS, background level)."""
+    import numpy as np
+    sr = SR
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "2", "-ar", str(sr), "-"],
+                         capture_output=True, check=True).stdout
+    y = np.frombuffer(raw, np.float32).reshape(-1, 2).copy()
+    loud = np.where(np.abs(y).max(axis=1) > 10 ** (-50 / 20))[0]        # trim silence at both ends (clean seam)
+    if len(loud):
+        y = y[loud[0]:loud[-1] + 1]
+    n, k = int(round(total * sr)), int(xfade * sr)
+    if len(y) <= 2 * k:
+        raise SystemExit(f"music file too short to loop: {path}")
+    up = np.sin(np.linspace(0, np.pi / 2, k))[:, None] ** 1
+    down = np.cos(np.linspace(0, np.pi / 2, k))[:, None]
+    out = y.copy()
+    while len(out) < n + k:
+        head = out[-k:] * down + y[:k] * up
+        out = np.concatenate([out[:-k], head, y[k:]])
+    out = out[:n]
+    fi, fo = int(fade_in * sr), int(fade_out * sr)
+    out[:fi] *= np.linspace(0, 1, fi)[:, None]
+    out[-fo:] *= np.linspace(1, 0, fo)[:, None] ** 2
+    pk = np.max(np.abs(out)) + 1e-9
+    return (out / pk * .89).astype(np.float32)
