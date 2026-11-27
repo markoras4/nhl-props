@@ -1,5 +1,5 @@
-Season 2026-2027. Fetching schedule from 2026-11-26 ...
-  48 upcoming games over 6 days
+Season 2026-2027. Fetching schedule from 2026-11-27 ...
+  60 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -9,7 +9,7 @@ Fetching 734 skaters and 72 goalies (careers + game logs) ...
 Fetching 399 recent box scores (hits, blocks) ...
 News: 118 injuries, likely starters for 28 games (+56 backup reports), line combinations for 32/32 teams, game-day lineups for 17 teams (2026-11-25, updated 2026-11-26T22:58:19.473Z)
   shot maps: 399 games, 45511 attempts
-Model built: 48 games, 734 skaters (569 expected to play)
+Model built: 60 games, 734 skaters (569 expected to play)
 Odds: bookmaker prices for 15 games, 532 players
 Odds: sharp-book prices for 0 games, 0 player markets
   Stoiximan sync: 0 games, 0 player prices (last push 2026-11-25T22:17:22.498634+00:00, pre)
@@ -22,8 +22,8 @@ Goalie projections: 72 goalies
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 12,114 player-games
   history: game-by-game files for 729 players (3 seasons)
-  archive: 6 past dates published (2026-11-19, 2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25)
+  archive: 5 past dates published (2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25)
 Best picks record: 435 graded, 114 won, +2.10 units
 Triage ledger: 226 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 2138 bets +19.2u, L 4517 bets -191.9u, F 3271 bets -205.5u
-Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-26.html
+Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-27.html
