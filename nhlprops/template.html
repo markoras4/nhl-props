@@ -1192,6 +1192,32 @@ a.mbtn{text-decoration:none;display:inline-flex;align-items:center;justify-conte
 })();
 </script>
 <style>.brand img{height:30px;width:auto;display:block}.brand .eo-l{display:none}@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .brand .eo-d{display:none}:root:not([data-theme="dark"]) .brand .eo-l{display:block}}:root[data-theme="light"] .brand .eo-d{display:none}:root[data-theme="light"] .brand .eo-l{display:block}@media (max-width:640px){.brand img{height:24px}}</style>
+<!-- OPENREPLAY-TEMP-START: temporary session recording; delete this whole block to remove -->
+<script>
+var initOpts = {
+  projectKey: "OvWyXL8ZTXnJs8uIJUvB",
+  // 0 - plain, 1 - obscured, 2 - ignored
+  defaultInputMode: 2,
+  obscureTextNumbers: false,
+  obscureTextEmails: true,
+};
+var startOpts = { userID: "" };
+(function(A,s,a,y,e,r){
+r=window.OpenReplay=[e,r,y,[s-1, e]];
+s=document.createElement('script');s.src=A;s.async=!a;
+document.getElementsByTagName('head')[0].appendChild(s);
+r.start=function(v){r.push([0])};
+r.stop=function(v){r.push([1])};
+r.setUserID=function(id){r.push([2,id])};
+r.setUserAnonymousID=function(id){r.push([3,id])};
+r.setMetadata=function(k,v){r.push([4,k,v])};
+r.event=function(k,p,i){r.push([5,k,p,i])};
+r.issue=function(k,p){r.push([6,k,p])};
+r.isActive=function(){return false};
+r.getSessionToken=function(){};
+})("https://static.openreplay.com/latest/openreplay.js",1,0,initOpts,startOpts);
+</script>
+<!-- OPENREPLAY-TEMP-END -->
 </head>
 <body>
 <header>
@@ -6188,6 +6214,7 @@ function pmBox(g, d){
   return pmShell(vol, `<div class="pmrows">${rows}</div><p class="note">${t("pm_note")}</p>`);
 }
 if (sb) sb.auth.onAuthStateChange((ev, session) => { USER = session?.user || null;
+  try { if (USER && window.OpenReplay) OpenReplay.setUserID(USER.email || USER.id); } catch (_) {}   // OPENREPLAY-TEMP: delete this line to remove
   if (ev === "SIGNED_OUT" && PAYWALLED && PRO_LOADED && PRO_PLANS.includes(PLAN)){ location.reload(); return; }   // drop Pro data from memory
   setTimeout(async () => { await loadPlan(); await Promise.all([loadPicks(), loadWatch(), loadParlays()]); header(); render();
     if (!window.__coDone){ window.__coDone = 1; checkoutReturn(); } }, 0); });
