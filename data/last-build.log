@@ -1,5 +1,5 @@
 Season 2026-2027. Fetching schedule from 2026-11-27 ...
-  60 upcoming games over 7 days
+  57 upcoming games over 7 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -9,13 +9,12 @@ Fetching 732 skaters and 72 goalies (careers + game logs) ...
 Fetching 399 recent box scores (hits, blocks) ...
 News: 114 injuries, likely starters for 23 games (+56 backup reports), line combinations for 32/32 teams, game-day lineups for 29 teams (2026-11-27, updated 2026-11-27T19:33:37.186Z)
   shot maps: 399 games, 45511 attempts
-Model built: 60 games, 732 skaters (567 expected to play)
-Odds: bookmaker prices for 18 games, 175 players
+Model built: 57 games, 732 skaters (568 expected to play)
+Odds: bookmaker prices for 17 games, 141 players
 Odds: sharp-book prices for 4 games, 205 player markets
-  Stoiximan sync: 23 games, 3793 player prices (last push 2026-11-27T21:05:39.980953+00:00, pre); unmatched: Brett Leason, Dominic Toninato, Jansen Harkins, Ryan Tverberg, Vladislav Kolyachonok, Κ. Μπράουν, Μπεν Τζόουνς, Ο. Μπέκ
-  manual odds: 3080 player prices added
+  Stoiximan sync: 20 games, 3044 player prices (last push 2026-11-27T21:05:39.980953+00:00, pre); unmatched: Brett Leason, Dominic Toninato, Jansen Harkins, Ο. Μπέκ, Τζέικ Έβανς
+  manual odds: 2477 player prices added
 Public betting: splits for 4 games
-Public betting: saved 3 locked splits (180 this season)
   season simulation: 10000 seasons, 945 games left, top Cup: CAR 39%, COL 14%, MIN 12%
 Futures odds: Cup 32, conference 32, division 0, playoffs 26, points 3
 Player projections: 732 skaters
