@@ -67,7 +67,10 @@ DRIVER = r"""
     body.__lean #main>:not(.ghero):not(.sides):not(#sidebody){display:none!important}
     body[data-cv="teams"] #sidebody>:not(.trbox){display:none!important}
     body[data-cv="goalies"] #sidebody>:not(.gsum){display:none!important}
-    body[data-cv="lines"] #sidebody>:not(.lnbox){display:none!important}`;
+    body[data-cv="lines"] #sidebody>:not(.lnbox){display:none!important}
+    body[data-cv="scores"] #sidebody>:not(.sgbox){display:none!important}
+    body[data-cv="shots"] #sidebody>:not(.shbox){display:none!important}
+    body[data-cv="defence"] #sidebody>:not(.opbox){display:none!important}`;
   document.head.appendChild(st);
   try { window.lgCount = function () {}; } catch (e) {}   // the count-up runs on the wall clock: off (numbers shown final)
   const p = document.createElement('div'); p.id = '__ptr';
@@ -144,9 +147,11 @@ def ease(x: float) -> float:
 
 
 class AppClips:
-    def __init__(self, work: Path, ref: str = "origin/site", date: str | None = None):
+    def __init__(self, work: Path, ref: str = "origin/site", date: str | None = None, pro: dict | None = None):
+        """pro: the day's Pro data patch (output/pro/latest.json): the app is shown as a signed-in Pro user sees it,
+        every number unlocked (odds are still hidden by the guard)."""
         from playwright.sync_api import sync_playwright
-        self.work, self.date = Path(work), date
+        self.work, self.date, self.pro = Path(work), date, pro
         self.site = Site(ref)
         self._pw = sync_playwright().start()
         self.br = self._pw.chromium.launch()
@@ -170,6 +175,8 @@ class AppClips:
             pg.goto(HOST + path)
             pg.wait_for_function("typeof DATA !== 'undefined' && typeof render === 'function' && typeof go === 'function' && document.querySelector('#main')", timeout=90000)
             pg.evaluate("() => document.documentElement.setAttribute('data-theme', 'dark')")
+            if self.pro:
+                pg.evaluate("(X) => { applyPro(X); PRO = true; PRO_LOADED = true; PLAN = 'pro'; PRO_STATE = ''; render(); }", self.pro)
             pg.evaluate(DRIVER)
             pg.evaluate(f"() => __clip.setKind({'true' if K['touch'] else 'false'})")
             self.pages[kind] = pg
@@ -292,7 +299,8 @@ class AppClips:
         self._mode(pg, view)
         pg.evaluate("() => { gamePage(); window.scrollTo(0, 0); }")
         self._settle(pg, 900)
-        sel = {"teams": "#sidebody .trbox", "goalies": "#sidebody .gsum", "lines": "#sidebody .lnbox"}[view]
+        sel = {"teams": "#sidebody .trbox", "goalies": "#sidebody .gsum", "lines": "#sidebody .lnbox",
+               "scores": "#sidebody .sgbox", "shots": "#sidebody .shbox", "defence": "#sidebody .opbox"}[view]
         m = pg.evaluate("""([sel, tab]) => { const b = document.querySelector(sel), s = document.querySelector(`#sides [data-s="${tab}"]`);
             if (!b || !s || b.getBoundingClientRect().height < 60) return null;
             const n = document.querySelector('#nav')?.getBoundingClientRect();
@@ -305,7 +313,8 @@ class AppClips:
                "goalies": """(f) => { const bs = [...document.querySelectorAll('#sidebody .gsum > .box')]; return bs.find(b => (b.querySelector('h4')?.textContent || '').trim().startsWith(f || '~')) || bs[0] || null; }""",
                "lines": """(f) => { if (!f) return null; const [tm, k] = f; const i = ['f1','f2','f3','f4','d1','d2','d3','pp1','pp2'].indexOf(k);
                    const row = document.querySelectorAll('#sidebody .lnrow')[i]; if (!row) return null; const cs = row.querySelectorAll('.lncard');
-                   return cs[tm === gameById[state.game].home ? 1 : 0] || null; }"""}[view]
+                   return cs[tm === gameById[state.game].home ? 1 : 0] || null; }""",
+               "scores": "() => null", "shots": "() => null", "defence": "() => null"}[view]
         fbox = pg.evaluate(f"(f) => {{ const e = ({fjs})(f); if (!e) return null; e.dataset.__f = '1'; return __clip.box(e); }}", focus)
         # start on the roster tab (as the page opens), then the tap shows the section
         pg.evaluate("() => { delete document.body.dataset.cv; state.side = gameById[state.game].away; gamePage(); window.scrollTo(0, 0); }")
@@ -329,7 +338,8 @@ class AppClips:
             t_hl = t_tap + 1.85
             events.append((t_hl, fbox["x"] + min(fbox["w"] * .5, 160), fbox["y"] + min(fbox["h"] / 2, 40), False))
             acts.append((t_hl, f"() => {{ const e = ({fjs})({json.dumps(focus)}); if (e) e.classList.add('__hl'); }}"))
-        what = {"teams": "team ranks", "goalies": "goalie cards", "lines": "tonight's lines"}[view]
+        what = {"teams": "team ranks", "goalies": "goalie cards", "lines": "tonight's lines", "scores": "chance of each final score",
+                "shots": "shots on goal model", "defence": "what each defence allows by position"}[view]
         return self._play(pg, kind, name, dur, keys, events, acts,
                           {"what": f"{ok['away']} @ {ok['home']} game page: {what}" + (f" ({focus if isinstance(focus, str) else '/'.join(focus)})" if focus else ""),
                            "caption": caption, "game": gid, "page": f"game/{view}"})
@@ -503,6 +513,104 @@ class AppClips:
             actions = [(T["tap2"], stat_js)]
         return self._record(pg, kind, name, dur, scroll, pointer, actions,
                             {"what": f"{info['name']}: last 10 games, Heat Index, game by game", "caption": caption, "game": info["game"], "pid": pid})
+
+    # the sections of a player's card (free for every player), by the start of the box title
+    CARD = {"built": "^how the number", "luck": "^skill or luck", "opp": "against", "l10": "^last 10", "gbg": "^game by game",
+            "mates": "^linemates", "role": "^role", "proj": "^season projection", "shots": "^shot profile", "avg": "^averages"}
+
+    def card(self, pid, box: str, kind: str = "phone", name: str = "clip", caption: str = "", prefer_game=None, dur: float = 6.0,
+             taps: list | None = None, pre: list | None = None, focus: str | None = None, pan: bool = False):
+        """One section of the player's card on his game page, scrolled into view and lit; then the finger taps the
+        section's own controls. box: a key of CARD (or a title regex). taps: [(t, css selector inside the box)];
+        a <select> takes "selector|value" and is set instead of clicked. pre: selectors applied before recording
+        (start state). focus: a selector inside the box to frame (tall boxes: the rink chart). pan: scroll down the box."""
+        pg = self.page(kind)
+        self._mode(pg, None)
+        pid, rx = str(pid), self.CARD.get(box, box)
+        info = pg.evaluate("""([pid, pref]) => {
+          const p = (typeof P === 'function' ? P(pid) : null) || DATA.players?.[pid];
+          if (!p) return {err: 'no player'};
+          const gs = DATA.games.filter(g => (g.home === p.team || g.away === p.team) && (!g.state || ['FUT','PRE'].includes(g.state)))
+                               .sort((a, b) => (a.start || '').localeCompare(b.start || ''));
+          const g = gs.find(x => String(x.id) === String(pref)) || gs[0];
+          if (!g) return {err: 'no upcoming game for ' + p.team};
+          state.l10n = 10; state.l10pop = false; state.l10anim = false;
+          go({tab: 'games', game: String(g.id), side: p.team}); state.open = String(pid); render();
+          return {game: String(g.id), name: p.name, team: p.team};
+        }""", [pid, str(prefer_game) if prefer_game else None])
+        if not info or info.get("err"):
+            print(f"  app clip {name}: player {pid} not shown ({(info or {}).get('err')})")
+            return None
+        self._settle(pg, 1300)
+        FIND = f"""(() => {{ const d = document.querySelector('tr.row[data-id="{pid}"]')?.nextElementSibling; return d ? __clip.findBox({json.dumps(rx)}, d) : null; }})()"""
+
+        def act(sel, hl=True):
+            lit = f"const b2 = {FIND}; if (b2) b2.classList.add('__hl');" if hl else ""
+            if "|" in sel:
+                q, v = sel.split("|", 1)
+                return (f"() => {{ const b = {FIND}; const e = b && b.querySelector({json.dumps(q)}); if (e) {{ e.value = {json.dumps(v)}; "
+                        f"e.dispatchEvent(new Event('change', {{bubbles: true}})); e.dispatchEvent(new Event('input', {{bubbles: true}})); }} {lit} }}")
+            return f"() => {{ const b = {FIND}; const e = b && b.querySelector({json.dumps(sel)}); if (e) e.click(); {lit} }}"
+        def start():
+            for sel in pre or []:
+                pg.evaluate(act(sel, False))
+                pg.wait_for_timeout(250)
+            self._settle(pg, 400)
+        # where the focus ends up after the taps (the frame must fit the final layout), then back to the start state
+        f_end = None
+        if taps and focus:
+            start()
+            for _, sel in taps:
+                pg.evaluate(act(sel, False))
+                pg.wait_for_timeout(300)
+            self._settle(pg, 400)
+            f_end = pg.evaluate(f"""(focus) => {{ const b = {FIND}; if (!b) return null; const fs = [...b.querySelectorAll(focus)].sort((x, y) => y.getBoundingClientRect().height - x.getBoundingClientRect().height);
+                return fs[0] ? __clip.box(fs[0]) : null; }}""", focus)
+        start()
+        locked = pg.evaluate(f"""() => {{ const b = {FIND}; if (!b) return false; const h = b.getBoundingClientRect().height;
+            const l = [...b.querySelectorAll('.pwlock')].reduce((s, e) => s + e.getBoundingClientRect().height, 0);
+            return l > h * .45 || (b.innerText || '').replace(/\s+/g, ' ').trim().length < 60; }}""")
+        if locked:
+            print(f"  app clip {name}: {info['name']}'s '{box}' section is locked (Pro) or empty")
+            return None
+        m = pg.evaluate(f"""([focus, sels]) => {{ const b = {FIND}; if (!b || b.getBoundingClientRect().height < 60) return null;
+            let f = null; if (focus) {{ const fs = [...b.querySelectorAll(focus)].sort((x, y) => y.getBoundingClientRect().height - x.getBoundingClientRect().height); f = fs[0] ? __clip.box(fs[0]) : null; }}
+            const n = document.querySelector('#nav')?.getBoundingClientRect();
+            return {{box: __clip.box(b), focus: f, nav: n && n.top > innerHeight / 2 ? innerHeight - n.top : 0,
+                     taps: sels.map(s => {{ const e = b.querySelector(s.split('|')[0]); return e ? __clip.box(e) : null; }})}}; }}""",
+                        [focus, [x[1] for x in taps or []]])
+        if not m:
+            print(f"  app clip {name}: {info['name']} has no '{box}' section")
+            return None
+        K, top = KINDS[kind], self._top(kind)
+        view_h = K["vh"] - m["nav"]
+        B, F = m["box"], f_end or m["focus"]
+        room = view_h - top
+        if F and F["h"] < room:
+            y1 = max(F["y"] + F["h"] / 2 - top - room / 2, B["y"] - top - 10)
+            y1 = min(y1, F["y"] - top - 8)
+        elif F:
+            y1 = F["y"] - top - 8
+        elif B["h"] <= room - 20:
+            y1 = B["y"] - top - (room - B["h"]) / 2
+        else:
+            y1 = B["y"] - top - 10
+        y1 = max(0.0, y1)
+        y0 = max(0.0, y1 - 300)
+        keys = [(0, y0), (.2, y0), (1.1, y1)]
+        y_end = B["y"] + B["h"] - view_h + 20
+        if pan and y_end > y1 + 40:
+            keys += [(max(2.2, dur * .45), y1), (dur - .4, y_end)]
+        keys.append((dur, keys[-1][1]))
+        events, acts = [], [(1.15, f"() => {{ const b = {FIND}; if (b) b.classList.add('__hl'); }}")]
+        for (t, sel), tb in zip(taps or [], m["taps"]):
+            if not tb:
+                continue
+            events.append((t, tb["x"] + min(tb["w"] / 2, 120), tb["y"] + tb["h"] / 2, True))
+            acts.append((t, act(sel)))
+        return self._play(pg, kind, name, dur, keys, events, acts,
+                          {"what": f"{info['name']}: {box} section", "caption": caption, "game": info["game"], "pid": pid, "page": f"card/{box}"})
+
 
     def explorer(self, query: str, kind: str = "desktop", name: str = "clip", caption: str = "", dur: float = 5.0):
         """Players explorer (Luck: goals vs expected goals): the chart scrolls in, then the player's name is typed into

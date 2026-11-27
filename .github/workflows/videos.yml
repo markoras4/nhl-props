@@ -131,6 +131,8 @@ jobs:
         run: |
           SLOTARG=""; if [ "$SLOT" != "all" ]; then SLOTARG="--slot $SLOT"; fi
           python video/series.py --date "$DATE" --all $SLOTARG --out video/out
+          # tonight's games: a Game preview Short for each of the 3 featured games (stats only, real app footage)
+          if [ "$SLOT" != "morning" ]; then python video/previews.py --date "$DATE" --n 3 --out video/out || echo "::warning::Game previews failed"; fi
           if [ ! -f "video/out/$DATE/manifest.json" ]; then echo "Nothing to post in this slot today"; echo "any=no" >> "$GITHUB_OUTPUT"; exit 0; fi
           echo "any=yes" >> "$GITHUB_OUTPUT"
           ls -la "video/out/$DATE"

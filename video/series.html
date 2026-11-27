@@ -154,6 +154,14 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
 .mini .who .mt{font-size:22px;letter-spacing:2px}
 .mbig{margin-top:26px;font:400 96px/0.95 Anton;color:var(--pink);text-transform:uppercase}
 .mini .lab{margin-top:10px}
+.phone.sm{zoom:.86;left:333px;top:365px}
+.appnote{position:absolute;left:72px;right:72px;top:1404px;padding:20px 28px;border-radius:26px;background:rgba(16,10,18,.82);border:2px solid rgba(255,79,168,.35);
+  font:600 31px/1.32 "Exo 2";color:#f1e6f0;text-align:center}
+.story .kick{font:700 26px Oxanium;letter-spacing:4px;text-transform:uppercase;color:var(--pink);margin-top:250px}
+.story .ttl{font:800 56px/1.08 "Exo 2";color:#fff;margin-top:18px}
+.story .dek{font:500 33px/1.38 "Exo 2";color:#e4d6e2;margin-top:26px}
+.story .mu{display:flex;gap:16px;margin-top:30px}
+.story .mu span{padding:8px 20px;border-radius:999px;border:3px solid var(--c);color:var(--c);font:800 28px Oxanium;letter-spacing:3px}
 .appurl{position:absolute;left:0;right:0;top:1552px;text-align:center;font:700 24px Oxanium;letter-spacing:2px;color:var(--mute)}
 /* outro */
 #outro .logo{position:absolute;left:140px;width:800px;top:430px}
@@ -280,7 +288,8 @@ parts.forEach((P,i)=>{
   if(P.kind==='app'){
     if(P.bg){const b=el('div','sbg',null,root);b.style.backgroundImage=`url(${P.bg})`;}
     const cap=el('div','appcap',`<span>On evenout</span>${esc(P.cap)}`,root);
-    const ph=el('div','phone',`<div class="scr"><img alt=""></div><i class="btn"></i>`,root);
+    const ph=el('div','phone'+(P.note?' sm':''),`<div class="scr"><img alt=""></div><i class="btn"></i>`,root);
+    const note=P.note?el('div','appnote',esc(P.note),root):null;
     const img=ph.querySelector('img');let cur=-1;
     const show=k=>{if(k===cur)return;cur=k;img.src=`${P.src}${String(k).padStart(3,'0')}.jpg`;window.PEND=img.decode().catch(()=>{});};
     // split beat: the card we just showed, small on the left, the phone with the real page slides in on the right;
@@ -294,7 +303,14 @@ parts.forEach((P,i)=>{
         ph.style.transform=`translate(${lerp(276,0,m)+(1-q)*700}px,${lerp(60,0,m)}px) scale(${lerp(.72,1,m)})`;}
       else{const q=eExpo(seg(u,0,.6));ph.style.opacity=clamp(q*1.5);ph.style.transform=`translateY(${(1-q)*500}px) rotate(${(1-q)*-6}deg) scale(${lerp(.9,1,q)+seg(u,.6,D)*.03})`;}
       show(Math.max(0,Math.min(P.n-1,Math.floor((u-P.lead)*30+1e-6))));
-      if(u>D-.4){out(ph,u,D-.4);out(cap,u,D-.4);}};
+      if(note){popIn(note,u,.5,40,.45);}
+      if(u>D-.4){out(ph,u,D-.4);out(cap,u,D-.4);if(note)out(note,u,D-.4);}};
+  }
+  if(P.kind==='story'){
+    const card=el('div','card story',`<div class="kick">${esc(P.kicker)}</div><div class="ttl">${esc(P.title)}</div>${P.deck?`<div class="dek">${esc(P.deck)}</div>`:''}
+      <div class="mu"><span style="--c:${P.ac}">${esc(P.away)}</span><span style="--c:${P.hc}">${esc(P.home)}</span></div>`,root);
+    css(card,{top:'300px'});const parts_=[...card.querySelectorAll('.kick,.ttl,.dek,.mu')];
+    s.draw=u=>{const D=P.b-P.a;popIn(card,u,0,120,.55);parts_.forEach((e,j)=>popIn(e,u,.35+j*.3,40,.45));if(u>D-.4) out(card,u,D-.4);};
   }
   // ---------- last night (stats only) ----------
   const D=P.b-P.a, leave=()=>{};

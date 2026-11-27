@@ -87,6 +87,18 @@ Output in `video/out/`: `<DATE>-nhl-review.mp4`, `<DATE>-review-cover.jpg`, `<DA
   style); tempo, key, mode, chord loop and patterns also come from the seed. Same seed -> identical audio.
 - Preview all styles: `video/out/music-sampler-v3.mp3` (12 s each, in `STYLES` order). 60 s renders in ~1.5 s.
 
+# Game previews (video/previews.py)
+
+- One 9:16 Short per featured game tonight (3 by default: games with a written preview, star power, close matchups).
+  The matchup, the game's written preview (headline, deck, preview photo), then 6 moments on the real app, each with
+  a one-line explanation under the phone. YouTube (workflow, 15:30 slot) and TikTok (stats only: odds hidden).
+- The moments vary by game and day (seeded): game pages (final-score chances, team ranks, lines, goalies, each defence
+  by position, playoff chances) and two featured players' cards (how the number is built, skill or luck, linemates
+  with/without, season projection, shot chart season / last 10 / last game, game by game, the averages chart in any
+  stat and per game / 82-game pace / per season / season by season, last 10 + Heat Index).
+- `py -X utf8 video/previews.py --date 2026-11-27 --n 3 --music "<song.mp3>"`; `--games id1,id2` to pick games;
+  `--preview 3,9,16` for stills. New player-card sections: `AppClips.card(pid, "shots", focus="svg", taps=[...])`.
+
 # Tonight's slate breakdown (long-form YouTube, video/longform.py)
 
     py video/longform.py --date 2026-11-17                       # full render (~8 min video)
