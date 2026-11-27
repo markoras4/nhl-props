@@ -12,7 +12,7 @@ News: 114 injuries, likely starters for 22 games (+56 backup reports), line comb
 Model built: 57 games, 732 skaters (568 expected to play)
 Odds: bookmaker prices for 17 games, 142 players
 Odds: sharp-book prices for 4 games, 205 player markets
-  Stoiximan sync: 20 games, 3044 player prices (last push 2026-11-27T21:21:35.766136+00:00, pre); unmatched: Brett Leason, Dominic Toninato, Jansen Harkins, Ο. Μπέκ, Τζέικ Έβανς
+  Stoiximan sync: 20 games, 3044 player prices (last push 2026-11-27T21:38:35.790673+00:00, pre); unmatched: Brett Leason, Dominic Toninato, Jansen Harkins, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 2474 player prices added
 Public betting: splits for 4 games
   season simulation: 10000 seasons, 945 games left, top Cup: CAR 39%, COL 14%, MIN 12%
@@ -24,7 +24,7 @@ Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 12,114 player-games
   history: game-by-game files for 726 players (3 seasons)
   archive: 5 past dates published (2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25)
-Best picks record: 441 graded, 115 won, -0.10 units
+Best picks record: 443 graded, 116 won, +6.90 units
 Triage ledger: 226 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 2155 bets +14.3u, L 4569 bets -174.4u, F 3311 bets -212.7u
+Triage ledger: S 2171 bets +11.0u, L 4580 bets -178.4u, F 3322 bets -210.1u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-27.html
