@@ -157,6 +157,13 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
 .phone.sm{zoom:.86;left:333px;top:365px}
 .appnote{position:absolute;left:72px;right:72px;top:1404px;padding:20px 28px;border-radius:26px;background:rgba(16,10,18,.82);border:2px solid rgba(255,79,168,.35);
   font:600 31px/1.32 "Exo 2";color:#f1e6f0;text-align:center}
+.promoc{position:absolute;left:60px;right:60px;top:420px;text-align:center}
+.promoc .pk{font:800 34px Oxanium;letter-spacing:8px;text-transform:uppercase;color:var(--purple);margin-bottom:26px}
+.promoc .pb{font:400 150px/1.0 Anton;text-transform:uppercase;color:#fff}.promoc .pb.alt{color:var(--pink)}
+.promoc .ps{margin-top:34px;font:800 44px/1.25 "Exo 2";color:#f1e6f0}
+.promoc .pc{margin:44px auto 0;display:inline-flex;flex-direction:column;gap:22px;text-align:left}
+.promoc .pc>div{font:800 46px "Exo 2";color:#fff;display:flex;align-items:center;gap:22px}
+.promoc .pc i{font-style:normal;width:64px;height:64px;border-radius:50%;background:var(--pink);color:#2b0016;display:grid;place-items:center;font-size:40px}
 .story .kick{font:700 26px Oxanium;letter-spacing:4px;text-transform:uppercase;color:var(--pink);margin-top:250px}
 .story .ttl{font:800 56px/1.08 "Exo 2";color:#fff;margin-top:18px}
 .story .dek{font:500 33px/1.38 "Exo 2";color:#e4d6e2;margin-top:26px}
@@ -305,6 +312,13 @@ parts.forEach((P,i)=>{
       show(Math.max(0,Math.min(P.n-1,Math.floor((u-P.lead)*30+1e-6))));
       if(note){popIn(note,u,.5,40,.45);}
       if(u>D-.4){out(ph,u,D-.4);out(cap,u,D-.4);if(note)out(note,u,D-.4);}};
+  }
+  if(P.kind==='promo'){
+    const card=el('div','promoc',`${P.kick?`<div class="pk">${esc(P.kick)}</div>`:''}${(P.big||[]).map((x,j)=>`<div class="pb${j%2?' alt':''}">${esc(x)}</div>`).join('')}
+      ${P.sub?`<div class="ps">${esc(P.sub)}</div>`:''}${(P.checks||[]).length?`<div class="pc">${P.checks.map(x=>`<div><i>✓</i>${esc(x)}</div>`).join('')}</div>`:''}`,root);
+    const kids=[...card.children];
+    s.draw=u=>{const D=P.b-P.a;kids.forEach((e,j)=>{if(e.classList.contains('pb'))slam(e,u,.1+j*T.beat,1.7);else popIn(e,u,.25+j*T.beat,50,.45);});
+      card.querySelectorAll('.pc>div').forEach((e,j)=>popIn(e,u,.9+j*.35,40,.4));if(u>D-.4) out(card,u,D-.4);};
   }
   if(P.kind==='story'){
     const card=el('div','card story',`<div class="kick">${esc(P.kicker)}</div><div class="ttl">${esc(P.title)}</div>${P.deck?`<div class="dek">${esc(P.deck)}</div>`:''}

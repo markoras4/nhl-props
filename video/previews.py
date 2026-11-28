@@ -192,7 +192,7 @@ def spec_for(g: dict, day: dt.date) -> dict:
             "sub": f"Tonight {start.strftime('%I:%M %p').lstrip('0')} ET · the numbers behind the game",
             "chips": [[g["away"], S.team_color(g["away"])], [g["home"], S.team_color(g["home"])]],
             "parts": parts, "timing": {"intro": intro, "outroAt": t, "total": t + S.seconds(8, bpm), "beat": 60 / bpm},
-            "linkSub": "Every game, every player", "outro1": "Every number from this video:", "outro3": "Free to start · link in bio",
+            "linkSub": "Every game, every player", "disclaimer": "Stats from NHL game data · projections and chances are model estimates", "outro1": "Every number from this video:", "outro3": "Free to start · link in bio",
             "_g": g}
 
 
