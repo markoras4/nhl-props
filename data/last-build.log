@@ -1,5 +1,5 @@
 Season 2026-2027. Fetching schedule from 2026-11-27 ...
-  48 upcoming games over 7 days
+  45 upcoming games over 6 days
 Fetching MoneyPuck season summaries ...
   seasons loaded: skaters [2021, 2022, 2023, 2024, 2025, 2026], teams [2021, 2022, 2023, 2024, 2025, 2026]
 Fetching team schedules/results (all 32 teams, 4 seasons) ...
@@ -7,13 +7,13 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 732 skaters and 72 goalies (careers + game logs) ...
 Fetching 411 recent box scores (hits, blocks) ...
-News: 119 injuries, likely starters for 21 games (+56 backup reports), line combinations for 32/32 teams, game-day lineups for 30 teams (2026-11-27, updated 2026-11-28T02:53:41.421Z)
+News: 119 injuries, likely starters for 21 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 30 teams (2026-11-27, updated 2026-11-28T02:53:41.421Z)
   shot maps: 411 games, 46814 attempts
-Model built: 48 games, 732 skaters (568 expected to play)
+Model built: 45 games, 732 skaters (569 expected to play)
 Odds: bookmaker prices for 13 games, 461 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  Stoiximan sync: 11 games, 861 player prices (last push 2026-11-28T02:55:32.316531+00:00, hourly); unmatched: Brett Leason, Ο. Μπέκ, Τζέικ Έβανς
-  manual odds: 815 player prices added
+  Stoiximan sync: 8 games, 81 player prices (last push 2026-11-28T02:55:32.316531+00:00, hourly); unmatched: Brett Leason, Ο. Μπέκ, Τζέικ Έβανς
+  manual odds: 35 player prices added
 Public betting: splits for 13 games
   season simulation: 10000 seasons, 933 games left, top Cup: CAR 38%, COL 14%, MIN 13%
 Futures odds: Cup 32, conference 32, division 0, playoffs 2, points 0
@@ -21,10 +21,10 @@ Player projections: 732 skaters
 Goalie projections: 72 goalies
   awards: no player match for Bradley Nadeau, Carter Yakemchuk, Connor Ingram, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
-  history: MoneyPuck xG for 2026: 12,114 player-games
+  history: MoneyPuck xG for 2026: 12,493 player-games
   history: game-by-game files for 727 players (3 seasons)
   archive: 5 past dates published (2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25)
-Best picks record: 463 graded, 120 won, +3.45 units
+Best picks record: 465 graded, 120 won, +1.45 units
 Triage ledger: 227 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 2262 bets +10.7u, L 4767 bets -192.1u, F 3470 bets -231.6u
+Triage ledger: S 2271 bets +10.6u, L 4788 bets -190.9u, F 3476 bets -235.0u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-27.html
