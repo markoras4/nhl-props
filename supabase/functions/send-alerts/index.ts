@@ -25,7 +25,9 @@ Deno.serve(async () => {
 
   const { data: all } = await db.from("alert_settings").select("user_id, edge_min, goalies, watch");
   if (!all?.length) return Response.json({ sent: 0, users: 0 });
-  const { data: pros } = await db.from("profiles").select("id").in("id", all.map((s) => s.user_id)).in("plan", PRO_PLANS);
+  // Pro plans, plus accounts whose free Black Week Pro (promo_until) is still running
+  const { data: pros } = await db.from("profiles").select("id").in("id", all.map((s) => s.user_id))
+    .or(`plan.in.(${PRO_PLANS.join(",")}),promo_until.gt.${new Date().toISOString()}`);
   const proIds = new Set((pros || []).map((p) => p.id));
   const settings = all.filter((s) => proIds.has(s.user_id));
   if (!settings.length) return Response.json({ sent: 0, users: 0 });

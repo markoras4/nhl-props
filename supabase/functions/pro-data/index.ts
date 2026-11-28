@@ -20,8 +20,10 @@ Deno.serve(async (req) => {
   const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
   const { data: u, error: ue } = await db.auth.getUser(jwt);
   if (ue || !u?.user) return json({ error: "sign in" }, 401);
-  const { data: prof } = await db.from("profiles").select("plan").eq("id", u.user.id).maybeSingle();
-  const plan = prof?.plan || "free";
+  const { data: prof } = await db.from("profiles").select("plan, promo_until").eq("id", u.user.id).maybeSingle();
+  // Black Week: an account whose promo_until is still ahead has Pro (free, no card), see 20261128120000_black_week_promo.sql
+  const promo = !!prof?.promo_until && Date.parse(prof.promo_until) > Date.now();
+  const plan = PRO_PLANS.includes(prof?.plan) ? prof!.plan : promo ? "pro" : (prof?.plan || "free");
   if (!PRO_PLANS.includes(plan)) return json({ error: "pro", plan }, 403);
 
   let d = "latest";

@@ -20,6 +20,9 @@ import datetime as dt
 import re
 
 PRO_PLANS = ("pro", "creator", "media")
+# Black Week 2026: every account (and every sign-up until signup_until) has Pro free until `until`, no card.
+# The database holds it per account (profiles.promo_until, migration 20261128120000_black_week_promo.sql).
+PROMO = {"signup_until": "2026-11-30T23:59:59-05:00", "until": "2026-12-31T23:59:59-05:00"}
 
 # model inputs on a prop row that free users keep for the two open players per team
 FREE_BASE = ("g", "a", "s")
@@ -153,7 +156,7 @@ def split(payload: dict) -> tuple[dict, dict]:
         pro["gproj"] = {pid: {k: gp[k] for k in ("vz", "gsax") if k in gp} for pid, gp in payload["gproj"].items()}
         pub["gproj"] = {pid: {k: (med(v) if k == "gsax" else v) for k, v in gp.items() if k != "vz"}
                         for pid, gp in payload["gproj"].items()}
-    pub["paywall"] = {"pro_plans": list(PRO_PLANS), "free_watch": 3, "free_legs": 2}
+    pub["paywall"] = {"pro_plans": list(PRO_PLANS), "free_watch": 3, "free_legs": 2, "promo": PROMO}
     return pub, pro
 
 

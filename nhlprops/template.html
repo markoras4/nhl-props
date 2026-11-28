@@ -1114,6 +1114,12 @@ tr.row.pwopen td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .plx{font-size:12px;font-weight:700;color:var(--accent)}.plcard .mbtn{width:100%;text-align:center;margin-top:auto}.plcard .plx{margin-bottom:4px}.plf{color:var(--accent);font-weight:700;font-size:13.5px;margin:4px 0 0}
 .pwlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:6px;font-size:14px}.pwfree{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
 .pwnote{font-size:12.5px;color:var(--mute);margin:6px 0}
+#promobar{display:block;width:100%;margin:8px 0 4px;padding:10px 14px;border:0;border-radius:12px;cursor:pointer;text-align:left;font:inherit;font-size:13.5px;line-height:1.4;
+  color:#fff;background:linear-gradient(100deg,#b8287a,#ff4fa8 55%,#b794ff)}
+#promobar b{font-family:Oxanium,inherit;letter-spacing:1px;text-transform:uppercase;margin-right:6px;padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.28)}
+#promobar u{white-space:nowrap;font-weight:700;margin-left:4px}
+.promobox{margin:10px 0 12px;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,79,168,.45);background:rgba(255,79,168,.08)}
+.promobox b{display:block;font-size:15px;margin-bottom:4px}.promobox p{margin:0 0 10px;font-size:13.5px}
 /* remembered Pro sign-in while the Pro data loads: placeholders, not locks */
 @keyframes pwpulse{0%,100%{opacity:.35}50%{opacity:.7}}
 .pwwait .pwlock{border-style:solid;border-color:var(--line)}.pwwait .pwover{display:none}.pwwait .pwblur{animation:pwpulse 1.4s ease-in-out infinite}
@@ -2051,6 +2057,11 @@ Object.assign(I18N.sv, {"aw_stale":"{n} dagar gamla: värde markeras inte", "p_m
 const PAYWALLED = !!DATA.paywall;                         // builds from before the split carry everything
 const PRO_PLANS = DATA.paywall?.pro_plans || ["pro","creator","media"];
 const FREE_WATCH = DATA.paywall?.free_watch ?? 3, FREE_LEGS = DATA.paywall?.free_legs ?? 2;
+// Black Week promo: everyone with an account (and everyone who signs up by the sign-up end) has Pro until the promo
+// end, free, no card. The server decides (profiles.promo_until, has_pro(), pro-data); this only shows it.
+const PROMO = DATA.paywall?.promo || {signup_until: "2026-11-30T23:59:59-05:00", until: "2026-12-31T23:59:59-05:00"};
+const PROMO_SIGNUP = () => PAYWALLED && Date.now() <= Date.parse(PROMO.signup_until);
+let PROMO_END = null;                                     // this account's free Pro ends (Date) while it runs
 let PLAN = "visitor";                                     // visitor | free | pro | creator | media
 let PRO = !PAYWALLED;                                     // Pro features on (and Pro data loaded)
 let PRO_STATE = "";                                       // "" | loading | error
@@ -2076,6 +2087,10 @@ pw_sub_f:"Pro opens every player and every market, best picks live until the loc
   pl_save:"Save {p}%", pl_btn_m:"Pay monthly", pl_btn_y:"Pay yearly", pl_founder:"Founder price until 30 November, yours for as long as you stay subscribed.",
   pl_note:"Secure payment with Stripe. Pro starts right away. Cancel any time under Account → Manage subscription and keep Pro until the end of the paid period.",
   pl_terms:"By continuing you accept the <a href='/legal.html#terms'>terms</a>.", pl_wait:"Opening secure checkout…", pl_err:"Couldn't open the payment page. Please try again in a minute.",
+  promo_tag:"Black Week", promo_btn:"Get Pro free", promo_bar:"Pro is free until {d}. Sign up by 30 November, no card needed.",
+  promo_h:"Black Week: Pro free until {d}", promo_p:"Create a free account by 30 November and every Pro feature is yours until {d}. No card, no payment, nothing to cancel: after that your account simply goes back to Free.",
+  promo_have:"You have Pro free until {d} (Black Week). No card and nothing to cancel: after that your account goes back to Free, and you decide then whether to subscribe.",
+  ac_promo:"Pro free until {d} (Black Week). No card, nothing to cancel.",
   pl_already:"You already have Pro.", pl_signin:"Create a free account or log in first, then pay.",
   ac_manage:"Manage subscription", ac_renews:"Renews on {d}", ac_ends:"Pro until {d} (cancelled, won't renew)", ac_pastdue:"Payment failed: update your card to keep Pro.",
   co_ok:"Payment received. Welcome to Pro! Unlocking…", co_slow:"Payment received. Pro unlocks within a minute; refresh the page if it hasn't.", co_cancel:"Payment cancelled. Nothing was charged.",
@@ -2103,6 +2118,10 @@ pw_sub_f:"Pro öppnar varje spelare och varje marknad, bästa spel live fram til
   pl_save:"Spara {p} %", pl_btn_m:"Betala månadsvis", pl_btn_y:"Betala årsvis", pl_founder:"Grundarpris till 30 november, ditt så länge du är prenumerant.",
   pl_note:"Säker betalning med Stripe. Pro startar direkt. Säg upp när du vill under Konto → Hantera prenumeration och behåll Pro till slutet av den betalda perioden.",
   pl_terms:"Genom att fortsätta godkänner du <a href='/legal.html#terms'>villkoren</a>.", pl_wait:"Öppnar säker betalning…", pl_err:"Betalsidan kunde inte öppnas. Försök igen om en minut.",
+  promo_tag:"Black Week", promo_btn:"Få Pro gratis", promo_bar:"Pro är gratis till {d}. Skapa konto senast 30 november, inget kort behövs.",
+  promo_h:"Black Week: Pro gratis till {d}", promo_p:"Skapa ett gratiskonto senast 30 november så är alla Pro-funktioner dina till {d}. Inget kort, ingen betalning, inget att säga upp: sedan går kontot bara tillbaka till Gratis.",
+  promo_have:"Du har Pro gratis till {d} (Black Week). Inget kort och inget att säga upp: sedan går kontot tillbaka till Gratis, och då väljer du själv om du vill prenumerera.",
+  ac_promo:"Pro gratis till {d} (Black Week). Inget kort, inget att säga upp.",
   pl_already:"Du har redan Pro.", pl_signin:"Skapa ett gratiskonto eller logga in först, sedan betalar du.",
   ac_manage:"Hantera prenumeration", ac_renews:"Förnyas {d}", ac_ends:"Pro till {d} (uppsagd, förnyas inte)", ac_pastdue:"Betalningen misslyckades: uppdatera kortet för att behålla Pro.",
   co_ok:"Betalningen är klar. Välkommen till Pro! Låser upp…", co_slow:"Betalningen är klar. Pro låses upp inom en minut; ladda om sidan om det inte har hänt.", co_cancel:"Betalningen avbröts. Inget drogs.",
@@ -2139,6 +2158,8 @@ function openUpgrade(feat){
   if (!ACCOUNT() && feat === "acct") return openAuth("up");
   const feats = (I18N[LANG]?.pw_feats || I18N.en.pw_feats).map(x => `<li>✓ ${esc(x)}</li>`).join("");
   const why = {compare:"pw_cmp_lock", explore:"pw_explore", shots:"pw_shots", alerts:"pw_alerts", matchup:"pw_matchup", fg:"pw_fg", saves:"pw_saves", public:"pw_pub", lines:"pw_ll", pm:"pw_pm"}[feat];
+  if (PROMO_SIGNUP() && !ACCOUNT()){ modal(`<h3>🔒 ${t("pw_h")}</h3>${why ? `<p><b>${esc(t(why))}.</b></p>` : ""}${promoBox()}<ul class="pwlist">${feats}</ul>
+    <div class="mrow"><button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`); return wirePromo(); }
   modal(`<h3>🔒 ${t("pw_h")}</h3>${why ? `<p><b>${esc(t(why))}.</b></p>` : ""}<p class="meta">${t(pwSub())}</p><ul class="pwlist">${feats}</ul>
     ${ACCOUNT() ? "" : `<div class="pwfree"><b>${t("pw_free_h")}</b><p class="meta">${t("pw_free_sub",{n:FREE_WATCH})}</p></div>`}
     <div class="mrow"><button class="mbtn pri" id="pw_go" type="button">${t("pw_go")}</button>${ACCOUNT() ? "" : `<button class="mbtn" id="pw_up" type="button">${t("pw_signup")}</button>`}<button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`);
@@ -2341,6 +2362,7 @@ function header(){
   $("#theme").title = th==="dark" ? t("theme_light") : t("theme_dark");
   $("#theme").setAttribute("aria-label", $("#theme").title);
   $("#totop").title = t("to_top"); $("#totop").setAttribute("aria-label", t("to_top"));
+  promoBar();
 }
 function wireHeader(){
   $("#nav").onclick = e => { const b=e.target.closest("button"); if(!b) return; go({tab:b.dataset.tab, game:null}); };
@@ -5721,8 +5743,25 @@ function openAccount(){
 // The price is decided by the server (founder price until 30 November); the picker only shows it.
 const FOUNDER = () => Date.now() < Date.parse("2026-12-01T00:00:00+01:00");
 const eur = v => { const n = Number.isInteger(v) ? String(v) : v.toFixed(2); return LANG === "sv" ? n.replace(".", ",") + " €" : "€" + n; };
+const promoDay = d => new Date(d).toLocaleDateString(LOCALE(), {day: "numeric", month: "long", timeZone: "America/New_York"});
+const promoDate = () => promoDay(PROMO.until);
+function promoBox(){
+  return `<div class="promobox"><b>${t("promo_h", {d: promoDate()})}</b><p>${t("promo_p", {d: promoDate()})}</p>
+    <button type="button" class="mbtn pri" id="promo_go">${t("promo_btn")}</button></div>`;
+}
+function wirePromo(){ const b = $("#promo_go"); if (b) b.onclick = () => { closeModal(); openAuth("up"); }; }
+function promoBar(){
+  let el = document.getElementById("promobar");
+  const show = PROMO_SIGNUP() && !PROMO_END && !(PRO && PLAN !== "visitor");
+  if (!show){ if (el) el.remove(); return; }
+  if (!el){ el = document.createElement("button"); el.type = "button"; el.id = "promobar"; const m = $("#main"); if (!m) return; m.parentNode.insertBefore(el, m);
+    el.onclick = () => openAuth("up"); }
+  el.innerHTML = `<b>${t("promo_tag")}</b> ${t("promo_bar", {d: promoDate()})} <u>${t("promo_btn")}</u>`;
+}
 function openPlans(){
+  if (PROMO_END && PLAN !== "visitor") return modal(`<h3>${t("pl_h")}</h3><p>${t("promo_have", {d: promoDay(PROMO_END)})}</p><div class="mrow"><button class="mbtn" type="button" data-close>OK</button></div>`);
   if (PRO && PLAN !== "visitor") return modal(`<h3>${t("pl_h")}</h3><p>${t("pl_already")}</p><div class="mrow"><button class="mbtn" type="button" data-close>OK</button></div>`);
+  if (PROMO_SIGNUP() && !ACCOUNT()){ modal(`<h3>${t("pl_h")}</h3>${promoBox()}<div class="mrow"><button class="mbtn" type="button" data-close>${t("pw_later")}</button></div>`); return wirePromo(); }
   const f = FOUNDER(), m = f ? 7.99 : 12.99, y = f ? 59 : 89, save = Math.round((1 - y / (m * 12)) * 100);
   const card = (k, price, per, was, extra) => `<button type="button" class="plcard" data-iv="${k}"><b>${t(k === "month" ? "pl_month" : "pl_year")}</b>
     <span class="plp">${was ? `<s>${eur(was)}</s>` : ""}${eur(price)} <small>${t(per)}</small></span>${extra ? `<span class="plx">${extra}</span>` : ""}
@@ -5752,6 +5791,7 @@ async function openPortal(){
 // the subscription line in Account: renews / ends / payment failed, and Manage subscription
 async function billBox(){
   const el = $("#ac_bill"); if (!el || !sb || !USER) return;
+  if (PROMO_END) el.insertAdjacentHTML("beforebegin", `<p class="pwnote">${esc(t("ac_promo", {d: promoDay(PROMO_END)}))}</p>`);
   let b = null; try { ({data: b} = await sb.from("billing").select("status,current_period_end,cancel_at_period_end").eq("user_id", USER.id).maybeSingle()); } catch(e){}
   if (!b?.status) return;
   const d = b.current_period_end ? new Date(b.current_period_end).toLocaleDateString(LOCALE(), {day: "numeric", month: "long", year: "numeric"}) : "";
@@ -6033,8 +6073,12 @@ function parlaysCard(){
 let PRO_LOADED = !PAYWALLED, PRO_ARCH = null;
 async function loadPlan(){
   let plan = "visitor";
-  if (sb && USER){ try { const {data} = await sb.from("profiles").select("plan").eq("id", USER.id).maybeSingle(); plan = data?.plan || "free"; } catch(e){ plan = "free"; } }
+  PROMO_END = null;
+  if (sb && USER){ try { const {data} = await sb.from("profiles").select("plan,promo_until").eq("id", USER.id).maybeSingle(); plan = data?.plan || "free";
+    if (data?.promo_until && Date.parse(data.promo_until) > Date.now()){ PROMO_END = new Date(data.promo_until); if (!PRO_PLANS.includes(plan)) plan = "pro"; }
+  } catch(e){ plan = "free"; } }
   PLAN = plan;
+  promoBar();
   const want = PRO_PLANS.includes(PLAN);
   if (want && !PRO_LOADED && sb){
     PRO_STATE = "loading"; render();

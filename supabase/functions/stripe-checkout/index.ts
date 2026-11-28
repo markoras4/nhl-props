@@ -13,8 +13,10 @@ Deno.serve(async (req) => {
   try { interval = (await req.json())?.interval === "year" ? "year" : "month"; } catch (_) { /* default */ }
 
   const sb = db();
-  const { data: prof } = await sb.from("profiles").select("plan").eq("id", user.id).maybeSingle();
+  const { data: prof } = await sb.from("profiles").select("plan, promo_until").eq("id", user.id).maybeSingle();
   if (["creator", "media"].includes(prof?.plan)) return json({ error: "already pro" }, 409);
+  // free Black Week Pro still running: nobody is charged for a period that is free (they can subscribe after it ends)
+  if (prof?.promo_until && Date.parse(prof.promo_until) > Date.now()) return json({ error: "already pro", promo_until: prof.promo_until }, 409);
   const { data: bill } = await sb.from("billing").select("*").eq("user_id", user.id).maybeSingle();
   if (bill?.subscription_id && LIVE.includes(bill.status)) return json({ error: "already pro" }, 409);
 
