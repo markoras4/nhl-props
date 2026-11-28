@@ -7,14 +7,13 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
 Fetching rosters for 32 teams ...
 Fetching 734 skaters and 72 goalies (careers + game logs) ...
 Fetching 414 recent box scores (hits, blocks) ...
-News: 120 injuries, likely starters for 30 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 30 teams (2026-11-27, updated 2026-11-28T02:53:41.421Z)
-  2 requests failed (first: https://www.dailyfaceoff.com/starting-goalies/2026-11-28 -> HTTP 403)
+News: 119 injuries, likely starters for 30 games (+30 backup reports), line combinations for 32/32 teams, game-day lineups for 8 teams (2026-11-28, updated 2026-11-28T15:04:50.377Z)
   shot maps: 414 games, 47129 attempts
 Model built: 49 games, 734 skaters (571 expected to play)
-Odds: bookmaker prices for 13 games, 461 players
+Odds: bookmaker prices for 13 games, 460 players
 Odds: sharp-book prices for 13 games, 747 player markets
-  Stoiximan sync: 13 games, 4044 player prices (last push 2026-11-28T14:09:54.513419+00:00, hourly); unmatched: Anton Silayev, Brett Leason, Jonas Rondbjerg, Ryan Tverberg, Sam Morton, Vladislav Kolyachonok, Κ. Μπράουν, Μπεν Τζόουνς
-  manual odds: 2349 player prices added
+  Stoiximan sync: 13 games, 4217 player prices (last push 2026-11-28T15:10:56.537622+00:00, hourly); unmatched: Anton Silayev, Brett Leason, Jonas Rondbjerg, Ryan Tverberg, Sam Morton, Vladislav Kolyachonok, Κ. Μπράουν, Μπεν Τζόουνς
+  manual odds: 2374 player prices added
 Public betting: splits for 13 games
   season simulation: 10000 seasons, 930 games left, top Cup: CAR 39%, COL 15%, MIN 12%
 Futures odds: Cup 32, conference 32, division 32, playoffs 2, points 0
@@ -29,4 +28,3 @@ Best picks record: 465 graded, 120 won, +1.45 units
 Triage ledger: 227 graded blocks bets: time to review whether blocks join the headline Solid record
 Triage ledger: S 2271 bets +10.6u, L 4788 bets -190.9u, F 3476 bets -235.0u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-28.html
-Note: 2 downloads failed - see data/errors.log
