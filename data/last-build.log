@@ -6,22 +6,24 @@ Fetching team schedules/results (all 32 teams, 4 seasons) ...
   5280 league games
 Fetching rosters for 32 teams ...
 Fetching 732 skaters and 72 goalies (careers + game logs) ...
-Fetching 410 recent box scores (hits, blocks) ...
-News: 118 injuries, likely starters for 21 games (+56 backup reports), line combinations for 32/32 teams, game-day lineups for 30 teams (2026-11-27, updated 2026-11-28T01:38:00.381Z)
-  shot maps: 410 games, 46718 attempts
+Fetching 411 recent box scores (hits, blocks) ...
+News: 119 injuries, likely starters for 21 games (+56 backup reports), line combinations for 32/32 teams, game-day lineups for 30 teams (2026-11-27, updated 2026-11-28T02:53:41.421Z)
+Shot maps: downloading play-by-play for 1 new games ...
+  shot maps: 411 games, 46814 attempts
 Model built: 48 games, 732 skaters (568 expected to play)
-Odds: bookmaker prices for 13 games, 462 players
+Odds: bookmaker prices for 13 games, 461 players
 Odds: sharp-book prices for 0 games, 0 player markets
-  Stoiximan sync: 11 games, 861 player prices (last push 2026-11-28T01:53:31.606517+00:00, hourly); unmatched: Brett Leason, Ο. Μπέκ, Τζέικ Έβανς
-  manual odds: 861 player prices added
-Public betting: splits for 10 games
-  season simulation: 10000 seasons, 934 games left, top Cup: CAR 39%, COL 14%, MIN 12%
+  Stoiximan sync: 11 games, 861 player prices (last push 2026-11-28T02:55:32.316531+00:00, hourly); unmatched: Brett Leason, Ο. Μπέκ, Τζέικ Έβανς
+  manual odds: 815 player prices added
+Public betting: splits for 12 games
+  season simulation: 10000 seasons, 933 games left, top Cup: CAR 38%, COL 14%, MIN 13%
 Futures odds: Cup 32, conference 32, division 0, playoffs 2, points 0
 Player projections: 732 skaters
 Goalie projections: 72 goalies
   awards: no player match for Bradley Nadeau, Carter Yakemchuk, Connor Ingram, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 12,114 player-games
+  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 727 players (3 seasons)
   archive: 5 past dates published (2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25)
 Best picks record: 459 graded, 120 won, +7.45 units
