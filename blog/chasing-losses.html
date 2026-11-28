@@ -1,0 +1,238 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Double or Nothing: What Chasing Would Have Done to Our Worst Week · evenout</title><meta name="description" content="Our best picks lost 33.91 units in seven days. A bettor who doubled up after every losing night would have lost 310. Why chasing losses feels like a plan, and why it isn&#x27;t one."><meta name="theme-color" content="#0a0e13">
+<meta property="og:title" content="Double or Nothing: What Chasing Would Have Done to Our Worst Week · evenout"><meta property="og:description" content="Our best picks lost 33.91 units in seven days. A bettor who doubled up after every losing night would have lost 310. Why chasing losses feels like a plan, and why it isn&#x27;t one."><meta property="og:type" content="article"><meta property="og:image" content="https://evenout.app/blog/img/chasing-losses-hero-2c8bae.jpg"><meta property="og:url" content="https://evenout.app/blog/chasing-losses.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Oxanium:wght@500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<link rel="icon" type="image/svg+xml" href="/brand/evenout-icon.svg?v=2"><link rel="icon" type="image/png" href="/icons/icon-192.png?v=2"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2"><style>
+:root{--bg:#0a0e13;--bg2:#0d131a;--panel:#111821;--panel2:#17202b;--line:#22303f;--text:#e7eef6;--mute:#8796a8;--accent:#3ddc97;--gold:#e9c46a;--glow:61,220,151;color-scheme:dark;
+--f-ui:"Exo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--f-disp:"Oxanium","Exo 2",sans-serif;--f-read:"Source Serif 4",Georgia,"Times New Roman",serif}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f3f5f8;--bg2:#eaeef3;--panel:#fff;--panel2:#eef2f6;--line:#dbe2ea;--text:#111821;--mute:#5a697b;--accent:#0d9a60;--gold:#b8860b;--glow:13,154,96;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f3f5f8;--bg2:#eaeef3;--panel:#fff;--panel2:#eef2f6;--line:#dbe2ea;--text:#111821;--mute:#5a697b;--accent:#0d9a60;--gold:#b8860b;--glow:13,154,96;color-scheme:light}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--f-ui)}
+a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left))}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:18px;height:60px}.brand{font:800 18px var(--f-disp);letter-spacing:.04em;text-transform:uppercase}.brand b{color:var(--accent)}.brand img{height:30px;width:auto;display:block}.brand .eo-l{display:none}@media (prefers-color-scheme: light){:root:not([data-theme="dark"]) .brand .eo-d{display:none}:root:not([data-theme="dark"]) .brand .eo-l{display:block}}:root[data-theme="light"] .brand .eo-d{display:none}:root[data-theme="light"] .brand .eo-l{display:block}@media (max-width:640px){.brand img{height:24px}}
+.top nav{display:flex;gap:4px;margin-left:auto}.top nav a{padding:7px 12px;border-radius:9px;font-weight:600;font-size:14px;color:var(--mute)}.top nav a:hover,.top nav a.on{color:var(--text);background:var(--panel2)}
+.cta{background:var(--accent);color:var(--accent-ink,#06210f)!important;font-weight:700}
+/* index */
+.bh{padding:46px 0 18px}.kick{font:700 12px var(--f-disp);letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.bh h1{font:800 clamp(34px,5vw,56px)/1.05 var(--f-disp);margin:8px 0 10px;letter-spacing:.01em}.bh p{color:var(--mute);max-width:640px;margin:0;font-size:17px}
+.tabs{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;margin:22px 0 22px;background:var(--panel)}
+.tabs button{all:unset;cursor:pointer;padding:8px 14px;border-radius:9px;font-weight:700;font-size:14px;color:var(--mute);transition:color .2s,box-shadow .2s}
+.tabs button.on{color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.feat{display:grid;grid-template-columns:1.25fr 1fr;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--panel);margin-bottom:22px;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.feat:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.35),0 0 50px rgba(var(--glow),.08)}
+.feat .ph{position:relative;min-height:360px;background:var(--panel2)}.feat .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.feat:hover .ph img{transform:scale(1.04)}.feat .tx{padding:34px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.feat h2{font:800 32px/1.1 var(--f-disp);margin:0}.feat p{color:var(--mute);margin:0;font-size:16px}
+.meta{color:var(--mute);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;margin-bottom:60px}
+.card{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--panel);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s;animation:up .6s cubic-bezier(.2,.8,.2,1) both}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 50%,var(--line));box-shadow:0 18px 44px rgba(0,0,0,.3)}
+.card .ph{aspect-ratio:16/9;background:var(--panel2);overflow:hidden}.card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.8,.2,1)}.card:hover .ph img{transform:scale(1.05)}
+.card .tx{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px}.card h3{font:800 21px/1.15 var(--f-disp);margin:0}.card p{margin:0;color:var(--mute);font-size:15px}
+.tag{display:inline-block;align-self:flex-start;font:700 11px var(--f-disp);letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.tag.history{color:var(--gold);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--gold) 70%,transparent)}.tag.betting{color:var(--accent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 70%,transparent)}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+/* article */
+.hero{position:relative;min-height:min(78vh,720px);display:flex;align-items:flex-end;overflow:hidden;background:#05080b}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;animation:kb 18s ease-out both}
+@keyframes kb{from{transform:scale(1.12)}to{transform:scale(1)}}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,11,.15) 0%,rgba(5,8,11,.35) 45%,rgba(5,8,11,.94) 100%)}
+.hero .in{position:relative;z-index:1;padding:0 0 46px;color:#f2f6fa;animation:up 1s .2s cubic-bezier(.2,.8,.2,1) both}
+.hero h1{font:800 clamp(34px,6vw,68px)/1.02 var(--f-disp);margin:12px 0 14px;max-width:900px;text-shadow:0 4px 30px rgba(0,0,0,.5)}
+.hero .deck{font:400 clamp(17px,2vw,21px)/1.5 var(--f-read);max-width:760px;margin:0 0 16px;color:#d9e2ea}
+.hero .meta{color:#b5c2cf}.hero .cr{position:absolute;right:14px;bottom:10px;z-index:1;font-size:11px;color:#9fb0bf}
+.art{max-width:720px;margin:0 auto;padding:46px max(16px,env(safe-area-inset-left)) 30px;font:400 19px/1.75 var(--f-read)}
+.art p{margin:0 0 1.3em}.art>p:first-of-type:first-letter{float:left;font:800 74px/0.8 var(--f-disp);margin:8px 12px 0 0;color:var(--accent)}
+.art h2{font:800 28px/1.2 var(--f-disp);margin:2em 0 .7em;letter-spacing:.01em}
+.art blockquote{margin:1.8em 0;padding:4px 0 4px 22px;border-left:3px solid var(--accent);font:italic 500 24px/1.45 var(--f-read);color:var(--text)}
+.art blockquote small{display:block;font:500 14px var(--f-ui);font-style:normal;color:var(--mute);margin-top:8px}
+.art figure{margin:2em -40px}.art figure img{width:100%;border-radius:14px}.art figcaption{font:500 13px/1.45 var(--f-ui);color:var(--mute);margin-top:8px;padding:0 40px}
+.art .viz{margin:2.2em -40px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font-family:var(--f-ui)}
+.art .viz h4{margin:0 0 4px;font:800 13px var(--f-disp);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}.art .viz p{font:400 14px/1.5 var(--f-ui);color:var(--mute);margin:0 0 12px}
+.art .viz svg{width:100%;height:auto;display:block;color:var(--text)}
+.art .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:2em -40px;font-family:var(--f-ui)}.art .stat div{padding:18px;border-radius:14px;background:var(--panel);border:1px solid var(--line);text-align:center}
+.art .stat b{display:block;font:800 34px var(--f-disp);color:var(--accent)}.art .stat span{font-size:13px;color:var(--mute)}
+.art ul{padding-left:1.1em}.art li{margin:.3em 0}
+.note{font:500 14px/1.55 var(--f-ui);color:var(--mute);border-top:1px solid var(--line);padding-top:18px;margin-top:2.5em}
+.rg{font:500 14px/1.55 var(--f-ui);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:12px 16px;background:var(--panel);margin:2em 0}
+.credits{font:500 12.5px/1.6 var(--f-ui);color:var(--mute)}.credits a{text-decoration:underline}
+.more{max-width:1180px;margin:0 auto 60px;padding:0 16px}.more h3{font:800 20px var(--f-disp);margin:0 0 14px}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+.bar{transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) both}@keyframes grow{from{transform:scaleY(0)}}
+footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--mute);font-size:13px}
+@media (max-width:800px){.feat{grid-template-columns:1fr}.feat .ph{min-height:220px}.art figure,.art .viz,.art .stat{margin-left:0;margin-right:0}.art figcaption{padding:0}.top nav a:not(.cta):not(.on){display:none}.art{font-size:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style><script>/* light/dark choice before the first paint, so a refresh never flashes the default */(function(){ try { const s = localStorage.getItem("set:theme"); if (s==="light"||s==="dark") document.documentElement.setAttribute("data-theme", s); } catch(e){} })();</script>
+<script>
+/* colour themes: the accent (buttons, tabs, logo, highlights, heatmap) follows the visitor's choice;
+   meaning colours (green = good/value, red = bad, amber = warning) never change */
+(function(){
+  const A = {
+    rink:  {en:"Rink",  sv:"Rink",  c:"#3ddc97", bg:"#111821", d:null, l:null},
+    ember: {en:"Ember", sv:"Glöd",  c:"#ff8a3d", bg:"#1a1410",
+      d:{bg:"#110d0a",bg2:"#15100c",panel:"#1a1410",panel2:"#231a14",line:"#35281e",text:"#f5ede5",mute:"#a9988b",chip:"#271d16",
+         accent:"#ff8a3d","accent-ink":"#2a1100",heat:"255,138,61",glow:"255,138,61",pc1:"#ff8a3d",pc3:"#2ee6c5",line2:"#ffc27a",hit:"#ff8a3d",accent2:"#f2c99a",pc2:"#f2c99a",good:"#ff8a3d",bad:"#ff4d6d"},
+      l:{bg:"#faf5ef",bg2:"#f3ebe2",panel:"#ffffff",panel2:"#f7efe6",line:"#eadccd",text:"#1e1611",mute:"#76655a",chip:"#f3e8dc",
+         accent:"#c2560e","accent-ink":"#ffffff",heat:"194,86,14",glow:"194,86,14",pc1:"#c2560e",pc3:"#0b8f7b",line2:"#b8661a",hit:"#d9681c",accent2:"#8a5a32",pc2:"#8a5a32",good:"#c2560e",bad:"#c8203f"}},
+    neon:  {en:"Neon",  sv:"Neon",  c:"#ff4fa8", bg:"#1a111d",
+      d:{bg:"#100a12",bg2:"#140c17",panel:"#1a111d",panel2:"#241827",line:"#37253b",text:"#f7ebf4",mute:"#aa93a5",chip:"#27192b",
+         accent:"#ff4fa8","accent-ink":"#2b0016",heat:"255,79,168",glow:"255,79,168",pc1:"#ff4fa8",pc4:"#a78bfa",line2:"#ff9ad5",hit:"#ff4fa8",accent2:"#b794ff",pc2:"#b794ff",good:"#ff4fa8",bad:"#ff6a3d"},
+      l:{bg:"#fbf4f8",bg2:"#f5e9f0",panel:"#ffffff",panel2:"#f8edf3",line:"#ecd8e3",text:"#1d1219",mute:"#75616d",chip:"#f5e5ee",
+         accent:"#c21d78","accent-ink":"#ffffff",heat:"194,29,120",glow:"194,29,120",pc1:"#c21d78",pc4:"#6a48d6",line2:"#b0337f",hit:"#d6328c",accent2:"#7a4fd6",pc2:"#7a4fd6",good:"#c21d78",bad:"#c43d12"}}
+  };
+  const OLD = {green:"rink", blue:"rink", mint:"rink", violet:"neon", pink:"neon", gold:"ember"};
+  const VARS = ["bg","bg2","panel","panel2","line","text","mute","chip","accent","accent-ink","heat","glow","pc1","pc2","pc3","pc4","line2","hit","accent2","good","bad"];
+  const get = () => "neon";   // one look for everyone: Neon (light and dark stay switchable)
+  const set = v => { try { localStorage.setItem("set:accent", v); } catch(e){} };
+  const theme = () => { const a = document.documentElement.getAttribute("data-theme"); if (a==="light"||a==="dark") return a; return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; };
+  function apply(){
+    const k = get(), v = A[k][theme()==="light" ? "l" : "d"], st = document.documentElement.style;
+    VARS.forEach(p => st.removeProperty("--" + p));
+    document.querySelectorAll("img[data-shot]").forEach(im => { const src = "assets/" + im.dataset.shot + (k === "rink" ? "" : "-" + k) + ".webp"; if (im.getAttribute("src") !== src) im.setAttribute("src", src); });
+    if (v) Object.entries(v).forEach(([p, x]) => st.setProperty("--" + p, x));
+    const mc = document.querySelector('meta[name="theme-color"]'); if (mc){ if (!mc.dataset.c0) mc.dataset.c0 = mc.getAttribute("content") || ""; mc.setAttribute("content", v ? v.bg : mc.dataset.c0); }
+    document.documentElement.dataset.accent = k;
+  }
+  apply();
+  document.addEventListener("DOMContentLoaded", apply);
+  new MutationObserver(apply).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  try { matchMedia("(prefers-color-scheme: light)").addEventListener("change", apply); } catch(e){}
+  const css = document.createElement("style");
+  css.textContent = `.accbtn{display:none!important}.accbtn i{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
+#accpop{position:absolute;z-index:200;background:var(--panel,#111821);border:1px solid var(--line,#22303f);border-radius:14px;padding:6px;box-shadow:0 18px 50px -12px rgba(0,0,0,.55);display:grid;gap:2px;min-width:170px;font:600 13.5px var(--f-ui,system-ui)}
+#accpop .ah{font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--mute,#8796a8);padding:6px 10px 4px}
+#accpop button{display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--text,#e7eef6);padding:8px 10px;border-radius:9px;cursor:pointer;text-align:left;font:inherit}
+#accpop button:hover{background:var(--panel2,#17202b)}
+#accpop button i{width:16px;height:16px;border-radius:50%;flex:none}
+#accpop button.on{background:var(--panel2,#17202b)}#accpop button.on::after{content:"✓";margin-left:auto;color:var(--text,#e7eef6)}`;
+  document.head.appendChild(css);
+  const close = () => { const p = document.getElementById("accpop"); if (p) p.remove(); };
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".accbtn");
+    if (b){
+      e.stopPropagation();
+      if (document.getElementById("accpop")){ close(); return; }
+      const sv = (document.documentElement.lang||"").startsWith("sv");
+      const r = b.getBoundingClientRect(), p = document.createElement("div");
+      p.id = "accpop"; p.setAttribute("role", "menu");
+      p.innerHTML = `<div class="ah">${sv ? "Tema" : "Theme"}</div>` + Object.entries(A).map(([k,x]) => `<button type="button" role="menuitemradio" aria-checked="${get()===k}" data-acc="${k}" class="${get()===k?"on":""}"><i style="background:linear-gradient(135deg,${x.bg} 0 50%,${x.c} 50% 100%);box-shadow:0 0 0 1.5px ${x.c}"></i><span>${sv ? x.sv : x.en}</span></button>`).join("");
+      document.body.appendChild(p);
+      const w = p.offsetWidth;
+      p.style.top = (r.bottom + 8 + scrollY) + "px";
+      p.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + scrollX + "px";
+      return;
+    }
+    const o = e.target.closest("[data-acc]");
+    if (o){ set(o.dataset.acc); apply(); close(); return; }
+    if (!e.target.closest("#accpop")) close();
+  }, true);
+  addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+  addEventListener("resize", close);
+})();
+
+</script>
+<!-- OPENREPLAY-TEMP-START: temporary session recording; delete this whole block to remove -->
+<script>
+var initOpts = {
+  projectKey: "OvWyXL8ZTXnJs8uIJUvB",
+  // 0 - plain, 1 - obscured, 2 - ignored
+  defaultInputMode: 2,
+  obscureTextNumbers: false,
+  obscureTextEmails: true,
+};
+var startOpts = { userID: "" };
+(function(A,s,a,y,e,r){
+r=window.OpenReplay=[e,r,y,[s-1, e]];
+s=document.createElement('script');s.src=A;s.async=!a;
+document.getElementsByTagName('head')[0].appendChild(s);
+r.start=function(v){r.push([0])};
+r.stop=function(v){r.push([1])};
+r.setUserID=function(id){r.push([2,id])};
+r.setUserAnonymousID=function(id){r.push([3,id])};
+r.setMetadata=function(k,v){r.push([4,k,v])};
+r.event=function(k,p,i){r.push([5,k,p,i])};
+r.issue=function(k,p){r.push([6,k,p])};
+r.isActive=function(){return false};
+r.getSessionToken=function(){};
+})("https://static.openreplay.com/latest/openreplay-assist.js",1,0,initOpts,startOpts);
+</script>
+<!-- OPENREPLAY-TEMP-END -->
+</head><body>
+<header><div class="wrap top"><a class="brand" href="/"><img class="eo-d" src="/brand/evenout-logo-dark.svg" alt="evenout" width="145" height="32"><img class="eo-l" src="/brand/evenout-logo-light.svg" alt="" width="145" height="32"></a><nav><a href="/blog" class="on">Blog</a><a href="/app">Tonight's games</a><a class="cta" href="/app">Open the app</a></nav></div></header><main><section class="hero"><img src="/blog/img/chasing-losses-hero-2c8bae.jpg" alt="An NHL game between the Rangers and the Chicago Blackhawks at Madison Square Garden"><div class="wrap in"><span class="tag betting">Betting Lab</span><h1>Double or Nothing: What Chasing Would Have Done to Our Worst Week</h1><p class="deck">Our best picks lost 33.91 units in seven days. A bettor who doubled up after every losing night would have lost 310. Why chasing losses feels like a plan, and why it isn&#x27;t one.</p><span class="meta">November 22, 2026 · 6 min read</span></div><span class="cr">Rangers vs Blackhawks, Madison Square Garden · Schen Photography · CC BY 2.0</span></section><article class="art"><p>After a bad night, the next one starts to feel like a chance to fix it. Stake a bit more, win it back, and the bad night never happened. After two bad nights, a bit more again. Almost every bettor has done this at least once, and plenty of systems sold online are built on it.</p>
+
+<p>It has a name: chasing losses. This week our own track record gave us a clean way to show what it does, because this was the worst week the best picks have had since the record started.</p>
+
+<h2>The week</h2>
+
+<p>On the evening of November 14 the best picks on the All tab were 10.45 units up after three weeks. Over the six slates from November 15 to 21 the same picks went 16 wins from 93, for a loss of 33.91 units. The record now stands at 23.46 units down from 382 graded picks.</p>
+
+<p>That is a bad week, but not a strange one. At their prices those 93 picks should have produced about 25 winners, and the model expected 29. Sixteen is a long way short of both. It is also the kind of shortfall that turns up from time to time when the average price is above 5.00 and three picks in four are expected to lose. We covered why a record this young can't tell a good model from a lucky one in <a href="/blog/fifteen-nights">Fifteen Nights, Two Stories</a>. This post is about something else: what you do with your stakes when a week like this arrives.</p>
+
+<h2>A simple chasing rule</h2>
+
+<p>Take the most common version. You bet the same picks we did, one unit each. After every losing night you double your stake per pick for the next night. After a winning night you go back to one unit. The idea is that the first good night pays back everything at once.</p>
+
+<p>We replayed that rule on the exact picks, prices and results of the All tab from October 25 to November 21. Nothing else changed.</p>
+
+<div class="viz reveal"><h4>Flat stakes against doubling after a losing night</h4><p>Running total in units after each night, October 25 to November 21. Same picks, same prices, same results. Only the stake changes.</p>
+<svg viewBox="0 0 700 250" role="img" aria-label="Flat stakes end at minus 23.5 units. Doubling after each losing night peaks at plus 163.2 units on November 14 and ends at minus 147.1 units.">
+<line x1="60" y1="130.6" x2="680" y2="130.6" stroke="#8796a8" stroke-dasharray="4 4" opacity=".6"/>
+<g font-family="Exo 2,sans-serif" font-size="12" fill="#8796a8"><text x="0" y="134">0</text><text x="0" y="78">+100</text><text x="0" y="190">−100</text><text x="60" y="244">Oct 25</text><text x="370" y="244" text-anchor="middle">Nov 7</text><text x="680" y="244" text-anchor="end">Nov 21</text></g>
+<line x1="44" y1="74.7" x2="680" y2="74.7" stroke="#22303f"/><line x1="44" y1="186.5" x2="680" y2="186.5" stroke="#22303f"/>
+<polyline fill="none" stroke="#3ddc97" stroke-width="3" stroke-linejoin="round" points="60.0,126.3 83.8,127.9 107.7,134.3 131.5,128.6 155.4,130.9 179.2,134.2 203.1,132.5 226.9,134.5 250.8,139.0 274.6,133.5 298.5,131.9 322.3,135.5 346.2,137.3 370.0,131.1 393.8,125.8 417.7,129.1 441.5,132.3 465.4,132.8 489.2,126.4 513.1,128.6 536.9,124.8 560.8,130.4 584.6,130.4 608.5,136.7 632.3,140.1 656.2,140.1 680.0,143.7"/>
+<polyline fill="none" stroke="#e3a33b" stroke-width="3" stroke-linejoin="round" points="60.0,126.3 83.8,127.9 107.7,140.6 131.5,118.0 155.4,120.2 179.2,127.0 203.1,120.0 226.9,122.1 250.8,131.0 274.6,109.1 298.5,107.5 322.3,111.1 346.2,114.8 370.0,89.8 393.8,84.5 417.7,87.8 441.5,94.2 465.4,96.0 489.2,44.9 513.1,47.2 536.9,39.4 560.8,45.0 584.6,45.0 608.5,70.5 632.3,97.3 656.2,97.7 680.0,212.8"/>
+<g font-family="Oxanium,sans-serif" font-weight="800" font-size="14"><text x="536" y="30" fill="#e3a33b" text-anchor="middle">+163.2</text><text x="672" y="228" fill="#e3a33b" text-anchor="end">−147.1</text><text x="625" y="162" fill="#3ddc97" text-anchor="end">−23.5</text></g>
+<g font-family="Exo 2,sans-serif" font-size="12"><text x="70" y="22" fill="#3ddc97">Flat, 1 unit</text><text x="170" y="22" fill="#e3a33b">Double after a losing night</text></g>
+</svg></div>
+
+<p>For three weeks, chasing looked brilliant. By November 14 the doubling bettor was 163.2 units up while the flat bettor was 10.45 up. Every bad night had been followed, sooner or later, by a good one at a bigger stake. It is exactly the experience that convinces people the method works.</p>
+
+<p>Then came the week. All six slates finished in the red, two of them by only 0.05 units, which under this rule still counts as a loss and still doubles the stake. The stake per pick went 1, 2, 4, 8, 16 and finally 32 units on November 21, a 28-pick slate. That night alone put 896 units at risk, and it lost 206.0 of them. The doubling bettor finished at 147.1 units down, a fall of 310 units in seven days.</p>
+
+<div class="stat reveal"><div><b>382</b><span>units staked, flat</span></div><div><b>2,207</b><span>units staked, doubling</span></div><div><b>32</b><span>units per pick on the last night</span></div></div>
+
+<p>A milder rule, raising the stake by half instead of doubling it, follows the same path at a smaller size: 65.6 up on November 14, 39.4 down a week later.</p>
+
+<h2>What doubling actually changes</h2>
+
+<p>Doubling after a loss feels like it improves your odds. It doesn't touch them. Each pick still wins exactly as often as it was going to, and each unit staked still returns what it was going to on average. Over the whole period our picks returned −6.1% per unit with flat stakes. With doubling they returned −6.7%. Practically the same bets, practically the same return per unit.</p>
+
+<p>What changes is how many units you stake, and when. Doubling put 2,207 units through the same 382 picks, almost six times as much, and it put the biggest stakes on the nights straight after a run of losses. If the picks have an edge, that is a riskier way to collect it. If they don't, it is a faster way to lose.</p>
+
+<blockquote>Chasing doesn't change the odds of any bet. It only changes how much you have riding on them when things are going badly.</blockquote>
+
+<h2>40,000 replays</h2>
+
+<p>One week can be an unlucky example, so we ran the same picks again 40,000 times. In each replay every pick won only as often as its price implies, which is a bettor with no edge at all, and we tracked the flat bettor and the doubling bettor side by side.</p>
+
+<div class="stat reveal"><div><b>49% → 73%</b><span>replays that finished ahead, flat → doubling</span></div><div><b>34 → 105</b><span>median worst slide in units, flat → doubling</span></div><div><b>0.4% → 52%</b><span>replays with a slide of 100+ units, flat → doubling</span></div></div>
+
+<p>This is why chasing is so persuasive. In most replays the doubling bettor ends up ahead. Lots of small wins, collected after bad nights, add up. But the slides are three times as deep in a typical run, and in one replay in twenty the doubling bettor finished more than 516 units down. About four times in ten, someone who started with a 100-unit bankroll would have run through all of it at some point along the way, against three times in a thousand on flat stakes. The method trades a high chance of a small win for a real chance of a loss you can't come back from.</p>
+
+<p>In the replays the stake per pick reached 16 units in a typical run and 256 units in one run in twenty. Real bookmakers limit stakes, and real people run out of money, long before that. The sequence of wins that would have paid it all back usually arrives after the money is gone.</p>
+
+<h2>Why it feels right anyway</h2>
+
+<p>Part of it is the "he's due" instinct turned on yourself. A bad week does not make a good week more likely. The picks on November 22 have the same chances whether the last seven nights went well or badly.</p>
+
+<p>The other part is the scoreboard in your head. A loss feels like a hole that has to be filled, and the faster the better. But nothing about the next bet knows about the hole. The sensible question before any bet is the same on a good week and a bad one: is this price worth it at this stake? How much you are down is not part of the answer.</p>
+
+<h2>What to do in a bad week</h2>
+<ul>
+<li><b>Keep the stake where it was.</b> Choose a stake you could live with through a long losing run, and leave it there. Our flat record lost 33.91 units this week. If that would hurt, the stake is too big, and raising it would make it worse.</li>
+<li><b>Never size a bet to win back a loss.</b> The size of a bet should come from the price and your bankroll, not from yesterday.</li>
+<li><b>Set a limit before the week starts.</b> Decide in advance how much you are prepared to lose in a week or a month, and stop when you reach it.</li>
+<li><b>Be wary of any system that wins small and often.</b> Doubling schemes look excellent until the run that breaks them. Ours looked excellent for 21 nights.</li>
+</ul>
+
+<p>Our record will keep showing the picks at one unit each, through weeks like this one and the better ones. That is the honest way to measure them, and it is also the only staking we would call responsible.</p>
+
+<p>And if you notice yourself raising stakes to win back what you lost, take it seriously. It is one of the clearest early signs that betting has stopped being fun. Take a break, use your bookmaker's deposit limits, or talk to someone; the help lines are at the bottom of every page on this site.</p>
+<div class="rg"><b>18+.</b> Betting involves risk and losing runs are normal, even with an edge. Only bet what you can afford to lose. Need help? <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a>.</div></article><section class="more"><h3>More from the blog</h3><div class="grid"><a class="card" href="/blog/billy-smith-goal" data-sec="history"><div class="ph"><img loading="lazy" src="/blog/img/billy-smith-goal-hero-b44acd.jpg" alt="Goaltender Joey Daccord and Vince Dunn dive across the crease as Jonathan Marchessault reaches the Seattle net at the 2024 Winter Classic"></div><div class="tx"><span class="tag history">History</span><h3>The Last Islander to Touch It: Billy Smith and the First Goalie Goal</h3><p>November 28, 1979. A delayed penalty in Denver, a blind pass to nobody and a puck that slid into an empty net. How Billy Smith became the first goaltender credited with an NHL goal, and why goalie goals keep coming.</p><span class="meta">November 22, 2026 · 6 min read</span></div></a><a class="card" href="/blog/biggest-edges" data-sec="betting"><div class="ph"><img loading="lazy" src="/blog/img/biggest-edges-hero-b44acd.jpg" alt="Jonathan Marchessault at the Seattle net as goaltender Joey Daccord and Vince Dunn dive across the ice at the 2024 Winter Classic"></div><div class="tx"><span class="tag betting">Betting Lab</span><h3>Why the Biggest Edges Lie the Most</h3><p>Sort your bets by edge and start at the top. It feels like discipline. Three weeks of our own ledger show why the bets that look best on paper are the ones most likely to be a mistake.</p><span class="meta">November 15, 2026 · 6 min read</span></div></a><a class="card" href="/blog/heritage-classic-2003" data-sec="history"><div class="ph"><img loading="lazy" src="/blog/img/heritage-classic-2003-hero-302586.jpg" alt="An outdoor NHL rink inside a packed baseball stadium during the 2012 Winter Classic in Philadelphia"></div><div class="tx"><span class="tag history">History</span><h3>Minus 18 and a Toque: The Night the NHL Went Outside</h3><p>November 22, 2003. 57,167 people in an open stadium in Edmonton, Gretzky and Messier shoveling snow, and a goalie in a wool hat. The first Heritage Classic, the game that took the NHL outdoors for real.</p><span class="meta">November 15, 2026 · 7 min read</span></div></a></div></section></main><footer><div class="wrap">18+ · Gambling can be addictive. Play responsibly. Need help? Sweden: <a href="https://www.stodlinjen.se" rel="noopener">Stödlinjen</a> 020-81 91 00 · <a href="https://www.spelpaus.se" rel="noopener">Spelpaus.se</a> · Elsewhere: <a href="https://www.begambleaware.org" rel="noopener">BeGambleAware</a>, <a href="https://www.ncpgambling.org" rel="noopener">1-800-GAMBLER</a>. evenout is an analysis tool and does not take bets. · <a href="/legal.html#terms">Terms</a> · <a href="/legal.html#privacy">Privacy</a> · <a href="/legal.html#contact">Contact</a></div></footer>
+<script>document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.12}).observe(el));
+const tb=document.querySelector('.tabs');if(tb)tb.onclick=e=>{const b=e.target.closest('button');if(!b)return;tb.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+document.querySelectorAll('[data-sec]').forEach(c=>{c.style.display=(b.dataset.k==='all'||c.dataset.sec===b.dataset.k)?'':'none';c.style.animation='none';c.offsetHeight;c.style.animation='';});};</script></body></html>
