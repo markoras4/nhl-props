@@ -8,14 +8,13 @@ Fetching rosters for 32 teams ...
 Fetching 732 skaters and 72 goalies (careers + game logs) ...
 Fetching 411 recent box scores (hits, blocks) ...
 News: 119 injuries, likely starters for 21 games (+56 backup reports), line combinations for 32/32 teams, game-day lineups for 30 teams (2026-11-27, updated 2026-11-28T02:53:41.421Z)
-Shot maps: downloading play-by-play for 1 new games ...
   shot maps: 411 games, 46814 attempts
 Model built: 48 games, 732 skaters (568 expected to play)
 Odds: bookmaker prices for 13 games, 461 players
 Odds: sharp-book prices for 0 games, 0 player markets
   Stoiximan sync: 11 games, 861 player prices (last push 2026-11-28T02:55:32.316531+00:00, hourly); unmatched: Brett Leason, Ο. Μπέκ, Τζέικ Έβανς
   manual odds: 815 player prices added
-Public betting: splits for 12 games
+Public betting: splits for 13 games
   season simulation: 10000 seasons, 933 games left, top Cup: CAR 38%, COL 14%, MIN 13%
 Futures odds: Cup 32, conference 32, division 0, playoffs 2, points 0
 Player projections: 732 skaters
@@ -23,10 +22,9 @@ Goalie projections: 72 goalies
   awards: no player match for Bradley Nadeau, Carter Yakemchuk, Connor Ingram, Elvis Merzlikins, Felix Unger Sörum, Theo Lindstein
 Award prices: hart 81, norris 48, rocket 59, vezina 46, calder 23, adams 32
   history: MoneyPuck xG for 2026: 12,114 player-games
-  history: 1 box scores for hits/blocks (2026)
   history: game-by-game files for 727 players (3 seasons)
   archive: 5 past dates published (2026-11-21, 2026-11-22, 2026-11-23, 2026-11-24, 2026-11-25)
-Best picks record: 459 graded, 120 won, +7.45 units
+Best picks record: 463 graded, 120 won, +3.45 units
 Triage ledger: 227 graded blocks bets: time to review whether blocks join the headline Solid record
-Triage ledger: S 2245 bets +4.7u, L 4748 bets -186.8u, F 3452 bets -229.1u
+Triage ledger: S 2262 bets +10.7u, L 4767 bets -192.1u, F 3470 bets -231.6u
 Dashboard written: /home/runner/work/nhl-props/nhl-props/output/nhl-props-2026-11-27.html
