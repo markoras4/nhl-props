@@ -169,6 +169,9 @@ jobs:
           ARGS=""
           YT=0; TT=0
           if [ -n "$YT_CLIENT_ID" ] && [ -n "$YT_CLIENT_SECRET" ] && [ -n "$YT_REFRESH_TOKEN" ]; then YT=1; else echo "No YouTube secrets yet - skipping YouTube"; fi
+          # PAUSED 2026-11-28: the channel has 2 of 3 copyright strikes (freetouse takedowns over Snap Crackle); a third deletes it.
+          # Delete the next line only once freetouse has whitelisted the channel and the strikes are resolved.
+          YT=0; echo "::notice title=YouTube::YouTube uploads are paused (copyright strikes) - see videos.yml"
           if [ -n "$TIKTOK_CLIENT_KEY" ] && [ -n "$TIKTOK_CLIENT_SECRET" ] && [ -n "$TIKTOK_REFRESH_TOKEN" ]; then TT=1; else echo "No TikTok secrets yet - skipping TikTok"; fi
           if [ "$YT" = 0 ] && [ "$TT" = 0 ]; then exit 0; fi
           if [ "$YT" = 1 ] && [ "$TT" = 0 ]; then ARGS="--only youtube"; fi
@@ -337,6 +340,9 @@ jobs:
           ARGS=""
           YT=0; TT=0
           if [ -n "$YT_CLIENT_ID" ] && [ -n "$YT_CLIENT_SECRET" ] && [ -n "$YT_REFRESH_TOKEN" ]; then YT=1; else echo "No YouTube secrets yet - skipping YouTube"; fi
+          # PAUSED 2026-11-28: the channel has 2 of 3 copyright strikes (freetouse takedowns over Snap Crackle); a third deletes it.
+          # Delete the next line only once freetouse has whitelisted the channel and the strikes are resolved.
+          YT=0; echo "::notice title=YouTube::YouTube uploads are paused (copyright strikes) - see videos.yml"
           if [ -n "$TIKTOK_CLIENT_KEY" ] && [ -n "$TIKTOK_CLIENT_SECRET" ] && [ -n "$TIKTOK_REFRESH_TOKEN" ]; then TT=1; else echo "No TikTok secrets yet - skipping TikTok"; fi
           if [ "$YT" = 0 ] && [ "$TT" = 0 ]; then exit 0; fi
           if [ "$YT" = 1 ] && [ "$TT" = 0 ]; then ARGS="--only youtube"; fi
