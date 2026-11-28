@@ -2059,7 +2059,7 @@ const PRO_PLANS = DATA.paywall?.pro_plans || ["pro","creator","media"];
 const FREE_WATCH = DATA.paywall?.free_watch ?? 3, FREE_LEGS = DATA.paywall?.free_legs ?? 2;
 // Black Week promo: everyone with an account (and everyone who signs up by the sign-up end) has Pro until the promo
 // end, free, no card. The server decides (profiles.promo_until, has_pro(), pro-data); this only shows it.
-const PROMO = DATA.paywall?.promo || {signup_until: "2026-11-30T23:59:59-05:00", until: "2026-12-31T23:59:59-05:00"};
+const PROMO = DATA.paywall?.promo || {signup_until: "2026-12-31T23:59:59-05:00", until: "2026-12-31T23:59:59-05:00"};
 const PROMO_SIGNUP = () => PAYWALLED && Date.now() <= Date.parse(PROMO.signup_until);
 let PROMO_END = null;                                     // this account's free Pro ends (Date) while it runs
 let PLAN = "visitor";                                     // visitor | free | pro | creator | media
@@ -2087,8 +2087,8 @@ pw_sub_f:"Pro opens every player and every market, best picks live until the loc
   pl_save:"Save {p}%", pl_btn_m:"Pay monthly", pl_btn_y:"Pay yearly", pl_founder:"Founder price until 30 November, yours for as long as you stay subscribed.",
   pl_note:"Secure payment with Stripe. Pro starts right away. Cancel any time under Account → Manage subscription and keep Pro until the end of the paid period.",
   pl_terms:"By continuing you accept the <a href='/legal.html#terms'>terms</a>.", pl_wait:"Opening secure checkout…", pl_err:"Couldn't open the payment page. Please try again in a minute.",
-  promo_tag:"Black Week", promo_btn:"Get Pro free", promo_bar:"Pro is free until {d}. Sign up by 30 November, no card needed.",
-  promo_h:"Black Week: Pro free until {d}", promo_p:"Create a free account by 30 November and every Pro feature is yours until {d}. No card, no payment, nothing to cancel: after that your account simply goes back to Free.",
+  promo_tag:"Black Week", promo_btn:"Get Pro free", promo_bar:"Pro is free until {d}. Create a free account, no card needed.",
+  promo_h:"Black Week: Pro free until {d}", promo_p:"Create a free account and every Pro feature is yours until {d}. No card, no payment, nothing to cancel: after that your account simply goes back to Free.",
   promo_have:"You have Pro free until {d} (Black Week). No card and nothing to cancel: after that your account goes back to Free, and you decide then whether to subscribe.",
   ac_promo:"Pro free until {d} (Black Week). No card, nothing to cancel.",
   pl_already:"You already have Pro.", pl_signin:"Create a free account or log in first, then pay.",
@@ -2118,8 +2118,8 @@ pw_sub_f:"Pro öppnar varje spelare och varje marknad, bästa spel live fram til
   pl_save:"Spara {p} %", pl_btn_m:"Betala månadsvis", pl_btn_y:"Betala årsvis", pl_founder:"Grundarpris till 30 november, ditt så länge du är prenumerant.",
   pl_note:"Säker betalning med Stripe. Pro startar direkt. Säg upp när du vill under Konto → Hantera prenumeration och behåll Pro till slutet av den betalda perioden.",
   pl_terms:"Genom att fortsätta godkänner du <a href='/legal.html#terms'>villkoren</a>.", pl_wait:"Öppnar säker betalning…", pl_err:"Betalsidan kunde inte öppnas. Försök igen om en minut.",
-  promo_tag:"Black Week", promo_btn:"Få Pro gratis", promo_bar:"Pro är gratis till {d}. Skapa konto senast 30 november, inget kort behövs.",
-  promo_h:"Black Week: Pro gratis till {d}", promo_p:"Skapa ett gratiskonto senast 30 november så är alla Pro-funktioner dina till {d}. Inget kort, ingen betalning, inget att säga upp: sedan går kontot bara tillbaka till Gratis.",
+  promo_tag:"Black Week", promo_btn:"Få Pro gratis", promo_bar:"Pro är gratis till {d}. Skapa ett gratiskonto, inget kort behövs.",
+  promo_h:"Black Week: Pro gratis till {d}", promo_p:"Skapa ett gratiskonto så är alla Pro-funktioner dina till {d}. Inget kort, ingen betalning, inget att säga upp: sedan går kontot bara tillbaka till Gratis.",
   promo_have:"Du har Pro gratis till {d} (Black Week). Inget kort och inget att säga upp: sedan går kontot tillbaka till Gratis, och då väljer du själv om du vill prenumerera.",
   ac_promo:"Pro gratis till {d} (Black Week). Inget kort, inget att säga upp.",
   pl_already:"Du har redan Pro.", pl_signin:"Skapa ett gratiskonto eller logga in först, sedan betalar du.",

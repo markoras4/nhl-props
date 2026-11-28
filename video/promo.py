@@ -1,8 +1,8 @@
-"""evenout Black Week promo Short (9:16): Pro is free for everyone until 31 December, sign up by 30 November, no card.
+"""evenout Black Week promo Short (9:16): Pro is free for everyone until 31 December, sign up by 31 December, no card.
 
 The intro slams "Black Week / Pro is free", then a fast run through Pro on the real app (season projection with
 milestone chances, shot profile, the chance of each final score, playoff chances, the players explorer), then
-"No card · nothing to cancel · sign up by 30 November", then the outro. Stats only: odds stay hidden (appclips.py).
+"No card · nothing to cancel · free account", then the outro. Stats only: odds stay hidden (appclips.py).
 
     py -X utf8 video/promo.py --pro <today's Pro data json> --music "<licensed song.mp3>"
 """
@@ -92,7 +92,7 @@ def main():
             spec["parts"][-1]["note"] = c["note"]
         T = spec["timing"]
         spec["parts"].append({"kind": "promo", "a": T["outroAt"], "b": T["outroAt"] + 5.5, "kick": "Black Week",
-                              "big": ["Sign up", "by 30 Nov"], "checks": ["Pro free until 31 December", "No card needed", "Nothing to cancel"]})
+                              "big": ["Sign up", "for free"], "checks": ["Pro free until 31 December", "No card needed", "Nothing to cancel"]})
         T["outroAt"] += 5.5
         T["total"] += 5.5
         print(f"promo: {len(clips)} app clips, {T['total']:.1f}s")
@@ -104,7 +104,7 @@ def main():
     title = "Black Week: evenout Pro is free until 31 December"
     body = ("Every Pro feature on evenout, free for everyone until 31 December: season projections, shot profiles, the chance "
             "of every final score, playoff chances, every player's numbers explained.\n"
-            "Sign up by 30 November. No card, no payment, nothing to cancel: on 1 January your account simply goes back to Free.")
+            "Create a free account. No card, no payment, nothing to cancel: on 1 January your account simply goes back to Free.")
     man_p = out / "manifest.json"
     man = json.loads(man_p.read_text(encoding="utf-8")) if man_p.exists() else {"date": a.date, "items": []}
     man["items"] = [i for i in man["items"] if i.get("id") != name]
